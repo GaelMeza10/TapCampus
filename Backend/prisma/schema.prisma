@@ -1,0 +1,116 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum TipoPublicacion{
+  EN_VIVO
+  ESTATICA
+}
+
+enum EstadoPublicacion{
+  ACTIVA
+  FINALIZADA_MANUALMENTE
+  EXPIRADA
+  VENDIDA
+}
+enum ModoActivacionGanga{
+  MANUAL
+  PROGRAMADO
+}
+enum EstadoReserva{
+  RESERVADA
+  VENDIDA
+  CANCELADA
+  EXPIRADA
+}
+
+model Usuario {
+  id Int @id @default(autoincrement())
+  correo String @unique
+  contrasena String
+  nombre String
+  telefono String
+  esModerador Boolean @default(false)
+  createdAt DateTime @default(now())
+  publicaciones Publicacion[]
+  reservas Reserva[]
+  reportes Reporte[]
+  @@map("usuarios")
+}
+
+model Zona {
+  id Int @id @default(autoincrement())
+  nombre String @unique
+  publicaciones Publicacion[]
+  @@map("zonas")
+}
+
+model Categoria {
+  id Int @id @default(autoincrement())
+  nombre String
+  tipo TipoPublicacion
+  publicaciones Publicacion[]
+  @@unique([nombre, tipo])
+  @@map("categorias")
+}
+model Publicacion{
+  id Int @id @default(autoincrement())
+  tipo TipoPublicacion
+  foto String
+  titulo String
+  descripcion String
+  precio Float
+  estado EstadoPublicacion @default(ACTIVA)
+  createdAt DateTime @default(now())
+  vendedorId Int
+  vendedor Usuario @relation(fields: [vendedorId], references: [id])
+  categoriaId Int
+  categoria Categoria @relation(fields: [categoriaId], references: [id])
+  zonaId Int?
+  zona Zona? @relation(fields: [zonaId], references: [id])
+
+  stockInicial Int?
+  stockDisponible Int?
+  horaInicio DateTime?
+  horaFin DateTime?
+
+  gangaHabilitada Boolean @default(false)
+  gangaActivada Boolean @default(false)
+  gangaPrecioMinimo Float?
+  gangaModo ModoActivacionGanga?
+  gangaMinutosAntes Int?
+
+  reservas Reserva[]
+  reportes Reporte[]
+  @@map("publicaciones")
+}
+
+model Reserva{
+  id Int @id @default(autoincrement())
+  estado EstadoReserva @default(RESERVADA)
+  createdAt DateTime @default(now())
+  expiracion DateTime
+  compradorId Int
+  comprador Usuario @relation(fields: [compradorId], references: [id])
+  publicacionId Int
+  publicacion Publicacion @relation(fields: [publicacionId], references: [id])
+  @@map  ("reservas")
+}
+model Reporte{
+  id Int @id @default(autoincrement())
+  motivo String 
+  createdAt DateTime @default(now())
+  usuarioId Int
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  publicacionId Int
+  publicacion Publicacion @relation(fields: [publicacionId], references: [id])
+  @@map("reportes")
+}
