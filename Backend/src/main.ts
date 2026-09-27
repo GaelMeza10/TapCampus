@@ -12,6 +12,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true, //lanza el error si hay un campo de mas en la peticion
     }),
   );
-  await app.listen(process.env.PORT ?? 3000);
+  app.enableCors(); // Por si acaso también activamos CORS
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 bootstrap();

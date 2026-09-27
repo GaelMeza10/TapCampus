@@ -8,11 +8,13 @@ export class UsuariosService {
   constructor(private readonly prisma: PrismaService) {}
 
   async crear(dto: RegisterDto) {
+
     const existe = await this.prisma.usuario.findUnique({
       where: { correo: dto.correo.toLowerCase() },
     });
 
     if (existe) {
+      //pendiente de agregar un mensaje de error amigable
       throw new ConflictException('Ya existe una cuenta con ese correo');
     }
 

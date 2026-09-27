@@ -2,7 +2,8 @@ import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-
+//aqui en el controller se definen las rutas
+//y se llama al servicio para que haga la logica de negocio
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}

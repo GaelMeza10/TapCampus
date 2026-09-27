@@ -5,19 +5,19 @@ import { UsuariosService } from '../usuarios/usuarios.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
-
+// en el service se hace la logica de negocio.
 @Injectable()
 export class AuthService {
     constructor(
         private readonly usuariosService: UsuariosService,
-        private readonly jwtService: JwtService,
+        private readonly jwtService: JwtService, //generar y verificar tokens
     ) {}
 
     async registrar(dto: RegisterDto) {
         const usuario = await this.usuariosService.crear(dto);
         return this.generarToken(usuario.id, usuario.correo);
     }
-
+    //pendiente de mensajes amigables
     async iniciarSesion(dto: LoginDto) {
         const usuario = await this.usuariosService.buscarPorCorreo(dto.correo);
         if (usuario == null) {

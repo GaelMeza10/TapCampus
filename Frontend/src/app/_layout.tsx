@@ -8,7 +8,7 @@ function RedireccionInicio(){ //renombrar con mayuscula
     useEffect(() => {
         if(estaCargando) return;
         if(estaAutenticado){
-            router.replace('/inicio');
+            router.replace('/homePage');
         }
         if(!estaAutenticado){
             router.replace('/login');
