@@ -7,7 +7,7 @@ import {
 export class LoginDto{
 
     @IsNotEmpty({ message: 'El correo es obligatorio' })
-    @IsEmail()
+    @IsEmail({}, { message: 'Ingresa un correo electrónico válido' })
     correo: string;
 
     @IsString()
