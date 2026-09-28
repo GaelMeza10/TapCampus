@@ -1,107 +1,196 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   StatusBar,
   TextInput,
+  SectionList,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { COLORS, RADIUS, SHADOW } from './styles/theme';
 import { PUBLICACIONES, ZONAS } from '@/constants/publications';
-import TarjetaPublicacion from '@/components/Publisher_Card';
+import TarjetaPublicacion, { PublicacionMock } from '@/components/Publisher_Card';
+import { useAuth } from '@/context/AuthContext';
 
-// ─── Pantalla principal ───────────────────────────────────────────────────────
+interface Seccion {
+  title: string;
+  count: number;
+  esViva: boolean;
+  data: PublicacionMock[];
+}
+//Buscador y los chips de las zonas 
+function ListaHeader({
+  busqueda,
+  setBusqueda,
+  zonaActiva,
+  setZonaActiva,
+}: {
+  busqueda: string;
+  setBusqueda: (v: string) => void;
+  zonaActiva: string;
+  setZonaActiva: (v: string) => void;
+}) {
+  return (
+    <View>
+      
+      <View style={styles.searchWrapper}>
+        <Ionicons name="search-outline" size={18} color={COLORS.textLight} style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar publicaciones..."
+          placeholderTextColor={COLORS.textLight}
+          value={busqueda}
+          onChangeText={setBusqueda}
+        />
+        {busqueda.length > 0 && (
+          <TouchableOpacity onPress={() => setBusqueda('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Ionicons name="close-circle" size={18} color={COLORS.textLight} />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      
+      <SectionList
+        horizontal
+        sections={[{ data: ZONAS }]}
+        keyExtractor={(zona) => zona}
+        renderItem={({ item: zona }) => (
+          <TouchableOpacity
+            style={[styles.zonaChip, zonaActiva === zona && styles.zonaChipActivo]}
+            onPress={() => setZonaActiva(zona)}
+          >
+            <Text style={[styles.zonaChipText, zonaActiva === zona && styles.zonaChipTextActivo]}>
+              {zona}
+            </Text>
+          </TouchableOpacity>
+        )}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.zonaScroll}
+      />
+    </View>
+  );
+}
+//Titulo de cada grupo
+const SeccionHeader = React.memo(function SeccionHeader({ seccion }: { seccion: Seccion }) {
+  return (
+    <View style={styles.seccionHeader}>
+      <View style={styles.seccionTituloRow}>
+        {seccion.esViva && <View style={styles.dot} />}
+        <Text style={styles.seccionTitulo}>{seccion.title}</Text>
+      </View>
+      <Text style={styles.seccionCount}>
+        {seccion.count} {seccion.esViva ? 'activas' : 'artículos'}
+      </Text>
+    </View>
+  );
+});
+//Cuando no hay articulos
+function ListaVacia({ busqueda }: { busqueda: string }) {
+  return (
+    <View style={styles.emptyContainer}>
+      <Ionicons name="search-outline" size={48} color={COLORS.textLight} />
+      <Text style={styles.emptyText}>
+        {busqueda ? `Sin resultados para "${busqueda}"` : 'No hay publicaciones disponibles'}
+      </Text>
+    </View>
+  );
+}
+
 export default function HomePage() {
   const [zonaActiva, setZonaActiva] = useState('Todas');
   const [busqueda, setBusqueda] = useState('');
+  const { logout } = useAuth();
+  //filtro publicaciones
+  const secciones = useMemo<Seccion[]>(() => {
+    const filtradas = PUBLICACIONES.filter((p) => {
+      const coincideZona = zonaActiva === 'Todas' || p.zona === zonaActiva;
+      const coincideBusqueda = p.titulo.toLowerCase().includes(busqueda.toLowerCase());
+      return coincideZona && coincideBusqueda;
+    });
 
-  const publicacionesFiltradas = PUBLICACIONES.filter((p) => {
-    const coincideZona = zonaActiva === 'Todas' || p.zona === zonaActiva;
-    const coincideBusqueda = p.titulo.toLowerCase().includes(busqueda.toLowerCase());
-    return coincideZona && coincideBusqueda;
-  });
+    const vivas = filtradas.filter((p) => p.tipo === 'viva');
+    const estaticas = filtradas.filter((p) => p.tipo === 'estatica');
+
+    return [
+      { title: 'En vivo ahora', count: vivas.length, esViva: true, data: vivas },
+      { title: 'Material escolar', count: estaticas.length, esViva: false, data: estaticas },
+    ];
+  }, [zonaActiva, busqueda]);
+  
+  const handleLogout = useCallback(() => {
+    Alert.alert(
+      'Cerrar sesión',
+      '¿Seguro que quieres salir?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Salir',
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+            router.replace('/login');
+          },
+        },
+      ]
+    );
+  }, [logout]);
+
+  const renderItem = useCallback(
+    ({ item }: { item: PublicacionMock }) => <TarjetaPublicacion item={item} />,
+    []
+  );
+
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: Seccion }) => <SeccionHeader seccion={section} />,
+    []
+  );
+
+  const keyExtractor = useCallback((item: PublicacionMock) => item.id, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitulo}>TapCampus</Text>
+        <TouchableOpacity style={styles.headerAvatar} onPress={handleLogout} activeOpacity={0.75}>
+          <Ionicons name="log-out-outline" size={20} color={COLORS.primary} />
+        </TouchableOpacity>
+      </View>
 
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.headerTitulo}>TapCampus</Text>
-          </View>
-          <TouchableOpacity style={styles.headerAvatar}>
-            <Ionicons name="person-outline" size={20} color={COLORS.primary} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.searchWrapper}>
-          <Ionicons name="search-outline" size={18} color={COLORS.textLight} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Buscar publicaciones..."
-            placeholderTextColor={COLORS.textLight}
-            value={busqueda}
-            onChangeText={setBusqueda}
+      <SectionList<PublicacionMock, Seccion>
+        sections={secciones}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        renderSectionHeader={renderSectionHeader}
+        ListHeaderComponent={
+          <ListaHeader
+            busqueda={busqueda}
+            setBusqueda={setBusqueda}
+            zonaActiva={zonaActiva}
+            setZonaActiva={setZonaActiva}
           />
-        </View>
+        }
+        ListEmptyComponent={<ListaVacia busqueda={busqueda} />}
+        ListFooterComponent={<View style={{ height: 100 }} />}
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={8}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews
+        getItemLayout={(_data, index) => ({
+          length: 182, 
+          offset: 182 * index,
+          index,
+        })}
+      />
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.zonaScroll}
-        >
-          {ZONAS.map((zona) => (
-            <TouchableOpacity
-              key={zona}
-              style={[styles.zonaChip, zonaActiva === zona && styles.zonaChipActivo]}
-              onPress={() => setZonaActiva(zona)}
-            >
-              <Text style={[styles.zonaChipText, zonaActiva === zona && styles.zonaChipTextActivo]}>
-                {zona}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        <View style={styles.seccionHeader}>
-          <View style={styles.seccionTituloRow}>
-            <View style={styles.dot} />
-            <Text style={styles.seccionTitulo}>En vivo ahora</Text>
-          </View>
-          <Text style={styles.seccionCount}>
-            {publicacionesFiltradas.filter((p) => p.tipo === 'viva').length} activas
-          </Text>
-        </View>
-
-        {publicacionesFiltradas
-          .filter((p) => p.tipo === 'viva')
-          .map((item) => (
-            <TarjetaPublicacion key={item.id} item={item} />
-          ))}
-
-        <View style={[styles.seccionHeader, { marginTop: 8 }]}>
-          <Text style={styles.seccionTitulo}>Material escolar</Text>
-          <Text style={styles.seccionCount}>
-            {publicacionesFiltradas.filter((p) => p.tipo === 'estatica').length} artículos
-          </Text>
-        </View>
-
-        {publicacionesFiltradas
-          .filter((p) => p.tipo === 'estatica')
-          .map((item) => (
-            <TarjetaPublicacion key={item.id} item={item} />
-          ))}
-
-        <View style={{ height: 100 }} />
-      </ScrollView>
-
+      
       <TouchableOpacity style={styles.fab} activeOpacity={0.85}>
         <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
@@ -115,6 +204,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
 
+  // Navbar
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -122,10 +212,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 12,
-  },
-  headerSub: {
-    fontSize: 13,
-    color: COLORS.textMedium,
   },
   headerTitulo: {
     fontSize: 24,
@@ -160,7 +246,7 @@ const styles = StyleSheet.create({
     color: COLORS.textDark,
   },
 
-  // Zonas
+  // Chips de zona
   zonaScroll: {
     paddingHorizontal: 20,
     gap: 8,
@@ -187,13 +273,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 
-  // Sección
+  // Header de sección
   seccionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginBottom: 12,
+    paddingVertical: 12,
+    backgroundColor: COLORS.background,
   },
   seccionTituloRow: {
     flexDirection: 'row',
@@ -216,7 +303,17 @@ const styles = StyleSheet.create({
     color: COLORS.textMedium,
   },
 
-
+  // Empty state
+  emptyContainer: {
+    alignItems: 'center',
+    paddingVertical: 60,
+    gap: 12,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: COLORS.textMedium,
+    textAlign: 'center',
+  },
 
   // FAB
   fab: {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, RADIUS, SHADOW } from '../app/styles/theme';
@@ -22,27 +21,28 @@ export default function TarjetaPublicacion({ item }: { item: PublicacionMock }) 
   const precioMostrar = item.gangaActiva && item.precioGanga ? item.precioGanga : item.precio;
 
   return (
+    //tarjeta
     <TouchableOpacity style={styles.card} activeOpacity={0.85}>
-      {/* Imagen placeholder */}
+      {}
       <View style={[styles.cardImage, { backgroundColor: esViva ? '#E8F5EE' : '#F0EDE8' }]}>
         <Ionicons
           name={esViva ? 'fast-food-outline' : 'book-outline'}
           size={32}
           color={COLORS.primary}
         />
-        {/* Badge tipo */}
+        
         <View style={[styles.badge, { backgroundColor: esViva ? COLORS.primary : '#8B7355' }]}>
           <Text style={styles.badgeText}>{esViva ? 'EN VIVO' : 'FIJO'}</Text>
         </View>
-        {/* Badge ganga */}
+        
         {item.gangaActiva && (
           <View style={styles.badgeGanga}>
-            <Text style={styles.badgeGangaText}>🔥 GANGA</Text>
+            <Text style={styles.badgeGangaText}>GANGA</Text>
           </View>
         )}
       </View>
 
-      {/* Info */}
+      
       <View style={styles.cardBody}>
         <Text style={styles.cardTitulo} numberOfLines={1}>{item.titulo}</Text>
 
@@ -52,7 +52,7 @@ export default function TarjetaPublicacion({ item }: { item: PublicacionMock }) 
         </View>
 
         <View style={styles.cardFooter}>
-          {/* Precio */}
+          
           <View>
             {item.gangaActiva && item.precioGanga && (
               <Text style={styles.precioOriginal}>${item.precio}</Text>
@@ -62,7 +62,7 @@ export default function TarjetaPublicacion({ item }: { item: PublicacionMock }) 
             </Text>
           </View>
 
-          {/* Stock / hora */}
+          
           <View style={styles.cardRight}>
             {esViva ? (
               <>

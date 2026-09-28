@@ -6,7 +6,7 @@ import {
 
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, RADIUS, SHADOW } from '../app/styles/theme';
+import { COLORS, RADIUS } from '../app/styles/theme';
 
 
 interface InputFieldProps {
@@ -15,7 +15,7 @@ interface InputFieldProps {
     value: string;
     onChangeText: (v: string) => void;
     keyboardType?: KeyboardTypeOptions;
-    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'; 
 }
 
     

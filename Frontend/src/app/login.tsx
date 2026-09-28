@@ -10,7 +10,6 @@ import {
   Platform,
   ScrollView,
   StatusBar,
-  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, RADIUS, SHADOW } from './styles/theme';
@@ -23,15 +22,37 @@ export default function PantallaLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const {login} = useAuth();
+  const { login } = useAuth();
 
   async function handleLogin() {
+    
+    if (!email.trim()) {
+      setError('El correo es obligatorio.');
+      return;
+    }
+
+    const esEmailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+    if (!esEmailValido) {
+      setError('Ingresa un correo electrónico válido.');
+      return;
+    }
+
+    if (!password) {
+      setError('La contraseña es obligatoria.');
+      return;
+    }
+
     try {
-      await login({ correo: email, contrasena: password });
-    } catch (error: any) {
-      console.error('Error al iniciar sesión:', error);
-      const mensaje = error?.response?.data?.message || 'Error de conexión con el servidor.';
-      Alert.alert('Error al iniciar sesión', String(mensaje));
+      setError('');
+      await login({ correo: email.trim(), contrasena: password });
+    } catch (err: any) {
+      const mensaje = err?.response?.data;
+      if (Array.isArray(mensaje?.message)) {
+        setError(mensaje.message.join('\n'));
+      } else {
+        setError(mensaje?.message || 'Correo o contraseña incorrectos.');
+      }
     }
   };
 
@@ -39,7 +60,7 @@ export default function PantallaLogin() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
 
-      
+
       <View style={styles.gridOverlay} pointerEvents="none" />
 
       <KeyboardAvoidingView
@@ -51,7 +72,7 @@ export default function PantallaLogin() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Logo */}
+          
           <View style={styles.logoRow}>
             <View style={styles.logoIcon}>
               <Ionicons name="location-sharp" size={22} color={COLORS.white} />
@@ -62,14 +83,13 @@ export default function PantallaLogin() {
             </View>
           </View>
 
-          {/* Card principal */}
+         
           <View style={styles.card}>
             <Text style={styles.title}>Bienvenido a{'\n'}TapCampus</Text>
             <Text style={styles.subtitle}>
               Accede con tu correo institucional.
             </Text>
 
-            {/* Email */}
             <View style={styles.inputWrapper}>
               <Ionicons
                 name="mail-outline"
@@ -78,21 +98,21 @@ export default function PantallaLogin() {
                 style={styles.inputIcon}
               />
               <TextInput
-                style={styles.input}
+                style={styles.input} 
                 placeholder="tu.nombre@uabc.edu.mx"
                 placeholderTextColor={COLORS.textLight}
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(v) => {setEmail(v); setError('');}}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-            </View> 
+            </View>
 
-            {/* Contraseña */}
+            
             <View style={styles.inputWrapper}>
               <Ionicons
-                name="lock-closed-outline" 
+                name="lock-closed-outline"
                 size={18}
                 color={COLORS.textLight}
                 style={styles.inputIcon}
@@ -102,7 +122,7 @@ export default function PantallaLogin() {
                 placeholder="Contraseña"
                 placeholderTextColor={COLORS.textLight}
                 value={password}
-                onChangeText={setPassword}
+                 onChangeText={(v) => {setPassword(v); setError('');}}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
@@ -119,7 +139,14 @@ export default function PantallaLogin() {
               </TouchableOpacity>
             </View>
 
-            {/* Botón iniciar sesión */}
+            {error ? (
+              <View style={styles.errorBox}>
+                <Ionicons name="alert-circle-outline" size={16} color={COLORS.error} />
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : null}
+
+            
             <TouchableOpacity
               style={[styles.primaryButton, loading && { opacity: 0.7 }]}
               onPress={async () => {
@@ -135,10 +162,10 @@ export default function PantallaLogin() {
               </Text>
             </TouchableOpacity>
 
-          
+
           </View>
 
-          {/* Pie: ir a registro */}
+         
           <View style={styles.footer}>
             <Text style={styles.footerText}>¿Aún no tienes cuenta? </Text>
             <TouchableOpacity onPress={() => router.push('/register')}>
@@ -156,13 +183,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  // Cuadrícula muy sutil para imitar mapa topográfico del prototipo
+
   gridOverlay: {
     ...StyleSheet.absoluteFill,
     opacity: 0.15,
     backgroundColor: 'transparent',
     borderColor: '#8FAB8A',
-    // En producción puedes usar una imagen SVG de mapa como backgroundImage
+    
   },
   keyboardView: {
     flex: 1,
@@ -290,4 +317,19 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontWeight: '700',
   },
+   errorBox: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: '#FEF2F2',   
+      borderRadius: RADIUS.md,
+      padding: 12,
+      marginBottom: 12,
+    },
+    errorText: {
+      flex: 1,
+      fontSize: 13,
+      color: COLORS.error,          
+      lineHeight: 18,
+    },
 });

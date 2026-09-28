@@ -2,7 +2,7 @@ import {useEffect} from 'react'
 import {AuthProvider, useAuth} from '../context/AuthContext'
 import {Stack, router } from 'expo-router'
 
-function RedireccionInicio(){ //renombrar con mayuscula
+function RedireccionInicio(){ 
     const {estaAutenticado, estaCargando} = useAuth();
 
     useEffect(() => {

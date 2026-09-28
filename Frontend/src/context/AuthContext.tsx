@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import {TOKEN_KEY} from "../constants/api.constants";
 import {login as loginService, register as registerService, logout as logoutService} from "../services/auth.service";
-//tipos
+
 interface RegisterData{
     nombre: string;
     correo: string;

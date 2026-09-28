@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     View,
     Text,
@@ -10,9 +10,8 @@ import {
     Platform,
     ScrollView,
     StatusBar,
-    KeyboardTypeOptions,
-    Alert,
 } from 'react-native';
+
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, RADIUS, SHADOW } from './styles/theme';
 import { router } from 'expo-router';
@@ -26,15 +25,16 @@ export default function RegisterScreen({ }) {
         telefono: '',
         password: '',
     });
+    
     const [showPassword, setShowPassword] = useState(false);
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const {register} = useAuth();
+    const { register } = useAuth();
 
     const updateField = (field: keyof typeof form, value: string) => setForm((prev) => ({ ...prev, [field]: value }));
 
-    async function handleRegister()  {
+    async function handleRegister() {
         if (!accepted) return;
         setLoading(true);
         setError('');
@@ -45,18 +45,13 @@ export default function RegisterScreen({ }) {
                 telefono: form.telefono,
                 contrasena: form.password,
             });
-        } catch (error: any) {
-            console.error('Error al registrar:', error);
-            const mensaje = error?.response?.data?.message;
-            let textoError = 'Error de conexión con el servidor.';
-            
-            if (Array.isArray(mensaje)) {
-                textoError = mensaje.join('\n');
-            } else if (mensaje) {
-                textoError = mensaje;
+        } catch (err: any) {
+            const data = err?.response?.data;
+            if (Array.isArray(data?.message)) {
+                setError(data.message[0]);
+            } else {
+                setError(data?.message || 'Ocurrió un error al registrarse.');
             }
-            
-            Alert.alert('Error al registrar', textoError);
         } finally {
             setLoading(false);
         }
@@ -75,7 +70,7 @@ export default function RegisterScreen({ }) {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
-                    {/* Botón volver */}
+                    
                     <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => router.back()}
@@ -85,7 +80,7 @@ export default function RegisterScreen({ }) {
                         <Text style={styles.backText}>Volver</Text>
                     </TouchableOpacity>
 
-                    {/* Encabezado */}
+                  
                     <View style={styles.header}>
                         <Text style={styles.title}>Crea tu cuenta</Text>
                         <Text style={styles.subtitle}>
@@ -94,9 +89,9 @@ export default function RegisterScreen({ }) {
                         </Text>
                     </View>
 
-                    {/* Card del formulario */}
+                    
                     <View style={styles.card}>
-                        {/* Nombre */}
+                       
                         <InputField
                             icon="person-outline"
                             placeholder="Nombre completo"
@@ -105,7 +100,7 @@ export default function RegisterScreen({ }) {
                             autoCapitalize="words"
                         />
 
-                        {/* Correo */}
+                      
                         <InputField
                             icon="mail-outline"
                             placeholder="Correo institucional"
@@ -115,7 +110,7 @@ export default function RegisterScreen({ }) {
                             autoCapitalize="none"
                         />
 
-                        {/* Teléfono */}
+                        
                         <InputField
                             icon="call-outline"
                             placeholder="+52 664 123 4567"
@@ -124,7 +119,7 @@ export default function RegisterScreen({ }) {
                             keyboardType="phone-pad"
                         />
 
-                        {/* Contraseña */}
+                        
                         <View style={styles.inputWrapper}>
                             <Ionicons
                                 name="lock-closed-outline"
@@ -153,10 +148,17 @@ export default function RegisterScreen({ }) {
                             </TouchableOpacity>
                         </View>
 
-                        {/* Separador */}
+                        {error ? (
+                            <View style={styles.errorBox}>
+                                <Ionicons name="alert-circle-outline" size={16} color={COLORS.error} />
+                                <Text style={styles.errorText}>{error}</Text>
+                            </View>
+                        ) : null}
+
+                        
                         <View style={styles.divider} />
 
-                        {/* Checkbox términos */}
+                        
                         <TouchableOpacity
                             style={styles.checkboxRow}
                             onPress={() => setAccepted(!accepted)}
@@ -177,7 +179,7 @@ export default function RegisterScreen({ }) {
                             </Text>
                         </TouchableOpacity>
 
-                        {/* Botón crear cuenta */}
+                        
                         <TouchableOpacity
                             style={[
                                 styles.primaryButton,
@@ -191,7 +193,7 @@ export default function RegisterScreen({ }) {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Footer: ir a login */}
+                    
                     <View style={styles.footer}>
                         <Text style={styles.footerText}>¿Ya tienes cuenta? </Text>
                         <TouchableOpacity onPress={() => router.push('/login')}>
@@ -359,5 +361,20 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: COLORS.textDark,
         height: '100%',
+    },
+    errorBox: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: '#FEF2F2',
+      borderRadius: RADIUS.md,
+      padding: 12,
+      marginBottom: 12,
+    },
+    errorText: {
+      flex: 1,
+      fontSize: 13,
+      color: COLORS.error,
+      lineHeight: 18,
     },
 });
