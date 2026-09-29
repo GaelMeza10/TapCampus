@@ -1,116 +1,130 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
-  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-
-enum TipoPublicacion{
-  EN_VIVO
-  ESTATICA
+enum PublicationType {
+  LIVE
+  STATIC
 }
 
-enum EstadoPublicacion{
-  ACTIVA
-  FINALIZADA_MANUALMENTE
-  EXPIRADA
-  VENDIDA
+enum PublicationStatus {
+  ACTIVE
+  FINISHED
+  HIDDEN_BY_REPORTS
 }
-enum ModoActivacionGanga{
+
+enum GangaActivationMode {
   MANUAL
-  PROGRAMADO
-}
-enum EstadoReserva{
-  RESERVADA
-  VENDIDA
-  CANCELADA
-  EXPIRADA
+  SCHEDULED
 }
 
-model Usuario {
-  id Int @id @default(autoincrement())
-  correo String @unique
-  contrasena String
-  nombre String
-  telefono String
-  esModerador Boolean @default(false)
-  createdAt DateTime @default(now())
-  publicaciones Publicacion[]
-  reservas Reserva[]
-  reportes Reporte[]
-  @@map("usuarios")
+enum ReservationStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  EXPIRED
 }
 
-model Zona {
-  id Int @id @default(autoincrement())
-  nombre String @unique
-  publicaciones Publicacion[]
-  @@map("zonas")
+model User {
+  id            String   @id @default(uuid()) @db.Uuid
+  email         String   @unique
+  password_hash String
+  name          String
+  phone         String
+  is_moderator  Boolean  @default(false)
+  created_at    DateTime @default(now())
+
+  // Relations
+  publications Publication[] @relation("SellerPublications")
+  reservations Reservation[] @relation("BuyerReservations")
+  reports      Report[]      @relation("UserReports")
+
+  @@map("users")
 }
 
-model Categoria {
-  id Int @id @default(autoincrement())
-  nombre String
-  tipo TipoPublicacion
-  publicaciones Publicacion[]
-  @@unique([nombre, tipo])
-  @@map("categorias")
-}
-model Publicacion{
-  id Int @id @default(autoincrement())
-  tipo TipoPublicacion
-  foto String
-  titulo String
-  descripcion String
-  precio Float
-  estado EstadoPublicacion @default(ACTIVA)
-  createdAt DateTime @default(now())
-  vendedorId Int
-  vendedor Usuario @relation(fields: [vendedorId], references: [id])
-  categoriaId Int
-  categoria Categoria @relation(fields: [categoriaId], references: [id])
-  zonaId Int?
-  zona Zona? @relation(fields: [zonaId], references: [id])
+model Zone {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  publications Publication[]
 
-  stockInicial Int?
-  stockDisponible Int?
-  horaInicio DateTime?
-  horaFin DateTime?
-
-  gangaHabilitada Boolean @default(false)
-  gangaActivada Boolean @default(false)
-  gangaPrecioMinimo Float?
-  gangaModo ModoActivacionGanga?
-  gangaMinutosAntes Int?
-
-  reservas Reserva[]
-  reportes Reporte[]
-  @@map("publicaciones")
+  @@map("zones")
 }
 
-model Reserva{
-  id Int @id @default(autoincrement())
-  estado EstadoReserva @default(RESERVADA)
-  createdAt DateTime @default(now())
-  expiracion DateTime
-  compradorId Int
-  comprador Usuario @relation(fields: [compradorId], references: [id])
-  publicacionId Int
-  publicacion Publicacion @relation(fields: [publicacionId], references: [id])
-  @@map  ("reservas")
+model Category {
+  id           Int             @id @default(autoincrement())
+  name         String
+  type         PublicationType
+  publications Publication[]
+
+  @@unique([name, type])
+  @@map("categories")
 }
-model Reporte{
-  id Int @id @default(autoincrement())
-  motivo String 
-  createdAt DateTime @default(now())
-  usuarioId Int
-  usuario Usuario @relation(fields: [usuarioId], references: [id])
-  publicacionId Int
-  publicacion Publicacion @relation(fields: [publicacionId], references: [id])
-  @@map("reportes")
+
+model Publication {
+  id          String            @id @default(uuid()) @db.Uuid
+  type        PublicationType
+  title       String
+  description String            @db.Text
+  price       Decimal           @db.Decimal(10, 2)
+  image_url   String
+  status      PublicationStatus @default(ACTIVE)
+  created_at  DateTime          @default(now())
+
+  // Base Relations
+  seller_id   String   @db.Uuid
+  seller      User     @relation("SellerPublications", fields: [seller_id], references: [id])
+  zone_id     Int
+  zone        Zone     @relation(fields: [zone_id], references: [id])
+  category_id Int
+  category    Category @relation(fields: [category_id], references: [id])
+
+  // Campos exclusivos para LIVE
+  initial_stock         Int?
+  current_stock         Int? // Check >= 0 manejado en lógica de negocio / bd
+  start_time            DateTime?
+  end_time              DateTime?
+  is_ganga_active       Boolean              @default(false)
+  ganga_min_price       Decimal?             @db.Decimal(10, 2)
+  ganga_activation_mode GangaActivationMode?
+  ganga_minutes_before  Int?
+
+  // Relations
+  reservations Reservation[]
+  reports      Report[]
+
+  @@map("publications")
+}
+
+model Reservation {
+  id          String            @id @default(uuid()) @db.Uuid
+  status      ReservationStatus @default(ACTIVE)
+  reserved_at DateTime          @default(now())
+  resolved_at DateTime?
+
+  // Relations
+  buyer_id       String      @db.Uuid
+  buyer          User        @relation("BuyerReservations", fields: [buyer_id], references: [id])
+  publication_id String      @db.Uuid
+  publication    Publication @relation(fields: [publication_id], references: [id])
+
+  @@map("reservations")
+}
+
+model Report {
+  id         Int      @id @default(autoincrement())
+  reason     String
+  created_at DateTime @default(now())
+
+  // Relations
+  reporter_id    String      @db.Uuid
+  reporter       User        @relation("UserReports", fields: [reporter_id], references: [id])
+  publication_id String      @db.Uuid
+  publication    Publication @relation(fields: [publication_id], references: [id])
+
+  @@map("reports")
 }
