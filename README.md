@@ -20,7 +20,7 @@ Tiene temporizador y stock reactivo. Desaparece del feed cuando el tiempo se ago
 | Foto | Obligatoria (al menos una imagen) |
 | Título | Nombre corto del producto |
 | Descripción | Texto libre (ingredientes, variantes, etc.) |
-| Categoría | Comida · Snacks · Bebidas · Postres · Otros |
+| Categoría | Comida Fuerte · Snacks · Bebidas · Postres |
 | Precio | Precio normal por pieza/porción |
 | Stock inicial | Piezas disponibles al publicar |
 | Lugar | Zona del campus (selección de catálogo) |
@@ -36,8 +36,9 @@ Permanece activa hasta que el vendedor la marque como vendida. No tiene temporiz
 | Foto | Obligatoria y es el campo más importante |
 | Título | Nombre descriptivo del artículo |
 | Descripción | Estado (nuevo/usado), características |
-| Categoría | Libros · Electrónica · Uniformes/Batas · Material escolar · Otros |
+| Categoría | Libros · Electrónica · Batas/Uniformes · Material Escolar |
 | Precio | Precio de referencia visible en el catálogo |
+| Lugar | Zona del campus (catálogo manual, sin GPS) |
 
 ---
 
@@ -45,17 +46,20 @@ Permanece activa hasta que el vendedor la marque como vendida. No tiene temporiz
 
 ### Sistema de Reservas (solo para ventas en vivo)
 - El comprador aparta su porción con un **margen de tolerancia de 20 minutos**.
-- Si no se concreta la entrega, el producto se libera automáticamente y vuelve al feed.
+- Cada reserva fija el precio vigente al confirmarse; una ganga o edición posterior no cambia ese precio.
+- El mismo comprador puede tener varias reservas activas de una publicación si hay stock. Una acción nueva crea otra reserva; reintentar la misma devuelve la existente sin otro descuento.
+- Si no se concreta la entrega, la pieza se libera automáticamente; vuelve al feed si la publicación sigue activa y dentro de horario.
+- Al terminar el horario, se bloquean reservas nuevas, pero el vendedor puede confirmar las previas dentro de sus respectivos 20 minutos.
 - **Confirmación:** el vendedor confirma la entrega con un toque; el stock pasa a "vendido definitivo".
 - **Cancelación por el comprador:** libera el stock de inmediato, sin esperar los 20 minutos.
-- **Contacto bidireccional por WhatsApp:**  
-  - El comprador puede contactar al vendedor desde la publicación en cualquier momento.  
-  - En cuanto existe una reserva, el vendedor puede contactar a ese comprador específico. Antes de la reserva, no se expone ningún número.
+- **Contacto bidireccional por WhatsApp:**
+  - En ventas en vivo, el comprador puede contactar al vendedor después de que el servidor confirma la reserva.
+  - En cuanto existe una reserva, el vendedor puede contactar a ese comprador específico.
 
 ### Mecanismo Técnico de Concurrencia
 La reserva de la última pieza está protegida con una **transacción de base de datos con bloqueo pesimista** (`SELECT ... FOR UPDATE`) sobre la fila del producto. Esto evita condiciones de carrera cuando varios compradores intentan apartar el mismo producto simultáneamente.
 
-La expiración de reservas **no depende de temporizadores en memoria**; se maneja con un **job programado** (BullMQ + Redis, o cron) que revisa reservas vencidas de forma confiable aunque el servidor se reinicie. Este mismo job verifica también las activaciones programadas de precio ganga.
+La expiración de reservas **no depende de temporizadores en memoria**; se maneja con **BullMQ + Redis** y una conciliación de reservas vencidas para recuperarse de reinicios o fallos de encolado. También se programan las activaciones de precio ganga.
 
 ### Precio Ganga (Elemento de Innovación)
 - El vendedor puede habilitar un precio ganga al publicar, definiendo un precio mínimo.
@@ -83,10 +87,11 @@ El vendedor puede editar precio, descripción, stock, horario y configuración d
 
 | Mecanismo | Descripción |
 |---|---|
-| Correo institucional | Solo se permite registro con dominio institucional (p. ej. `@universidad.edu.mx`); validación en el formulario, sin verificación por email adicional |
+| Correo institucional | Solo se permite registro con `@uabc.edu.mx`; validación también en el servidor, sin verificación por email adicional |
+| Teléfono mexicano | Se aceptan diez dígitos nacionales con o sin `+52`, de cualquier región de México; se guarda como `+52XXXXXXXXXX` |
 | Hash de contraseñas | Buenas prácticas de NestJS (bcrypt o similar) |
 | JWT con expiración | Tokens de sesión con tiempo de vida limitado |
-| Filtro de palabras clave | Se ejecuta al crear una publicación; bloquea términos prohibidos sin perder el contenido; el vendedor debe corregirlos para continuar |
+| Filtro de palabras clave | Idea pendiente de requisito y criterios de aceptación; no está implementada ni comprometida en el MVP |
 | Reportes de la comunidad | Varias denuncias acumuladas ocultan la publicación automáticamente para revisión |
 | Rol de moderador | Campo booleano en `Usuario`; sin panel dedicado en el MVP (puede ser una vista simple o consulta directa a BD) |
 
@@ -101,46 +106,19 @@ El vendedor puede editar precio, descripción, stock, horario y configuración d
 | ORM | Prisma | Puente tipado entre backend y base de datos |
 | Base de datos | PostgreSQL | Modelo relacional de toda la lógica de negocio |
 | Tiempo real | Socket.io | Eventos de inventario en vivo hacia la app móvil |
-| Jobs programados | BullMQ + Redis (o cron) | Expiración de reservas y activación de precio ganga |
+| Jobs programados | BullMQ + Redis | Expiración de reservas y activación de precio ganga |
 
 ---
 
 ## Modelo de Datos (Entidades Principales)
 
-### `Usuario`
-- `correo` — solo dominio institucional (p. ej. `@universidad.edu.mx`)
-- `contraseña` — hasheada
-- `nombre`
-- `telefono` — habilita los botones de WhatsApp
-- `esModerador` — booleano (campo simple, sin rol complejo)
-- Puede actuar como **vendedor** y como **comprador** indistintamente.
+El contrato detallado y los nombres físicos vigentes están en [arquitectura](docs/03_ARCHITECTURE.md) y `Backend/prisma/schema.prisma`:
 
-### `Publicacion` (entidad base)
-Dos subtipos: **en vivo** y **estática**.
-
-Campos exclusivos de la publicación en vivo:
-- `estado`: `activa` | `finalizada_manualmente` | `expirada`
-- `horaInicio`, `horaFin`, `stockInicial`, `stockDisponible`
-- `stockReservado`
-- `precioGangaHabilitada`, `modoActivacion`, `minutosAnticipacion`, `precioGangaActivada`, `precioMinimo`
-
-### `Reserva`
-- Vincula `Usuario` (comprador) con `PublicacionEnVivo`
-- `estado`: `reservada` | `vendida` | `cancelada_por_comprador` | `expirada`
-- `creadaEn` — timestamp para calcular expiración de 20 min
-- `confirmadaPorVendedor` — booleano
-
-### `Zona`
-Catálogo predefinido de facultades, edificios y áreas del campus. Referenciado por publicaciones y filtros de búsqueda.
-
-### `Categoria`
-Dos conjuntos independientes:
-- Ventas en vivo: Comida, Snacks, Bebidas, Postres, Otros
-- Ventas estáticas: Libros, Electrónica, Uniformes/Batas, Material escolar, Otros
-
-### `Reporte`
-- Vincula `Usuario` (denunciante) con `Publicacion`
-- Varias denuncias acumuladas disparan ocultamiento automático
+- `User`: UUID, `email` institucional, `password_hash`, `name`, `phone` e `is_moderator`. Una persona puede comprar y vender.
+- `Publication`: `LIVE` o `STATIC`; pertenece a un vendedor, zona y categoría. `LIVE` añade horario, stock disponible y configuración de ganga. `ACTIVE` y `FINISHED` controlan su visibilidad; «Vendido» de una `STATIC` se guarda como `FINISHED`.
+- `Reservation`: vincula comprador con publicación `LIVE` y pasa de `ACTIVE` a `COMPLETED`, `CANCELLED` o `EXPIRED`. Las unidades reservadas se representan mediante reservas activas y el stock disponible; el esquema actual no tiene `stock_reservado` ni los campos de precio fijado y clave de idempotencia planificados para la implementación.
+- `Zone` y `Category`: catálogos de zonas y categorías separadas por tipo de publicación.
+- `Report`: vincula denunciante y publicación para moderación SHOULD; antes de usarla se requiere unicidad por par de IDs.
 
 ---
 
@@ -159,23 +137,9 @@ Dos conjuntos independientes:
 
 ## Priorización del MVP
 
-### Núcleo indispensable (entregar sí o sí)
-- Autenticación con correo institucional
-- CRUD de publicaciones editable (vivas y estáticas)
-- Sistema de reservas con expiración de 20 min (transacción + bloqueo pesimista)
-- Cancelación de reserva por el comprador
-- Confirmación de entrega por el vendedor
-- Botón de finalizar publicación en vivo manualmente
-- Filtro de palabras clave al crear publicación
-- **Precio ganga manual o programado** (elemento de innovación)
-- Socket.io para inventario en tiempo real
-- Filtro por zonas del campus (selección manual)
+La prioridad vinculante está en las etiquetas `MUST` y `SHOULD` de `docs/02_REQUIREMENTS.md`. El núcleo `MUST` comprende autenticación UABC, publicaciones en vivo y estáticas, venta física, filtros de zona y categoría, reserva y expiración de 20 minutos, confirmación de entrega, bloqueo pesimista, precio ganga manual/programado, WhatsApp tras reserva y eventos Socket.io.
 
-### Deseable si hay tiempo
-- Filtro por categoría en ambos catálogos
-- Reportes de la comunidad con ocultamiento automático y rol de moderador
-- Perfil y reputación de usuario (historial de cumplimiento, calificación)
-- Notificaciones push (recordatorio al vendedor antes de que expire la reserva, stock liberado, reserva por expirar para el comprador)
+El cierre manual, la cancelación por el comprador y la moderación por reportes están etiquetados `SHOULD`. El filtro de palabras clave, perfil/reputación y notificaciones push son ideas que necesitan un requisito y criterios de aceptación antes de planificarse.
 
 ### Fuera de alcance
 - Geolocalización real por GPS (el filtrado de zona es manual, por catálogo)
@@ -204,6 +168,12 @@ Dos conjuntos independientes:
 - **No hay pagos digitales.** La app es pura logística; el dinero cambia de mano en físico.
 - El vendedor **confirma** la entrega; el comprador **no necesita hacer nada** en el intercambio físico.
 - La expiración de reservas **debe sobrevivir reinicios del servidor** (job externo, no setTimeout en memoria).
-- El campo `telefono` del usuario es obligatorio porque alimenta directamente los botones de WhatsApp.
+- El campo `phone` del usuario es obligatorio porque alimenta directamente los botones de WhatsApp.
 - Las categorías de ventas en vivo y ventas estáticas son conjuntos **separados e independientes**.
 - El rol de moderador es un **campo booleano simple** en la entidad Usuario, sin sistema de roles complejo.
+
+---
+
+## Proceso de desarrollo
+
+El trabajo nuevo sigue la [constitución](.specify/memory/constitution.md) y el [proceso de desarrollo](docs/08_DEVELOPMENT_WORKFLOW.md): especificar, planificar, desglosar tareas, implementar, verificar y converger. El [registro de funcionalidades](specs/README.md) contiene plantillas, ocho expedientes que cubren documentalmente los requisitos MUST y uno opcional para reportes. La [auditoría](docs/09_PROJECT_AUDIT.md) registra las decisiones resueltas y brechas técnicas; la [matriz de trazabilidad](docs/10_TRACEABILITY.md) muestra qué requisitos carecen de evidencia ejecutada. `node scripts/check-sdd.mjs` comprueba estructura y referencias básicas; cada feature requiere además pruebas reales y revisión de sus criterios de aceptación.

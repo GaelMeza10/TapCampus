@@ -6,6 +6,9 @@ Este archivo (`AGENTS.md`) sirve como el **punto de entrada principal** para la 
 
 ## Índice de Documentación (Carpeta `/docs`)
 
+*   📄 **`docs/00_DEVELOPMENT_GUIDE.md`**
+    *   **Contenido:** Material general de apoyo sobre planificación, especificaciones y validación; no define reglas de negocio de TapCampus.
+
 *   📄 **`docs/01_PROJECT_OVERVIEW.md`** 
     *   **Contenido:** Visión general, planteamiento del problema, objetivos y stakeholders (vendedores, compradores, moderadores).
     *   **Cuándo leerlo:** Si necesitas entender "para qué" sirve la aplicación o quién la va a usar, o si vas a crear flujos nuevos que involucren la experiencia general.
@@ -34,9 +37,23 @@ Este archivo (`AGENTS.md`) sirve como el **punto de entrada principal** para la 
     *   **Contenido:** Plan de pruebas de QA (Concurrencia) y UAT (Heurísticas y Piloto).
     *   **Cuándo leerlo:** Al escribir tests unitarios o End-to-End para verificar que el código cumple con los criterios de éxito del proyecto.
 
+*   📄 **`docs/08_DEVELOPMENT_WORKFLOW.md` y `.specify/memory/constitution.md`**
+    *   **Contenido:** Proceso de desarrollo, artefactos, trazabilidad y puertas de calidad.
+    *   **Cuándo leerlos:** **Siempre antes de iniciar o modificar una funcionalidad.** Crear o actualizar `specs/NNNN-slug/` en orden: especificación → plan → tareas → implementación → verificación y convergencia.
+
+*   📄 **`docs/09_PROJECT_AUDIT.md` y `specs/README.md`**
+    *   **Contenido:** Discrepancias abiertas, línea base e índice de features.
+    *   **Cuándo leerlos:** Al tocar comportamiento existente, resolver contradicciones o seleccionar el siguiente feature.
+
+*   📄 **`docs/10_TRACEABILITY.md`**
+    *   **Contenido:** Cobertura de todos los RF/RNF hasta tareas, criterios y evidencia.
+    *   **Cuándo leerlo:** Al planificar un feature o comprobar si una fase del producto está realmente completa.
+
 *   ✅ **`TASKS.md` (En la raíz del proyecto)**
     *   **Contenido:** Checklist ultra-optimizado (por fases) para ahorrar tokens.
     *   **Cuándo leerlo:** **SIEMPRE**, para saber en qué punto del desarrollo estamos. Debes marcar las casillas `[x]` conforme vayas terminando tareas.
+
+**Regla de documentación:** No marques una tarea o feature como terminado solo porque existe código. Relaciona cada criterio `AC` con tareas y evidencia `EV` reproducible en `verification.md`; resuelve decisiones de producto abiertas antes de implementar el comportamiento afectado. Ejecuta `node scripts/check-sdd.mjs` para comprobar referencias documentales.
 
 ---
 ## Reglas de Git y Control de Versiones

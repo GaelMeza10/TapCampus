@@ -6,7 +6,7 @@ Todas las interfaces deben basarse en el archivo principal de tokens (`theme.js`
 ## 2. Heurísticas de Usabilidad (Nielsen) Aplicadas
 Para garantizar una experiencia intuitiva, el diseño se rige bajo las siguientes heurísticas:
 *   **Visibilidad del estado del sistema:** El uso de temporizadores regresivos en tiempo real y contadores de stock aseguran que el usuario siempre sepa si el producto sigue disponible.
-*   **Prevención de errores:** Los botones críticos (como cancelar reserva o finalizar publicación) deben requerir confirmación (Modal) antes de ejecutarse. Los inputs bloquean formatos incorrectos (ej. correo sin `@uabc.edu.mx`).
+*   **Prevención de errores:** Los botones críticos (como cancelar reserva o finalizar publicación) deben requerir confirmación (Modal) antes de ejecutarse. Los inputs bloquean formatos incorrectos (ej. correo sin `@uabc.edu.mx`); el teléfono admite cualquier región de México, con diez dígitos nacionales o `+52` seguido de esos dígitos.
 *   **Control y libertad del usuario:** El comprador siempre tiene visible un botón de "Cancelar Reserva" por si cambia de opinión, sin necesidad de contactar al vendedor.
 *   **Reconocimiento antes que recuerdo:** Los filtros están expuestos visualmente (botones de categorías) en lugar de requerir que el usuario escriba la categoría exacta en un buscador.
 
@@ -22,7 +22,7 @@ Para garantizar una experiencia intuitiva, el diseño se rige bajo las siguiente
 * `border: '#E5E7EB'` - Divisiones, líneas separadoras.
 * `error: '#EF4444'` - Mensajes de advertencia o error.
 
-## 3. Estilos de Componentes Comunes
+## 4. Estilos de Componentes Comunes
 
 ### Layouts
 * Todo screen principal debe estar envuelto en `<SafeAreaView>` con color de fondo `COLORS.background`.
@@ -52,7 +52,7 @@ Los mensajes de error deben aparecer en cajas rojas sutiles sobre los inputs, no
 * Caja: `backgroundColor: '#FEF2F2'` con bordes `RADIUS.md` (16px).
 * Texto y el ícono: `color: COLORS.error`.
 
-## 4. Mejores Prácticas de Layout y Rendimiento (React Native)
+## 5. Mejores Prácticas de Layout y Rendimiento (React Native)
 Para asegurar que la app corra a 60 FPS y el código se mantenga limpio, la IA (y los desarrolladores) deben seguir estrictamente estas reglas:
 
 *   **Uso de Flexbox:** Todo el maquetado debe resolverse utilizando Flexbox. Evitar márgenes mágicos o posiciones absolutas (`position: 'absolute'`) a menos que sea estrictamente necesario (ej. un botón flotante superpuesto).

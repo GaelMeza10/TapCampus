@@ -6,13 +6,36 @@ Este documento define cómo sabremos que el proyecto fue un éxito, dividiendo l
 
 ### 1.1 Pruebas de Estrés y Concurrencia (Crítico)
 *   **Objetivo:** Validar que el Bloqueo Pesimista funciona.
-*   **Método:** Disparar 50 peticiones simultáneas (con herramientas como JMeter o un script de Node.js) al endpoint de crear reserva para un producto que solo tiene 1 pieza.
+*   **Método:** Disparar 50 peticiones simultáneas con claves de idempotencia distintas (con herramientas como JMeter o un script de Node.js) al endpoint de crear reserva para un producto que solo tiene 1 pieza.
 *   **Criterio de Éxito:** Solo 1 petición retorna `HTTP 201 Created`. Las otras 49 retornan `HTTP 409 Conflict`.
 
 ### 1.2 Pruebas de Resiliencia (Background Jobs)
 *   **Objetivo:** Validar que las reservas expiran a los 20 minutos incluso en condiciones adversas.
 *   **Método:** Crear una reserva. Apagar el servidor NestJS de inmediato. Esperar 21 minutos y volver a encender el servidor.
 *   **Criterio de Éxito:** Redis/BullMQ debe procesar el job en cola tan pronto el servidor despierte, devolviendo el stock y marcando la reserva como `EXPIRED`.
+
+### 1.3 Cobertura de aceptación por funcionalidad
+
+Cada expediente `specs/0001`–`0008` tiene una matriz `AC → T → EV` en `verification.md`. Las siguientes comprobaciones son obligatorias antes de declarar el MVP verificado; una fila planificada no equivale a una prueba aprobada.
+
+| Área | Comprobación indispensable |
+| --- | --- |
+| Autenticación (0002) | Registro UABC válido/inválido, cuatro campos, hash, duplicado, login, JWT y ruta protegida con BD real. |
+| Teléfono mexicano (0002/0008) | Números de distintas regiones con diez dígitos o `+52`, normalización idéntica y rechazo de país ajeno/entrada ambigua. |
+| Venta en vivo (0003) | Creación/imagen, horario y stock, propiedad, expiración y carrera entre reserva y venta física. |
+| Estáticas (0004) | Crear/listar sin reserva, marcar «Vendida», excluir del catálogo y rechazar usuario ajeno. |
+| Catálogos/filtros (0005) | Seed repetible, cinco zonas, categorías por tipo y filtros `AND` con respuesta vacía e inválida. |
+| Ganga (0006) | Activación manual y programada, reprogramación, reinicio, precio decimal, evento, orden del feed y reserva anterior con precio inmutable. |
+| Tiempo real (0007) | Dos clientes, stock/precio/fin actualizados y resincronización tras desconexión. |
+| WhatsApp (0008) | Privacidad en `LIVE`, contacto directo en `STATIC`, URL codificada y error al abrir enlace. |
+| Reservas (0001) | 50 compradores por última pieza con claves distintas; dos reservas del mismo comprador con claves distintas; reintento concurrente con la misma clave sin doble descuento; precio fijado; confirmación tras `end_time` dentro de los 20 minutos; permisos y expiración. |
+| Reportes SHOULD (0009) | Solo si se incluye RF-14: tres reportantes distintos, duplicados, concurrencia, visibilidad y resultado de revisión tras cerrar sus decisiones. |
+
+La prueba de concurrencia requiere PostgreSQL real; mocks de Prisma no demuestran bloqueo de fila. La de reinicio requiere detener/reiniciar el proceso del worker con Redis persistente. En móviles, comprobar flujos en dispositivo o emulador y registrar versión/entorno.
+
+### 1.4 Evidencia y puerta de cierre
+
+Por cada `AC`, anotar comando o recorrido reproducible, datos iniciales, resultado observado, fecha y enlace a prueba/log/captura en `verification.md`. Un resultado fallido crea una tarea o un cambio de especificación. Solo se marca `[x]` en `TASKS.md` cuando el alcance global de esa casilla tenga evidencia aprobada. Antes del cierre ejecutar `node scripts/check-sdd.mjs` y revisar semánticamente la convergencia entre requisitos, contratos, pruebas y código.
 
 ## 2. Validación de Usuario (UAT - User Acceptance Testing)
 

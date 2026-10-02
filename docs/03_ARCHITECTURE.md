@@ -9,7 +9,7 @@
 | **Base de Datos** | PostgreSQL | Manejo de transacciones ACID para el bloqueo pesimista. |
 | **Almacenamiento de Archivos** | Multer + Sistema de Archivos Local (MVP) | Almacenar las imágenes de las publicaciones temporalmente en el servidor backend (carpeta estática `/uploads`). Opcionalmente migrable a Cloudinary. |
 | **Eventos Real-Time** | Socket.io | Actualizaciones en vivo de stock y temporizadores sin recargar pantallas. |
-| **Background Jobs** | BullMQ + Redis (o Cron) | Manejo de colas y cronometrado resistente a reinicios para expiración de reservas y activación programada de Precio Ganga. |
+| **Background Jobs** | BullMQ + Redis | Manejo de colas y cronometrado resistente a reinicios para expiración de reservas y activación programada de Precio Ganga. |
 
 ## 2. Diccionario de Datos (Modelo Lógico Prisma)
 
@@ -18,7 +18,7 @@
 *   `email`: String (Unique, validación `@uabc.edu.mx`)
 *   `password_hash`: String
 *   `name`: String
-*   `phone`: String (Obligatorio)
+*   `phone`: String (Obligatorio; canónico `+52XXXXXXXXXX`, cualquier región mexicana)
 *   `is_moderator`: Boolean (Default: false)
 *   `created_at`: DateTime
 
@@ -50,22 +50,44 @@
 *   `publication_id`: UUID (FK -> Publication)
 *   `status`: Enum `ReservationStatus` (`ACTIVE`, `COMPLETED`, `CANCELLED`, `EXPIRED`)
 *   `reserved_at`: DateTime (Timestamp de inicio para los 20 mins)
+*   `unit_price`: Decimal(10,2) (precio fijado al confirmar la reserva; campo planificado, ausente del esquema actual)
+*   `idempotency_key`: UUID (clave de solicitud; único por `(buyer_id, idempotency_key)`, campo planificado)
 *   `resolved_at`: DateTime (Nullable, cuándo se completó/canceló/expiró)
+
+No se impone unicidad por `(buyer_id, publication_id)`: varias reservas activas del mismo comprador y publicación son válidas si hay stock. Los dos campos planificados requieren migración antes de implementar reservas; no se modifica el esquema en esta fase documental.
+
+### `Report` (Reporte, funcionalidad SHOULD)
+*   `reporter_id`: UUID (FK -> User)
+*   `publication_id`: UUID (FK -> Publication)
+*   `reason`: String
+*   `created_at`: DateTime
+*   Un mismo usuario cuenta como máximo una vez por publicación: restricción única `(reporter_id, publication_id)` antes de activar RF-14.
+
+**Contrato de nombres:** El modelo Prisma y el contrato REST previstos usan `User`, UUID y campos `email`, `password`, `name`, `phone` (en persistencia `password_hash`). El código actual de autenticación usa nombres españoles y `prisma.usuario`; debe adaptarse en el feature de autenticación. La migración existente que introduce el modelo nuevo elimina tablas antiguas; verificar el estado de datos y plan de respaldo antes de ejecutarla en un entorno compartido. El estado `FINISHED` representa también una publicación `STATIC` marcada como «Vendida» en la UI; no se necesita un enum adicional para esa acción.
 
 ## 3. Contratos de API REST (Endpoints Core)
 
 Para garantizar consistencia, el Backend deberá exponer las siguientes rutas base:
 
 *   **Autenticación**
-    *   `POST /auth/register` (Body: email, password, name, phone)
+    *   `POST /auth/register` (Body: email, password, name, phone; diez dígitos mexicanos con o sin `+52`, persistidos como `+52XXXXXXXXXX`)
     *   `POST /auth/login` -> Retorna JWT Token.
 *   **Publicaciones**
     *   `POST /publications` (Requiere JWT, crea Viva o Estática)
     *   `GET /publications?type=LIVE&zoneId=X` (Filtros por query params)
-    *   `PATCH /publications/:id/ganga` (Activar/desactivar ganga manualmente)
+    *   `GET /publications/:id` (Detalle; la exposición de teléfonos depende de RF-06/RF-07)
+    *   `PATCH /publications/:id` (Solo vendedor; campos editables según tipo)
+    *   `PATCH /publications/:id/ganga` (Activar ganga manualmente; la desactivación posterior no forma parte de RF-11/RF-12)
     *   `POST /publications/:id/finish` (Cierre manual anticipado)
+    *   `POST /publications/:id/sold` (Solo `STATIC`; cambia `ACTIVE → FINISHED` y la UI muestra «Vendido»)
+    *   `POST /publications/:id/physical-sale` (Solo `LIVE`; decrementa una unidad disponible sin afectar reservas)
+    *   `GET /zones` y `GET /categories?type=LIVE|STATIC` (Catálogos para formularios y filtros)
+    *   `POST /uploads` (Requiere JWT; devuelve URL de imagen para `image_url`)
 *   **Reservas (Transacciones Seguras)**
-    *   `POST /reservations` (Body: publicationId). *Este endpoint es crítico y debe envolverse en un `prisma.$transaction` con Bloqueo Pesimista.*
+    *   `POST /reservations` (Body: `{ publicationId }`, JWT y encabezado obligatorio `Idempotency-Key: <UUID>`; clave ausente o inválida: `400`). *Este endpoint es crítico y debe envolverse en un `prisma.$transaction` con bloqueo pesimista.* Primera creación: `201` con `{ id, publicationId, status, reservedAt, expiresAt, unitPrice, sellerContact }`, donde `unitPrice` es cadena decimal de dos posiciones, fechas ISO 8601 y `sellerContact.phone` es canónico. Mismo comprador/clave/publicación: `200` con la reserva existente y su estado actual, sin otro descuento ni evento; misma clave para otra publicación: `409`. Una acción nueva requiere otra clave y puede crear otra reserva del mismo comprador si hay stock.
+    *   `GET /reservations/mine` (JWT; lista de reservas propias, cada una con ID, estado, precio fijado y plazo; contacto conforme a RF-13).
+    *   `GET /publications/:id/reservations` (JWT; solo vendedor propietario, lista de reservas de esa publicación con ID, comprador y estado; teléfono del comprador únicamente según RF-13; ajeno `403`).
+    *   `GET /reservations/:id` (JWT; detalle para su comprador o vendedor propietario; ajeno `403`, inexistente `404`).
     *   `POST /reservations/:id/complete` (Solo permitido para el `seller_id`).
     *   `POST /reservations/:id/cancel` (Solo permitido para el `buyer_id`).
 
@@ -83,12 +105,14 @@ Toda la API debe retornar errores siguiendo el formato estándar de NestJS (Http
 *   **Propiedad de los Datos (Ownership):** 
     *   Una publicación solo puede ser editada, finalizada o aplicarle "Ganga" por el usuario dueño de la misma (`seller_id === jwt.user.id`).
     *   Una reserva solo puede ser cancelada por su creador (`buyer_id === jwt.user.id`).
+    *   El vendedor puede confirmar una reserva activa previa hasta que venza su plazo de 20 minutos aunque la publicación haya llegado a `end_time`.
     *   Cualquier intento de modificar entidades ajenas debe retornar **403 Forbidden**.
+*   **Contacto:** El teléfono de una venta en vivo no aparece en el feed ni en el detalle público; se entrega al comprador solo tras confirmar su reserva. El contacto de una venta estática activa es directo, de acuerdo con RF-06. El teléfono del comprador se entrega únicamente al vendedor relacionado con una reserva activa.
 
 ## 6. Diccionario de Eventos en Tiempo Real (Socket.io)
 Para evitar asimetrías entre Backend y Frontend, se usarán estrictamente estos nombres de eventos:
 *   `Emisión desde Servidor`: 
-    *   `stock_updated`: Payload `{ publicationId: UUID, newStock: Int }`. Emitido cuando alguien reserva o cancela.
+    *   `stock_updated`: Payload `{ publicationId: UUID, newStock: Int }`. Emitido después de confirmar cualquier cambio efectivo del stock disponible: reserva, cancelación, expiración de reserva o venta física.
     *   `publication_expired`: Payload `{ publicationId: UUID }`. Emitido cuando el temporizador de una publicación llega a 0.
     *   `ganga_activated`: Payload `{ publicationId: UUID, newPrice: Decimal }`.
 *   `Suscripción de Cliente`:
@@ -96,12 +120,12 @@ Para evitar asimetrías entre Backend y Frontend, se usarán estrictamente estos
 
 ## 7. Estrategia de Tareas en Segundo Plano (Background Jobs)
 *   **Colas (BullMQ + Redis):**
-    *   `reservation_queue`: Al crearse una reserva, se encola un trabajo con un *delay* exacto de 20 minutos. Si el usuario confirma o cancela antes, el trabajo se elimina de la cola. Si el trabajo se ejecuta, se marca la reserva como `EXPIRED` y se libera el stock.
-    *   `ganga_queue`: Si un vendedor programa el "Precio Ganga" 15 minutos antes de acabar su turno, se encola un trabajo con el *delay* correspondiente para activar la oferta de manera desatendida.
+    *   `reservation_queue`: Al crearse una reserva, se encola un trabajo para la fecha límite de 20 minutos. Cancelar el job tras confirmar/cancelar es una optimización; el worker siempre relee estado y vencimiento en BD antes de liberar stock. Una conciliación recupera reservas vencidas si falló el encolado o se reinició el proceso.
+    *   `ganga_queue`: Si un vendedor programa el "Precio Ganga" N minutos antes del fin, se encola un trabajo con el *delay* correspondiente. Reprogramar el horario invalida el trabajo anterior; el worker verifica configuración y estado en BD antes de activar.
 
 ## 8. Datos Semilla (Data Seeding)
 Al inicializar la base de datos (`prisma db seed`), se deben insertar obligatoriamente los siguientes catálogos correspondientes a la UABC:
-*   **Zonas:** "Facultad de Ingeniería", "Facultad de Artes", "Biblioteca Central", "Cafetería Principal", "Gimnasio".
+*   **Zonas:** "Facultad de Ingeniería", "Facultad de Artes", "Biblioteca Central", "Cafetería Principal", "Gimnasio". Esta es la lista de cinco zonas del MVP; `seed.ts` todavía inserta siete nombres y requiere reconciliación antes de ejecutarse en un entorno compartido.
 *   **Categorías (Ventas Vivas):** "Comida Fuerte", "Snacks", "Bebidas", "Postres".
 *   **Categorías (Ventas Estáticas):** "Libros", "Material Escolar", "Batas/Uniformes", "Electrónica".
 

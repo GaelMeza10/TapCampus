@@ -16,6 +16,7 @@ Este documento detalla los requerimientos funcionales (RF) y no funcionales (RNF
     *   **Descripción:** El sistema deberá requerir de manera obligatoria el ingreso de Nombre, Correo, Contraseña y Teléfono durante el registro.
     *   **Criterios de Aceptación:**
         *   Si falta alguno de los 4 campos, el botón de registro estará deshabilitado.
+        *   El teléfono puede ser de cualquier región de México: se aceptan diez dígitos nacionales con o sin prefijo `+52` y se almacena como `+52XXXXXXXXXX`. Se rechazan números no mexicanos o ambiguos.
 
 ### Módulo de Publicaciones (Ventas en Vivo)
 *   **RF-03: Creación de Publicación en Vivo [MUST]**
@@ -24,6 +25,8 @@ Este documento detalla los requerimientos funcionales (RF) y no funcionales (RNF
         *   La publicación debe mostrar un temporizador regresivo calculado entre la hora actual y la hora de fin.
 *   **RF-04: Expiración por Tiempo o Stock [MUST]**
     *   **Descripción:** El sistema deberá retirar automáticamente la publicación del feed cuando el temporizador llegue a cero o cuando el stock disponible llegue a cero.
+    *   **Criterio de Aceptación:** Si una reserva libera stock antes del fin del horario y la publicación sigue `ACTIVE`, vuelve al feed; una publicación ya finalizada no se reactiva. Esta regla se apoya en el retorno al feed descrito en `README.md` y la liberación exigida por RF-09.
+    *   Al llegar la hora de fin se bloquean reservas nuevas; las anteriores siguen vigentes hasta completar o agotar sus propios 20 minutos.
 *   **RF-05: Cierre Manual Anticipado [SHOULD]**
     *   **Descripción:** El sistema deberá permitir al vendedor finalizar la publicación manualmente con un solo toque antes de que expire el tiempo.
     *   **Criterios de Aceptación:**
@@ -42,20 +45,25 @@ Este documento detalla los requerimientos funcionales (RF) y no funcionales (RNF
     *   **Descripción:** El sistema deberá permitir la publicación de artículos sin temporizador (libros, materiales).
     *   **Criterios de Aceptación:**
         *   La publicación permanecerá activa indefinidamente hasta que el vendedor cambie su estado a "Vendido".
+        *   No admite reservas; el comprador puede contactar al vendedor por WhatsApp directamente desde la publicación, conforme al flujo descrito en `README.md`.
 
 ### Módulo de Reservas y Transacciones
 *   **RF-07: Reserva Temporal [MUST]**
     *   **Descripción:** El sistema deberá permitir al comprador apartar una unidad del producto, descontando el stock disponible e iniciando un temporizador de 20 minutos.
     *   **Criterios de Aceptación:**
         *   El comprador solo puede ver el contacto de WhatsApp del vendedor *después* de que la reserva ha sido confirmada por el sistema.
+        *   El precio unitario se fija cuando se confirma cada reserva y no cambia por una ganga o edición posterior.
+        *   Un comprador puede apartar varias unidades de la misma publicación mediante reservas independientes si hay stock. Reintentar la misma solicitud devuelve la reserva original y no descuenta otra pieza; una nueva acción crea otra reserva con clave de idempotencia nueva.
 *   **RF-08: Confirmación de Entrega [MUST]**
     *   **Descripción:** El sistema deberá permitir **únicamente al vendedor** confirmar la entrega física del producto mediante un botón en la app.
     *   **Criterios de Aceptación:**
         *   Al confirmar, el stock reservado pasa permanentemente a estado "Vendido".
+        *   El vendedor puede confirmar una reserva previa durante sus 20 minutos aun si la publicación llegó a su hora de fin.
 *   **RF-09: Expiración Automática de Reservas [MUST]**
     *   **Descripción:** El sistema deberá liberar el stock reservado devolviéndolo al inventario disponible si transcurren 20 minutos sin que el vendedor confirme la entrega.
     *   **Criterios de Aceptación:**
         *   Esta validación debe ejecutarse en el servidor (ej. BullMQ/Redis) para ser resistente a cierres de la app o reinicios del servidor.
+        *   La liberación solo devuelve disponibilidad al feed si la publicación sigue activa y dentro de horario, conforme a RF-04.
 *   **RF-10: Cancelación por Comprador [SHOULD]**
     *   **Descripción:** El sistema deberá permitir al comprador cancelar su propia reserva antes de los 20 minutos.
     *   **Criterios de Aceptación:**
@@ -81,12 +89,15 @@ stateDiagram-v2
     *   **Descripción:** Al momento de activarse (ya sea por el botón del vendedor o por el job de tiempo), el sistema deberá reemplazar el precio normal por el precio ganga de forma inmediata (sin transiciones graduales).
     *   **Criterios de Aceptación:**
         *   La interfaz de la publicación cambiará para incluir un distintivo visual ("Ganga") y subirá de posición en el feed.
+        *   El nuevo precio aplica a reservas creadas después de la activación; las anteriores conservan su precio fijado.
 
 ### Módulo de Interacción y Moderación
 *   **RF-13: Redirección a WhatsApp (Deep Linking) [MUST]**
     *   **Descripción:** El botón de "Contactar" deberá abrir directamente el chat de WhatsApp utilizando el número del usuario.
     *   **Criterios de Aceptación:**
-        *   El formato de la URL debe ser: `https://wa.me/52[NUMERO]?text=Hola,%20tengo%20una%20reserva%20para%20[PRODUCTO]`.
+        *   En una venta en vivo, el comprador obtiene el contacto solo tras una reserva confirmada; el enlace usa `https://wa.me/52[NUMERO]?text=Hola,%20tengo%20una%20reserva%20para%20[PRODUCTO]` con el producto codificado para URL.
+        *   En una venta estática, el enlace de consulta está disponible desde el detalle sin reserva y usa un mensaje de interés en el artículo; la app no afirma que exista una reserva.
+        *   Desde el teléfono canónico `+52XXXXXXXXXX`, el enlace usa `wa.me/52XXXXXXXXXX` sin duplicar el prefijo, sin restringir la región mexicana.
 *   **RF-14: Ocultamiento Automático por Reportes [SHOULD]**
     *   **Descripción:** El sistema deberá proteger a la comunidad de publicaciones maliciosas o SPAM.
     *   **Criterios de Aceptación:**
@@ -103,7 +114,7 @@ stateDiagram-v2
 *   **RNF-02: Actualización en Tiempo Real [MUST]**
     *   **Descripción:** El sistema deberá notificar a los clientes sobre cambios en el inventario sin necesidad de que el usuario recargue la pantalla (Pull to refresh).
     *   **Criterios de Aceptación:**
-        *   Se usarán WebSockets (Socket.io) para propagar eventos de `stock_actualizado` a los clientes conectados.
+        *   Se usarán WebSockets (Socket.io) para propagar eventos de `stock_updated` a los clientes conectados, según el contrato de `03_ARCHITECTURE.md`.
 *   **RNF-03: Seguridad y Restricciones Físicas [MUST]**
     *   **Descripción:** El sistema no integrará geolocalización satelital (GPS) ni pasarelas de pago (Stripe/PayPal).
     *   **Criterios de Aceptación:**
@@ -115,13 +126,13 @@ stateDiagram-v2
 
 | Prioridad | Funcionalidad |
 | :--- | :--- |
-| **Alta (MVP)** | Autenticación (`@uabc`), CRUD de publicaciones, Bloqueo Pesimista, Reserva de 20 min y expiración por Job, Activación manual de Precio Ganga. |
-| **Media** | Filtros por Zonas y Categorías, Cancelación manual del comprador, Activación programada de Precio Ganga, Sockets para tiempo real. |
-| **Baja** | Moderación de publicaciones reportadas, Perfil de usuario y edición, Notificaciones Push. |
+| **MUST (MVP definido por RF/RNF)** | Registro y perfil obligatorio, publicaciones en vivo y estáticas, venta física, filtros de zona/categoría, reserva de 20 min y confirmación, bloqueo pesimista, expiración, precio ganga manual/programado, WhatsApp tras reserva y Socket.io. |
+| **SHOULD** | Cierre manual anticipado, cancelación por comprador y ocultamiento por tres reportes distintos. |
+| **Fuera de estos RF/RNF** | Edición de perfil, reputación y notificaciones push requieren nuevos requisitos antes de planificarse. |
 
 ---
 
 ## 4. Estrategia de Pruebas (QA / Testing)
 Para garantizar la solidez de las lógicas críticas, se implementarán pruebas automatizadas en el backend:
-*   **Prueba de Estrés (Concurrencia):** Se debe crear un script (Unit o E2E test) que dispare 50 peticiones HTTP simultáneas al endpoint `POST /reservations` para un producto con `current_stock: 1`. La prueba se aprueba si **exactamente 1 petición** recibe HTTP 201 (Created) y las **49 restantes** reciben HTTP 409 (Conflict).
+*   **Prueba de Estrés (Concurrencia):** Se debe crear un script (Unit o E2E test) que dispare 50 peticiones HTTP simultáneas con **claves de idempotencia distintas** al endpoint `POST /reservations` para un producto con `current_stock: 1`. La prueba se aprueba si **exactamente 1 petición** recibe HTTP 201 (Created) y las **49 restantes** reciben HTTP 409 (Conflict). Un reintento con la misma clave se comprueba aparte y devuelve 200 con la reserva original.
 *   **Prueba de Expiración:** Se simulará la creación de una reserva y se adelantará el reloj del sistema/Redis para verificar que el job en background devuelva el stock al producto y cambie la reserva a estado `EXPIRED` automáticamente.
