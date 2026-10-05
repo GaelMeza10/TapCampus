@@ -4,7 +4,7 @@ Estado: **Planificado; dependencias de implementación pendientes** | Especifica
 
 ## Contexto y dependencias
 
-El esquema Prisma ya tiene `Publication.current_stock` y `Reservation.status/reserved_at`, pero faltan precio fijado, clave de idempotencia, rutas, guards, worker y eventos. Resolver antes `GAP-05` de `docs/09_PROJECT_AUDIT.md`, JWT guard y CRUD/consulta de publicaciones (`TASKS.md` 2.1, 2.2, 2.4, 2.5). `expiresAt` se deriva de `reserved_at + 20 min` con hora de servidor; la consulta de conciliación usa esa misma expresión.
+El esquema Prisma ya tiene precio fijado, clave de idempotencia, unicidad por comprador e índice `(status,reserved_at)`, comprobados por 0010 EV-02/03/04. El backend compila tras corregir GAP-05; faltan rutas, JWT guard, CRUD/consulta de publicaciones, worker y eventos (`TASKS.md` 2.1, 2.2, 2.4, 2.5). `expiresAt` se deriva de `reserved_at + 20 min` con hora de servidor; la consulta de conciliación usa esa misma expresión.
 
 ## Diseño propuesto
 

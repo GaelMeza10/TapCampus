@@ -50,11 +50,11 @@
 *   `publication_id`: UUID (FK -> Publication)
 *   `status`: Enum `ReservationStatus` (`ACTIVE`, `COMPLETED`, `CANCELLED`, `EXPIRED`)
 *   `reserved_at`: DateTime (Timestamp de inicio para los 20 mins)
-*   `unit_price`: Decimal(10,2) (precio fijado al confirmar la reserva; campo planificado, ausente del esquema actual)
-*   `idempotency_key`: UUID (clave de solicitud; único por `(buyer_id, idempotency_key)`, campo planificado)
+*   `unit_price`: Decimal(10,2) (precio fijado al confirmar la reserva; esquema/migración verificados en 0010)
+*   `idempotency_key`: UUID (clave de solicitud; único por `(buyer_id, idempotency_key)`, esquema/migración verificados en 0010)
 *   `resolved_at`: DateTime (Nullable, cuándo se completó/canceló/expiró)
 
-No se impone unicidad por `(buyer_id, publication_id)`: varias reservas activas del mismo comprador y publicación son válidas si hay stock. Los dos campos planificados requieren migración antes de implementar reservas; no se modifica el esquema en esta fase documental.
+No se impone unicidad por `(buyer_id, publication_id)`: varias reservas activas del mismo comprador y publicación son válidas si hay stock. Los dos campos y el CHECK de stock están migrados y verificados por 0010; la semántica HTTP/transaccional de reservas corresponde a 0001.
 
 ### `Report` (Reporte, funcionalidad SHOULD)
 *   `reporter_id`: UUID (FK -> User)
@@ -63,7 +63,7 @@ No se impone unicidad por `(buyer_id, publication_id)`: varias reservas activas 
 *   `created_at`: DateTime
 *   Un mismo usuario cuenta como máximo una vez por publicación: restricción única `(reporter_id, publication_id)` antes de activar RF-14.
 
-**Contrato de nombres:** El modelo Prisma y el contrato REST previstos usan `User`, UUID y campos `email`, `password`, `name`, `phone` (en persistencia `password_hash`). El código actual de autenticación usa nombres españoles y `prisma.usuario`; debe adaptarse en el feature de autenticación. La migración existente que introduce el modelo nuevo elimina tablas antiguas; verificar el estado de datos y plan de respaldo antes de ejecutarla en un entorno compartido. El estado `FINISHED` representa también una publicación `STATIC` marcada como «Vendida» en la UI; no se necesita un enum adicional para esa acción.
+**Contrato de nombres:** El modelo Prisma y el contrato REST usan `User`, UUID y campos `email`, `password`, `name`, `phone` (en persistencia `password_hash`). El backend de autenticación ya usa este contrato y compila; el cliente móvil requiere su adaptación en 0002. La migración existente que introduce el modelo nuevo elimina tablas antiguas; conservarla si ya está aplicada y usar la transición segura de 0010 tras inventario/respaldo/ensayo en cada entorno. El estado `FINISHED` representa también una publicación `STATIC` marcada como «Vendida» en la UI; no se necesita un enum adicional para esa acción.
 
 ## 3. Contratos de API REST (Endpoints Core)
 
@@ -125,7 +125,7 @@ Para evitar asimetrías entre Backend y Frontend, se usarán estrictamente estos
 
 ## 8. Datos Semilla (Data Seeding)
 Al inicializar la base de datos (`prisma db seed`), se deben insertar obligatoriamente los siguientes catálogos correspondientes a la UABC:
-*   **Zonas:** "Facultad de Ingeniería", "Facultad de Artes", "Biblioteca Central", "Cafetería Principal", "Gimnasio". Esta es la lista de cinco zonas del MVP; `seed.ts` todavía inserta siete nombres y requiere reconciliación antes de ejecutarse en un entorno compartido.
+*   **Zonas:** "Facultad de Ingeniería", "Facultad de Artes", "Biblioteca Central", "Cafetería Principal", "Gimnasio". Esta es la lista de cinco zonas del MVP; seed y remapeo seguro están verificados en 0010. Cada entorno adicional exige inventario/respaldo/ensayo propios.
 *   **Categorías (Ventas Vivas):** "Comida Fuerte", "Snacks", "Bebidas", "Postres".
 *   **Categorías (Ventas Estáticas):** "Libros", "Material Escolar", "Batas/Uniformes", "Electrónica".
 
@@ -135,6 +135,7 @@ El proyecto Backend requiere la definición estricta de las siguientes variables
 *   `JWT_SECRET` (Llave secreta de firma de Tokens)
 *   `REDIS_URL` (Conexión al manejador de colas BullMQ)
 *   `PORT` (Puerto expuesto de NestJS, usualmente 3000)
+*   `CORS_ORIGINS` (Orígenes web separados por coma; desarrollo: `http://localhost:8081,http://localhost:19006`; las solicitudes nativas sin Origin siguen disponibles)
 
 ## 10. Estrategia de Despliegue (Deployment)
 Para pasar a producción el MVP, se utilizará la siguiente infraestructura:

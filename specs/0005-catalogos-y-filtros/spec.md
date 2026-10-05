@@ -4,7 +4,7 @@ Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
 
 ## Contexto y fuentes
 
-RF-05c y RNF-03; US-05c. `docs/03_ARCHITECTURE.md` define cinco zonas y ocho categorías separadas por `PublicationType`. `Backend/prisma/seed.ts` contiene siete zonas y un nombre de categoría distinto; es deuda de implementación, no un cambio de alcance aprobado. No hay API de catálogos ni de publicaciones.
+RF-05c y RNF-03; US-05c. `docs/03_ARCHITECTURE.md` define cinco zonas y ocho categorías separadas por `PublicationType`. Seed exacto, repetición y remapeo seguro verificados por 0010 el 2026-10-04. No hay API de catálogos ni de publicaciones.
 
 ## Alcance y contratos observables
 

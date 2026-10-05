@@ -1,0 +1,121 @@
+{
+  "server": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "tables": {
+    "_prisma_migrations": {
+      "count": 4,
+      "sha256": "67b7af7e82169d0e6c4c0e7b7fb3773ca1ee75dc6f5623f3ea21b1fb33a1ef73"
+    },
+    "categories": {
+      "count": 8,
+      "sha256": "9c7a9a5e7277dc1e7029857954ce09a2a7057c0e918e53cd1f71440bf6d5a7f6"
+    },
+    "publications": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "users": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "migrations": [
+    {
+      "migration_name": "20260910011413_init",
+      "checksum": "16ee3b69d4308e94c3674e1f2ea92cc192fcffde9a987c359187051e1f206600",
+      "finished_at": "2026-09-29T23:23:12.287Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260910012517_fix_estado_reserva",
+      "checksum": "620fcdf7a1f135bbe6ff7506d9b64d5f016fc601a3e0a20623505fdb6843483b",
+      "finished_at": "2026-09-29T23:23:12.319Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260929232323_sdd_architecture",
+      "checksum": "2977e6881bf2e3195ec331af016432c7a4579b402920520ccca270c6a9398824",
+      "finished_at": "2026-09-29T23:23:23.267Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20261005000100_reservation_integrity",
+      "checksum": "8019324d7ffa64af48cf5f20a9cf5f00650a86239a815cd9c534a49c352fcf1a",
+      "finished_at": "2026-10-05T00:19:20.583Z",
+      "rolled_back_at": null
+    }
+  ],
+  "constraints": [
+    {
+      "conname": "_prisma_migrations_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "conname": "categories_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "conname": "publications_category_id_fkey",
+      "definition": "FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "publications_current_stock_nonnegative",
+      "definition": "CHECK (((current_stock IS NULL) OR (current_stock >= 0)))"
+    },
+    {
+      "conname": "publications_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "conname": "publications_seller_id_fkey",
+      "definition": "FOREIGN KEY (seller_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "publications_zone_id_fkey",
+      "definition": "FOREIGN KEY (zone_id) REFERENCES zones(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "reports_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "conname": "reports_publication_id_fkey",
+      "definition": "FOREIGN KEY (publication_id) REFERENCES publications(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "reports_reporter_id_fkey",
+      "definition": "FOREIGN KEY (reporter_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "reservations_buyer_id_fkey",
+      "definition": "FOREIGN KEY (buyer_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "reservations_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "conname": "reservations_publication_id_fkey",
+      "definition": "FOREIGN KEY (publication_id) REFERENCES publications(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "users_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "conname": "zones_pkey",
+      "definition": "PRIMARY KEY (id)"
+    }
+  ]
+}

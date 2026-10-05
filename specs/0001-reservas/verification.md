@@ -1,6 +1,6 @@
 # 0001 — Verificación y convergencia
 
-Estado: **Sin ejecutar** | Fecha: 2026-10-01
+Estado: **Infraestructura verificada; aceptación de reservas sin ejecutar** | Fecha: 2026-10-04
 
 No existe implementación del módulo de reservas. Las pruebas siguientes son el plan de evidencia; `EV` es un identificador reservado, no una prueba aprobada.
 
@@ -18,9 +18,13 @@ No existe implementación del módulo de reservas. Las pruebas siguientes son el
 
 ## Registro de ejecución
 
+### EV-10 — Dependencia de datos (T-02)
+
+2026-10-04, Windows/Node 24.13/PostgreSQL 16.15: `npm run test:infra` en `Backend/` y aplicación local de `npm run db:migrate:safe -- --backup-verified`, tras respaldo/restore comprobados. [0010 EV-02/03/04](../0010-infraestructura-y-base-de-datos/verification.md) acredita precio Decimal(10,2) obligatorio, UUID de idempotencia, unicidad por comprador/clave, varias reservas por comprador/publicación, índice status/fecha, conservación de relaciones y rechazo del backfill sin evidencia. T-02 completa. Esta evidencia no acredita creación HTTP, bloqueo de fila, worker ni reintentos de 0001; EV-01..09 continúan por ejecutar.
+
 | Fecha | Entorno y comando | Resultado | Evidencia adjunta |
 | --- | --- | --- | --- |
-| — | — | Sin ejecutar | — |
+| 2026-10-04 | PostgreSQL 16.15 / Node 24.13; npm run test:infra, migración local tras respaldo restaurado | Esquema aprobado; pruebas HTTP/worker del feature sin ejecutar | EV-10 / 0010 EV-02/03/04 |
 
 ## Convergencia
 

@@ -3,7 +3,7 @@
 Estado: **Planificado** | Plan: `plan.md`
 
 - [ ] **T-01** `[AC-01, AC-03, AC-09]` Comprobar dependencias de autenticación y publicaciones (`TASKS.md` 2.1–2.5) antes de integrar reservas.
-- [ ] **T-02** `[AC-01, AC-06, AC-09]` Planificar y aplicar migración para precio fijado, clave de idempotencia única por comprador e índice de vencimiento; respaldar datos.
+- [x] **T-02** `[AC-01, AC-06, AC-09]` Planificar y aplicar migración para precio fijado, clave de idempotencia única por comprador e índice de vencimiento; respaldar datos. Evidencia: EV-10 y 0010 EV-02/03/04.
 - [ ] **T-03** `[AC-01, AC-02, AC-03, AC-09]` Implementar `POST /reservations` con JWT, clave obligatoria, bloqueo pesimista, transacción y reintento idempotente; exponer consultas de reservas propias y del vendedor con permisos.
 - [ ] **T-04** `[AC-04, AC-05, AC-07]` Implementar confirmar/cancelar con guardias de propiedad, vencimiento y transición de estado única.
 - [ ] **T-05** `[AC-06, AC-07, AC-08]` Implementar BullMQ, conciliación de vencidas, ejecución idempotente y emisión `stock_updated` después del commit.

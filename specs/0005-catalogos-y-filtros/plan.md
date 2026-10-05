@@ -4,6 +4,8 @@ Estado: **Planificado** | Especificación: `spec.md`
 
 ## Diseño
 
+2026-10-04: la reconciliación del seed de T-01 está implementada/verificada en 0010 EV-05. Se conservan los pasos de endpoints, filtros y UI como alcance restante. Operación y formato de remapeos en `Backend/scripts/README.md`.
+
 - Ajustar `Backend/prisma/seed.ts` a los cinco nombres exactos de `docs/03_ARCHITECTURE.md` y categorías exactas. El seed debe ser repetible mediante `upsert`. Antes de quitar o renombrar zonas existentes, inspeccionar claves foráneas y planificar remapeo; no borrar datos referenciados por sorpresa.
 - Exponer `GET /zones` y `GET /categories?type=...` con DTO de lectura; verificar tipo de categoría y unicidad `(name,type)` ya declarada en Prisma.
 - En `GET /publications`, validar query con DTO, componer filtros `AND` y aplicar visibilidad servidor: `LIVE` dentro de horario y stock disponible; `STATIC` activo. Ordenación ganga se integra con 0006. No filtrar solo en el cliente.

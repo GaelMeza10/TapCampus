@@ -6,7 +6,7 @@ Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
 
 El comprador necesita apartar una pieza durante 20 minutos y el vendedor confirmar su entrega. Fuentes: `docs/02_REQUIREMENTS.md` (RF-04, RF-05, RF-05b, RF-07 a RF-10, RNF-01, RNF-02), `docs/03_ARCHITECTURE.md` (Reservation, rutas y eventos), `docs/05_USER_FLOWS.md`, `docs/06_USER_STORIES_AND_TASKS.md` (US-06, US-07, US-07b, US-08), `docs/07_VALIDATION.md` y `TASKS.md` (3.1–3.5, 5.3, 6.1).
 
-El esquema actual contiene `Reservation` y `Publication`, pero no hay módulo de reservas implementado. La autenticación del backend aún no compila (`docs/09_PROJECT_AUDIT.md`, GAP-05).
+El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CHECK de stock, migrados y verificados por 0010 (2026-10-04). No hay módulo de reservas implementado. El backend de autenticación ya compila; siguen faltando guards y endpoints de publicaciones como dependencias.
 
 ## Alcance
 

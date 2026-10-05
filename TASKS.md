@@ -14,10 +14,10 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 **Orden para comenzar:** inspeccionar backend, BD y datos de 1.1–1.4 sin ejecutar migraciones → 0002 autenticación (2.1–2.2, 4.3, 5.1) para corregir el contrato y la compilación → cerrar 1.1–1.4 con migración y seed seguros → 0005 catálogos (2.7) → imágenes y publicaciones 0003/0004 con filtros 0005 (2.3–2.6) → base del gateway 0007 (3.5) → 0001 reservas (3.1–3.4) → 0006 ganga (3.6) → integrar eventos 0007 y contacto 0008 (5.6) → pantallas restantes y validación. Dentro de cada funcionalidad, seguir su `spec.md`, `plan.md`, `tasks.md` y `verification.md`; las casillas globales agrupan trabajo de varios expedientes y solo se cierran con evidencia.
 
 ## FASE 1: Configuración Inicial y Base de Datos (Infraestructura)
-- [ ] **1.1 Inicializar Backend (NestJS):** NestJS, `ValidationPipe` y CORS existen; falta comprobar el Global Exception Filter y la compilación del backend.
-- [ ] **1.2 Configurar Prisma y BD:** Prisma y `.env` existen; falta comprobar conexión funcional con PostgreSQL y compilación.
-- [ ] **1.3 Definir Esquema Prisma:** Enums, relaciones y UUID existen; faltan la restricción de BD `current_stock >= 0`, `Reservation.unit_price`, la clave de idempotencia única por comprador y una migración segura para datos existentes. No deducir precios históricos sin evidencia.
-- [ ] **1.4 Script de Migración y Seed:** Los archivos de migración y `seed.ts` existen; reconciliar cinco zonas y categorías con arquitectura, revisar la migración que elimina tablas antiguas y aportar evidencia de ejecución segura.
+- [x] **1.1 Inicializar Backend (NestJS):** Build, arranque con PORT, ValidationPipe estricto, filtro global y CORS configurado comprobados en 0010 EV-01.
+- [x] **1.2 Configurar Prisma y BD:** PostgreSQL 16.15 y conexión Prisma reales; validate, status y diff coherentes, build aprobado (0010 EV-01/02).
+- [x] **1.3 Definir Esquema Prisma:** CHECK de stock, precio Decimal(10,2), clave UUID única por comprador y migración segura comprobados en PostgreSQL; ningún precio histórico se deduce del actual (0010 EV-03/04).
+- [x] **1.4 Script de Migración y Seed:** Respaldo restaurado, transición conservadora, ensayo vacío/poblado y aplicación local comprobados; seed doble con cinco zonas/ocho categorías y FK conservadas (0010 EV-04/05).
 
 ## FASE 2: Backend - Autenticación y API Básica
 - [ ] **2.1 Módulo de Autenticación (JWT):** Implementar AuthModule con Passport y JWT. Crear `POST /auth/register` con correo `@uabc.edu.mx`, teléfono mexicano con o sin `+52` normalizado y contraseña hasheada. Crear `POST /auth/login` para devolver el token.

@@ -1,8 +1,10 @@
 # 0002 — Plan técnico
 
-Estado: **Planificado** | Especificación: `spec.md`
+Estado: **En implementación; dependencia backend de 0010 comprobada** | Especificación: `spec.md`
 
 ## Contexto y diseño
+
+Avance 2026-10-04: T-01/T-02 y la parte login de T-03 implementadas y probadas bajo 0010 EV-01/04; `prisma.user`, DTO ingleses, UUID, normalización telefónica, bcrypt y duplicados concurrentes comprobados. El historial aplicado se conserva y 0010 aporta la transición antigua segura. Los puntos siguientes mantienen el alcance restante de guards/cliente móvil y su verificación antes de cerrar 0002.
 
 - **Datos y migración (AC-02/06):** `User.id` es UUID, `email` único y `password_hash` persistido. La migración `20260929232323_sdd_architecture` elimina tablas antiguas: antes de aplicarla fuera de un entorno vacío, inspeccionar datos, definir respaldo/migración de usuarios y probar reversión. El seed y su compilación se revisan por separado en `TASKS.md` 1.4.
 - **API (AC-01–04):** adaptar DTO y servicio a `name/email/password/phone`, `prisma.user` y `User.id: string`. Validar dominio y campos; aceptar diez dígitos nacionales de México con o sin `+52`, normalizar a `+52XXXXXXXXXX` y rechazar números ajenos o ambiguos. Normalizar correo antes de comprobar unicidad. Conservar errores HTTP estándar de NestJS. `bcrypt` nunca sale en respuesta.
