@@ -1,5 +1,21 @@
 # Operación de la fase 1
 
+## Backend fase 3
+
+Desde Backend, con DATABASE_URL y JWT_SECRET locales, PostgreSQL de fase 1 y Redis:
+
+```powershell
+docker compose up -d redis
+npm run build
+npm run test:phase3
+```
+
+`verify-phase3.mjs` crea `tapcampus_phase3_<timestamp>` y un BULLMQ_PREFIX del mismo nombre, migra/siembra esa BD nueva y arranca dos veces `dist/main.js` en puertos libres. Mantiene PostgreSQL original sin escrituras y compara inventarios/hash. Prueba 50 compradores con claves distintas (1×201/49×409), 50 reintentos de la misma clave (1×201/49×200 y un ID), precio/plazo/permisos/privacidad, estados terminales, bloqueo SQL real, carreras de resolución y venta física, eventos con dos socket.io-client, ganga y reprogramación. Mata y reinicia el proceso que contiene los workers manteniendo Redis y comprueba jobs pendientes/perdidos y conciliación periódica. Para acelerar el vencimiento solo modifica reserved_at de fixtures y añade jobs en el namespace aislado; el plazo de producción sigue fijo en 20 minutos. Los jobs de ganga y fin también se prueban con delays reales cortos. No requiere esperar 21 minutos de reloj real.
+
+Redis se crea con volumen/AOF y política noeviction. No se usa FLUSHDB ni se eliminan bases. Ensayos conservados en `.local/verification/`; phase3.json no contiene credenciales ni teléfonos. La aplicación aloja QueueService, tres workers y conciliación al arrancar/cada 30 s (configurable). Encolado tras commit puede fallar; se registra y la conciliación usa PostgreSQL para recuperar trabajos. Socket.io en mismo puerto/namespace `/`, room `feed`, eventos públicos; al reconectar consultar REST. Cada despliegue/base debe tener su propio BULLMQ_PREFIX. La suite de fase 2 también usa namespace aislado; el E2E de smoke desactiva JobsService para no modificar la base original.
+
+Diseño consultado: [conexiones BullMQ](https://docs.bullmq.io/guide/connections), [producción BullMQ](https://docs.bullmq.io/guide/going-to-production) y [gateways NestJS](https://docs.nestjs.com/websockets/gateways). El lock fija las versiones usadas; BullMQ 6 ya no expone Queue.client, por lo que la prueba de versión Redis usa ioredis directamente.
+
 ## Verificación del backend de fase 2
 
 Desde `Backend/`, con PostgreSQL de fase 1 disponible, DATABASE_URL local y permiso de crear bases:

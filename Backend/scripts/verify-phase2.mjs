@@ -66,6 +66,8 @@ async function start(uploads = uploadDir, publicBase) {
     JWT_SECRET: secret,
     PORT: String(port),
     UPLOADS_DIR: uploads,
+    BULLMQ_PREFIX: name,
+    RECONCILIATION_INTERVAL_MS: '600000',
   };
   delete env.PUBLIC_BASE_URL;
   if (publicBase) env.PUBLIC_BASE_URL = publicBase;

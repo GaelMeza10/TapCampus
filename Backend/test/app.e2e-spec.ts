@@ -5,6 +5,7 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 import { configureApp } from '../src/common/configure-app';
+import { JobsService } from '../src/jobs/jobs.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -12,7 +13,10 @@ describe('AppController (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(JobsService)
+      .useValue({})
+      .compile();
 
     app = moduleFixture.createNestApplication();
     configureApp(app);
