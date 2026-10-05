@@ -8,32 +8,35 @@ import { LoginDto } from './dto/login.dto';
 // en el service se hace la logica de negocio.
 @Injectable()
 export class AuthService {
-    constructor(
-        private readonly usuariosService: UsuariosService,
-        private readonly jwtService: JwtService, //generar y verificar tokens
-    ) {}
+  constructor(
+    private readonly usuariosService: UsuariosService,
+    private readonly jwtService: JwtService, //generar y verificar tokens
+  ) {}
 
-    async registrar(dto: RegisterDto) {
-        const usuario = await this.usuariosService.crear(dto);
-        return this.generarToken(usuario.id, usuario.correo);
+  async registrar(dto: RegisterDto) {
+    const usuario = await this.usuariosService.crear(dto);
+    return this.generarToken(usuario.id, usuario.email);
+  }
+  //pendiente de mensajes amigables
+  async iniciarSesion(dto: LoginDto) {
+    const usuario = await this.usuariosService.buscarPorCorreo(dto.email);
+    if (usuario == null) {
+      throw new UnauthorizedException('Correo o contraseña incorrectos');
     }
-    //pendiente de mensajes amigables
-    async iniciarSesion(dto: LoginDto) {
-        const usuario = await this.usuariosService.buscarPorCorreo(dto.correo);
-        if (usuario == null) {
-            throw new UnauthorizedException('Correo o contraseña incorrectos');
-        }
-        const contrasenaValida = await bcrypt.compare(dto.contrasena, usuario.contrasena);
-        if(contrasenaValida == false){
-            throw new UnauthorizedException('Correo o contraseña incorrectos');
-        }
-        return this.generarToken(usuario.id, usuario.correo);
+    const contrasenaValida = await bcrypt.compare(
+      dto.password,
+      usuario.password_hash,
+    );
+    if (contrasenaValida == false) {
+      throw new UnauthorizedException('Correo o contraseña incorrectos');
     }
+    return this.generarToken(usuario.id, usuario.email);
+  }
 
-    private generarToken(usuarioId: number, usuarioCorreo: string) {
-        const payload = {sub: usuarioId, correo: usuarioCorreo}; // payload es la info q se va a guardar en el token
-        return {
-            access_token: this.jwtService.sign(payload),
-        };
-    }
+  private generarToken(usuarioId: string, usuarioCorreo: string) {
+    const payload = { sub: usuarioId, email: usuarioCorreo };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
 }
