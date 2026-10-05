@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-05T21:35:30.489Z",
+  "node": "v24.13.0",
+  "database": "tapcampus_phase2_1791236130488",
+  "requests": 253,
+  "checks": [
+    {
+      "name": "fase 1 reutilizada: migraciones, CHECK y seed repetible 5/8",
+      "result": "PASS"
+    },
+    {
+      "name": "0002 EV-08: registro/hash/teléfonos/duplicados/login/JWT/CurrentUser",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-08: uploads autenticado, contenido/tamaño/campos, URL estática y sin residuos rechazados",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-09 / 0004 EV-06: creación estricta LIVE/STATIC y configuración básica sin activación",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-09 / 0004 EV-06: PATCH combinado, inmutables, permisos y rollback",
+      "result": "PASS"
+    },
+    {
+      "name": "0005 EV-06 / 0003 EV-09 / 0004 EV-06: catálogos exactos, filtros AND, visibilidad y contacto protegido",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-10: 25 ventas físicas por última unidad = 1x200/24x409, bloqueo compartido, CHECK y reservas intactas",
+      "result": "PASS",
+      "concurrency": {
+        "requests": 25,
+        "success": 1,
+        "conflict": 24
+      }
+    },
+    {
+      "name": "0004 EV-06: sold propio, ajeno, incompatible, repetido y concurrente; no DELETE",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-08: origen público configurable y error de almacenamiento 500 controlado",
+      "result": "PASS"
+    },
+    {
+      "name": "base original conservada: hashes/recuentos idénticos",
+      "result": "PASS"
+    }
+  ],
+  "postgres": "16.15 (Debian 16.15-1.pgdg13+2)",
+  "originalBefore": {
+    "_prisma_migrations": {
+      "count": 4,
+      "sha256": "67b7af7e82169d0e6c4c0e7b7fb3773ca1ee75dc6f5623f3ea21b1fb33a1ef73"
+    },
+    "categories": {
+      "count": 8,
+      "sha256": "9c7a9a5e7277dc1e7029857954ce09a2a7057c0e918e53cd1f71440bf6d5a7f6"
+    },
+    "publications": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "users": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "originalAfter": {
+    "_prisma_migrations": {
+      "count": 4,
+      "sha256": "67b7af7e82169d0e6c4c0e7b7fb3773ca1ee75dc6f5623f3ea21b1fb33a1ef73"
+    },
+    "categories": {
+      "count": 8,
+      "sha256": "9c7a9a5e7277dc1e7029857954ce09a2a7057c0e918e53cd1f71440bf6d5a7f6"
+    },
+    "publications": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "users": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "result": "PASS",
+  "packages": {
+    "@nestjs/common": "12.1.0",
+    "@nestjs/core": "12.1.0",
+    "@nestjs/platform-express": "12.1.0",
+    "@prisma/client": "7.10.0",
+    "prisma": "7.10.0",
+    "typescript": "6.0.3"
+  }
+}
