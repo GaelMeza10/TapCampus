@@ -76,4 +76,25 @@ export class PublicationsController {
   ) {
     return this.publications.physicalSale(id, user.id);
   }
+
+  @Post(':id/finish')
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  finish(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() _body: EmptyDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.publications.finish(id.toLowerCase(), user.id);
+  }
+
+  @Patch(':id/ganga')
+  @UseGuards(JwtAuthGuard)
+  ganga(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() _body: EmptyDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.publications.activateGanga(id.toLowerCase(), user.id);
+  }
 }

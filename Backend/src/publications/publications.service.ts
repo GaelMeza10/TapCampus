@@ -11,6 +11,8 @@ import { CatalogsService } from '../catalogs/catalogs.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { PublicationQueryDto } from '../catalogs/catalog-query.dto';
 import { CreatePublicationDto, UpdatePublicationDto } from './publication.dto';
+import { RealtimeGateway } from '../realtime/realtime.gateway';
+import { QueueService } from '../jobs/queue.service';
 import {
   publicationResponse,
   publicationSelect,
@@ -33,11 +35,14 @@ export class PublicationsService {
     private readonly prisma: PrismaService,
     private readonly catalogs: CatalogsService,
     private readonly uploads: UploadsService,
+    private readonly events: RealtimeGateway,
+    private readonly queue: QueueService,
   ) {}
 
   private async validate(
     data: Prisma.PublicationUncheckedCreateInput,
     origin: string,
+    requireFutureGanga = true,
   ) {
     for (const field of [
       'title',
@@ -99,7 +104,13 @@ export class PublicationsService {
       throw new BadRequestException('La ganga manual no admite minutos');
     if (mode === 'SCHEDULED') {
       const activation = end - (minutes ?? 0) * 60000;
-      if (minutes == null || activation < start || activation <= Date.now()) {
+      if (
+        minutes == null ||
+        activation < start ||
+        (!data.is_ganga_active &&
+          requireFutureGanga &&
+          activation <= Date.now())
+      ) {
         throw new BadRequestException(
           'La programación ganga debe quedar dentro del horario y en el futuro',
         );
@@ -117,9 +128,12 @@ export class PublicationsService {
       current_stock: dto.type === 'LIVE' ? dto.initial_stock : undefined,
     } as Prisma.PublicationUncheckedCreateInput;
     await this.validate(data, origin);
-    return publicationResponse(
-      await this.prisma.publication.create({ data, select: publicationSelect }),
-    );
+    const publication = await this.prisma.publication.create({
+      data,
+      select: publicationSelect,
+    });
+    await this.queue.publication(publication);
+    return publicationResponse(publication);
   }
 
   async list(query: PublicationQueryDto) {
@@ -136,7 +150,11 @@ export class PublicationsService {
         ],
       },
       select: publicationSelect,
-      orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
+      orderBy: [
+        { is_ganga_active: 'desc' },
+        { created_at: 'desc' },
+        { id: 'desc' },
+      ],
     });
     return publications.map(publicationResponse);
   }
@@ -194,7 +212,7 @@ export class PublicationsService {
     );
     if (!fields.length)
       throw new BadRequestException('Envía al menos un campo editable');
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const publication = await this.owned(tx, id, sellerId);
       if (
         publication.type === 'STATIC' &&
@@ -226,15 +244,31 @@ export class PublicationsService {
       const supplied = Object.fromEntries(
         Object.entries(data).filter(([, value]) => value !== undefined),
       );
-      await this.validate({ ...publication, ...supplied }, origin);
-      return publicationResponse(
-        await tx.publication.update({
-          where: { id },
-          data,
-          select: publicationSelect,
-        }),
+      await this.validate(
+        { ...publication, ...supplied },
+        origin,
+        [
+          'start_time',
+          'end_time',
+          'ganga_min_price',
+          'ganga_activation_mode',
+          'ganga_minutes_before',
+        ].some((field) => fields.includes(field)),
       );
+      const updated = await tx.publication.update({
+        where: { id },
+        data,
+        select: publicationSelect,
+      });
+      return {
+        updated,
+        stockChanged: publication.current_stock !== updated.current_stock,
+      };
     });
+    if (result.stockChanged && result.updated.current_stock !== null)
+      this.events.stockUpdated(id, result.updated.current_stock);
+    await this.queue.publication(result.updated);
+    return publicationResponse(result.updated);
   }
 
   async sold(id: string, sellerId: string) {
@@ -253,7 +287,7 @@ export class PublicationsService {
   }
 
   async physicalSale(id: string, sellerId: string) {
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const publication = await this.owned(tx, id, sellerId);
       if (
         publication.type !== 'LIVE' ||
@@ -274,5 +308,91 @@ export class PublicationsService {
         }),
       );
     });
+    this.events.stockUpdated(id, result.current_stock!);
+    return result;
+  }
+
+  async finish(id: string, sellerId: string) {
+    const result = await this.prisma.$transaction(async (tx) => {
+      const p = await this.owned(tx, id, sellerId);
+      if (p.type !== 'LIVE')
+        throw new ConflictException('Solo LIVE admite cierre manual');
+      return tx.publication.update({
+        where: { id },
+        data: { status: 'FINISHED' },
+        select: publicationSelect,
+      });
+    });
+    this.events.publicationExpired(id);
+    return publicationResponse(result);
+  }
+
+  async expire(id: string, expectedAt?: number) {
+    const changed = await this.prisma.$transaction(async (tx) => {
+      const [p] = await tx.$queryRaw<
+        Publication[]
+      >`SELECT * FROM publications WHERE id = ${id}::uuid FOR UPDATE`;
+      if (
+        !p ||
+        p.type !== 'LIVE' ||
+        p.status !== 'ACTIVE' ||
+        !p.end_time ||
+        p.end_time.getTime() > Date.now() ||
+        (expectedAt !== undefined && p.end_time.getTime() !== expectedAt)
+      )
+        return false;
+      await tx.publication.update({
+        where: { id },
+        data: { status: 'FINISHED' },
+      });
+      return true;
+    });
+    if (changed) this.events.publicationExpired(id);
+    return changed;
+  }
+
+  async activateGanga(id: string, sellerId?: string, expectedAt?: number) {
+    const result = await this.prisma.$transaction(async (tx) => {
+      const [p] = await tx.$queryRaw<
+        Publication[]
+      >`SELECT * FROM publications WHERE id = ${id}::uuid FOR UPDATE`;
+      if (!p) {
+        if (!sellerId) return null;
+        throw new NotFoundException('Publicación inexistente');
+      }
+      if (sellerId && p.seller_id !== sellerId)
+        throw new ForbiddenException('Publicación ajena');
+      const at =
+        p.end_time && p.ganga_minutes_before
+          ? p.end_time.getTime() - p.ganga_minutes_before * 60000
+          : null;
+      const now = new Date();
+      const valid =
+        p.type === 'LIVE' &&
+        p.status === 'ACTIVE' &&
+        p.start_time &&
+        p.start_time <= now &&
+        p.end_time &&
+        p.end_time > now &&
+        p.ganga_min_price &&
+        !p.is_ganga_active &&
+        (sellerId
+          ? p.ganga_activation_mode === 'MANUAL'
+          : p.ganga_activation_mode === 'SCHEDULED' &&
+            at !== null &&
+            at <= now.getTime() &&
+            (expectedAt === undefined || expectedAt === at));
+      if (!valid) {
+        if (!sellerId) return null;
+        throw new ConflictException('Ganga no disponible o ya activada');
+      }
+      return tx.publication.update({
+        where: { id },
+        data: { price: p.ganga_min_price!, is_ganga_active: true },
+        select: publicationSelect,
+      });
+    });
+    if (result) this.events.gangaActivated(id, result.price.toFixed(2));
+    return result ? publicationResponse(result) : null;
   }
 }

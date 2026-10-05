@@ -1,4 +1,12 @@
 services:
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - tapcampus_redisdata:/data
   postgres:
     image: postgres:16
     restart: always
@@ -12,4 +20,5 @@ services:
       - tapcampus_pgdata:/var/lib/postgresql/data
 
 volumes:
+  tapcampus_redisdata:
   tapcampus_pgdata:
