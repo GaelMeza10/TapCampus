@@ -1,6 +1,8 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+  importFileExtension = ""
 }
 
 datasource db {
@@ -85,7 +87,7 @@ model Publication {
 
   // Campos exclusivos para LIVE
   initial_stock         Int?
-  current_stock         Int? // Check >= 0 manejado en lógica de negocio / bd
+  current_stock         Int? // CHECK publications_current_stock_nonnegative en PostgreSQL
   start_time            DateTime?
   end_time              DateTime?
   is_ganga_active       Boolean              @default(false)
@@ -105,6 +107,8 @@ model Reservation {
   status      ReservationStatus @default(ACTIVE)
   reserved_at DateTime          @default(now())
   resolved_at DateTime?
+  unit_price Decimal @db.Decimal(10, 2)
+  idempotency_key String @db.Uuid
 
   // Relations
   buyer_id       String      @db.Uuid
@@ -112,6 +116,8 @@ model Reservation {
   publication_id String      @db.Uuid
   publication    Publication @relation(fields: [publication_id], references: [id])
 
+  @@unique([buyer_id, idempotency_key])
+  @@index([status, reserved_at])
   @@map("reservations")
 }
 

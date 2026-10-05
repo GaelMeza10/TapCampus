@@ -1,0 +1,12 @@
+{
+  "reservations": {
+    "1": {
+      "unit_price": "12.50",
+      "source": "Recibo sintético fixture-001: precio registrado al reservar"
+    },
+    "2": {
+      "unit_price": "13.50",
+      "source": "Recibo sintético fixture-002: precio registrado al reservar"
+    }
+  }
+}

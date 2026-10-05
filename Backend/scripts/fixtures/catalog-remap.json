@@ -1,0 +1,8 @@
+{
+  "zones": {
+    "Facultad de Ciencias": {
+      "target": "Biblioteca Central",
+      "source": "Ubicación sintética de la publicación 2 del fixture; no es un remapeo de producción"
+    }
+  }
+}
