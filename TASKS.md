@@ -20,13 +20,15 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 - [x] **1.4 Script de Migración y Seed:** Respaldo restaurado, transición conservadora, ensayo vacío/poblado y aplicación local comprobados; seed doble con cinco zonas/ocho categorías y FK conservadas (0010 EV-04/05).
 
 ## FASE 2: Backend - Autenticación y API Básica
-- [ ] **2.1 Módulo de Autenticación (JWT):** Implementar AuthModule con Passport y JWT. Crear `POST /auth/register` con correo `@uabc.edu.mx`, teléfono mexicano con o sin `+52` normalizado y contraseña hasheada. Crear `POST /auth/login` para devolver el token.
-- [ ] **2.2 Middleware/Guards de Autenticación:** Crear un `JwtAuthGuard` para proteger rutas. Añadir decorador `@CurrentUser()` para inyectar el usuario autenticado en los controladores.
-- [ ] **2.3 Subida de Imágenes (Multer):** Configurar Multer para recibir form-data. Guardar la imagen localmente en `/uploads` y retornar la URL estática para guardarla en la base de datos.
-- [ ] **2.4 Publicaciones (Vendedor):** Implementar creación/edición con DTOs estrictos y propiedad; usar transiciones `FINISHED` solo para «Vendido» de `STATIC` o cierre `LIVE` documentado. El borrado genérico requiere un RF nuevo.
-- [ ] **2.5 Listado y Filtros (Comprador):** Implementar `GET /publications` aceptando Query Params opcionales (`?zoneId=X&categoryId=Y&type=LIVE`) para el filtrado.
-- [ ] **2.6 Venta estática y venta física:** Implementar `POST /publications/:id/sold` para `STATIC` y `POST /publications/:id/physical-sale` para `LIVE`, con propiedad y stock atómico.
-- [ ] **2.7 Catálogos:** Exponer `GET /zones` y `GET /categories?type=...`; la subida y servicio de imagen pertenecen a 2.3.
+- [x] **2.1 Módulo de Autenticación (JWT):** Registro/login reutilizados y verificados: dominio UABC, hash bcrypt, teléfono canónico, duplicados y JWT. 0002 EV-08.
+- [x] **2.2 Middleware/Guards de Autenticación:** Passport JwtStrategy, JwtAuthGuard y @CurrentUser verificados en rutas protegidas; tokens inválidos/expirados →401. 0002 EV-08.
+- [x] **2.3 Subida de Imágenes (Multer):** Multipart autenticado, JPEG/PNG/WebP por contenido y límite 5 MiB; URL estática y errores verificados. 0003 EV-08.
+- [x] **2.4 Publicaciones (Vendedor):** Creación/edición LIVE/STATIC, DTO estrictos, propiedad y validaciones; sin borrado genérico. 0003 EV-09/10 y 0004 EV-06. Cierre manual LIVE queda en fase posterior.
+- [x] **2.5 Listado y Filtros (Comprador):** GET feed/detalle con visibilidad y filtros opcionales type/zoneId/categoryId AND, sin contacto LIVE público. 0003 EV-09 y 0005 EV-06.
+- [x] **2.6 Venta estática y venta física:** Sold STATIC y physical-sale LIVE verificados con propiedad/estado y PostgreSQL: última pieza 1×200/24×409, reservas intactas. 0003 EV-10 y 0004 EV-06.
+- [x] **2.7 Catálogos:** GET zones/categories usa catálogos de fase 1, exactitud/queries verificadas. 0005 EV-06.
+
+**Cierre fase 2 (2026-10-05):** build, tsc, 9 unitarias, 1 E2E existente, suite HTTP/SQL test:phase2 y check-sdd aprobados. Base original intacta. Esto cierra el backend 2.1–2.7; 0002–0005 conservan criterios móviles/eventos/reservas de fases posteriores pendientes.
 
 ## FASE 3: Backend - Core Complejo (Concurrencia y Eventos)
 - [ ] **3.1 Módulo de Reservas (Transacción Segura):** Implementar `POST /reservations` y consultas de reservas propias, detalle y listado del vendedor con permisos. Fijar precio, usar clave de idempotencia y permitir varias reservas del mismo comprador. **CRÍTICO:** Usar transacción interactiva con `SELECT ... FOR UPDATE`; devolver 200 y la reserva original al reintentar la misma clave, o 409 si no hay stock para una acción nueva.

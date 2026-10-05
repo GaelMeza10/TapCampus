@@ -1,10 +1,10 @@
 # 0005 — Catálogos y filtros del feed
 
-Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
+Estado: **En implementación; backend fase 2 verificado, móvil pendiente** | Fecha: 2026-10-05
 
 ## Contexto y fuentes
 
-RF-05c y RNF-03; US-05c. `docs/03_ARCHITECTURE.md` define cinco zonas y ocho categorías separadas por `PublicationType`. Seed exacto, repetición y remapeo seguro verificados por 0010 el 2026-10-04. No hay API de catálogos ni de publicaciones.
+RF-05c y RNF-03; US-05c. Arquitectura define cinco zonas y ocho categorías separadas por PublicationType. Seed exacto/repetición/remapeo seguro verificados por 0010; catálogos HTTP y filtros AND verificados en EV-06 de fase 2. UI pendiente.
 
 ## Alcance y contratos observables
 
@@ -14,6 +14,10 @@ RF-05c y RNF-03; US-05c. `docs/03_ARCHITECTURE.md` define cinco zonas y ocho cat
 - Query inválida o categoría incompatible con el tipo solicitado responde `400`; combinación válida sin resultados devuelve `200` con lista vacía.
 
 ## Criterios de aceptación
+
+## Contrato backend de fase 2 — 2026-10-05
+
+GET catálogos devuelve arrays `{id,name}` para zonas y `{id,name,type}` para categorías, ordenados por id. `type` es opcional en categorías (sin filtro entrega ambos conjuntos), valores distintos de LIVE/STATIC reciben `400`. Queries desconocidas, IDs no enteros positivos/repetidos, referencias inexistentes y categoría cruzada reciben `400`; combinación válida vacía recibe `200 []`. GET publicaciones admite solo `type,zoneId,categoryId`, todos opcionales e intersectados. Usa visibilidad y proyección de 0003/0004. Se reutiliza seed verificado, sin migrar ni sembrar la base configurada durante esta fase. AC-04 móvil permanece pendiente.
 
 ### AC-01 — Catálogos correctos
 **Dado** la base inicializada, **cuando** se consultan zonas y categorías por tipo, **entonces** se obtienen las cinco zonas y las cuatro categorías propias de cada tipo definidas en arquitectura.

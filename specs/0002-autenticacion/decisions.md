@@ -6,4 +6,4 @@
 | DEC-02 | Persistir JWT en `AsyncStorage` mencionado históricamente, o en `expo-secure-store` ya instalado. | Sesión móvil | Resuelta | 2026-10-01: `expo-secure-store`, ya documentado en US-02 y presente en cliente móvil. |
 | DEC-03 | Formato de teléfono mexicano para registro y enlace. | RF-02/RF-13, DTO, datos históricos | Resuelta | 2026-10-01: aceptar diez dígitos nacionales con o sin prefijo `+52`, de cualquier región de México. Normalizar y almacenar como `+52` seguido de diez dígitos; rechazar otros países y entradas ambiguas. |
 
-El contrato de campos/Prisma y teléfono está resuelto. El backend de registro/login y compilación quedó comprobado en EV-07 (0010); guards e integración móvil conservan sus verificaciones pendientes.
+El contrato de campos/Prisma y teléfono está resuelto. Registro/login, compilación y guards/CurrentUser quedaron comprobados en EV-08 de fase 2; integración móvil conserva su verificación pendiente.

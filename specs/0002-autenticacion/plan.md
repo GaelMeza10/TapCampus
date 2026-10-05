@@ -1,6 +1,6 @@
 # 0002 — Plan técnico
 
-Estado: **En implementación; dependencia backend de 0010 comprobada** | Especificación: `spec.md`
+Estado: **En implementación; backend fase 2 verificado** | Especificación: `spec.md`
 
 ## Contexto y diseño
 
@@ -13,6 +13,10 @@ Avance 2026-10-04: T-01/T-02 y la parte login de T-03 implementadas y probadas b
 - **Compatibilidad:** frontend y backend deben desplegarse con el mismo contrato; una versión antigua que envíe claves españolas no funcionará hasta adaptar el cliente o añadir un adaptador temporal explícito. No cambiar el esquema para ocultar el desajuste.
 
 ## Constitución
+
+## Ejecución backend fase 2
+
+Reutilizar registro/login/bcrypt/normalización existentes; registrar JwtStrategy en AuthModule y exportar JwtAuthGuard. JwtModule.registerAsync lee JWT_SECRET al iniciar, igual que estrategia. Pruebas HTTP de JWT ausente, falsificado, expirado, sub inválido y usuario inexistente sobre POST protegido; demostrar CurrentUser por seller_id persistido. Separar aceptación backend de los recorridos móviles (no incluidos).
 
 | Principio | Cumplimiento |
 | --- | --- |

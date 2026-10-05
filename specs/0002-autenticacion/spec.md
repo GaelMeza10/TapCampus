@@ -1,10 +1,10 @@
 # 0002 — Autenticación y perfil obligatorio
 
-Estado: **En implementación; backend de registro/login comprobado** | Fecha: 2026-10-04
+Estado: **En implementación; backend fase 2 verificado, móvil pendiente** | Fecha: 2026-10-05
 
 ## Contexto y fuentes
 
-RF-01, RF-02, RNF-03; US-01 y US-02; `docs/03_ARCHITECTURE.md` (User, API y JWT), `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `TASKS.md` 1.1–1.4, 2.1–2.2, 4.3 y 5.1. En 0010 se corrigieron DTO/servicio a User y UUID, se comprobó la compilación y se probaron registro/login HTTP contra PostgreSQL. Persisten integración móvil con campos ingleses y guards como alcance restante de 0002.
+RF-01, RF-02, RNF-03; US-01 y US-02; `docs/03_ARCHITECTURE.md` (User, API y JWT), `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `TASKS.md` 1.1–1.4, 2.1–2.2, 4.3 y 5.1. En 0010 se corrigieron DTO/servicio a User y UUID, se comprobó la compilación y se probaron registro/login HTTP contra PostgreSQL. Backend y guards/CurrentUser verificados en EV-08 de fase 2; integración móvil con campos ingleses pendiente.
 
 ## Alcance
 
@@ -42,4 +42,8 @@ RF-01, RF-02, RNF-03; US-01 y US-02; `docs/03_ARCHITECTURE.md` (User, API y JWT)
 
 ## Decisiones
 
-DEC-03 está resuelta junto con 0008 DEC-01. La adaptación backend está comprobada en EV-07; faltan guards, cliente móvil y la evidencia de aceptación integrada.
+## Revisión acotada de fase 2 — 2026-10-05
+
+2.1/2.2 se aceptan con registro/login y autorización HTTP backend; 4.3/5.1 y los criterios integrados móviles siguen pendientes. Passport verifica firma HS256, expiración y `sub` UUID contra un User existente; `@CurrentUser()` entrega solo `{ id, email }`. No se acepta token de usuario eliminado ni configuración sin JWT_SECRET. No se agrega un endpoint de perfil.
+
+DEC-03 está resuelta junto con 0008 DEC-01. Backend y guards comprobados en EV-08; cliente móvil y aceptación integrada siguen pendientes.

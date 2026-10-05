@@ -1,10 +1,10 @@
 # 0004 — Catálogo de publicaciones estáticas
 
-Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
+Estado: **En implementación; backend fase 2 verificado, móvil pendiente** | Fecha: 2026-10-05
 
 ## Contexto y fuentes
 
-RF-06, RNF-03; US-04 y US-11. `README.md` define que una venta estática no tiene temporizador ni reservas y permite contacto directo; `docs/03_ARCHITECTURE.md` exige categoría y zona, y `docs/05_USER_FLOWS.md` describe el cierre al marcar «Vendida». No existe API de publicaciones; el esquema Prisma ya soporta `STATIC` y `FINISHED`.
+RF-06, RNF-03; US-04 y US-11. `README.md` define STATIC sin temporizador ni reservas y con contacto directo; arquitectura exige categoría/zona y flujos definen «Vendida». API STATIC/FINISHED implementada y verificada en EV-06; integración móvil pendiente.
 
 ## Alcance y contrato observable
 
@@ -15,6 +15,10 @@ RF-06, RNF-03; US-04 y US-11. `README.md` define que una venta estática no tien
 - Fuera de alcance: reserva, temporizador, inventario de piezas, ganga, GPS y pagos.
 
 ## Criterios de aceptación
+
+## Contrato backend de fase 2 — 2026-10-05
+
+Comparte upload, nombres snake_case, precio decimal, DTO estricto y proyección con 0003. STATIC rechaza stock, horarios y ganga, incluso null; persiste campos LIVE null. Detalle solo ACTIVE (otro estado `404`), contacto `sellerContact: {phone}` sin hash/email. PATCH solo campos comunes de 0003 en ACTIVE. `POST /publications/:id/sold` exige cuerpo vacío y devuelve `200` con FINISHED; LIVE o estado distinto de ACTIVE: `409`, ajeno: `403`, inexistente: `404`. Transición protegida por bloqueo de fila; repetición concurrente solo permite un éxito. UI y apertura WhatsApp se verifican después, sin cerrar el expediente en fase 2.
 
 ### AC-01 — Crear artículo estático
 **Dado** vendedor autenticado e imagen válida, **cuando** crea un artículo con zona y categoría `STATIC`, **entonces** recibe `201` y queda `ACTIVE` sin stock ni horarios exigidos.

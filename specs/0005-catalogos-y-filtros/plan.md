@@ -1,6 +1,6 @@
 # 0005 — Plan técnico
 
-Estado: **Planificado** | Especificación: `spec.md`
+Estado: **En implementación; backend fase 2 verificado** | Especificación: `spec.md`
 
 ## Diseño
 
@@ -12,6 +12,10 @@ Estado: **Planificado** | Especificación: `spec.md`
 - En móvil, selector de zona y categorías del tipo actual, estado visible de filtros y `FlatList`; usar `docs/04_UI_UX_GUIDELINES.md`. No depender de permiso GPS.
 
 ## Constitución
+
+## Ejecución backend fase 2
+
+CatalogsModule comparte CatalogsService con PublicationsModule para validar IDs y categorías por tipo. Query DTO convierte únicamente strings de enteros decimales positivos a Number (evitar aceptar exponentes, listas o null); aplica whitelist estricta. Componer AND de filtros y OR de visibilidad LIVE/STATIC, seleccionar vendedor público sin teléfono. Probar catálogos exactos y matriz con filtros individuales, combinados y vacíos usando seed de fase 1 en BD de prueba; conservar T-04/UI pendiente.
 
 | Principio | Cumplimiento |
 | --- | --- |

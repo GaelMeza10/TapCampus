@@ -92,6 +92,15 @@ Para garantizar consistencia, el Backend deberá exponer las siguientes rutas ba
     *   `POST /reservations/:id/cancel` (Solo permitido para el `buyer_id`).
 
 ## 4. Estándar de Respuestas de Error
+
+### Contratos concretos de fase 2 (verificados el 2026-10-05)
+
+- Publicaciones: JSON con campos snake_case de Publication; `price` numérico positivo con hasta dos decimales y máximo 99999999.99, respuesta decimal en cadena de dos posiciones. `seller_id` procede de JWT. LIVE requiere initial_stock >0 e inicio/fin ISO con zona; STATIC rechaza campos LIVE. PATCH admite campos comunes y, en LIVE, current_stock >=0 y horario; type/estado/propietario/initial_stock no se editan. Detalles en [0003](../specs/0003-publicaciones-en-vivo/spec.md) y [0004](../specs/0004-catalogo-estatico/spec.md).
+- GET feed/detalle: ACTIVE; LIVE además inicio <= ahora < fin y stock >0. Detalle no visible →404. Feed y LIVE no incluyen teléfono; STATIC ACTIVE en detalle añade `{sellerContact: {phone}}`. Vendedor público solo `{id,name}`.
+- Sold/physical-sale: cuerpo vacío, éxito 200, propiedad 403, inexistente 404, estado/tipo/stock incompatible 409. Bloqueo de la fila compartido por edición y venta física. No existe borrado genérico aprobado.
+- Upload: JWT, multipart `file` único, JPEG/PNG/WebP detectado por contenido, máximo 5 MiB; 201 `{image_url}` absoluto, 400 formato/campo ausente o inválido, 413 tamaño, 500 escritura. `/uploads` se sirve con nosniff. Imagen en publicación debe existir en almacenamiento local y pertenecer al origen público de la API.
+- Catálogos/query: `type` opcional (LIVE/STATIC); zoneId/categoryId enteros positivos, filtros AND, entradas desconocidas/inexistentes/cruzadas →400, coincidencias vacías →200 []. [0005](../specs/0005-catalogos-y-filtros/spec.md).
+- Configuración ganga en creación/edición LIVE se valida y guarda como dependencia mínima de RF-11. Activación, encolado, reprogramación y eventos de 0006 pertenecen a fase 3; la configuración sola no acredita RF-11/12 completos.
 Toda la API debe retornar errores siguiendo el formato estándar de NestJS (HttpException):
 ```json
 {
@@ -136,6 +145,8 @@ El proyecto Backend requiere la definición estricta de las siguientes variables
 *   `REDIS_URL` (Conexión al manejador de colas BullMQ)
 *   `PORT` (Puerto expuesto de NestJS, usualmente 3000)
 *   `CORS_ORIGINS` (Orígenes web separados por coma; desarrollo: `http://localhost:8081,http://localhost:19006`; las solicitudes nativas sin Origin siguen disponibles)
+*   `UPLOADS_DIR` (Opcional, predeterminado `uploads` relativo al directorio de arranque Backend; directorio local de imágenes)
+*   `PUBLIC_BASE_URL` (Opcional, origen público HTTP(S) accesible desde el móvil, sin path; detrás de proxy define la URL externa de imágenes. Sin variable se usa el origen de la petición)
 
 ## 10. Estrategia de Despliegue (Deployment)
 Para pasar a producción el MVP, se utilizará la siguiente infraestructura:

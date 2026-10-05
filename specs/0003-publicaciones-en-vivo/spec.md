@@ -1,10 +1,10 @@
 # 0003 — Publicaciones en vivo e inventario disponible
 
-Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
+Estado: **En implementación; backend fase 2 verificado** | Fecha: 2026-10-05
 
 ## Contexto y fuentes
 
-RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) se documenta como comportamiento SHOULD relacionado. Fuentes: `docs/02_REQUIREMENTS.md`, `docs/03_ARCHITECTURE.md`, `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `README.md` y `TASKS.md` 2.3–2.7, 3.5, 5.2, 5.4–5.5. Solo existen modelo Prisma, tarjetas y una pantalla de inicio parcial; no hay API de publicaciones ni subida de imágenes.
+RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relacionado. Fuentes: `docs/02_REQUIREMENTS.md`, `docs/03_ARCHITECTURE.md`, `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `README.md` y `TASKS.md` 2.3–2.7, 3.5, 5.2, 5.4–5.5. API de creación/edición/lectura/venta física y uploads implementada/verificada en EV-08..10; UI existente sigue parcial y reservas/jobs/eventos pendientes.
 
 ## Alcance y contratos observables
 
@@ -40,4 +40,13 @@ RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) se documenta como c
 
 ## Decisiones
 
-DEC-02 está resuelta y reflejada en 0001. Implementación y pruebas pendientes.
+## Contrato backend de fase 2 — 2026-10-05
+
+- `POST /uploads`: multipart con exactamente un campo `file`, JPEG/PNG/WebP detectado por contenido, no vacío y máximo 5 MiB. Devuelve `201 { image_url }`, URL absoluta de `/uploads/<UUID>.<ext>`; nombre original ignorado. Ausente, campo extra, formato inválido o contenido falso: `400`; tamaño excedido: `413`; escritura fallida: `500` estándar sin datos internos. No se persiste archivo rechazado. `UPLOADS_DIR` opcional (predeterminado `Backend/uploads` al arrancar desde Backend); `PUBLIC_BASE_URL` opcional define origen externo, si se omite se usa origen de la petición.
+- Cuerpos REST usan campos Prisma snake_case. Creación: `type,title,description,price,image_url,zone_id,category_id`; LIVE añade `initial_stock,start_time,end_time`. `current_stock` se inicializa igual a `initial_stock`. Precio JSON numérico, positivo, máximo 99999999.99 y dos decimales; respuesta decimal en cadena con dos posiciones. IDs catálogo enteros positivos. Fechas ISO 8601 con zona explícita, inicio anterior al fin y fin futuro. Texto obligatorio sin solo espacios. Imagen referencia un archivo existente de la subida local, usando URL devuelta o ruta `/uploads/...`.
+- PATCH acepta `title,description,price,image_url,zone_id,category_id` y, en LIVE, `current_stock,start_time,end_time`. `id,type,seller_id,status,initial_stock,is_ganga_active` son inmutables desde DTO. Cuerpo vacío, null, campos desconocidos o exclusivos LIVE en STATIC: `400`. Edición solo ACTIVE y, en LIVE, antes de end_time (`409` si incompatible). Se valida el estado combinado, no solo el fragmento. Asignar current_stock ajusta únicamente inventario disponible; no modifica reservas ni su precio; mínimo cero.
+- Configuración opcional LIVE de RF-11: `ganga_min_price,ganga_activation_mode,ganga_minutes_before`, sin activación/colas en esta fase. Mínimo positivo <= precio, modo MANUAL sin minutos o SCHEDULED con minutos enteros positivos y disparo dentro de ventana/futuro. Validar configuración combinada en PATCH; configuración activa no editable. La ejecución y reprogramación duradera pertenecen a 0006/fase 3.
+- GET listado devuelve array de publicaciones visibles, orden estable por created_at/id descendente. GET detalle aplica la misma visibilidad: ausentes/ocultas/finalizadas, LIVE futura/agotada/vencida: `404`. Proyección explícita de vendedor `{id,name}`, sin email/hash/teléfono en feed ni LIVE. STATIC activo añade `sellerContact: {phone}` solo en detalle.
+- Venta física recibe cuerpo vacío y devuelve `200` con publicación tras descontar uno. Requiere LIVE ACTIVE en ventana y stock >0, si incompatible `409`. Venta física/edición bloquean la fila con `SELECT FOR UPDATE`; una operación espera a la otra y valida después del bloqueo. No hay rutas DELETE ni cierre manual en fase 2. Eventos, worker, carrera HTTP con reservas y UI quedan pendientes de fases 3–5.
+
+DEC-02 está resuelta y reflejada en 0001. Backend fase 2 verificado en EV-08..10; reservas, expiración persistente, eventos, UI y cierre manual siguen pendientes.

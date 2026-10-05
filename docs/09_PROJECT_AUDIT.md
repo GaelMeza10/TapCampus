@@ -1,6 +1,6 @@
 # Auditoría del proyecto y decisiones de producto
 
-Fecha de corte: 2026-10-04; se conserva la evidencia histórica del 2026-10-01. Esta auditoría distingue **documentado**, **implementado** y **verificado**. Una referencia a código prueba que existe una pieza, no que el flujo completo funciona. Los hallazgos abiertos se convierten en decisiones o tareas antes de declarar listo el feature afectado.
+Fecha de corte: 2026-10-05; se conserva la evidencia histórica del 2026-10-01/04. Esta auditoría distingue **documentado**, **implementado** y **verificado**. Una referencia a código prueba que existe una pieza, no que el flujo completo funciona. Los hallazgos abiertos se convierten en decisiones o tareas antes de declarar listo el feature afectado.
 
 ## Estado de adopción
 
@@ -21,9 +21,9 @@ Fecha de corte: 2026-10-04; se conserva la evidencia histórica del 2026-10-01. 
 | --- | --- | --- | --- |
 | GAP-01 | Al inicio, `README.md` permitía contacto de venta en vivo antes de reservar; RF-07 lo exige después. README ya describía contacto directo para `STATIC`. | Se sincronizaron RF-06/RF-13, arquitectura, flujo estático y 0008: `LIVE` tras reserva; `STATIC` directo sin reserva. | Resuelto documentalmente. |
 | GAP-02 | El resumen del README y la matriz de `docs/02_REQUIREMENTS.md` contradecían las etiquetas `MUST/SHOULD` de los requisitos individuales. | Se alinearon resumen y matriz con las etiquetas existentes; cualquier cambio futuro de prioridad requiere modificar el RF/RNF. | Resuelto documentalmente. |
-| GAP-03 | RF-06 dice «Vendido» y `PublicationStatus` solo tiene `FINISHED`. | Arquitectura y 0004 definen `STATIC ACTIVE → FINISHED` por `POST /publications/:id/sold`; UI muestra «Vendido». | Contrato resuelto; código pendiente. |
+| GAP-03 | RF-06 dice «Vendido» y `PublicationStatus` solo tiene `FINISHED`. | STATIC ACTIVE → FINISHED por sold, con propiedad y transición concurrente única. | Resuelto/verificado backend 0004 EV-06; UI pendiente. |
 | GAP-04 | RF-14 exige tres denunciantes distintos y `Report` no tiene unicidad `(reporter_id, publication_id)`. | Arquitectura y `TASKS.md` 6.4 registran restricción/migración para el SHOULD antes de activarlo. | Diseño resuelto; código pendiente si se incluye. |
-| GAP-05 | Arquitectura/esquema usan User/UUID; auth/usuarios de la línea base usaban prisma.usuario y campos españoles. | Backend corregido; build y registro/login HTTP comprobados en 0002 EV-07 y 0010 EV-01. | Resuelto backend; cliente móvil y guards pendientes en 0002. |
+| GAP-05 | Arquitectura/esquema usan User/UUID; auth/usuarios de la línea base usaban prisma.usuario y campos españoles. | Backend y guards/CurrentUser comprobados, registro/login/JWT sobre PostgreSQL aislado. | Resuelto/verificado backend 0002 EV-08; cliente móvil pendiente. |
 | GAP-06 | `docs/03_ARCHITECTURE.md` usa `stock_updated`; `RNF-02` decía `stock_actualizado`. | Se usa `stock_updated`, según el diccionario explícito de eventos de arquitectura. | Resuelto en requisitos. |
 | GAP-07 | `docs/06_USER_STORIES_AND_TASKS.md` decía `/register`, `/login` y `AsyncStorage`; el contrato y el código actuales usan `/auth/*` y `expo-secure-store`. | Se actualizan las referencias de historias/tareas a los contratos observados; la compilación backend sigue pendiente. | Resuelto documentalmente. |
 | GAP-08 | Arquitectura exigía cinco zonas; seed previo insertaba siete y alias distintos. | Seed transaccional exacto, alias/remapeos y referencias comprobados en 0010 EV-05 / 0005 EV-05. | Resuelto y verificado en PostgreSQL local y fixtures. |
@@ -39,6 +39,16 @@ Fecha de corte: 2026-10-04; se conserva la evidencia histórica del 2026-10-01. 
 | GAP-18 | Las reglas de reserva repetida, fin horario y formato de teléfono no tenían respuesta única. | Decisiones del usuario del 2026-10-01 incorporadas a RF-02/04/07/08/12/13, expedientes y trazabilidad. | Resuelto documentalmente; pruebas pendientes. |
 | GAP-19 | RF-14 tenía historia y tarea global, pero ningún criterio `AC` ni evidencia `EV` en la trazabilidad. | Se creó 0009 con AC/T/EV planificados. El flujo de revisión del moderador y la validez de reportes requieren DEC-01/02 si se incluye este SHOULD. | Cobertura documental creada; decisión opcional pendiente. |
 
+## Revisión backend fase 2 — 2026-10-05
+
+Git inicial limpio; se conservaron historial/migraciones y catálogos de fase 1. Contenedor PostgreSQL local existente iniciado. Inventario/status/diff confirman cuatro migraciones, CHECK stock, cinco zonas/ocho categorías y cero filas de negocio en original. Fase 2 completa: auth Passport JWT/guard/CurrentUser; uploads autenticado/estático; creación y edición estricta LIVE/STATIC; listado/detalle con filtros AND y privacidad; sold STATIC y physical-sale LIVE bajo bloqueo de fila; endpoints de catálogos. No DELETE. Configuración ganga se valida/guarda como dependencia mínima; no activa ni encola.
+
+Build, tsc, lint, 5 suites/9 unitarias, 1 E2E existente y suite HTTP/SQL `npm run test:phase2` aprobaron con salida 0. Prisma status/diff sin diferencias y SDD correcto. [0003 verification](../specs/0003-publicaciones-en-vivo/verification.md) registra comandos/entorno/incidencias y [phase2.json](../specs/0003-publicaciones-en-vivo/evidence/phase2.json) diez grupos PASS. BD aislada nueva con migraciones y seed existente ejecutado dos veces; hashes/recuentos de original idénticos antes/después. 25 ventas físicas concurrentes sobre última pieza: 1×200/24×409, stock cero y reservas intactas. sold concurrente: 200/409. Bloqueo SQL compartido con edición/venta física probado; carrera HTTP con reservas permanece pendiente de fase 3.
+
+2.1–2.7 cerradas con 0002 EV-08, 0003 EV-08..10, 0004 EV-06 y 0005 EV-06. Los expedientes 0002–0005 permanecen En implementación por móvil, eventos, expiración persistente y reservas; no se declara el MVP ni esos expedientes Verificados completos. No hay bloqueo de fase 2 en entorno local. npm advirtió engines del CLI bajo Node 24.13, sin fallo de build/pruebas; no se cambiaron versiones del lock. Ejecutor corregido tras timeout en frío y doble espera de cierre, ejecución final salida 0.
+
+El siguiente trabajo autorizado por el backlog es fase 3 (reservas/colas/eventos); las pantallas y Linking pertenecen a fases 4–5.
+
 ## Evidencia histórica de la revisión del 2026-10-01
 
 - `npm run build` en `Backend/` (revisión inicial): **falló** por tres referencias a `prisma.usuario` ausentes en el cliente generado.
@@ -51,7 +61,7 @@ Fecha de corte: 2026-10-04; se conserva la evidencia histórica del 2026-10-01. 
 
 Actualización 2026-10-04: fase 1 implementada y verificada. Build, tsc, validate/status/diff, seed doble, 9 pruebas unitarias, 1 E2E y ensayo integral de infraestructura aprobaron. Inventario real: 7→5 zonas, 8 categorías reconciliadas, 3→4 migraciones y cero filas de negocio antes/después. Respaldo real restaurado con hashes idénticos; fixtures antiguos/modernos migrados y recuperados sin deducir precios. Detalles en [0010 verification](../specs/0010-infraestructura-y-base-de-datos/verification.md). Los criterios HTTP/móviles de reservas y catálogos conservan su verificación pendiente.
 
-El siguiente trabajo funcional es completar 0002 (guards/cliente móvil), seguido de 0005 (endpoints/filtros). La secuencia inicial siguiente se conserva como referencia; sus pasos de fase 1 ya tienen evidencia.
+La recomendación histórica del 2026-10-04 era completar guards y endpoints/filtros; ya se verificaron en fase 2. Cliente móvil sigue pendiente. La secuencia inicial siguiente se conserva como referencia histórica, con fases 1/2 comprobadas.
 
 1. Inspeccionar datos existentes antes de migraciones y seed; resolver GAP-12/13/15 y la migración planificada de GAP-17 durante implementación. GAP-14 solo requiere comprobar ejecución.
 2. Corregir contrato de autenticación según 0002 y verificar compilación/integración; después implementar catálogos, publicaciones, reservas, ganga, eventos y contacto según dependencias.

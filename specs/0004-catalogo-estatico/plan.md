@@ -1,6 +1,6 @@
 # 0004 — Plan técnico
 
-Estado: **Planificado** | Especificación: `spec.md`
+Estado: **En implementación; backend fase 2 verificado** | Especificación: `spec.md`
 
 ## Diseño
 
@@ -11,6 +11,10 @@ Estado: **Planificado** | Especificación: `spec.md`
 - Compatibilidad: el frontend actual solo tiene pantallas de auth y un inicio parcial; no hay endpoint anterior que mantener. La imagen local de backend debe ser accesible desde el dispositivo, no solo desde el servidor.
 
 ## Constitución
+
+## Ejecución backend fase 2
+
+Reutilizar módulo de publicaciones/upload/auth, DTO común y validación por tipo. STATIC mantiene campos LIVE null y nunca acepta stock/horarios/ganga. sold transaccional bloquea publicación, comprueba propiedad/tipo/estado y actualiza FINISHED. Probar HTTP creación/edición, detalle con contacto, privacidad de feed, sold repetido/concurrente, errores y ausencia del catálogo. No integrar móvil ni deep linking en esta fase.
 
 | Principio | Cumplimiento |
 | --- | --- |

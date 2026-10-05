@@ -1,5 +1,20 @@
 # Operación de la fase 1
 
+## Verificación del backend de fase 2
+
+Desde `Backend/`, con PostgreSQL de fase 1 disponible, DATABASE_URL local y permiso de crear bases:
+
+```powershell
+npm run build
+npm run test:phase2
+```
+
+`verify-phase2.mjs` crea exclusivamente `tapcampus_phase2_<timestamp>`, despliega las migraciones y ejecuta el seed existente dos veces **en esa base nueva**. La BD original se consulta solo para comparar hashes/recuentos antes/después. Arranca la API compilada en puerto libre, con JWT y directorio de uploads de fixture, comprueba contratos HTTP y concurrencia SQL, y termina su proceso. Conserva BD y archivos en `.local/verification/tapcampus_phase2_<timestamp>/`; no borra bases ni datos preexistentes. `phase2.json` contiene resultados sin tokens/contraseñas; un fallo termina con código distinto de cero. Evidencia AC → T → EV en `specs/0002` a `0005`, resumen compartido en `specs/0003-publicaciones-en-vivo/evidence/phase2.json`.
+
+Para uso local, POST uploads recibe exactamente un campo multipart `file`, imagen JPEG/PNG/WebP de hasta 5 MiB y Bearer JWT; devuelve image_url. Directorio default `uploads` relativo a Backend, configurable con UPLOADS_DIR. PUBLIC_BASE_URL opcional es el origen HTTP(S) externo sin path, accesible desde móvil; sin él se usa el origen de la petición. Los ejemplos y cuerpos de publicaciones están en `docs/03_ARCHITECTURE.md` y los expedientes; no se aceptan seller_id/status ni campos desconocidos del cliente.
+
+## Infraestructura y recuperación
+
 Ejecutar desde `Backend/` con Node 24.13 o posterior y `DATABASE_URL` configurada
 en el entorno o `.env`. No registrar la URL ni datos personales en evidencia.
 
