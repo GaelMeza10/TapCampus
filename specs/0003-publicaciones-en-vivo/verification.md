@@ -1,18 +1,28 @@
 # 0003 — Verificación
 
-Estado: **Backend fase 2 verificado; reservas/eventos/UI pendientes** | Fecha: 2026-10-05
+Estado: **Backend fases 2/3 verificado; UI pendiente** | Fecha: 2026-10-05
 
 | AC | Tarea(s) | Evidencia requerida | Resultado |
 | --- | --- | --- | --- |
 | AC-01 | T-02, T-03, T-06, T-07, T-08 | EV-01 plan integrado; EV-08/09 upload y creación 201 | Aprobado backend; UI pendiente |
 | AC-02 | T-02, T-03, T-07, T-08 | EV-02 plan; EV-08/09 matriz 400 sin filas parciales | Aprobado backend |
 | AC-03 | T-01, T-04, T-06, T-07, T-08 | EV-03 plan; EV-09 visibilidad HTTP y end_time ISO | Aprobado backend; temporizador móvil pendiente |
-| AC-04 | T-01, T-04, T-07 | EV-04: fin horario, evento único, reserva previa confirmable antes de 20 min y feed cerrado | Pendiente |
-| AC-05 | T-05, T-07, T-08 | EV-05 carrera HTTP reserva/venta pendiente; EV-10 ventas concurrentes y bloqueo SQL | Aprobado venta física; reserva HTTP/evento pendiente |
-| AC-06 | T-03, T-05, T-06, T-07, T-08 | EV-06 plan; EV-09/10 edición, 403 ajeno, reservas intactas | Aprobado backend; UI/eventos pendientes |
-| AC-07 | T-06, T-07 | EV-07: cierre con reserva previa y permisos | Pendiente |
+| AC-04 | T-01, T-04, T-07, T-09 | EV-04: fin persistente, evento único, reserva previa confirmable | Aprobado backend fase 3 |
+| AC-05 | T-05, T-07, T-08, T-09 | EV-05 carrera HTTP reserva/venta; EV-10 ventas concurrentes y bloqueo SQL | Aprobado backend fases 2/3 |
+| AC-06 | T-03, T-05, T-06, T-07, T-08 | EV-06 plan; EV-09/10 edición, 403 ajeno, reservas intactas | Aprobado backend fases 2/3; UI pendiente |
+| AC-07 | T-06, T-07, T-09 | EV-07: cierre con reserva previa y permisos | Aprobado backend; UI pendiente |
 
 ## Convergencia
+
+### Evidencia adicional fase 3 — T-01/T-04/T-05/T-09
+
+Desde Backend: npm run build, npm run test:phase2 y npm run test:phase3. [0001 verification](../0001-reservas/verification.md) registra entorno/comandos; [phase3.json](../0001-reservas/evidence/phase3.json) contiene dieciséis grupos PASS/311 HTTP, PostgreSQL 16.15/Redis 7.4.11 y hashes originales idénticos. La evidencia de fase 2 siguiente se conserva histórica.
+
+- EV-04, AC-03/04, T-01/T-04/T-09: job fin creado por API y conciliación persisten FINISHED/publication_expired una vez en dos clientes; duplicado no muta/emite. Nuevas reservas 409, vendedor completa previa tras end_time antes de sus 20 min. Expiración posterior libera sin reactivar el feed.
+- EV-05, AC-05/06, T-05/T-09: diez carreras HTTP reservations/physical-sale por stock uno, un ganador por carrera, stock cero/un evento. Edición efectiva emite stock_updated, reservas/precio intactos. Bloqueo externo retiene reserva hasta commit y relee stock/plazo.
+- EV-07, AC-07, T-09: finish propio LIVE ACTIVE 200 FINISHED, ajeno 403, sin JWT 401, repetido 409, nuevas reservas 409; reserva previa intacta/confirmable, evento único.
+
+T-01/T-04/T-05/T-09 completas; T-06/T-07 conservan UI/convergencia completa. Lo descrito como pendiente en la evidencia histórica de fase 2 respecto a reservas/jobs/eventos ya se verificó aquí. Sin bloqueo backend.
 
 ### Entorno y comandos de fase 2
 

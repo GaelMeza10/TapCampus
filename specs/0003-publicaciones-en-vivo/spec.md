@@ -1,10 +1,10 @@
 # 0003 — Publicaciones en vivo e inventario disponible
 
-Estado: **En implementación; backend fase 2 verificado** | Fecha: 2026-10-05
+Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Contexto y fuentes
 
-RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relacionado. Fuentes: `docs/02_REQUIREMENTS.md`, `docs/03_ARCHITECTURE.md`, `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `README.md` y `TASKS.md` 2.3–2.7, 3.5, 5.2, 5.4–5.5. API de creación/edición/lectura/venta física y uploads implementada/verificada en EV-08..10; UI existente sigue parcial y reservas/jobs/eventos pendientes.
+RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relacionado. Fuentes: `docs/02_REQUIREMENTS.md`, `docs/03_ARCHITECTURE.md`, `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `README.md` y `TASKS.md` 2.3–2.7, 3.5, 5.2, 5.4–5.5. API de creación/edición/lectura/venta física y uploads implementada/verificada en EV-08..10; UI sigue parcial; reservas/jobs/eventos verificados en fase 3.
 
 ## Alcance y contratos observables
 
@@ -40,6 +40,10 @@ RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relaciona
 
 ## Decisiones
 
+## Extensión backend fase 3 — 2026-10-05
+
+POST /publications/:id/finish recibe cuerpo vacío: propietario de LIVE ACTIVE antes del fin →200 FINISHED, otro actor →403, STATIC/estado terminal →409. No cambia reservas. Fin natural se persiste en FINISHED y emite publication_expired solo una vez. Edición de current_stock emite stock_updated si cambia efectivamente. Feed pasa a ordenar is_ganga_active descendente antes de created_at/id. Crear/editar horario encola fin natural y ganga después del commit; trabajos antiguos releen el horario actual.
+
 ## Contrato backend de fase 2 — 2026-10-05
 
 - `POST /uploads`: multipart con exactamente un campo `file`, JPEG/PNG/WebP detectado por contenido, no vacío y máximo 5 MiB. Devuelve `201 { image_url }`, URL absoluta de `/uploads/<UUID>.<ext>`; nombre original ignorado. Ausente, campo extra, formato inválido o contenido falso: `400`; tamaño excedido: `413`; escritura fallida: `500` estándar sin datos internos. No se persiste archivo rechazado. `UPLOADS_DIR` opcional (predeterminado `Backend/uploads` al arrancar desde Backend); `PUBLIC_BASE_URL` opcional define origen externo, si se omite se usa origen de la petición.
@@ -49,4 +53,4 @@ RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relaciona
 - GET listado devuelve array de publicaciones visibles, orden estable por created_at/id descendente. GET detalle aplica la misma visibilidad: ausentes/ocultas/finalizadas, LIVE futura/agotada/vencida: `404`. Proyección explícita de vendedor `{id,name}`, sin email/hash/teléfono en feed ni LIVE. STATIC activo añade `sellerContact: {phone}` solo en detalle.
 - Venta física recibe cuerpo vacío y devuelve `200` con publicación tras descontar uno. Requiere LIVE ACTIVE en ventana y stock >0, si incompatible `409`. Venta física/edición bloquean la fila con `SELECT FOR UPDATE`; una operación espera a la otra y valida después del bloqueo. No hay rutas DELETE ni cierre manual en fase 2. Eventos, worker, carrera HTTP con reservas y UI quedan pendientes de fases 3–5.
 
-DEC-02 está resuelta y reflejada en 0001. Backend fase 2 verificado en EV-08..10; reservas, expiración persistente, eventos, UI y cierre manual siguen pendientes.
+DEC-02 está resuelta y reflejada en 0001. Backend fases 2/3 verificado en EV-08..10 y EV-04/05/07; UI pendiente.

@@ -1,10 +1,10 @@
 # 0006 — Precio ganga manual y programado
 
-Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
+Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Contexto y fuentes
 
-RF-11 y RF-12; US-05. `docs/02_REQUIREMENTS.md` exige precio mínimo y activación instantánea; `README.md` permite modo manual/programado y reconfiguración del horario; `docs/03_ARCHITECTURE.md` define campos Prisma, cola BullMQ y evento `ganga_activated`. No hay implementación de ganga, worker ni Socket.io.
+RF-11 y RF-12; US-05. `docs/02_REQUIREMENTS.md` exige precio mínimo y activación instantánea; `README.md` permite modo manual/programado y reconfiguración del horario; `docs/03_ARCHITECTURE.md` define campos Prisma, cola BullMQ y evento `ganga_activated`. Ganga/worker/eventos backend verificados en fase 3; UI pendiente.
 
 ## Alcance y contrato observable
 
@@ -36,4 +36,10 @@ RF-11 y RF-12; US-05. `docs/02_REQUIREMENTS.md` exige precio mínimo y activaci�
 
 ## Decisiones
 
-DEC-01 está resuelta junto con 0001 DEC-02. Implementación y pruebas pendientes.
+## Precisión backend fase 3 — 2026-10-05
+
+El disparo futuro se exige al crear/reprogramar una ganga aún no activa. Editar título o stock después del disparo no invalida la configuración guardada ni impide editar una ganga activa; su precio/configuración continúan inmutables.
+
+PATCH /publications/:id/ganga recibe cuerpo vacío y exige modo MANUAL, LIVE ACTIVE dentro de ventana, mínimo configurado y aún no activo; devuelve publicación con 200. SCHEDULED solo se activa por worker/conciliación; estado incompatible →409. Reprogramar usa PATCH existente; tiempo antiguo se invalida por comparación con configuración persistida. No se activa con horario vencido ni publicación finalizada. Ganga con stock cero puede activarse dentro del horario; no cambia visibilidad hasta liberar stock. La reserva previa mantiene unit_price.
+
+DEC-01 está resuelta junto con 0001 DEC-02. Backend aprobado; UI pendiente.

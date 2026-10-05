@@ -93,6 +93,14 @@ Para garantizar consistencia, el Backend deberá exponer las siguientes rutas ba
 
 ## 4. Estándar de Respuestas de Error
 
+### Contratos concretos de fase 3 — 2026-10-05
+
+- Reservas: JWT en todas las rutas, UUID e Idempotency-Key obligatorios, normalizados en minúsculas. Cuerpos de complete/cancel vacíos; éxito 200, estado terminal o plazo vencido 409; permiso ajeno 403 e inexistente 404. Precio y vencimiento se calculan al reservar bajo bloqueo, plazo fijo 1 200 000 ms; reintento mismo comprador/clave devuelve estado actual 200 sin stock/evento adicionales. Clave cruzada 409, otra clave puede crear otra reserva.
+- Lecturas: comprador recibe sellerContact.phone en su reserva confirmada; vendedor relacionado recibe buyer {id,name} y buyerContact.phone solo mientras ACTIVE y antes del vencimiento. Ajeno 403. Feed/LIVE público/eventos no contienen contactos. Apertura WhatsApp móvil permanece en fase 5.
+- POST /publications/:id/finish: cuerpo vacío, solo propietario LIVE ACTIVE antes del fin, 200 FINISHED, 403 ajeno, 409 tipo/estado incompatible. Conserva reservas y publica publication_expired tras cierre. Fin natural persiste FINISHED y publica el mismo evento una vez por transición.
+- PATCH /publications/:id/ganga: cuerpo vacío, propietario LIVE ACTIVE en horario con modo MANUAL/mínimo configurado/no activada →200. Ajeno 403, inexistente 404, estado/tipo/modo incompatible/repetición 409. SCHEDULED se ejecuta por worker; nuevo precio/evento en cadena decimal de dos posiciones. Feed ordena gangas primero, después created_at/id descendentes.
+- Editar horario/configuración reprograma jobs después del commit. Solo crear/reprogramar una ganga aún no activa exige disparo futuro; editar título/stock de una ganga activa no revalida el disparo histórico como futuro. Precio/configuración de ganga activa inmutables.
+
 ### Contratos concretos de fase 2 (verificados el 2026-10-05)
 
 - Publicaciones: JSON con campos snake_case de Publication; `price` numérico positivo con hasta dos decimales y máximo 99999999.99, respuesta decimal en cadena de dos posiciones. `seller_id` procede de JWT. LIVE requiere initial_stock >0 e inicio/fin ISO con zona; STATIC rechaza campos LIVE. PATCH admite campos comunes y, en LIVE, current_stock >=0 y horario; type/estado/propietario/initial_stock no se editan. Detalles en [0003](../specs/0003-publicaciones-en-vivo/spec.md) y [0004](../specs/0004-catalogo-estatico/spec.md).
@@ -131,6 +139,7 @@ Para evitar asimetrías entre Backend y Frontend, se usarán estrictamente estos
 *   **Colas (BullMQ + Redis):**
     *   `reservation_queue`: Al crearse una reserva, se encola un trabajo para la fecha límite de 20 minutos. Cancelar el job tras confirmar/cancelar es una optimización; el worker siempre relee estado y vencimiento en BD antes de liberar stock. Una conciliación recupera reservas vencidas si falló el encolado o se reinició el proceso.
     *   `ganga_queue`: Si un vendedor programa el "Precio Ganga" N minutos antes del fin, se encola un trabajo con el *delay* correspondiente. Reprogramar el horario invalida el trabajo anterior; el worker verifica configuración y estado en BD antes de activar.
+    *   `publication_queue`: Persiste el fin natural y publica `publication_expired`; comprueba fecha esperada y estado bajo bloqueo. Las tres colas comparten Redis con AOF y política noeviction en desarrollo, jobs con reintentos exponenciales y namespace `BULLMQ_PREFIX` (default tapcampus). QueueService registra errores de encolado sin revertir un commit SQL; JobsService reconcilia por lotes al arrancar y periódicamente. Jobs obsoletos se invalidan por comparación de fecha/configuración en BD. Workers se cierran antes de desconectar Prisma y las colas. Socket.io comparte el puerto REST y agrega cada conexión al room global `feed`.
 
 ## 8. Datos Semilla (Data Seeding)
 Al inicializar la base de datos (`prisma db seed`), se deben insertar obligatoriamente los siguientes catálogos correspondientes a la UABC:
@@ -143,6 +152,8 @@ El proyecto Backend requiere la definición estricta de las siguientes variables
 *   `DATABASE_URL` (URL de conexión a PostgreSQL)
 *   `JWT_SECRET` (Llave secreta de firma de Tokens)
 *   `REDIS_URL` (Conexión al manejador de colas BullMQ)
+*   `BULLMQ_PREFIX` (Opcional, predeterminado `tapcampus`; separar por entorno/base de datos para evitar cruzar jobs)
+*   `RECONCILIATION_INTERVAL_MS` (Opcional, predeterminado `30000`, entero >=100; conciliación adicional al arranque)
 *   `PORT` (Puerto expuesto de NestJS, usualmente 3000)
 *   `CORS_ORIGINS` (Orígenes web separados por coma; desarrollo: `http://localhost:8081,http://localhost:19006`; las solicitudes nativas sin Origin siguen disponibles)
 *   `UPLOADS_DIR` (Opcional, predeterminado `uploads` relativo al directorio de arranque Backend; directorio local de imágenes)

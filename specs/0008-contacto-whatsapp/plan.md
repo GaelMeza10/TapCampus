@@ -1,8 +1,10 @@
 # 0008 — Plan técnico
 
-Estado: **Planificado** | Especificación: `spec.md`
+Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Diseño
+
+Fase 3 usa proyección explícita de respuesta de reservas según actor y vigencia; prueba aislamiento HTTP y ausencia de contacto tras resolución para vendedor. No devolver relaciones Prisma completas. T-05 distingue evidencia API de URL/Linking pendientes.
 
 - En backend, usar `User.phone` únicamente en las respuestas autorizadas: detalle `STATIC` activo, respuesta de reserva `LIVE` al comprador y detalle de reserva al vendedor propietario. No incluir teléfonos protegidos en `GET /publications` ni eventos Socket.io. Probar lectura desde cuentas ajenas.
 - Validar al registrar diez dígitos nacionales con o sin `+52` y persistir `+52XXXXXXXXXX`. Revisar datos históricos antes de transformarlos; rechazar valores ambiguos. Construir `wa.me/52XXXXXXXXXX` desde el valor canónico sin duplicar prefijo.

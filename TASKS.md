@@ -31,12 +31,14 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 **Cierre fase 2 (2026-10-05):** build, tsc, 9 unitarias, 1 E2E existente, suite HTTP/SQL test:phase2 y check-sdd aprobados. Base original intacta. Esto cierra el backend 2.1–2.7; 0002–0005 conservan criterios móviles/eventos/reservas de fases posteriores pendientes.
 
 ## FASE 3: Backend - Core Complejo (Concurrencia y Eventos)
-- [ ] **3.1 Módulo de Reservas (Transacción Segura):** Implementar `POST /reservations` y consultas de reservas propias, detalle y listado del vendedor con permisos. Fijar precio, usar clave de idempotencia y permitir varias reservas del mismo comprador. **CRÍTICO:** Usar transacción interactiva con `SELECT ... FOR UPDATE`; devolver 200 y la reserva original al reintentar la misma clave, o 409 si no hay stock para una acción nueva.
-- [ ] **3.2 Acciones de Reserva (Completar/Cancelar):** Crear endpoints para confirmar entrega (solo el vendedor, también tras `end_time` dentro de sus 20 minutos) y cancelar (solo el comprador). Actualizar la máquina de estados.
-- [ ] **3.3 Configuración de BullMQ (Redis):** Instalar BullMQ, conectar a Redis e instanciar el Worker encargado de procesar la lógica de expiración en segundo plano.
-- [ ] **3.4 Job de Expiración (20 mins):** Al crear una reserva, inyectar un trabajo a la `reservation_queue` con un delay de 20 min. Al ejecutarse, verificar si el estado sigue en `ACTIVE` y, de ser así, devolver stock y emitir evento Socket.
-- [ ] **3.5 WebSockets Gateway (Socket.io):** Inicializar el Gateway. Implementar emisión de eventos obligatorios: `stock_updated`, `publication_expired` y `ganga_activated`.
-- [ ] **3.6 Precio ganga programado:** Encolar, reprogramar y ejecutar la activación con BullMQ/Redis; impedir activación de publicaciones finalizadas y emitir `ganga_activated` tras confirmar el cambio.
+- [x] **3.1 Módulo de Reservas (Transacción Segura):** Implementar `POST /reservations` y consultas de reservas propias, detalle y listado del vendedor con permisos. Fijar precio, usar clave de idempotencia y permitir varias reservas del mismo comprador. **CRÍTICO:** Usar transacción interactiva con `SELECT ... FOR UPDATE`; devolver 200 y la reserva original al reintentar la misma clave, o 409 si no hay stock para una acción nueva.
+- [x] **3.2 Acciones de Reserva (Completar/Cancelar):** Crear endpoints para confirmar entrega (solo el vendedor, también tras `end_time` dentro de sus 20 minutos) y cancelar (solo el comprador). Actualizar la máquina de estados.
+- [x] **3.3 Configuración de BullMQ (Redis):** Instalar BullMQ, conectar a Redis e instanciar el Worker encargado de procesar la lógica de expiración en segundo plano.
+- [x] **3.4 Job de Expiración (20 mins):** Al crear una reserva, inyectar un trabajo a la `reservation_queue` con un delay de 20 min. Al ejecutarse, verificar si el estado sigue en `ACTIVE` y, de ser así, devolver stock y emitir evento Socket.
+- [x] **3.5 WebSockets Gateway (Socket.io):** Inicializar el Gateway. Implementar emisión de eventos obligatorios: `stock_updated`, `publication_expired` y `ganga_activated`.
+- [x] **3.6 Precio ganga programado:** Encolar, reprogramar y ejecutar la activación con BullMQ/Redis; impedir activación de publicaciones finalizadas y emitir `ganga_activated` tras confirmar el cambio.
+
+**Cierre fase 3 (2026-10-05):** 3.1–3.6 y estrés 6.1 aprobados: 50 claves distintas 1×201/49×409; misma clave 1×201/49×200/un ID. Worker/reinicio/conciliación/carreras, dos clientes Socket.io y ganga/reprogramación aprobados. Build/tsc/lint, 9 unitarias/1 E2E, fases 2/3 y check-sdd aprobados. AC→T→EV en 0001/0003/0006/0007/0008 y phase3.json; UI/Linking pendientes.
 
 ## FASE 4: Frontend Móvil - Arquitectura (React Native)
 - [ ] **4.1 Configurar Expo y Tema:** Expo Router y `theme.js` ya existen; revisar la cobertura de todos los tokens de UI/UX y la navegación real antes de cerrar la casilla.
@@ -52,7 +54,7 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 - [ ] **5.6 Contacto WhatsApp:** Integrar enlace directo en `STATIC` y enlace tras reserva confirmada en `LIVE`; proteger teléfonos en respuestas públicas y probar URL/errores conforme a 0008.
 
 ## FASE 6: Validación, QA y Despliegue
-- [ ] **6.1 Pruebas de Estrés:** Ejecutar 50 reservas concurrentes con claves distintas para la última pieza y comprobar 1×201/49×409; probar aparte reintentos concurrentes con la misma clave, sin doble descuento. Registrar resultados en 0001 `verification.md`.
+- [x] **6.1 Pruebas de Estrés:** Ejecutar 50 reservas concurrentes con claves distintas para la última pieza y comprobar 1×201/49×409; probar aparte reintentos concurrentes con la misma clave, sin doble descuento. Registrar resultados en 0001 `verification.md`.
 - [ ] **6.2 Despliegue Backend:** Subir PostgreSQL y Redis a la nube. Configurar variables de entorno y desplegar la API NestJS en producción.
 - [ ] **6.3 Empaquetado Móvil:** Generar APK de prueba usando Expo EAS Build y distribuir localmente.
 - [ ] **6.4 Moderación SHOULD:** Si se incluye RF-14, cerrar 0009 DEC-01/02 antes de implementar; después añadir unicidad de denunciante/publicación, reporte, ocultamiento al tercer denunciante distinto y revisión del moderador. Registrar EV-01..03 de 0009.

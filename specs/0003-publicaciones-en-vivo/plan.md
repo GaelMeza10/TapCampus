@@ -1,6 +1,6 @@
 # 0003 — Plan técnico
 
-Estado: **En implementación; backend fase 2 verificado** | Especificación: `spec.md`
+Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Datos, API y seguridad
 
@@ -27,5 +27,7 @@ Reutilizar CHECK y modelos de fase 1 sin migraciones. UploadsModule usa FileInte
 | VI | Sin pagos/GPS; cambios de ciclo de vida reabren spec. |
 
 ## Pruebas y dependencias
+
+Fase 3 añade finish y expirePublication transaccionales; worker y conciliación de JobsModule llaman servicios exportados. Los jobs contienen fecha esperada y rechazan horarios obsoletos, y la conciliación recupera fin perdido. Mutaciones publican eventos tras commit; creación/edición encolan según la fila persistida actual. No modificar pantallas en este alcance.
 
 Orden: 0002 autenticación → catálogos de 0005 → subida y DTO → publicación/edición → expiración y venta física → UI y eventos → pruebas. Probar AC-01/02 mediante HTTP, AC-03/04 con reloj controlado, reserva previa y lectura de feed, AC-05 con reserva/venta simultáneas y AC-06/07 con dos vendedores. Registrar no regresión de 0001.

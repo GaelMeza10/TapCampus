@@ -1,6 +1,6 @@
 # 0008 — Contacto por WhatsApp
 
-Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
+Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Contexto y fuentes
 
@@ -32,4 +32,6 @@ RF-13, RF-07 y RF-06; US-09 y US-11. `docs/02_REQUIREMENTS.md` exige enlace `wa.
 
 ## Decisiones
 
-DEC-01 está resuelta junto con 0002 DEC-03. Implementación y pruebas pendientes.
+Precisión backend fase 3: comprador relacionado recibe sellerContact.phone en POST/mine/detalle de sus reservas; vendedor recibe buyer {id,name} y buyerContact.phone únicamente si ACTIVE y antes de expiresAt. Ajeno →403. Feed/LIVE públicos y eventos no contienen teléfono. Enlaces y apertura móvil siguen fuera de fase 3.
+
+DEC-01 está resuelta junto con 0002 DEC-03. Privacidad/contacto backend verificados; Linking pendiente.

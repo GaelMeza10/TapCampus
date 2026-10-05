@@ -1,8 +1,10 @@
 # 0007 — Plan técnico
 
-Estado: **Planificado** | Especificación: `spec.md`
+Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Diseño
+
+RealtimeModule exporta gateway a productores sin importar esos módulos. Emisión room feed solo después del commit y sin evento para intento fallido/repetido. E2E usa dos socket.io-client reales y comparación SQL de payloads; desconectar/reconectar y consultar REST demuestra soporte backend, no listeners móviles. Cierre de proceso habilita shutdown hooks y cierra workers/colas.
 
 - Crear gateway Socket.io con room global para el feed. Tipar y documentar nombres/payloads de `docs/03_ARCHITECTURE.md`; serializar `newPrice` como cadena decimal para no perder precisión monetaria.
 - Emitir `stock_updated`, `publication_expired` y `ganga_activated` después del commit de sus transacciones. Un job repetido que no cambia estado no emite una transición adicional. En errores de emisión, la API de lectura permite recuperar estado; no considerar al socket como fuente de verdad.

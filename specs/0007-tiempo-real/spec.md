@@ -1,10 +1,10 @@
 # 0007 — Actualización en tiempo real del feed
 
-Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
+Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Contexto y fuentes
 
-RNF-02; US-03, US-05 y US-06. `docs/03_ARCHITECTURE.md` define Socket.io y tres eventos; RF-04, RF-05b, RF-07, RF-09 y RF-12 producen cambios que el usuario debe ver. `Frontend/src/app/homePage.tsx` existe, pero no hay gateway ni cliente Socket.io implementados.
+RNF-02; US-03, US-05 y US-06. `docs/03_ARCHITECTURE.md` define Socket.io y tres eventos; RF-04, RF-05b, RF-07, RF-09 y RF-12 producen cambios que el usuario debe ver. El gateway backend está verificado. `Frontend/src/app/homePage.tsx` existe; su integración Socket.io sigue pendiente.
 
 ## Alcance y contrato observable
 
@@ -15,6 +15,8 @@ RNF-02; US-03, US-05 y US-06. `docs/03_ARCHITECTURE.md` define Socket.io y tres 
 - Fuera de alcance: chat, notificaciones push, reloj de servidor transmitido cada segundo y geolocalización.
 
 ## Criterios de aceptación
+
+Concreción backend fase 3: Socket.io en el mismo puerto REST, namespace /, room global feed incorporado al conectar. CORS usa CORS_ORIGINS y admite cliente nativo sin Origin. Eventos públicos sin JWT ni datos personales; no existen mutaciones por socket. Recuperación se comprueba con reconexión y reconsulta HTTP; integración automática móvil queda pendiente.
 
 ### AC-01 — Stock visible sin recarga manual
 **Dado** dos clientes conectados al feed, **cuando** una operación confirmada cambia stock, **entonces** ambos reflejan `newStock` sin gesto de recarga, usando `stock_updated` con el ID correcto.

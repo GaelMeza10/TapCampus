@@ -1,12 +1,12 @@
 # 0001 — Reservas de ventas en vivo
 
-Estado: **Planificado; implementación pendiente** | Fecha: 2026-10-01
+Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Contexto y fuentes
 
 El comprador necesita apartar una pieza durante 20 minutos y el vendedor confirmar su entrega. Fuentes: `docs/02_REQUIREMENTS.md` (RF-04, RF-05, RF-05b, RF-07 a RF-10, RNF-01, RNF-02), `docs/03_ARCHITECTURE.md` (Reservation, rutas y eventos), `docs/05_USER_FLOWS.md`, `docs/06_USER_STORIES_AND_TASKS.md` (US-06, US-07, US-07b, US-08), `docs/07_VALIDATION.md` y `TASKS.md` (3.1–3.5, 5.3, 6.1).
 
-El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CHECK de stock, migrados y verificados por 0010 (2026-10-04). No hay módulo de reservas implementado. El backend de autenticación ya compila; siguen faltando guards y endpoints de publicaciones como dependencias.
+El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CHECK de stock, migrados y verificados por 0010 (2026-10-04). Fases 1/2 revalidadas y reservas backend verificadas en fase 3; móvil pendiente.
 
 ## Alcance
 
@@ -68,4 +68,8 @@ El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CH
 
 ## Decisiones
 
-DEC-02/03 y 0003 DEC-02 están resueltas en `decisions.md`. Faltan implementación y evidencia de ejecución.
+## Precisión del contrato backend de fase 3 — 2026-10-05
+
+Complete/cancel reciben cuerpo vacío y devuelven 200 con la reserva; estado terminal o plazo vencido devuelve 409 sin mutación. El contacto del vendedor se entrega al comprador relacionado desde la reserva creada; el teléfono del comprador solo al vendedor relacionado mientras la reserva esté ACTIVE y no vencida. Consultas sin JWT: 401; ID inexistente: 404. UUID y claves se normalizan a minúsculas. El vencimiento se comprueba después de adquirir los bloqueos, con hora de servidor. Los reintentos devuelven el estado persistido actual incluso después de resolverse la reserva.
+
+DEC-02/03 y 0003 DEC-02 están resueltas en `decisions.md`. Backend aprobado en EV-01..09; móvil pendiente.

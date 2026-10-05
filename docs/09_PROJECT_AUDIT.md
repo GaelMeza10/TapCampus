@@ -32,11 +32,11 @@ Fecha de corte: 2026-10-05; se conserva la evidencia histórica del 2026-10-01/0
 | GAP-11 | README listaba filtro de palabras clave como indispensable, pero no existe RF. | Se aclaró como idea fuera del MVP comprometido; necesita requisito si se decide incluir. | Fuera de alcance MUST actual. |
 | GAP-12 | La migración 20260929232323_sdd_architecture conserva DROP TABLE; estaba aplicada localmente desde 2026-09-29. | Mantener checksum; ruta complementaria segura con archivo íntegro, UUID y precios con procedencia; respaldo real y ensayo antiguo poblado aprobados en 0010 EV-04. | Resuelto para fase 1 local; otros entornos requieren inventario/respaldo/ensayo propios. |
 | GAP-13 | Seed previo tenía errores de imports .ts/tipos pg y ejecución no comprobada. | Imports sin extensión, adapter directo, generador CommonJS y ts-node local; tsc y seed repetido aprobados. | Resuelto, 0010 EV-01/05. |
-| GAP-14 | Faltaba plantilla de entorno y prueba funcional de conexión. | Plantilla con CORS_ORIGINS; PostgreSQL/Prisma conectaron realmente. | Resuelto para fase 1, 0010 EV-02. Redis corresponde a fase 3. |
+| GAP-14 | Faltaba plantilla de entorno y prueba funcional de conexión. | Plantilla con CORS_ORIGINS; PostgreSQL/Prisma conectaron realmente. | Resuelto para fase 1, 0010 EV-02. Redis verificado en fase 3, 0001 EV-06. |
 | GAP-15 | Stock no negativo carecía de CHECK. | Migración aditiva y SQLSTATE 23514 para stock -1; NULL en STATIC válido. | Resuelto y verificado, 0010 EV-03. |
 | GAP-16 | README tenía nombres/estados españoles, `stockReservado` y categorías «Otros» ausentes del modelo actual. | Resumen de modelo y categorías alineado a arquitectura/esquema; el comportamiento de negocio se conserva en requisitos. | Resuelto documentalmente. |
-| GAP-17 | Reservation carecía de precio e idempotencia. | Columnas NOT NULL, Decimal(10,2), UUID, unicidad comprador/clave e índice de fecha migrados; precios históricos solo con evidencia, múltiples reservas permitidas. | Esquema verificado, 0010 EV-03/04 y 0001 EV-10; API/reintentos pendientes en 0001. |
-| GAP-18 | Las reglas de reserva repetida, fin horario y formato de teléfono no tenían respuesta única. | Decisiones del usuario del 2026-10-01 incorporadas a RF-02/04/07/08/12/13, expedientes y trazabilidad. | Resuelto documentalmente; pruebas pendientes. |
+| GAP-17 | Reservation carecía de precio e idempotencia. | Columnas NOT NULL, Decimal(10,2), UUID, unicidad comprador/clave e índice de fecha migrados; precios históricos solo con evidencia, múltiples reservas permitidas. | Esquema verificado, 0010 EV-03/04 y 0001 EV-10; API/reintentos verificados en 0001 EV-01/02/09. |
+| GAP-18 | Las reglas de reserva repetida, fin horario y formato de teléfono no tenían respuesta única. | Decisiones del usuario del 2026-10-01 incorporadas a RF-02/04/07/08/12/13, expedientes y trazabilidad. | Backend verificado en 0001/0006/0008; móvil pendiente. |
 | GAP-19 | RF-14 tenía historia y tarea global, pero ningún criterio `AC` ni evidencia `EV` en la trazabilidad. | Se creó 0009 con AC/T/EV planificados. El flujo de revisión del moderador y la validez de reportes requieren DEC-01/02 si se incluye este SHOULD. | Cobertura documental creada; decisión opcional pendiente. |
 
 ## Revisión backend fase 2 — 2026-10-05
@@ -47,7 +47,7 @@ Build, tsc, lint, 5 suites/9 unitarias, 1 E2E existente y suite HTTP/SQL `npm ru
 
 2.1–2.7 cerradas con 0002 EV-08, 0003 EV-08..10, 0004 EV-06 y 0005 EV-06. Los expedientes 0002–0005 permanecen En implementación por móvil, eventos, expiración persistente y reservas; no se declara el MVP ni esos expedientes Verificados completos. No hay bloqueo de fase 2 en entorno local. npm advirtió engines del CLI bajo Node 24.13, sin fallo de build/pruebas; no se cambiaron versiones del lock. Ejecutor corregido tras timeout en frío y doble espera de cierre, ejecución final salida 0.
 
-El siguiente trabajo autorizado por el backlog es fase 3 (reservas/colas/eventos); las pantallas y Linking pertenecen a fases 4–5.
+Tras aquel corte seguía fase 3, ya verificada en la revisión siguiente; pantallas/Linking corresponden a fases 4–5.
 
 ## Evidencia histórica de la revisión del 2026-10-01
 
@@ -75,3 +75,13 @@ La recomendación histórica del 2026-10-04 era completar guards y endpoints/fil
 4. **Teléfonos:** se aceptan diez dígitos mexicanos con o sin `+52`, de cualquier región; se guardan en formato `+52XXXXXXXXXX` (0002 DEC-03; 0008 DEC-01).
 
 No quedan decisiones de negocio imprescindibles abiertas en los ocho expedientes `MUST`. En 0009 siguen abiertas dos decisiones opcionales sobre moderación; no bloquean el MVP. Permanecen dependencias técnicas y pruebas sin ejecutar.
+
+## Revisión backend fase 3 — 2026-10-05
+
+Git inicial limpio. Fases 1/2 revalidadas: cuatro migraciones/diff vacío, seed doble/catálogos 5/8 y auth/JWT/uploads/publicaciones/permisos/stock reales con test:phase2. Original intacta. Dependencia mínima resuelta: Redis 7.4.11 volumen/AOF/noeviction y paquetes BullMQ/Socket.io, sin migraciones nuevas.
+
+Reservas JWT/consultas/precio fijo/20 min/idempotencia, transacciones SELECT FOR UPDATE, confirmación vendedor/cancelación comprador, fin persistente/cierre, tres workers/conciliación, gateway sin contactos y ganga manual/programada/reprogramada/prioridad REST implementados. Jobs releen BD; eventos tras commit, sin doble transición/stock.
+
+Build/tsc/lint, 9 unitarias/1 E2E, fase 2, fase 3 y check-sdd aprobados. [0001 verification](../specs/0001-reservas/verification.md) y [phase3.json](../specs/0001-reservas/evidence/phase3.json): 311 HTTP/16 PASS; 50 claves distintas 1×201/49×409, misma clave 1×201/49×200/un ID; carreras de resolución/venta, worker detenido/reiniciado con Redis persistente, jobs perdidos/duplicados, fin/ganga/dos clientes/reconexión+REST. Aceleración solo de timestamps de fixtures, plazo de producción fijo.
+
+3.1–3.6 y 6.1 completos con AC→T→EV. Móvil/Linking/UAT siguen pendientes; sin bloqueo backend local, MVP completo no declarado. Incidencias de verificador (Queue.client ausente, pg UTC e imagen tras nuevo puerto) corregidas antes del ensayo final. Advertencias engines CLI Node 24.13 sin fallar. Se retomó convergencia tras interrupción del turno; phase3.json confirmó PASS.
