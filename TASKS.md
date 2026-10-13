@@ -41,9 +41,11 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 **Cierre fase 3 (2026-10-05):** 3.1–3.6 y estrés 6.1 aprobados: 50 claves distintas 1×201/49×409; misma clave 1×201/49×200/un ID. Worker/reinicio/conciliación/carreras, dos clientes Socket.io y ganga/reprogramación aprobados. Build/tsc/lint, 9 unitarias/1 E2E, fases 2/3 y check-sdd aprobados. AC→T→EV en 0001/0003/0006/0007/0008 y phase3.json; UI/Linking pendientes.
 
 ## FASE 4: Frontend Móvil - Arquitectura (React Native)
-- [ ] **4.1 Configurar Expo y Tema:** Expo Router y `theme.js` ya existen; revisar la cobertura de todos los tokens de UI/UX y la navegación real antes de cerrar la casilla.
-- [ ] **4.2 Componentes Base UI:** Crear componentes reutilizables: `PrimaryButton`, `CustomInput` (con íconos y manejo de errores rojo), y `Card` con sombras (respetando las Heurísticas de Diseño).
-- [ ] **4.3 Interceptor HTTP (Axios):** Existe el interceptor que lee JWT de `expo-secure-store`; falta verificación de integración con una ruta protegida.
+- [x] **4.1 Configurar Expo y Tema:** Expo Router con guardas y ancla sin bucles; `theme.js` fuera de rutas, tokens de UI/UX completos. 0011 EV-01/02/04.
+- [x] **4.2 Componentes Base UI:** `PrimaryButton`, `CustomInput` con ícono/error y `Card` con `RADIUS.lg`/`SHADOW.card` reutilizados y probados. 0011 EV-02/03.
+- [x] **4.3 Interceptor HTTP (Axios):** Bearer presente/ausente y 401 probados contra `GET /reservations/mine` protegido, con sesión/navegación en memoria. 0002 EV-09.
+
+**Cierre fase 4 (2026-10-13):** Frontend tsc, 2 suites/9 pruebas, exportación Expo Router y prueba HTTP Nest en memoria aprobados; check-sdd aprobado. No se inició app/backend ni se usaron puertos por indicación del usuario. La aceptación de formularios completos y el uso en dispositivo corresponden a fase 5.
 
 ## FASE 5: Frontend Móvil - Pantallas
 - [ ] **5.1 Pantallas de Auth:** Desarrollar `Login` y `Registro` usando `KeyboardAvoidingView`; aceptar teléfonos de cualquier región mexicana con diez dígitos o `+52`. Conectar al endpoint y guardar el JWT exitoso.

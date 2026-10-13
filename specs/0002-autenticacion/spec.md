@@ -1,10 +1,10 @@
 # 0002 — Autenticación y perfil obligatorio
 
-Estado: **En implementación; backend fase 2 verificado, móvil pendiente** | Fecha: 2026-10-05
+Estado: **En implementación; backend y fase 4.3 verificados, fase 5.1 pendiente** | Fecha: 2026-10-13
 
 ## Contexto y fuentes
 
-RF-01, RF-02, RNF-03; US-01 y US-02; `docs/03_ARCHITECTURE.md` (User, API y JWT), `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `TASKS.md` 1.1–1.4, 2.1–2.2, 4.3 y 5.1. En 0010 se corrigieron DTO/servicio a User y UUID, se comprobó la compilación y se probaron registro/login HTTP contra PostgreSQL. Backend y guards/CurrentUser verificados en EV-08 de fase 2; integración móvil con campos ingleses pendiente.
+RF-01, RF-02, RNF-03; US-01 y US-02; `docs/03_ARCHITECTURE.md` (User, API y JWT), `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `TASKS.md` 1.1–1.4, 2.1–2.2, 4.3 y 5.1. En 0010 se corrigieron DTO/servicio a User y UUID, se comprobó la compilación y se probaron registro/login HTTP contra PostgreSQL. Backend y guards/CurrentUser verificados en EV-08 de fase 2; interceptor y navegación de fase 4 en EV-09. El recorrido de formularios completos contra el backend/BD real corresponde a 5.1.
 
 ## Alcance
 

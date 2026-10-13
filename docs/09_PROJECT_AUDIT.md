@@ -57,6 +57,12 @@ Tras aquel corte seguía fase 3, ya verificada en la revisión siguiente; pantal
 - No se ejecutaron migraciones, seed ni pruebas contra una base de datos real. Ningún `EV` de los expedientes se considera aprobado.
 - Se inspeccionaron el esquema Prisma, auth, cliente HTTP, flujo de registro e inicio de sesión y documentación. La presencia de módulos/pantallas se registra como **implementación parcial**.
 
+## Revisión frontend fase 4 — 2026-10-13
+
+Se corrigió la redirección global que sacaba al usuario de registro y podía reemplazar rutas repetidamente. Expo Router SDK 57 usa guardas para login/registro/home y `index` como ancla tras hidratar SecureStore. `theme.js` se movió fuera de `src/app` porque la primera exportación lo exponía como `/styles/theme`; la exportación final contiene solo las cuatro rutas de pantalla y rutas internas de Expo. Los tres componentes compartidos se aplicaron a autenticación y la tarjeta de muestra.
+
+`Frontend` tsc y 2 suites/9 pruebas aprobaron; `Backend` build y prueba Axios con `ReservationsController`/`JwtAuthGuard` reales en memoria aprobaron Bearer presente/ausente y 401. No se inició la app ni el backend ni se ocuparon puertos por indicación del usuario. 4.1–4.3 están verificadas en 0011 EV-01..04 y 0002 EV-09. El recorrido manual en dispositivo y la integración de formularios completos con BD son alcance de 5.1.
+
 ## Orden recomendado para cerrar la deuda
 
 Actualización 2026-10-04: fase 1 implementada y verificada. Build, tsc, validate/status/diff, seed doble, 9 pruebas unitarias, 1 E2E y ensayo integral de infraestructura aprobaron. Inventario real: 7→5 zonas, 8 categorías reconciliadas, 3→4 migraciones y cero filas de negocio antes/después. Respaldo real restaurado con hashes idénticos; fixtures antiguos/modernos migrados y recuperados sin deducir precios. Detalles en [0010 verification](../specs/0010-infraestructura-y-base-de-datos/verification.md). Los criterios HTTP/móviles de reservas y catálogos conservan su verificación pendiente.

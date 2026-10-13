@@ -1,11 +1,11 @@
 # Matriz de trazabilidad de TapCampus
 
-Fecha: 2026-10-05. Esta matriz cubre **todos los requisitos identificados** en `02_REQUIREMENTS.md`. `TASKS.md` aporta tareas globales; solo `specs/` aporta `AC → T → EV`. Fases 1/2/3 backend verificadas; UI/listeners móviles/Linking pendientes.
+Fecha: 2026-10-13. Esta matriz cubre **todos los requisitos identificados** en `02_REQUIREMENTS.md`. `TASKS.md` aporta tareas globales; solo `specs/` aporta `AC → T → EV`. Fases 1/2/3 backend y fase 4 arquitectura verificadas; pantallas completas/listeners móviles/Linking pendientes.
 
 | Requisito | Historia | Tarea global | Feature / criterio | Evidencia y estado |
 | --- | --- | --- | --- | --- |
-| RF-01 Registro UABC | US-01 | 1.1–1.3, 2.1, 5.1 | [0002](../specs/0002-autenticacion/spec.md) AC-01/02/03/06; [0010](../specs/0010-infraestructura-y-base-de-datos/spec.md) AC-01/02/04 | 0010 EV-01/02/04 y 0002 EV-08 aprobadas backend; 0002 T-03/T-06 completas. Móvil EV-01/03/06 pendiente. |
-| RF-02 Perfil obligatorio | US-01 | 1.3, 2.1, 5.1 | 0002 AC-02/03, [0008](../specs/0008-contacto-whatsapp/spec.md) AC-05 y 0010 AC-04; teléfono mexicano con o sin +52 | 0010 EV-04 y 0002 EV-08 aprobadas backend; normalización/hash/faltantes comprobados. 0008 Linking y móvil pendientes. |
+| RF-01 Registro UABC | US-01 | 1.1–1.3, 2.1, 4.1–4.3, 5.1 | [0002](../specs/0002-autenticacion/spec.md) AC-01/02/03/05/06; [0010](../specs/0010-infraestructura-y-base-de-datos/spec.md) AC-01/02/04; [0011](../specs/0011-arquitectura-visual-movil/spec.md) AC-01/02/03 | 0010 EV-01/02/04 y 0002 EV-08 backend; 0002 EV-09 interceptor/JWT/401 y 0011 EV-01..04 arquitectura móvil aprobados. Formularios completos con backend/BD de 5.1 pendientes. |
+| RF-02 Perfil obligatorio | US-01 | 1.3, 2.1, 4.2, 5.1 | 0002 AC-02/03, [0011](../specs/0011-arquitectura-visual-movil/spec.md) AC-02/03, [0008](../specs/0008-contacto-whatsapp/spec.md) AC-05 y 0010 AC-04; teléfono mexicano con o sin +52 | 0010 EV-04 y 0002 EV-08 backend; 0011 EV-02/03 componentes/formulario base aprobados. Registro completo de 5.1 y 0008 Linking pendientes. |
 | RF-03 Publicación en vivo | US-03 | 1.3, 2.3, 2.4, 5.4 | [0003](../specs/0003-publicaciones-en-vivo/spec.md) AC-01/02/03/06; 0010 AC-03/04 | 0010 EV-03/04 y 0003 EV-08/09/10 backend aprobadas, T-02/T-03/T-08 completas; UI/temporizador pendientes. |
 | RF-04 Expirar por tiempo/stock | US-03, US-08 | 2.4, 3.5, 5.2 | 0003 AC-03/04; [0001](../specs/0001-reservas/spec.md) AC-08 | 0003 T-04/T-09 → EV-04 y 0001 T-05/T-08 → EV-08 aprobadas: fin persistente/evento/reposición vigente; móvil pendiente. |
 | RF-05 Cierre anticipado [SHOULD] | US-05d | 5.5 | 0003 AC-07; 0001 AC-07 | 0003 T-09 → EV-07 y 0001 T-04/T-08 → EV-07 aprobadas: cierre conserva reservas; UI pendiente. |
