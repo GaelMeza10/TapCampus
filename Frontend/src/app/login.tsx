@@ -1,335 +1,57 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StatusBar,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { COLORS, RADIUS, SHADOW } from './styles/theme';
-import { router } from 'expo-router';
+import { KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Link } from 'expo-router';
+import { COLORS } from '../theme';
 import { useAuth } from '@/context/AuthContext';
+import Card from '@/components/Card';
+import CustomInput from '@/components/CustomInput';
+import PrimaryButton from '@/components/PrimaryButton';
 
-export default function PantallaLogin() {
+export default function Login() {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-
-  async function handleLogin() {
-    
-    if (!email.trim()) {
-      setError('El correo es obligatorio.');
-      return;
-    }
-
-    const esEmailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-
-    if (!esEmailValido) {
-      setError('Ingresa un correo electrónico válido.');
-      return;
-    }
-
-    if (!password) {
-      setError('La contraseña es obligatoria.');
-      return;
-    }
-
-    try {
-      setError('');
-      await login({ correo: email.trim(), contrasena: password });
-    } catch (err: any) {
-      const mensaje = err?.response?.data;
-      if (Array.isArray(mensaje?.message)) {
-        setError(mensaje.message.join('\n'));
-      } else {
-        setError(mensaje?.message || 'Correo o contraseña incorrectos.');
-      }
-    }
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
-
-
-      <View style={styles.gridOverlay} pointerEvents="none" />
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scroll}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          
-          <View style={styles.logoRow}>
-            <View style={styles.logoIcon}>
-              <Ionicons name="location-sharp" size={22} color={COLORS.white} />
-            </View>
-            <View>
-              <Text style={styles.logoName}>TapCampus</Text>
-              <Text style={styles.logoTagline}>TU CAMPUS EN LÍNEA</Text>
-            </View>
-          </View>
-
-         
-          <View style={styles.card}>
-            <Text style={styles.title}>Bienvenido a{'\n'}TapCampus</Text>
-            <Text style={styles.subtitle}>
-              Accede con tu correo institucional.
-            </Text>
-
-            <View style={styles.inputWrapper}>
-              <Ionicons
-                name="mail-outline"
-                size={18}
-                color={COLORS.textLight}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={styles.input} 
-                placeholder="tu.nombre@uabc.edu.mx"
-                placeholderTextColor={COLORS.textLight}
-                value={email}
-                onChangeText={(v) => {setEmail(v); setError('');}}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
-
-            
-            <View style={styles.inputWrapper}>
-              <Ionicons
-                name="lock-closed-outline"
-                size={18}
-                color={COLORS.textLight}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={[styles.input, styles.inputPassword]}
-                placeholder="Contraseña"
-                placeholderTextColor={COLORS.textLight}
-                value={password}
-                 onChangeText={(v) => {setPassword(v); setError('');}}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-              />
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeButton}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
-                <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={18}
-                  color={COLORS.textLight}
-                />
-              </TouchableOpacity>
-            </View>
-
-            {error ? (
-              <View style={styles.errorBox}>
-                <Ionicons name="alert-circle-outline" size={16} color={COLORS.error} />
-                <Text style={styles.errorText}>{error}</Text>
-              </View>
-            ) : null}
-
-            
-            <TouchableOpacity
-              style={[styles.primaryButton, loading && { opacity: 0.7 }]}
-              onPress={async () => {
-                setLoading(true);
-                await handleLogin();
-                setLoading(false);
-              }}
-              activeOpacity={0.85}
-              disabled={loading}
-            >
-              <Text style={styles.primaryButtonText}>
-                {loading ? 'Cargando...' : 'Iniciar sesión'}
-              </Text>
-            </TouchableOpacity>
-
-
-          </View>
-
-         
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>¿Aún no tienes cuenta? </Text>
-            <TouchableOpacity onPress={() => router.push('/register')}>
-              <Text style={styles.footerLink}>Regístrate</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
+  async function submit() {
+    if (loading) return;
+    if (!email.trim().toLowerCase().endsWith('@uabc.edu.mx')) { setError('Ingresa tu correo @uabc.edu.mx.'); return; }
+    if (!password) { setError('La contraseña es obligatoria.'); return; }
+    setLoading(true);
+    setError('');
+    try { await login({ email: email.trim(), password }); }
+    catch (cause: any) {
+      const message = cause?.response?.data?.message;
+      setError(Array.isArray(message) ? message.join('\n') : message || 'Correo o contraseña incorrectos.');
+    } finally { setLoading(false); }
+  }
+  return <SafeAreaView style={styles.screen}>
+    <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.fill}>
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+        <Text style={styles.brand}>TapCampus</Text>
+        <Card style={styles.card}>
+          <Text style={styles.title}>Bienvenido a TapCampus</Text>
+          <Text style={styles.subtitle}>Accede con tu correo institucional.</Text>
+          <CustomInput icon="mail-outline" accessibilityLabel="Correo institucional" placeholder="tu.nombre@uabc.edu.mx" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={value => { setEmail(value); setError(''); }} error={error && !email.trim().toLowerCase().endsWith('@uabc.edu.mx') ? error : undefined} />
+          <CustomInput icon="lock-closed-outline" accessibilityLabel="Contraseña" placeholder="Contraseña" secureTextEntry value={password} onChangeText={value => { setPassword(value); setError(''); }} error={error && email.trim().toLowerCase().endsWith('@uabc.edu.mx') ? error : undefined} />
+          <PrimaryButton title="Iniciar sesión" loading={loading} onPress={submit} />
+        </Card>
+        <View style={styles.footer}><Text style={styles.footerText}>¿Aún no tienes cuenta? </Text><Link href="/register" asChild><Pressable accessibilityRole="link"><Text style={styles.link}>Regístrate</Text></Pressable></Link></View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  </SafeAreaView>;
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-
-  gridOverlay: {
-    ...StyleSheet.absoluteFill,
-    opacity: 0.15,
-    backgroundColor: 'transparent',
-    borderColor: '#8FAB8A',
-    
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scroll: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingBottom: 32,
-    justifyContent: 'center',
-  },
-
-  // Logo
-  logoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 32,
-    marginTop: 16,
-  },
-  logoIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: COLORS.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: COLORS.textDark,
-    letterSpacing: 0.2,
-  },
-  logoTagline: {
-    fontSize: 10,
-    fontWeight: '500',
-    color: COLORS.textMedium,
-    letterSpacing: 1.2,
-  },
-
-  // Card
-  card: {
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.lg,
-    padding: 28,
-    ...SHADOW.card,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: '800',
-    color: COLORS.textDark,
-    lineHeight: 36,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: COLORS.textMedium,
-    marginBottom: 28,
-    lineHeight: 20,
-  },
-
-  // Inputs
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.inputBg,
-    borderRadius: RADIUS.md,
-    marginBottom: 14,
-    paddingHorizontal: 14,
-    height: 52,
-  },
-  inputIcon: {
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 15,
-    color: COLORS.textDark,
-    height: '100%',
-  },
-  inputPassword: {
-    paddingRight: 8,
-  },
-  eyeButton: {
-    padding: 4,
-  },
-
-  // Botón primario
-  primaryButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: RADIUS.full,
-    height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-    marginBottom: 18,
-  },
-  primaryButtonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-  },
-
-  forgotText: {
-    color: COLORS.primary,
-    fontSize: 14,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-
-  // Footer
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 28,
-  },
-  footerText: {
-    fontSize: 14,
-    color: COLORS.textMedium,
-  },
-  footerLink: {
-    fontSize: 14,
-    color: COLORS.primary,
-    fontWeight: '700',
-  },
-   errorBox: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-      backgroundColor: '#FEF2F2',   
-      borderRadius: RADIUS.md,
-      padding: 12,
-      marginBottom: 12,
-    },
-    errorText: {
-      flex: 1,
-      fontSize: 13,
-      color: COLORS.error,          
-      lineHeight: 18,
-    },
+  screen: { flex: 1, backgroundColor: COLORS.background },
+  fill: { flex: 1 },
+  scroll: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 32 },
+  brand: { fontSize: 20, fontWeight: '800', color: COLORS.primary, marginBottom: 24 },
+  card: { padding: 24 },
+  title: { color: COLORS.textDark, fontSize: 30, fontWeight: '800', marginBottom: 8 },
+  subtitle: { color: COLORS.textMedium, fontSize: 14, marginBottom: 24 },
+  footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 28 },
+  footerText: { color: COLORS.textMedium, fontSize: 14 },
+  link: { color: COLORS.primary, fontSize: 14, fontWeight: '700' },
 });

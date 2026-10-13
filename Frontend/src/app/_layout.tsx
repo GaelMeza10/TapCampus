@@ -1,29 +1,23 @@
-import {useEffect} from 'react'
-import {AuthProvider, useAuth} from '../context/AuthContext'
-import {Stack, router } from 'expo-router'
+import { Stack } from 'expo-router';
+import { AuthProvider, useAuth } from '../context/AuthContext';
 
-function RedireccionInicio(){ 
-    const {estaAutenticado, estaCargando} = useAuth();
-
-    useEffect(() => {
-        if(estaCargando) return;
-        if(estaAutenticado){
-            router.replace('/homePage');
-        }
-        if(!estaAutenticado){
-            router.replace('/login');
-        }
-    },[estaAutenticado, estaCargando]);
-
-    return(
-        <Stack screenOptions={{headerShown: false}}/>
-    )
+function RootNavigator() {
+  const { estaAutenticado, estaCargando } = useAuth();
+  if (estaCargando) return null;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Protected guard={!estaAutenticado}>
+        <Stack.Screen name="login" />
+        <Stack.Screen name="register" />
+      </Stack.Protected>
+      <Stack.Protected guard={estaAutenticado}>
+        <Stack.Screen name="homePage" />
+      </Stack.Protected>
+    </Stack>
+  );
 }
-    
- export default function RootLayout() {
-      return (
-        <AuthProvider>
-          <RedireccionInicio/>
-        </AuthProvider>
-      );
-    }
+
+export default function RootLayout() {
+  return <AuthProvider><RootNavigator /></AuthProvider>;
+}

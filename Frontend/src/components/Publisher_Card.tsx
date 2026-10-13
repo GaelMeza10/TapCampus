@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, RADIUS, SHADOW } from '../app/styles/theme';
+import { COLORS, RADIUS } from '../theme';
+import Card from './Card';
 
 export interface PublicacionMock {
   id: string;
@@ -21,17 +22,16 @@ export default function TarjetaPublicacion({ item }: { item: PublicacionMock }) 
   const precioMostrar = item.gangaActiva && item.precioGanga ? item.precioGanga : item.precio;
 
   return (
-    //tarjeta
-    <TouchableOpacity style={styles.card} activeOpacity={0.85}>
-      {}
-      <View style={[styles.cardImage, { backgroundColor: esViva ? '#E8F5EE' : '#F0EDE8' }]}>
+    <Card style={styles.card}>
+      <View style={styles.inner}>
+      <View style={[styles.cardImage, esViva ? styles.liveImage : styles.staticImage]}>
         <Ionicons
           name={esViva ? 'fast-food-outline' : 'book-outline'}
           size={32}
           color={COLORS.primary}
         />
         
-        <View style={[styles.badge, { backgroundColor: esViva ? COLORS.primary : '#8B7355' }]}>
+        <View style={[styles.badge, esViva ? styles.liveBadge : styles.staticBadge]}>
           <Text style={styles.badgeText}>{esViva ? 'EN VIVO' : 'FIJO'}</Text>
         </View>
         
@@ -57,7 +57,7 @@ export default function TarjetaPublicacion({ item }: { item: PublicacionMock }) 
             {item.gangaActiva && item.precioGanga && (
               <Text style={styles.precioOriginal}>${item.precio}</Text>
             )}
-            <Text style={[styles.precio, item.gangaActiva && { color: '#E85D24' }]}>
+            <Text style={[styles.precio, item.gangaActiva && styles.gangaPrice]}>
               ${precioMostrar}
             </Text>
           </View>
@@ -82,19 +82,25 @@ export default function TarjetaPublicacion({ item }: { item: PublicacionMock }) 
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+      </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
-    borderRadius: RADIUS.lg,
     marginHorizontal: 20,
     marginBottom: 12,
-    overflow: 'hidden',
-    ...SHADOW.card,
   },
+  inner: {
+    overflow: 'hidden',
+    borderRadius: RADIUS.lg,
+  },
+  liveImage: { backgroundColor: COLORS.primarySoft },
+  staticImage: { backgroundColor: COLORS.staticSoft },
+  liveBadge: { backgroundColor: COLORS.primary },
+  staticBadge: { backgroundColor: COLORS.staticAccent },
+  gangaPrice: { color: COLORS.ganga },
   cardImage: {
     height: 110,
     alignItems: 'center',
@@ -111,14 +117,14 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#fff',
+    color: COLORS.white,
     letterSpacing: 0.5,
   },
   badgeGanga: {
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#FFF3E0',
+    backgroundColor: COLORS.gangaSoft,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: RADIUS.full,
@@ -126,7 +132,7 @@ const styles = StyleSheet.create({
   badgeGangaText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#E85D24',
+    color: COLORS.ganga,
   },
   cardBody: {
     padding: 14,
@@ -167,7 +173,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   stockPill: {
-    backgroundColor: '#E8F5EE',
+    backgroundColor: COLORS.primarySoft,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: RADIUS.full,

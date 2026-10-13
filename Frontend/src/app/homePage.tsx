@@ -11,8 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { COLORS, RADIUS, SHADOW } from './styles/theme';
+import { COLORS, RADIUS, SHADOW } from '../theme';
 import { PUBLICACIONES, ZONAS } from '@/constants/publications';
 import TarjetaPublicacion, { PublicacionMock } from '@/components/Publisher_Card';
 import { useAuth } from '@/context/AuthContext';
@@ -133,7 +132,6 @@ export default function HomePage() {
           style: 'destructive',
           onPress: async () => {
             await logout();
-            router.replace('/login');
           },
         },
       ]
@@ -177,7 +175,7 @@ export default function HomePage() {
           />
         }
         ListEmptyComponent={<ListaVacia busqueda={busqueda} />}
-        ListFooterComponent={<View style={{ height: 100 }} />}
+        ListFooterComponent={<View style={styles.listFooter} />}
         showsVerticalScrollIndicator={false}
         initialNumToRender={8}
         maxToRenderPerBatch={10}
@@ -192,7 +190,7 @@ export default function HomePage() {
 
       
       <TouchableOpacity style={styles.fab} activeOpacity={0.85}>
-        <Ionicons name="add" size={28} color="#fff" />
+          <Ionicons name="add" size={28} color={COLORS.white} />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -222,7 +220,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#E8F5EE',
+    backgroundColor: COLORS.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -231,7 +229,7 @@ const styles = StyleSheet.create({
   searchWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
     marginHorizontal: 20,
     marginBottom: 16,
@@ -256,9 +254,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: RADIUS.full,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: COLORS.border,
   },
   zonaChipActivo: {
     backgroundColor: COLORS.primary,
@@ -270,7 +268,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   zonaChipTextActivo: {
-    color: '#fff',
+    color: COLORS.white,
   },
 
   // Header de sección
@@ -314,6 +312,7 @@ const styles = StyleSheet.create({
     color: COLORS.textMedium,
     textAlign: 'center',
   },
+  listFooter: { height: 100 },
 
   // FAB
   fab: {
@@ -327,6 +326,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...SHADOW.card,
-    shadowOpacity: 0.25,
   },
 });

@@ -3,15 +3,15 @@ import api from './api';
 import { TOKEN_KEY } from '../constants/api.constants';
 
 interface RegistrarPayload {
-    nombre: string;
-    correo: string;
-    telefono: string;
-    contrasena: string;
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
 }
 
 interface LoginPayload {
-    correo: string;
-    contrasena: string;
+    email: string;
+    password: string;
 }
 
 interface AuthResponse {

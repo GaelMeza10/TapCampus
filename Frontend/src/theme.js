@@ -9,6 +9,13 @@ export const COLORS = {
   inputBg: '#F3F4F6',
   border: '#E5E7EB',
   error: '#EF4444',
+  errorBg: '#FEF2F2',
+  disabled: '#B9C2B9',
+  primarySoft: '#E8F5EE',
+  staticSoft: '#F0EDE8',
+  staticAccent: '#8B7355',
+  gangaSoft: '#FFF3E0',
+  ganga: '#E85D24',
 };
 
 export const FONTS = {
@@ -25,10 +32,6 @@ export const RADIUS = {
 
 export const SHADOW = {
   card: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 4,
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
   },
 };

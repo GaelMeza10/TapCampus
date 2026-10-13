@@ -2,17 +2,18 @@ import { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import {TOKEN_KEY} from "../constants/api.constants";
 import {login as loginService, register as registerService, logout as logoutService} from "../services/auth.service";
+import { setUnauthorizedHandler } from '../services/api';
 
 interface RegisterData{
-    nombre: string;
-    correo: string;
-    telefono: string;
-    contrasena: string;
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
 }
 
 interface LoginData{
-    correo: string;
-    contrasena: string;
+    email: string;
+    password: string;
 }
 interface AuthContextType{
     estaAutenticado: boolean;
@@ -31,16 +32,21 @@ export function  AuthProvider({children}: {children: React.ReactNode}){
 
     //al abrir la app revisamos si ya esta un token guardado
     useEffect(() =>{
+        let active = true;
         async function verificarToken(){
-            //se obtiene el token
-            const token = await SecureStore.getItemAsync(TOKEN_KEY);
-            if (token){
-                //si hay token se actualiza el estado
-                setEstaAutenticado(true);
+            try {
+                const token = await SecureStore.getItemAsync(TOKEN_KEY);
+                if (active) setEstaAutenticado(Boolean(token));
+            } finally {
+                if (active) setEstaCargando(false);
             }
-            setEstaCargando(false);
         }       
-        verificarToken();
+        void verificarToken();
+        setUnauthorizedHandler(async () => {
+            await SecureStore.deleteItemAsync(TOKEN_KEY);
+            if (active) setEstaAutenticado(false);
+        });
+        return () => { active = false; setUnauthorizedHandler(); };
     },[]);
 
     async function login(data: LoginData){
