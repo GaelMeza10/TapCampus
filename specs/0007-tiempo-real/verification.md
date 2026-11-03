@@ -10,6 +10,10 @@ Estado: **Gateway backend verificado; cliente móvil pendiente** | Fecha: 2026-1
 | AC-04 | T-03, T-04, T-05 | EV-04: reconexión/reconsulta REST | Aprobado soporte backend; automático móvil pendiente |
 | AC-05 | T-01, T-02, T-04, T-05 | EV-05: rechazos/retry/bloqueo sin eventos falsos | Aprobado backend |
 
+### EV-06 — Suscripción de feed (2026-10-13)
+
+AC-01/02/03/04 → T-03/T-04: `homePage.tsx` conecta Socket.io a la URL REST, escucha los tres eventos y reconsulta HTTP en `connect`, al reenfocar y al volver a primer plano. `feed.test.tsx` comprueba filtros y cuatro disparadores de reconsulta con Socket simulado; frontend 8 suites/25 pruebas, tsc y exportación web aprobaron. No se verificaron dos dispositivos reales, pérdida de red ni reconexión Socket.io con servidor en esta fase; T-03/T-04 y 5.2 siguen abiertos.
+
 ## Reproducción y resultados
 
 `npm run build` y `npm run test:phase3`, PostgreSQL/Redis y dos conexiones socket.io-client reales. Ver [entorno/comandos](../0001-reservas/verification.md), [script](../../Backend/scripts/verify-phase3.mjs) y [phase3.json](../0001-reservas/evidence/phase3.json). Socket.io comparte puerto REST/namespace /, room feed; CORS_ORIGINS y cliente sin Origin. Payloads exactos sin contactos/email/password/tokens.

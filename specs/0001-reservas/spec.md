@@ -1,12 +1,12 @@
 # 0001 — Reservas de ventas en vivo
 
-Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
+Estado: **En verificación; backend fases 2/3 verificado y presentación móvil probada en Jest; dispositivo pendiente**
 
 ## Contexto y fuentes
 
 El comprador necesita apartar una pieza durante 20 minutos y el vendedor confirmar su entrega. Fuentes: `docs/02_REQUIREMENTS.md` (RF-04, RF-05, RF-05b, RF-07 a RF-10, RNF-01, RNF-02), `docs/03_ARCHITECTURE.md` (Reservation, rutas y eventos), `docs/05_USER_FLOWS.md`, `docs/06_USER_STORIES_AND_TASKS.md` (US-06, US-07, US-07b, US-08), `docs/07_VALIDATION.md` y `TASKS.md` (3.1–3.5, 5.3, 6.1).
 
-El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CHECK de stock, migrados y verificados por 0010 (2026-10-04). Fases 1/2 revalidadas y reservas backend verificadas en fase 3; móvil pendiente.
+El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CHECK de stock, migrados y verificados por 0010 (2026-10-04). Fases 1/2 revalidadas y reservas backend verificadas en fase 3; presentación móvil probada en Jest y recorrido en dispositivo pendiente.
 
 ## Alcance
 
@@ -18,6 +18,7 @@ El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CH
 
 - `POST /reservations` recibe `{ publicationId }`, JWT y encabezado obligatorio `Idempotency-Key` (UUID nuevo por acción del comprador; ausente o inválido `400`). La primera creación devuelve `201` con `id`, `publicationId`, `status: ACTIVE`, `reservedAt`, `expiresAt` ISO 8601, `unitPrice` cadena decimal de dos posiciones y `sellerContact.phone` canónico. Un reintento del mismo comprador, clave y publicación devuelve la misma reserva y su estado actual con `200`, sin otro descuento de stock; reutilizar la clave para otra publicación responde `409`.
 - `GET /reservations/mine` permite al comprador consultar cada reserva propia; `GET /publications/:id/reservations` permite al vendedor propietario ver las de su publicación; `GET /reservations/:id` da detalle a comprador o vendedor relacionados. Otro actor recibe `403`. Los contactos se exponen solo conforme a RF-13.
+- Cada proyección autorizada de reserva incluye `publicationTitle` para identificar el producto y construir el mensaje de contacto aun cuando la última unidad o el fin de horario oculten el detalle público. La lista `mine` sigue disponible con publicaciones invisibles; el feed y el detalle público no reciben teléfonos nuevos.
 - Un comprador puede mantener varias reservas activas independientes de la misma publicación, una unidad cada una, si queda stock. Una nueva acción emplea otra clave; no existe unicidad por comprador/publicación. El precio de cada reserva se fija al confirmarla y cambios posteriores del precio visible no la alteran.
 - Solo se reserva una publicación `LIVE` en estado `ACTIVE`, dentro de su ventana de venta y con `current_stock > 0`. La operación crea la reserva y resta una pieza de stock disponible de forma atómica.
 - `POST /reservations/:id/complete` permite únicamente al vendedor pasar `ACTIVE → COMPLETED` antes del vencimiento; el stock disponible no cambia otra vez.
@@ -66,7 +67,24 @@ El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CH
 
 **Dado** el mismo comprador, la misma publicación y stock 2, **cuando** envía dos acciones con claves distintas, **entonces** obtiene dos reservas `ACTIVE` visibles por separado para comprador y vendedor y stock 0; al repetir cualquiera de las claves, aun concurrentemente, recibe `200` con la reserva original y el stock sigue en 0. Una clave usada para otra publicación recibe `409`; una clave ausente o inválida recibe `400`.
 
+### AC-10 — Reserva accesible tras salir del feed
+**Dado** un comprador que apartó la última unidad o una publicación que terminó, **cuando** abre `GET /reservations/mine`, **entonces** la respuesta API incluye ID, `publicationTitle`, precio, plazo y estado de cada reserva, con el contacto autorizado para una reserva activa. La presentación visible de estos datos se rige por AC-11..13.
+
+### AC-11 — Reservas comprensibles para el comprador
+
+**Dado** cualquiera de los estados `ACTIVE`, `COMPLETED`, `CANCELLED` y `EXPIRED`, **cuando** el comprador ve la reserva en «Mis reservas» o en el detalle del producto, **entonces** lee el nombre del producto, precio, fecha y estado en español, sin UUID ni enum técnico visibles. Si `ACTIVE` ya superó `expiresAt` pero el servidor aún no confirmó `EXPIRED`, la interfaz indica «Plazo terminado; actualizando» sin afirmar una transición no confirmada. El ID sigue presente en la respuesta API y se usa internamente.
+
+### AC-12 — Reservas comprensibles para el vendedor
+
+**Dado** un vendedor con reservas de una publicación, **cuando** abre «Mis Ventas» o un diálogo para confirmar la entrega, **entonces** ve producto, comprador, momento del apartado, precio y estado con etiquetas en español; no ve UUID de reserva/publicación ni valores `LIVE`, `STATIC` o `ACTIVE`. La acción confirmada sigue aplicándose exactamente al ID de la reserva seleccionada.
+
+### AC-13 — Varias reservas sin ambigüedad
+
+**Dado** dos o más reservas de una misma publicación, **cuando** comprador o vendedor las consulta, **entonces** cada tarjeta se distingue por su momento de apartado y un orden visible dentro de esa publicación, incluso si se apartaron en el mismo segundo; cancelar o confirmar una tarjeta conserva las demás. El orden se calcula en el cliente a partir de `reservedAt` y, ante empate, del ID interno, sin cambiar el contrato API.
+
 ## Decisiones
+
+DEC-04 y DEC-05 resueltas en `decisions.md`: el UUID y los enums siguen como contrato técnico; la presentación móvil los traduce y usa referencias legibles para distinguir reservas.
 
 ## Precisión del contrato backend de fase 3 — 2026-10-05
 

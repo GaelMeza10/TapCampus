@@ -1,6 +1,6 @@
 # 0001 — Verificación y convergencia
 
-Estado: **Backend fase 3 verificado; móvil pendiente** | Fecha: 2026-10-05
+Estado: **Backend fase 3 verificado; presentación móvil probada en Jest; dispositivo pendiente** | Fecha: 2026-10-19
 
 | AC | Tarea(s) | Evidencia | Resultado |
 | --- | --- | --- | --- |
@@ -13,6 +13,28 @@ Estado: **Backend fase 3 verificado; móvil pendiente** | Fecha: 2026-10-05
 | AC-07 | T-04, T-05, T-06, T-07, T-08 | EV-07: cierre/fin, continuidad/eventos | Aprobado backend; móvil pendiente |
 | AC-08 | T-05, T-06, T-07, T-08 | EV-08: devolución/feed ACTIVE/FINISHED | Aprobado backend; móvil pendiente |
 | AC-09 | T-01, T-02, T-03, T-06, T-07, T-08 | EV-09: varias reservas, misma clave/cruzada | Aprobado backend; móvil pendiente |
+| AC-10 | T-11 | EV-11: título autorizado y lista propia tras salir del feed | Aprobado contrato/UI simulada; dispositivo pendiente |
+| AC-11 | T-12, T-13, T-14 | EV-12/13/14: estados/fechas en español y comprador sin UUID visible | Aprobado en Jest; dispositivo pendiente |
+| AC-12 | T-12, T-13, T-14 | EV-12/13/14: vendedor y diálogos legibles; acción con UUID interno correcto | Aprobado en Jest; dispositivo pendiente |
+| AC-13 | T-12, T-13, T-14 | EV-12/13/14: dos reservas, orden estable y acciones independientes | Aprobado en Jest; dispositivo pendiente |
+
+La corrección de presentación AC-11..13 se planificó el 2026-10-19 tras observar UUID y enums visibles en las tres pantallas. EV-12..14 documentan la implementación y sus límites; no modifican el resultado histórico de EV-01..11.
+
+### EV-12 — Presentación pura (2026-10-19)
+
+AC-11/12/13 → T-12. En Windows/PowerShell, Node v24.13.0, Expo 57.0.19, ejecutar desde `Frontend`: `npm.cmd test -- --runInBand --silent __tests__/reservation-presentation.test.tsx`. Resultado: **1 suite/2 pruebas aprobadas**. `reservation-presentation.test.tsx` comprueba cuatro estados de reserva, valor futuro, plazo local transcurrido sin afirmar `EXPIRED`, tipo y estado de publicación en español, fecha inválida y dos apartados con igual `reservedAt` ordenados por ID interno con referencias «Unidad 1 de 2»/«Unidad 2 de 2». El formato usa `es-MX` y zona horaria local del dispositivo. No se modifica el contrato API.
+
+### EV-13 — Pantallas y acciones individuales (2026-10-19)
+
+AC-11/12/13 → T-13. Ejecutar desde `Frontend`: `npm.cmd test -- --runInBand --silent __tests__/reservations.test.tsx __tests__/reservation-screen.test.tsx __tests__/sales.test.tsx __tests__/reservation-presentation.test.tsx`. Resultado: **4 suites/10 pruebas aprobadas**. Las pantallas comprador, detalle y vendedor muestran título, fecha/hora, precio, estado español y referencia por unidad sin texto de UUID/enum; los diálogos identifican el producto y la unidad, el de vendedor también comprador y precio. Las etiquetas accesibles probadas no contienen ID/enum. Las pruebas seleccionan la segunda tarjeta de dos apartados con igual instante y observan `cancelReservation('r2')` o `completeReservation('r2')`, nunca `r1`; los IDs permanecen en `key`/argumentos de servicio. Las cuatro etiquetas de estado se comprueban en comprador y vendedor. La app solicita una actualización una vez al vencer el plazo local y oculta la acción hasta recibir estado del servidor.
+
+### EV-14 — Comprobaciones de conjunto y límite móvil (2026-10-19)
+
+AC-11/12/13 → T-14 **parcial**. Ejecutar desde `Frontend`: `npm.cmd test -- --runInBand --silent` → **10 suites/32 pruebas aprobadas**; `npx.cmd tsc --noEmit` → salida 0. Desde la raíz: `node scripts/check-sdd.mjs` → salida 0: «SDD: estructura e identificadores básicos correctos. La revisión semántica sigue siendo necesaria»; `git diff --check` → salida 0 (solo advertencias de fin de línea de archivos preexistentes). No se detectó `adb` en `PATH`; por tanto no hubo recorrido en dispositivo o emulador, ni cancelación/confirmación desde Android o iOS contra API/BD/Redis reales. Pendiente probar allí dos reservas reales del mismo producto, los cuatro estados, vencimiento y actualización, diálogos, lector de pantalla y que confirmar/cancelar una preserve la otra. T-14 y las casillas globales 5.3/5.5 continúan abiertas.
+
+### EV-11 — Integración móvil de reservas (2026-10-13)
+
+AC-01/03/05/07/08/09 → T-06/T-07 y AC-10 → T-11: `Backend/npm run build`, `Backend/npm run test:phase5-contracts`, `Frontend/npm test -- --runInBand --silent` (8 suites, 25 pruebas) y `Frontend/npx tsc --noEmit` aprobaron sin iniciar servicios. `reservation-screen.test.tsx` comprueba que error/reintento conserva la clave y «Apartar otra unidad» usa otra; `marketplace-contracts.test.tsx` comprueba encabezado, y el controlador/servicio en memoria comprueba `publicationTitle` autorizado. `reservations.tsx` lista cada ID/precio/plazo y permite cancelación individual con confirmación; el acceso sigue disponible si la publicación deja de ser visible. Faltan recorrido en dispositivo, 409 real desde pantalla y cancelación/confirmación móvil contra PostgreSQL/Redis; T-06/T-07/T-11 y fase 5.3/5.5 siguen abiertos.
 
 ## Entorno y reproducción
 

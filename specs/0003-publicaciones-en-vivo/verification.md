@@ -11,6 +11,11 @@ Estado: **Backend fases 2/3 verificado; UI pendiente** | Fecha: 2026-10-05
 | AC-05 | T-05, T-07, T-08, T-09 | EV-05 carrera HTTP reserva/venta; EV-10 ventas concurrentes y bloqueo SQL | Aprobado backend fases 2/3 |
 | AC-06 | T-03, T-05, T-06, T-07, T-08 | EV-06 plan; EV-09/10 edición, 403 ajeno, reservas intactas | Aprobado backend fases 2/3; UI pendiente |
 | AC-07 | T-06, T-07, T-09 | EV-07: cierre con reserva previa y permisos | Aprobado backend; UI pendiente |
+| AC-08 | T-10 | EV-11: lista propia JWT y estado terminal | Aprobado contrato en memoria; dispositivo pendiente |
+
+### EV-11 — Pantallas y lista propia (2026-10-13)
+
+AC-01/02/03/06/07 → T-06/T-07 y AC-08 → T-10: `Backend/npm run build`, `Backend/npm run test:phase5-contracts`, `Frontend/npm test -- --runInBand --silent` (8 suites/25 pruebas), `Frontend/npx tsc --noEmit` y exportación web de Expo aprobaron. `GET /publications/mine` se probó con dos JWT y sin token en Nest en memoria: propietario recibe FINISHED/stock 0, otro vendedor lista vacía, anónimo 401; proyección sin teléfono. Formulario ImagePicker/validación, feed API y Mis Ventas están implementados; prueba móvil simula permiso denegado y stock negativo. Falta cámara/galería y upload real en dispositivo y recorrido completo con API/BD; T-06/T-07/T-10 y 5.4/5.5 siguen abiertos.
 
 ## Convergencia
 

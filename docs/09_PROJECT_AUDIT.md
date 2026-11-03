@@ -2,7 +2,13 @@
 
 Fecha de corte: 2026-10-05; se conserva la evidencia histórica del 2026-10-01/04. Esta auditoría distingue **documentado**, **implementado** y **verificado**. Una referencia a código prueba que existe una pieza, no que el flujo completo funciona. Los hallazgos abiertos se convierten en decisiones o tareas antes de declarar listo el feature afectado.
 
+## Migración Expo SDK 58 — 2026-11-03
+
+0013 actualiza Expo 58.0.23, React 19.3.0, React Native 0.88.1, Router 58.0.30 y Jest 30.5.2 con el mapa oficial. Se corrigieron cuatro incompatibilidades de tipos (StatusBar y ListEmptyComponent). Instalación limpia sin peers forzados, expo install --check, Doctor 20/20, tsc, 32 pruebas y exportación Android/iOS/web aprobados. TASKS 4.4 cerrada; compilación y ejecución nativa siguen en fase 5/6.3.
+
 ## Estado de adopción
+
+Corrección móvil 2026-11-03 (0014): Expo Go abre por túnel, pero la API seguía configurada con IP LAN y Axios sin timeout. Se configuró un túnel temporal adicional para API e imágenes, se acotó la espera a 15 segundos y se resolvieron URLs de uploads en el origen actual sin mutar la BD. LIVE/STATIC/PNG/Socket.io HTTPS y 35 pruebas aprobados; el usuario confirmó productos visibles en iPhone (EV-04). Esto cierra 0014 y conserva la aceptación restante de fase 5.2.
 
 | Elemento del proceso | Antes de esta revisión | Estado documental actual |
 | --- | --- | --- |
@@ -38,6 +44,7 @@ Fecha de corte: 2026-10-05; se conserva la evidencia histórica del 2026-10-01/0
 | GAP-17 | Reservation carecía de precio e idempotencia. | Columnas NOT NULL, Decimal(10,2), UUID, unicidad comprador/clave e índice de fecha migrados; precios históricos solo con evidencia, múltiples reservas permitidas. | Esquema verificado, 0010 EV-03/04 y 0001 EV-10; API/reintentos verificados en 0001 EV-01/02/09. |
 | GAP-18 | Las reglas de reserva repetida, fin horario y formato de teléfono no tenían respuesta única. | Decisiones del usuario del 2026-10-01 incorporadas a RF-02/04/07/08/12/13, expedientes y trazabilidad. | Backend verificado en 0001/0006/0008; móvil pendiente. |
 | GAP-19 | RF-14 tenía historia y tarea global, pero ningún criterio `AC` ni evidencia `EV` en la trazabilidad. | Se creó 0009 con AC/T/EV planificados. El flujo de revisión del moderador y la validez de reportes requieren DEC-01/02 si se incluye este SHOULD. | Cobertura documental creada; decisión opcional pendiente. |
+| GAP-20 | El 2026-10-19, las vistas móviles de comprador, detalle y vendedor muestran UUID de reserva y enums como `ACTIVE`; Mis Ventas también expone ID, tipo y estado técnicos de publicación. | 0001 AC-11..13/DEC-04..05/T-12/13 → EV-12/13: etiquetas y fechas en español, referencias por unidad y acciones con ID interno. | Corregido y probado en Jest; EV-14/recorrido en dispositivo pendiente. |
 
 ## Revisión backend fase 2 — 2026-10-05
 
@@ -63,6 +70,12 @@ Se corrigió la redirección global que sacaba al usuario de registro y podía r
 
 `Frontend` tsc y 2 suites/9 pruebas aprobaron; `Backend` build y prueba Axios con `ReservationsController`/`JwtAuthGuard` reales en memoria aprobaron Bearer presente/ausente y 401. No se inició la app ni el backend ni se ocuparon puertos por indicación del usuario. 4.1–4.3 están verificadas en 0011 EV-01..04 y 0002 EV-09. El recorrido manual en dispositivo y la integración de formularios completos con BD son alcance de 5.1.
 
+## Avance frontend fase 5 — 2026-10-13
+
+Git estaba limpio antes de editar. Se detectaron dos contratos ausentes para completar Mis Ventas y reservas tras agotarse el stock: `GET /publications/mine` autenticado y `publicationTitle` en respuestas autorizadas de reserva. Se actualizaron 0003 y 0001 (spec → plan → tasks) y arquitectura antes del código. El backend ahora entrega publicaciones propias incluidas FINISHED y título de reserva sin exponer teléfono en el feed. `Backend/npm run test:phase5-contracts` comprobó JWT de dos vendedores, 401 anónimo, estado terminal y proyección de reserva en Nest en memoria.
+
+Se reemplazó el feed de muestra por consultas API con filtros, `FlatList` y Socket.io; se añadieron detalle/reservas independientes, formulario ImagePicker, Mis Ventas y WhatsApp condicionado. `Frontend/npx tsc --noEmit`, exportación web Expo Router y 8 suites/25 pruebas pasaron; `Backend/npm run build` pasó. El estudio real de cámara, permisos, navegación y enlace WhatsApp en Android/iOS, así como los flujos completos contra PostgreSQL/Redis/Socket.io, no se ejecutó. Sigue vigente la instrucción previa de no iniciar app/backend ni usar puertos de aplicación; no se marcan 5.1–5.6 como terminadas. EV-11/10/11/07/07/07/06/06 de 0001–0008 separan evidencia simulada de la pendiente.
+
 ## Orden recomendado para cerrar la deuda
 
 Actualización 2026-10-04: fase 1 implementada y verificada. Build, tsc, validate/status/diff, seed doble, 9 pruebas unitarias, 1 E2E y ensayo integral de infraestructura aprobaron. Inventario real: 7→5 zonas, 8 categorías reconciliadas, 3→4 migraciones y cero filas de negocio antes/después. Respaldo real restaurado con hashes idénticos; fixtures antiguos/modernos migrados y recuperados sin deducir precios. Detalles en [0010 verification](../specs/0010-infraestructura-y-base-de-datos/verification.md). Los criterios HTTP/móviles de reservas y catálogos conservan su verificación pendiente.
@@ -72,6 +85,10 @@ La recomendación histórica del 2026-10-04 era completar guards y endpoints/fil
 1. Inspeccionar datos existentes antes de migraciones y seed; resolver GAP-12/13/15 y la migración planificada de GAP-17 durante implementación. GAP-14 solo requiere comprobar ejecución.
 2. Corregir contrato de autenticación según 0002 y verificar compilación/integración; después implementar catálogos, publicaciones, reservas, ganga, eventos y contacto según dependencias.
 3. Repetir convergencia por feature, registrar `EV` reales y actualizar esta auditoría con fecha y pruebas.
+
+## Ampliación de publicaciones de demostración — 2026-11-03
+
+0012 se reabrió y cerró para pasar de ocho a veinticuatro ejemplos. Los dieciséis nuevos tienen descripciones, precios, ubicaciones y fotografías ilustrativas por producto; los ocho UUID históricos se conservan. Docker Desktop se inició tras comprobar que estaba detenido. `verify-demo-seed.cjs`, tsc, build, lint, Prisma validate y check-sdd aprobaron. En PostgreSQL local, el seed creó 16 filas y luego 0; SQL confirmó 12 LIVE/12 STATIC y dos nuevas por categoría. Nest en memoria mostró los ocho LIVE y ocho STATIC nuevos en el feed y sirvió un PNG por HTTP 200. Usuarios, reservas y catálogos conservaron sus hashes. EV-04..07 y TASKS 1.5 quedan cerradas; el dispositivo móvil sigue en fase 5.
 
 ## Decisiones de producto cerradas
 

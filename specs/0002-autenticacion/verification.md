@@ -13,6 +13,10 @@ La revisión histórica del 2026-10-01 encontró fallos de compilación por `pri
 | AC-05 | T-03, T-04, T-05, T-06 | EV-08 JWT, guard y CurrentUser; EV-09 Axios contra `GET /reservations/mine` y Expo Router en memoria | Aprobado backend y fase 4.3; dispositivo pendiente de fase 5.1 |
 | AC-06 | T-01, T-04, T-05, T-06 | EV-08 build y contrato backend; EV-09 cliente con campos ingleses/tsc; EV-06 plan integrado | Aprobado contrato estático; registro/login móvil contra BD pendiente |
 
+### EV-10 — Formularios de fase 5 (2026-10-13)
+
+AC-01/03/04/05/06 → T-04/T-05 y AC-02 → T-05: login/registro usan `KeyboardAvoidingView`, error visible, correo UABC exacto y teléfono de diez dígitos con o sin +52; `auth.service.ts` ya guarda JWT en SecureStore. `Frontend/npm test -- --runInBand --silent` aprobó 8 suites/25 pruebas incluidas rutas protegidas/sesión; `npx tsc --noEmit` aprobó. Backend de registro/login real permanece acreditado por EV-08 y 401/interceptor en memoria por EV-09. No se ejecutaron formularios en dispositivo ni registro/login extremo a extremo con BD en esta fase; T-05 y 5.1 siguen abiertos.
+
 ## Convergencia
 
 ### EV-07 — Corrección backend para fase 1

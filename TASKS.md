@@ -18,6 +18,7 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 - [x] **1.2 Configurar Prisma y BD:** PostgreSQL 16.15 y conexión Prisma reales; validate, status y diff coherentes, build aprobado (0010 EV-01/02).
 - [x] **1.3 Definir Esquema Prisma:** CHECK de stock, precio Decimal(10,2), clave UUID única por comprador y migración segura comprobados en PostgreSQL; ningún precio histórico se deduce del actual (0010 EV-03/04).
 - [x] **1.4 Script de Migración y Seed:** Respaldo restaurado, transición conservadora, ensayo vacío/poblado y aplicación local comprobados; seed doble con cinco zonas/ocho categorías y FK conservadas (0010 EV-04/05).
+- [x] **1.5 Publicaciones de demostración (opcional):** 24 ejemplos en PostgreSQL local (12 LIVE/12 STATIC, 16 fotografías ilustrativas nuevas); seed repetido 16→0, feed HTTP y PNG 200 verificados en 0012 EV-04..07. Los ocho ejemplos originales conservan EV-01..03.
 
 ## FASE 2: Backend - Autenticación y API Básica
 - [x] **2.1 Módulo de Autenticación (JWT):** Registro/login reutilizados y verificados: dominio UABC, hash bcrypt, teléfono canónico, duplicados y JWT. 0002 EV-08.
@@ -41,6 +42,7 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 **Cierre fase 3 (2026-10-05):** 3.1–3.6 y estrés 6.1 aprobados: 50 claves distintas 1×201/49×409; misma clave 1×201/49×200/un ID. Worker/reinicio/conciliación/carreras, dos clientes Socket.io y ganga/reprogramación aprobados. Build/tsc/lint, 9 unitarias/1 E2E, fases 2/3 y check-sdd aprobados. AC→T→EV en 0001/0003/0006/0007/0008 y phase3.json; UI/Linking pendientes.
 
 ## FASE 4: Frontend Móvil - Arquitectura (React Native)
+- [x] **4.4 Actualizar Expo SDK 58:** Dependencias alineadas, Doctor 20/20, tipos, 32 pruebas y exportación Android/iOS/web aprobados; 0013 EV-01..03. Ejecución nativa sigue en fase 5/6.3.
 - [x] **4.1 Configurar Expo y Tema:** Expo Router con guardas y ancla sin bucles; `theme.js` fuera de rutas, tokens de UI/UX completos. 0011 EV-01/02/04.
 - [x] **4.2 Componentes Base UI:** `PrimaryButton`, `CustomInput` con ícono/error y `Card` con `RADIUS.lg`/`SHADOW.card` reutilizados y probados. 0011 EV-02/03.
 - [x] **4.3 Interceptor HTTP (Axios):** Bearer presente/ausente y 401 probados contra `GET /reservations/mine` protegido, con sesión/navegación en memoria. 0002 EV-09.
@@ -50,10 +52,14 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 ## FASE 5: Frontend Móvil - Pantallas
 - [ ] **5.1 Pantallas de Auth:** Desarrollar `Login` y `Registro` usando `KeyboardAvoidingView`; aceptar teléfonos de cualquier región mexicana con diez dígitos o `+52`. Conectar al endpoint y guardar el JWT exitoso.
 - [ ] **5.2 Feed Principal (Home):** Pantalla con Tabs (En Vivo / Estático). Renderizar lista de publicaciones usando WebSockets para escuchar cambios de stock sin recargar. Integrar menús de Filtro por Zona.
-- [ ] **5.3 Detalle y Reserva (Comprador):** Mostrar reservas independientes con precio y plazo propios; conservar la clave en reintentos, generar otra al apartar otra unidad y mostrar WhatsApp tras confirmación de cada reserva.
+- [ ] **5.3 Detalle y Reserva (Comprador):** Mostrar reservas independientes con precio y plazo propios, estado en español y sin UUID visible; conservar la clave en reintentos, generar otra al apartar otra unidad y mostrar WhatsApp tras confirmación de cada reserva.
 - [ ] **5.4 Formulario de Publicación:** Pantalla para el Vendedor. Implementar ImagePicker para la cámara/galería. Formularios con validación (no dejar poner stock negativo).
-- [ ] **5.5 Dashboard de Vendedor (Mis Ventas):** Mostrar reservas activas por separado, incluso varias del mismo comprador, y permitir confirmar cada entrega dentro de sus 20 minutos. Añadir controles de "Activar Ganga Manual", "-1 Venta Física" y "Finalizar Publicación".
+- [ ] **5.5 Dashboard de Vendedor (Mis Ventas):** Mostrar reservas activas por separado, incluso varias del mismo comprador, con etiquetas en español y sin IDs visibles; permitir confirmar cada entrega dentro de sus 20 minutos. Añadir controles de "Activar Ganga Manual", "-1 Venta Física" y "Finalizar Publicación".
 - [ ] **5.6 Contacto WhatsApp:** Integrar enlace directo en `STATIC` y enlace tras reserva confirmada en `LIVE`; proteger teléfonos en respuestas públicas y probar URL/errores conforme a 0008.
+
+**Avance fase 5 (2026-10-13):** Pantallas, servicios y contratos implementados; frontend tsc, exportación Expo, 8 suites/25 pruebas y contrato HTTP Nest en memoria aprobados. No se inició app/backend ni se usaron puertos de aplicación, según la restricción vigente registrada en el cierre de fase 4. Las casillas 5.1–5.6 siguen abiertas hasta comprobar flujos en dispositivo y contra API/BD/Redis/Socket.io reales; consultar EV nuevos de 0001–0008 y auditoría.
+
+**Corrección de conexión móvil (2026-11-03):** 0014 añade timeout de 15 s y resolución de imágenes en el origen actual; API/PNG/Socket.io por túnel HTTPS y 35 pruebas aprobados. El usuario confirmó productos visibles en iPhone (EV-04); 5.2 sigue abierta por el resto de la aceptación integrada.
 
 ## FASE 6: Validación, QA y Despliegue
 - [x] **6.1 Pruebas de Estrés:** Ejecutar 50 reservas concurrentes con claves distintas para la última pieza y comprobar 1×201/49×409; probar aparte reintentos concurrentes con la misma clave, sin doble descuento. Registrar resultados en 0001 `verification.md`.

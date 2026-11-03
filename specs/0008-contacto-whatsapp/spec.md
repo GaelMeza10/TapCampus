@@ -11,6 +11,7 @@ RF-13, RF-07 y RF-06; US-09 y US-11. `docs/02_REQUIREMENTS.md` exige enlace `wa.
 - Una publicación `STATIC` activa ofrece «Contactar por WhatsApp» desde el detalle sin reserva. El mensaje dice que el comprador está interesado en el artículo, sin afirmar que lo apartó.
 - En `LIVE`, el comprador ve el contacto del vendedor **solo después** de recibir confirmación de `POST /reservations`; el vendedor de esa reserva puede contactar al comprador identificado en la reserva. Listado y detalle públicos no incluyen esos teléfonos.
 - El móvil usa `Linking.openURL` con `https://wa.me/52XXXXXXXXXX?text=<mensaje-codificado>`; elimina solo el `+` del teléfono canónico `+52XXXXXXXXXX`, sin duplicar `52`. Se aceptan en registro diez dígitos nacionales con o sin `+52` de cualquier región mexicana. Si no puede abrir el enlace, muestra error útil sin perder el estado de la pantalla.
+- Para `LIVE`, el mensaje usa `publicationTitle` de la reserva autorizada; sigue disponible aunque el detalle público desaparezca por stock cero o fin de horario. Para `STATIC`, usa el título del detalle activo.
 - Fuera de alcance: chat interno, envío automático de mensajes y llamadas.
 
 ## Criterios de aceptación

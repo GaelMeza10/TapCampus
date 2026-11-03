@@ -8,6 +8,8 @@ El esquema Prisma ya tiene precio fijado, clave de idempotencia, unicidad por co
 
 ## Diseño propuesto
 
+La proyección de reserva selecciona también `publication.title` y responde `publicationTitle` para AC-10. La pantalla de reservas propias consulta `/reservations/mine` sin depender de `GET /publications/:id`, pues este puede devolver 404 tras agotar stock o vencer horario. Se prueba la lista con una publicación invisible y una reserva activa.
+
 ### Ejecución fase 3
 
 Revalidar fases 1/2 mediante suite HTTP/SQL aislada y status/diff de Prisma. Serializar la clave por comprador con bloqueo de su fila users (evita carreras incluso entre publicaciones distintas); después bloquear publications. Resoluciones bloquean publication antes de reservation, siguiendo el mismo orden que los consumidores de inventario. No cambiar esquema ni migraciones. Separar ReservationsModule, RealtimeModule y JobsModule; JobsModule consume servicios exportados sin dependencia circular. Un productor QueueService independiente encola tras commit; conciliación al arrancar y cada 30 s recupera vencidas y recrea trabajos futuros. Tiempo fijo de reserva: 1 200 000 ms, no configurable en producción. Pruebas SQL adelantan reserved_at en fixtures sin alterar ese contrato.
@@ -24,7 +26,7 @@ Revalidar fases 1/2 mediante suite HTTP/SQL aislada y status/diff de Prisma. Ser
 
 | Principio | Aplicación |
 | --- | --- |
-| I | AC-01 a AC-09 definen resultados; las decisiones de producto están cerradas. |
+| I | AC-01 a AC-13 definen resultados; las decisiones de producto están cerradas. |
 | II | RF/RNF/US se vinculan en `spec.md`; matriz `AC → T → EV` en `verification.md`. |
 | III | Transacciones, bloqueo de fila, estados terminales y conciliación cubren integridad. |
 | IV | Rutas, errores, permisos y evento se especifican antes de integrar frontend. |
@@ -42,5 +44,36 @@ Revalidar fases 1/2 mediante suite HTTP/SQL aislada y status/diff de Prisma. Ser
 | AC-07 | Cierre manual con reserva activa y suscripción Socket.io. |
 | AC-08 | Consulta de feed tras liberar stock con publicación activa y finalizada. |
 | AC-09 | Dos altas del mismo comprador con claves distintas, consultas separadas para comprador/vendedor, reintento concurrente con la misma clave y rechazo de clave usada para otra publicación. |
+| AC-11, AC-12 | Probar los cuatro estados en comprador/vendedor y ausencia de UUID/enums en texto visible y etiquetas accesibles. |
+| AC-13 | Dos reservas del mismo producto, incluso con la misma marca de tiempo; confirmar/cancelar una y comprobar que se envía su UUID interno y la otra permanece. |
 
 Orden: resolver dependencias de autenticación/publicaciones → datos/contratos → transacciones → worker/conciliación → eventos y UI → pruebas y convergencia.
+
+## Corrección planificada de presentación móvil — 2026-10-19
+
+### Hallazgo y alcance
+
+`Frontend/src/app/reservations.tsx` y `Frontend/src/app/publication/[id].tsx` imprimen `reservation.id` y `reservation.status`. `Frontend/src/app/sales.tsx` imprime IDs de reserva/publicación, estados y tipos técnicos en filas y en el diálogo de confirmación. Son datos del contrato que se están mostrando sin adaptación al usuario.
+
+### Diseño de la corrección (AC-11..13)
+
+1. Crear una capa pura de presentación en `Frontend/src/lib/reservation-presentation.ts`: mapa exhaustivo `ACTIVE → Activa`, `COMPLETED → Entrega confirmada`, `CANCELLED → Cancelada`, `EXPIRED → Vencida`; tipo de publicación `LIVE → En vivo`, `STATIC → Estática` y estados de publicación `ACTIVE → Activa`, `FINISHED` estática → Vendida, `FINISHED` en vivo → Finalizada, `HIDDEN_BY_REPORTS → Oculta por reportes`. Un valor futuro no reconocido se muestra como «Estado no disponible» o «Tipo no disponible», nunca como enum crudo.
+2. Formatear `reservedAt`, `expiresAt` y `resolvedAt` con locale `es-MX` y zona horaria del dispositivo; manejar fechas inválidas sin exponer `Invalid Date`. Mostrar «Vence» solo mientras la reserva esté activa y aún tenga plazo. Si el reloj local alcanza `expiresAt` antes de que el servidor cambie `ACTIVE`, mostrar «Plazo terminado; actualizando», deshabilitar la acción y solicitar una actualización al cruzar el plazo, sin repetirla en cada segundo. El servidor conserva autoridad sobre el estado.
+3. Reemplazar encabezados UUID por `publicationTitle`, fecha/hora del apartado y «Unidad N de M» solo cuando haya varias reservas de esa publicación. Ordenar por `reservedAt` y desempatar con `id` interno para que dos reservas del mismo segundo tengan referencias visuales distintas. Conservar el ID como `key` de React y argumento de `cancelReservation`/`completeReservation`; no imprimirlo ni usarlo en etiquetas accesibles.
+4. Aplicar la misma presentación en `reservations.tsx`, `publication/[id].tsx` y `sales.tsx`. En el diálogo del vendedor, describir la acción concreta con título, comprador y momento de apartado; para acciones de publicación, usar su título y tipo en vez de `publicationId`. Mantener las confirmaciones y permisos existentes.
+
+### Contratos, compatibilidad y recuperación
+
+- Sin cambios de Prisma, migraciones, endpoints, payloads ni enums del backend. Los UUID continúan identificando cada reserva y las claves de idempotencia conservan su comportamiento.
+- No se almacena un número de reserva derivado. «Unidad N de M» es una referencia de pantalla calculada sobre el conjunto recibido; el UUID sigue siendo la única clave de operación.
+- La corrección se limita a presentación móvil. Si hay regresión, se revierten helper/vistas sin transformar datos persistidos.
+
+### Verificación prevista
+
+- Pruebas del helper para todos los estados, `ACTIVE` con plazo transcurrido, valores inesperados, fechas inválidas y empate de `reservedAt`.
+- Pruebas de pantalla comprador/vendedor con dos reservas del mismo producto: ningún UUID ni enum técnico visible, etiquetas en español y acción HTTP con el ID correcto para la tarjeta elegida.
+- `npx tsc --noEmit`, suites Jest pertinentes y `node scripts/check-sdd.mjs`; recorrido Android en dispositivo o emulador con reserva, cancelación, confirmación, expiración y dos apartados del mismo producto. Registrar resultados como EV-12..14 antes de cerrar AC-11..13, T-06/T-11 o TASKS 5.3/5.5.
+
+### Convergencia con la constitución
+
+I–II: AC-11..13 → T-12..14 → EV-12..14 y DEC-04/05 cierran el comportamiento esperado. III–IV: IDs y estados del servidor siguen gobernando operaciones/stock y los contratos no cambian. V: se exige evidencia de mapeo, acción individual y dispositivo. VI: el cambio queda acotado a texto y presentación de reservas/publicaciones en estas vistas.

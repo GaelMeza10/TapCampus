@@ -11,6 +11,7 @@ RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relaciona
 - El vendedor autenticado crea `LIVE` con foto, título, descripción, precio, categoría `LIVE`, zona, stock inicial positivo y horas de inicio/fin. `POST /uploads` entrega la URL de imagen; `POST /publications` persiste `image_url` y demás campos.
 - `GET /publications?type=LIVE` devuelve solo publicaciones visibles: `ACTIVE`, dentro de horario y con stock disponible positivo. El temporizador se calcula con `end_time` del servidor; la app no decide la expiración.
 - El vendedor puede editar datos permitidos de su publicación activa mediante `PATCH /publications/:id`. `POST /publications/:id/physical-sale` resta una pieza **disponible**; no toca reservas activas. Un usuario ajeno recibe `403`.
+- `GET /publications/mine` requiere JWT y devuelve solo publicaciones del vendedor, incluidas `LIVE` sin stock, futuras y `FINISHED`, ordenadas por creación e ID descendentes. Reutiliza la proyección de publicación sin contactos; permite gestionar estado y consultar reservas por ID aun cuando una publicación sale del feed público. Sin JWT responde `401`.
 - Cuando llega `end_time`, la publicación sale del feed, impide nuevas reservas y emite `publication_expired`. Las reservas activas previas pueden confirmarse por el vendedor dentro de sus propios 20 minutos; las vencidas liberan stock sin reactivar el feed. El cierre manual SHOULD usa `POST /publications/:id/finish` y aplica la misma continuidad.
 - Respuestas: `400` para datos mal formados, `401` sin JWT, `403` para ajenos, `404` si no existe y `409` para estado/stock incompatible. La visibilidad tras liberar stock y el destino de reservas activas están definidos en 0001 y `decisions.md`.
 - Fuera de alcance: pagos, GPS, reservas (0001), activación de ganga (0006) y moderación.
@@ -37,6 +38,9 @@ RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relaciona
 
 ### AC-07 — Cierre manual SHOULD
 **Dado** una `LIVE` con reserva activa, **cuando** el vendedor la finaliza, **entonces** desaparece del feed, bloquea reservas nuevas y conserva la reserva existente hasta su resolución; otro usuario recibe `403`.
+
+### AC-08 — Lista propia de ventas
+**Dado** un vendedor con publicaciones activas, agotadas y finalizadas, **cuando** consulta `GET /publications/mine` con JWT, **entonces** recibe solo las suyas con sus estados y stock, sin teléfonos; un usuario sin JWT recibe `401`.
 
 ## Decisiones
 

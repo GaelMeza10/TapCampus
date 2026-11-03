@@ -9,6 +9,7 @@ Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 - [x] **T-05** `[AC-05, AC-06]` Implementar venta física y edición de stock atómicas frente a reserva, con `stock_updated`. Evidencia backend: verification.md, fase 3.
 - [ ] **T-06** `[AC-01, AC-03, AC-06, AC-07]` Integrar formulario, feed, temporizador y gestión del vendedor conforme UI/UX; incluir cierre manual SHOULD.
 - [ ] **T-07** `[AC-01, AC-02, AC-03, AC-04, AC-05, AC-06, AC-07]` Ejecutar integración, concurrencia, eventos y revisión de convergencia; registrar EV-01..07.
+- [ ] **T-10** `[AC-08]` Añadir `GET /publications/mine` autenticado, probar aislamiento y estado terminal, integrar Mis Ventas y registrar EV-11.
 - [x] **T-08** `[AC-01, AC-02, AC-03, AC-05, AC-06]` Implementar y verificar HTTP backend fase 2: upload, creación/edición, feed/detalle privado y venta física bajo bloqueo PostgreSQL; EV-08/09/10 aprobadas con límites respecto a reservas/eventos/UI.
 
 T-01/T-04/T-05 cerradas con T-09/EV-04/05/07; T-06/T-07 conservan integración móvil.

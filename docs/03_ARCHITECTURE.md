@@ -3,7 +3,7 @@
 ## 1. Stack Seleccionado
 | Capa | Tecnología | Justificación |
 | :--- | :--- | :--- |
-| **Frontend Móvil** | React Native (Expo) | Interfaz nativa ágil, componentes reutilizables, TypeScript. |
+| **Frontend Móvil** | React Native 0.88.1 (Expo SDK 58, React 19.3) | Interfaz nativa ágil, componentes reutilizables, TypeScript. Migración: specs/0013-expo-sdk-58. |
 | **Backend API** | NestJS | Arquitectura escalable y orientada a objetos (POO). |
 | **Capa de Datos** | Prisma (ORM) | Seguridad de tipado y migraciones declarativas sencillas. |
 | **Base de Datos** | PostgreSQL | Manejo de transacciones ACID para el bloqueo pesimista. |
@@ -75,6 +75,7 @@ Para garantizar consistencia, el Backend deberá exponer las siguientes rutas ba
 *   **Publicaciones**
     *   `POST /publications` (Requiere JWT, crea Viva o Estática)
     *   `GET /publications?type=LIVE&zoneId=X` (Filtros por query params)
+    *   `GET /publications/mine` (JWT; solo publicaciones del vendedor, incluidas agotadas, futuras y finalizadas; sin teléfonos)
     *   `GET /publications/:id` (Detalle; la exposición de teléfonos depende de RF-06/RF-07)
     *   `PATCH /publications/:id` (Solo vendedor; campos editables según tipo)
     *   `PATCH /publications/:id/ganga` (Activar ganga manualmente; la desactivación posterior no forma parte de RF-11/RF-12)
@@ -84,8 +85,8 @@ Para garantizar consistencia, el Backend deberá exponer las siguientes rutas ba
     *   `GET /zones` y `GET /categories?type=LIVE|STATIC` (Catálogos para formularios y filtros)
     *   `POST /uploads` (Requiere JWT; devuelve URL de imagen para `image_url`)
 *   **Reservas (Transacciones Seguras)**
-    *   `POST /reservations` (Body: `{ publicationId }`, JWT y encabezado obligatorio `Idempotency-Key: <UUID>`; clave ausente o inválida: `400`). *Este endpoint es crítico y debe envolverse en un `prisma.$transaction` con bloqueo pesimista.* Primera creación: `201` con `{ id, publicationId, status, reservedAt, expiresAt, unitPrice, sellerContact }`, donde `unitPrice` es cadena decimal de dos posiciones, fechas ISO 8601 y `sellerContact.phone` es canónico. Mismo comprador/clave/publicación: `200` con la reserva existente y su estado actual, sin otro descuento ni evento; misma clave para otra publicación: `409`. Una acción nueva requiere otra clave y puede crear otra reserva del mismo comprador si hay stock.
-    *   `GET /reservations/mine` (JWT; lista de reservas propias, cada una con ID, estado, precio fijado y plazo; contacto conforme a RF-13).
+    *   `POST /reservations` (Body: `{ publicationId }`, JWT y encabezado obligatorio `Idempotency-Key: <UUID>`; clave ausente o inválida: `400`). *Este endpoint es crítico y debe envolverse en un `prisma.$transaction` con bloqueo pesimista.* Primera creación: `201` con `{ id, publicationId, publicationTitle, status, reservedAt, expiresAt, unitPrice, sellerContact }`, donde `unitPrice` es cadena decimal de dos posiciones, fechas ISO 8601 y `sellerContact.phone` es canónico. Mismo comprador/clave/publicación: `200` con la reserva existente y su estado actual, sin otro descuento ni evento; misma clave para otra publicación: `409`. Una acción nueva requiere otra clave y puede crear otra reserva del mismo comprador si hay stock.
+    *   `GET /reservations/mine` (JWT; lista de reservas propias, cada una con ID, título, estado, precio fijado y plazo, aun si ya no es pública la publicación; contacto conforme a RF-13).
     *   `GET /publications/:id/reservations` (JWT; solo vendedor propietario, lista de reservas de esa publicación con ID, comprador y estado; teléfono del comprador únicamente según RF-13; ajeno `403`).
     *   `GET /reservations/:id` (JWT; detalle para su comprador o vendedor propietario; ajeno `403`, inexistente `404`).
     *   `POST /reservations/:id/complete` (Solo permitido para el `seller_id`).
@@ -148,6 +149,8 @@ Al inicializar la base de datos (`prisma db seed`), se deben insertar obligatori
 *   **Categorías (Ventas Estáticas):** "Libros", "Material Escolar", "Batas/Uniformes", "Electrónica".
 
 ## 9. Variables de Entorno (`.env.example`)
+
+Desarrollo en redes que no permiten LAN: el túnel de Metro sirve el proyecto a Expo Go; la API requiere su propio origen accesible en `EXPO_PUBLIC_API_URL`. HTTP y Socket.io usan ese origen. El cliente resuelve las rutas `/uploads/<uuid>.(png|jpg|webp)` en el origen actual para que imágenes guardadas con una IP previa sigan siendo accesibles. `PUBLIC_BASE_URL` del backend debe coincidir para nuevos uploads. Reiniciar Metro tras cambiar variables y backend tras cambiar su entorno; los túneles son temporales. Ver 0014.
 El proyecto Backend requiere la definición estricta de las siguientes variables para operar:
 *   `DATABASE_URL` (URL de conexión a PostgreSQL)
 *   `JWT_SECRET` (Llave secreta de firma de Tokens)

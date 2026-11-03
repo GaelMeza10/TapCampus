@@ -10,6 +10,10 @@ Estado: **Backend fase 2 verificado; móvil pendiente** | Fecha: 2026-10-05
 | AC-04 | T-02, T-03, T-04, T-05, T-06 | EV-04 plan móvil; EV-06 sold/exclusión/repetición/carrera | Aprobado backend; UI pendiente |
 | AC-05 | T-03, T-05, T-06 | EV-05 plan; EV-06 edición/sold ajenos 403 | Aprobado backend |
 
+### EV-07 — STATIC móvil (2026-10-13)
+
+AC-01/02/03/04 → T-04/T-05: `publication/edit.tsx` crea/edita STATIC sin horario, stock ni reserva; feed filtra `STATIC`, detalle activo ofrece contacto y Mis Ventas confirma `sold` antes de enviar. `Frontend` tsc, exportación web y 8 suites/25 pruebas aprobaron; URL/contacto se prueban en 0008 EV-06. Faltan publicación/venta y apertura WhatsApp reales en dispositivo con API; T-04/T-05 y fase 5.4/5.6 siguen abiertos.
+
 ## Convergencia
 
 ### EV-06 — HTTP STATIC de fase 2

@@ -9,6 +9,10 @@ Estado: **Seed y backend fase 2 verificados; móvil pendiente** | Fecha: 2026-10
 | AC-03 | T-02, T-03, T-05, T-06 | EV-03 plan; EV-06 queries inválidas 400 y vacío 200 | Aprobado backend |
 | AC-04 | T-04, T-05 | EV-04: filtrado móvil sin permiso GPS | Pendiente |
 
+### EV-07 — Filtros móviles (2026-10-13)
+
+AC-02/04 → T-04/T-05: `feed.test.tsx` simula zona FIAD/categoría Comida y comprueba `listPublications('LIVE', 1, 2)`; la UI consulta `/zones` y `/categories?type=...`, ofrece `FlatList` para ambos selectores y no solicita ubicación. `Frontend/npm test -- --runInBand --silent` aprobó 8 suites/25 pruebas, tsc aprobó. Falta comprobar visualmente en dispositivo la selección de los catálogos reales y resultados de API; T-04/T-05, AC-04 y 5.2 permanecen abiertos.
+
 ## Convergencia
 
 ### EV-05 — Seed y referencias (T-01)
