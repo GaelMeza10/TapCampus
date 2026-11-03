@@ -4,6 +4,7 @@ import { API_BASE_URL, TOKEN_KEY } from '../constants/api.constants';
 //instancia de axios con la url base del backend
 const api = axios.create({
     baseURL: API_BASE_URL,
+    timeout: 15000,
     headers:{
         'Content-Type': 'application/json',
     },

@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 import { COLORS } from '../theme';
 import { useAuth } from '@/context/AuthContext';
 import Card from '@/components/Card';
 import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
+import { uabcEmail } from '@/services/auth-validation';
 
 export default function Login() {
   const { login } = useAuth();
@@ -15,26 +17,27 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   async function submit() {
     if (loading) return;
-    if (!email.trim().toLowerCase().endsWith('@uabc.edu.mx')) { setError('Ingresa tu correo @uabc.edu.mx.'); return; }
+    const normalizedEmail = uabcEmail(email);
+    if (!normalizedEmail) { setError('Ingresa tu correo @uabc.edu.mx.'); return; }
     if (!password) { setError('La contraseña es obligatoria.'); return; }
     setLoading(true);
     setError('');
-    try { await login({ email: email.trim(), password }); }
+    try { await login({ email: normalizedEmail, password }); }
     catch (cause: any) {
       const message = cause?.response?.data?.message;
       setError(Array.isArray(message) ? message.join('\n') : message || 'Correo o contraseña incorrectos.');
     } finally { setLoading(false); }
   }
   return <SafeAreaView style={styles.screen}>
-    <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
+    <StatusBar barStyle="dark-content" />
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.fill}>
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <Text style={styles.brand}>TapCampus</Text>
         <Card style={styles.card}>
           <Text style={styles.title}>Bienvenido a TapCampus</Text>
           <Text style={styles.subtitle}>Accede con tu correo institucional.</Text>
-          <CustomInput icon="mail-outline" accessibilityLabel="Correo institucional" placeholder="tu.nombre@uabc.edu.mx" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={value => { setEmail(value); setError(''); }} error={error && !email.trim().toLowerCase().endsWith('@uabc.edu.mx') ? error : undefined} />
-          <CustomInput icon="lock-closed-outline" accessibilityLabel="Contraseña" placeholder="Contraseña" secureTextEntry value={password} onChangeText={value => { setPassword(value); setError(''); }} error={error && email.trim().toLowerCase().endsWith('@uabc.edu.mx') ? error : undefined} />
+          <CustomInput icon="mail-outline" accessibilityLabel="Correo institucional" placeholder="tu.nombre@uabc.edu.mx" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={value => { setEmail(value); setError(''); }} error={error && !uabcEmail(email) ? error : undefined} />
+          <CustomInput icon="lock-closed-outline" accessibilityLabel="Contraseña" placeholder="Contraseña" secureTextEntry value={password} onChangeText={value => { setPassword(value); setError(''); }} error={error && !!uabcEmail(email) ? error : undefined} />
           <PrimaryButton title="Iniciar sesión" loading={loading} onPress={submit} />
         </Card>
         <View style={styles.footer}><Text style={styles.footerText}>¿Aún no tienes cuenta? </Text><Link href="/register" asChild><Pressable accessibilityRole="link"><Text style={styles.link}>Regístrate</Text></Pressable></Link></View>

@@ -32,9 +32,13 @@ const routes = {
   login: () => <Text>Login</Text>,
   register: () => <Text>Registro</Text>,
   homePage: Home,
+  sales: () => <Text>Ventas</Text>,
+  reservations: () => <Text>Reservas</Text>,
+  'publication/[id]': () => <Text>Detalle</Text>,
+  'publication/edit': () => <Text>Editar</Text>,
 };
 
-describe('navegación Expo Router SDK 57', () => {
+describe('navegación Expo Router SDK 58', () => {
   test('sin sesión: inicio lleva a login', async () => {
     mockToken = null;
     await renderRouter(routes, { initialUrl: '/' });
@@ -50,6 +54,12 @@ describe('navegación Expo Router SDK 57', () => {
   test('sin sesión: enlace profundo a home lleva a login', async () => {
     mockToken = null;
     await renderRouter(routes, { initialUrl: '/homePage' });
+    await waitFor(() => expect(screen.getByText('Login')).toBeTruthy());
+  });
+
+  test('sin sesión: Mis Ventas y reservas requieren autenticación', async () => {
+    mockToken = null;
+    await renderRouter(routes, { initialUrl: '/sales' });
     await waitFor(() => expect(screen.getByText('Login')).toBeTruthy());
   });
 

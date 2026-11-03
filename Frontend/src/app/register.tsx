@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 import { COLORS } from '../theme';
 import { useAuth } from '@/context/AuthContext';
 import Card from '@/components/Card';
 import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
+import { mexicanPhone, uabcEmail } from '@/services/auth-validation';
 
 export default function Register() {
   const { register } = useAuth();
@@ -17,19 +19,20 @@ export default function Register() {
   const complete = Boolean(form.name.trim() && form.email.trim() && form.phone.trim() && form.password && accepted);
   async function submit() {
     if (!complete || loading) return;
-    if (!form.email.trim().toLowerCase().endsWith('@uabc.edu.mx')) { setError('Ingresa tu correo @uabc.edu.mx.'); return; }
-    const phone = form.phone.replace(/[\s()-]/g, '');
-    if (!/^(?:\+52)?\d{10}$/.test(phone)) { setError('Ingresa diez dígitos mexicanos, con o sin +52.'); return; }
+    const email = uabcEmail(form.email);
+    if (!email) { setError('Ingresa tu correo @uabc.edu.mx.'); return; }
+    const phone = mexicanPhone(form.phone);
+    if (!phone) { setError('Ingresa diez dígitos mexicanos, con o sin +52.'); return; }
     setLoading(true);
     setError('');
-    try { await register({ name: form.name.trim(), email: form.email.trim(), phone, password: form.password }); }
+    try { await register({ name: form.name.trim(), email, phone, password: form.password }); }
     catch (cause: any) {
       const message = cause?.response?.data?.message;
       setError(Array.isArray(message) ? message.join('\n') : message || 'No se pudo crear la cuenta.');
     } finally { setLoading(false); }
   }
   return <SafeAreaView style={styles.screen}>
-    <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
+    <StatusBar barStyle="dark-content" />
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.fill}>
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <Link href="/login" asChild><Pressable accessibilityRole="link" style={styles.back}><Text style={styles.link}>‹ Volver</Text></Pressable></Link>

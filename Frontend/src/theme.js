@@ -16,6 +16,7 @@ export const COLORS = {
   staticAccent: '#8B7355',
   gangaSoft: '#FFF3E0',
   ganga: '#E85D24',
+  overlay: 'rgba(0, 0, 0, 0.45)',
 };
 
 export const FONTS = {

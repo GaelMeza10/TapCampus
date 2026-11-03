@@ -1,330 +1,82 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-  TextInput,
-  SectionList,
-  Alert,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { COLORS, RADIUS, SHADOW } from '../theme';
-import { PUBLICACIONES, ZONAS } from '@/constants/publications';
-import TarjetaPublicacion, { PublicacionMock } from '@/components/Publisher_Card';
-import { useAuth } from '@/context/AuthContext';
-
-interface Seccion {
-  title: string;
-  count: number;
-  esViva: boolean;
-  data: PublicacionMock[];
-}
-//Buscador y los chips de las zonas 
-function ListaHeader({
-  busqueda,
-  setBusqueda,
-  zonaActiva,
-  setZonaActiva,
-}: {
-  busqueda: string;
-  setBusqueda: (v: string) => void;
-  zonaActiva: string;
-  setZonaActiva: (v: string) => void;
-}) {
-  return (
-    <View>
-      
-      <View style={styles.searchWrapper}>
-        <Ionicons name="search-outline" size={18} color={COLORS.textLight} style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar publicaciones..."
-          placeholderTextColor={COLORS.textLight}
-          value={busqueda}
-          onChangeText={setBusqueda}
-        />
-        {busqueda.length > 0 && (
-          <TouchableOpacity onPress={() => setBusqueda('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Ionicons name="close-circle" size={18} color={COLORS.textLight} />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      
-      <SectionList
-        horizontal
-        sections={[{ data: ZONAS }]}
-        keyExtractor={(zona) => zona}
-        renderItem={({ item: zona }) => (
-          <TouchableOpacity
-            style={[styles.zonaChip, zonaActiva === zona && styles.zonaChipActivo]}
-            onPress={() => setZonaActiva(zona)}
-          >
-            <Text style={[styles.zonaChipText, zonaActiva === zona && styles.zonaChipTextActivo]}>
-              {zona}
-            </Text>
-          </TouchableOpacity>
-        )}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.zonaScroll}
-      />
-    </View>
-  );
-}
-//Titulo de cada grupo
-const SeccionHeader = React.memo(function SeccionHeader({ seccion }: { seccion: Seccion }) {
-  return (
-    <View style={styles.seccionHeader}>
-      <View style={styles.seccionTituloRow}>
-        {seccion.esViva && <View style={styles.dot} />}
-        <Text style={styles.seccionTitulo}>{seccion.title}</Text>
-      </View>
-      <Text style={styles.seccionCount}>
-        {seccion.count} {seccion.esViva ? 'activas' : 'artículos'}
-      </Text>
-    </View>
-  );
-});
-//Cuando no hay articulos
-function ListaVacia({ busqueda }: { busqueda: string }) {
-  return (
-    <View style={styles.emptyContainer}>
-      <Ionicons name="search-outline" size={48} color={COLORS.textLight} />
-      <Text style={styles.emptyText}>
-        {busqueda ? `Sin resultados para "${busqueda}"` : 'No hay publicaciones disponibles'}
-      </Text>
-    </View>
-  );
-}
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, AppState, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { io } from 'socket.io-client';
+import { API_BASE_URL } from '@/constants/api.constants';
+import { COLORS, RADIUS } from '@/theme';
+import PublisherCard from '@/components/Publisher_Card';
+import { apiMessage, categories, listPublications, zones, type Category, type Publication, type PublicationType, type Zone } from '@/services/marketplace';
 
 export default function HomePage() {
-  const [zonaActiva, setZonaActiva] = useState('Todas');
-  const [busqueda, setBusqueda] = useState('');
-  const { logout } = useAuth();
-  //filtro publicaciones
-  const secciones = useMemo<Seccion[]>(() => {
-    const filtradas = PUBLICACIONES.filter((p) => {
-      const coincideZona = zonaActiva === 'Todas' || p.zona === zonaActiva;
-      const coincideBusqueda = p.titulo.toLowerCase().includes(busqueda.toLowerCase());
-      return coincideZona && coincideBusqueda;
-    });
-
-    const vivas = filtradas.filter((p) => p.tipo === 'viva');
-    const estaticas = filtradas.filter((p) => p.tipo === 'estatica');
-
-    return [
-      { title: 'En vivo ahora', count: vivas.length, esViva: true, data: vivas },
-      { title: 'Material escolar', count: estaticas.length, esViva: false, data: estaticas },
-    ];
-  }, [zonaActiva, busqueda]);
-  
-  const handleLogout = useCallback(() => {
-    Alert.alert(
-      'Cerrar sesión',
-      '¿Seguro que quieres salir?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Salir',
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-          },
-        },
-      ]
-    );
-  }, [logout]);
-
-  const renderItem = useCallback(
-    ({ item }: { item: PublicacionMock }) => <TarjetaPublicacion item={item} />,
-    []
-  );
-
-  const renderSectionHeader = useCallback(
-    ({ section }: { section: Seccion }) => <SeccionHeader seccion={section} />,
-    []
-  );
-
-  const keyExtractor = useCallback((item: PublicacionMock) => item.id, []);
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
-
-      <View style={styles.header}>
-        <Text style={styles.headerTitulo}>TapCampus</Text>
-        <TouchableOpacity style={styles.headerAvatar} onPress={handleLogout} activeOpacity={0.75}>
-          <Ionicons name="log-out-outline" size={20} color={COLORS.primary} />
-        </TouchableOpacity>
-      </View>
-
-      <SectionList<PublicacionMock, Seccion>
-        sections={secciones}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        renderSectionHeader={renderSectionHeader}
-        ListHeaderComponent={
-          <ListaHeader
-            busqueda={busqueda}
-            setBusqueda={setBusqueda}
-            zonaActiva={zonaActiva}
-            setZonaActiva={setZonaActiva}
-          />
-        }
-        ListEmptyComponent={<ListaVacia busqueda={busqueda} />}
-        ListFooterComponent={<View style={styles.listFooter} />}
-        showsVerticalScrollIndicator={false}
-        initialNumToRender={8}
-        maxToRenderPerBatch={10}
-        windowSize={5}
-        removeClippedSubviews
-        getItemLayout={(_data, index) => ({
-          length: 182, 
-          offset: 182 * index,
-          index,
-        })}
-      />
-
-      
-      <TouchableOpacity style={styles.fab} activeOpacity={0.85}>
-          <Ionicons name="add" size={28} color={COLORS.white} />
-      </TouchableOpacity>
-    </SafeAreaView>
-  );
+  const router = useRouter();
+  const [type, setType] = useState<PublicationType>('LIVE');
+  const [zoneId, setZoneId] = useState<number>();
+  const [categoryId, setCategoryId] = useState<number>();
+  const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
+  const [items, setItems] = useState<Publication[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
+  const refresh = useCallback(async (initial = false) => {
+    if (initial) setLoading(true); else setRefreshing(true);
+    try { setItems(await listPublications(type, zoneId, categoryId)); setError(''); }
+    catch (cause) { setError(apiMessage(cause)); }
+    finally { setLoading(false); setRefreshing(false); }
+  }, [type, zoneId, categoryId]);
+  useEffect(() => { void refresh(true); }, [refresh]);
+  useEffect(() => { void zones().then(setZoneOptions).catch(cause => setError(apiMessage(cause))); }, []);
+  useEffect(() => { void categories(type).then(setCategoryOptions).catch(cause => setError(apiMessage(cause))); }, [type]);
+  useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
+  useFocusEffect(useCallback(() => {
+    const socket = io(API_BASE_URL, { autoConnect: true });
+    const sync = () => { void refresh(); };
+    socket.on('connect', sync);
+    socket.on('stock_updated', sync);
+    socket.on('publication_expired', sync);
+    socket.on('ganga_activated', sync);
+    const app = AppState.addEventListener('change', state => { if (state === 'active') sync(); });
+    return () => { app.remove(); socket.disconnect(); };
+  }, [refresh]));
+  const changeType = (next: PublicationType) => { setType(next); setCategoryId(undefined); };
+  return <SafeAreaView style={styles.screen}>
+    <View style={styles.top}>
+      <Text style={styles.heading}>TapCampus</Text>
+      <View style={styles.nav}><Pressable accessibilityRole="button" onPress={() => router.push('/reservations')}><Text style={styles.link}>Reservas</Text></Pressable><Pressable accessibilityRole="button" onPress={() => router.push('/sales')}><Text style={styles.link}>Mis Ventas</Text></Pressable></View>
+    </View>
+    <View style={styles.tabs}>
+      <Pressable accessibilityRole="tab" accessibilityState={{ selected: type === 'LIVE' }} style={[styles.tab, type === 'LIVE' && styles.activeTab]} onPress={() => changeType('LIVE')}><Text style={styles.tabText}>En Vivo</Text></Pressable>
+      <Pressable accessibilityRole="tab" accessibilityState={{ selected: type === 'STATIC' }} style={[styles.tab, type === 'STATIC' && styles.activeTab]} onPress={() => changeType('STATIC')}><Text style={styles.tabText}>Estático</Text></Pressable>
+    </View>
+    <FlatList data={items} keyExtractor={item => item.id}
+      renderItem={({ item }) => <PublisherCard item={item} onPress={() => router.push({ pathname: '/publication/[id]', params: { id: item.id } })} />}
+      contentContainerStyle={styles.list} refreshing={refreshing} onRefresh={() => void refresh()}
+      ListHeaderComponent={<View>
+        <Text style={styles.filterLabel}>Zona</Text>
+        <FlatList horizontal data={[{ id: 0, name: 'Todas' }, ...zoneOptions]} keyExtractor={item => String(item.id)} showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => <Pressable style={[styles.chip, (zoneId ?? 0) === item.id && styles.selectedChip]} onPress={() => setZoneId(item.id || undefined)}><Text style={styles.chipText}>{item.name}</Text></Pressable>} />
+        <Text style={styles.filterLabel}>Categoría</Text>
+        <FlatList horizontal data={[{ id: 0, name: 'Todas', type }, ...categoryOptions]} keyExtractor={item => String(item.id)} showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => <Pressable style={[styles.chip, (categoryId ?? 0) === item.id && styles.selectedChip]} onPress={() => setCategoryId(item.id || undefined)}><Text style={styles.chipText}>{item.name}</Text></Pressable>} />
+        {error ? <View style={styles.error}><Text style={styles.errorText}>{error}</Text><Pressable onPress={() => void refresh()}><Text style={styles.link}>Reintentar</Text></Pressable></View> : null}
+      </View>}
+      ListEmptyComponent={loading ? <ActivityIndicator color={COLORS.primary} /> : <Text style={styles.empty}>{error ? 'No se pudieron cargar las publicaciones.' : 'No hay publicaciones para estos filtros.'}</Text>}
+    />
+    <Pressable style={styles.create} accessibilityRole="button" onPress={() => router.push('/publication/edit')}><Text style={styles.createText}>+ Publicar</Text></Pressable>
+  </SafeAreaView>;
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-
-  // Navbar
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
-  },
-  headerTitulo: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: COLORS.textDark,
-  },
-  headerAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  // Buscador
-  searchWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.md,
-    marginHorizontal: 20,
-    marginBottom: 16,
-    paddingHorizontal: 14,
-    height: 48,
-    ...SHADOW.card,
-  },
-  searchIcon: { marginRight: 8 },
-  searchInput: {
-    flex: 1,
-    fontSize: 14,
-    color: COLORS.textDark,
-  },
-
-  // Chips de zona
-  zonaScroll: {
-    paddingHorizontal: 20,
-    gap: 8,
-    marginBottom: 20,
-  },
-  zonaChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: RADIUS.full,
-    backgroundColor: COLORS.white,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  zonaChipActivo: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
-  zonaChipText: {
-    fontSize: 13,
-    color: COLORS.textMedium,
-    fontWeight: '500',
-  },
-  zonaChipTextActivo: {
-    color: COLORS.white,
-  },
-
-  // Header de sección
-  seccionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: COLORS.background,
-  },
-  seccionTituloRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.primary,
-  },
-  seccionTitulo: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: COLORS.textDark,
-  },
-  seccionCount: {
-    fontSize: 12,
-    color: COLORS.textMedium,
-  },
-
-  // Empty state
-  emptyContainer: {
-    alignItems: 'center',
-    paddingVertical: 60,
-    gap: 12,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: COLORS.textMedium,
-    textAlign: 'center',
-  },
-  listFooter: { height: 100 },
-
-  // FAB
-  fab: {
-    position: 'absolute',
-    bottom: 28,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: COLORS.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...SHADOW.card,
-  },
+  screen: { flex: 1, backgroundColor: COLORS.background }, top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
+  nav: { flexDirection: 'row', gap: 12 },
+  heading: { color: COLORS.textDark, fontSize: 24, fontWeight: '800' }, link: { color: COLORS.primaryDark, fontWeight: '700' },
+  tabs: { flexDirection: 'row', marginHorizontal: 20, marginBottom: 8 }, tab: { flex: 1, alignItems: 'center', padding: 12, borderBottomWidth: 2, borderColor: COLORS.border },
+  activeTab: { borderColor: COLORS.primary }, tabText: { color: COLORS.textDark, fontWeight: '700' },
+  list: { paddingHorizontal: 20, paddingBottom: 90, flexGrow: 1 }, filterLabel: { color: COLORS.textMedium, fontWeight: '700', marginTop: 10, marginBottom: 8 },
+  chip: { backgroundColor: COLORS.white, borderRadius: RADIUS.full, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8, marginBottom: 8 },
+  selectedChip: { backgroundColor: COLORS.primarySoft, borderWidth: 1, borderColor: COLORS.primary }, chipText: { color: COLORS.textDark },
+  error: { padding: 12, backgroundColor: COLORS.errorBg, borderRadius: RADIUS.md, marginBottom: 8 }, errorText: { color: COLORS.error },
+  empty: { textAlign: 'center', color: COLORS.textMedium, padding: 30 },
+  create: { position: 'absolute', bottom: 28, right: 20, backgroundColor: COLORS.primary, borderRadius: RADIUS.full, paddingHorizontal: 22, paddingVertical: 16 },
+  createText: { color: COLORS.white, fontWeight: '800' },
 });
