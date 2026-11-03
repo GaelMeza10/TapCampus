@@ -39,6 +39,12 @@ export class PublicationsController {
     return this.publications.list(query);
   }
 
+  @Get('mine')
+  @UseGuards(JwtAuthGuard)
+  mine(@CurrentUser() user: AuthenticatedUser) {
+    return this.publications.mine(user.id);
+  }
+
   @Get(':id')
   detail(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.publications.detail(id);

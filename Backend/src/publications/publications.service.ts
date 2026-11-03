@@ -159,6 +159,15 @@ export class PublicationsService {
     return publications.map(publicationResponse);
   }
 
+  async mine(sellerId: string) {
+    const publications = await this.prisma.publication.findMany({
+      where: { seller_id: sellerId },
+      select: publicationSelect,
+      orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
+    });
+    return publications.map(publicationResponse);
+  }
+
   async detail(id: string) {
     const publication = await this.prisma.publication.findFirst({
       where: { AND: [{ id }, visiblePublications(new Date())] },

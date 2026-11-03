@@ -11,7 +11,7 @@ import { QueueService, RESERVATION_MS } from '../jobs/queue.service';
 
 const include = {
   publication: {
-    select: { seller_id: true, seller: { select: { phone: true } } },
+    select: { title: true, seller_id: true, seller: { select: { phone: true } } },
   },
   buyer: { select: { id: true, name: true, phone: true } },
 } satisfies Prisma.ReservationInclude;
@@ -32,6 +32,7 @@ export class ReservationsService {
     return {
       id: r.id,
       publicationId: r.publication_id,
+      publicationTitle: r.publication.title,
       status: r.status,
       reservedAt: r.reserved_at.toISOString(),
       expiresAt: expiresAt.toISOString(),

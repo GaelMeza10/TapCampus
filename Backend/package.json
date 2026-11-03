@@ -11,6 +11,7 @@
     "test:infra": "node scripts/verify-infrastructure.mjs",
     "test:phase2": "node scripts/verify-phase2.mjs",
     "test:phase3": "node scripts/verify-phase3.mjs",
+    "test:phase5-contracts": "node scripts/verify-phase5-contracts.cjs",
     "build": "nest build",
     "deploy": "nest deploy",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
