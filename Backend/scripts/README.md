@@ -29,6 +29,18 @@ npm run test:phase2
 
 Para uso local, POST uploads recibe exactamente un campo multipart `file`, imagen JPEG/PNG/WebP de hasta 5 MiB y Bearer JWT; devuelve image_url. Directorio default `uploads` relativo a Backend, configurable con UPLOADS_DIR. PUBLIC_BASE_URL opcional es el origen HTTP(S) externo sin path, accesible desde móvil; sin él se usa el origen de la petición. Los ejemplos y cuerpos de publicaciones están en `docs/03_ARCHITECTURE.md` y los expedientes; no se aceptan seller_id/status ni campos desconocidos del cliente.
 
+## Publicaciones de demostración
+
+El seed ordinario solo reconcilia zonas y categorías. Para poblar el feed local con doce publicaciones LIVE y doce STATIC, primero registra un vendedor y ejecuta desde `Backend/`:
+
+```powershell
+$env:SEED_DEMO_SELLER_EMAIL='correo.existente@uabc.edu.mx'
+$env:SEED_PUBLIC_BASE_URL='http://IP_LOCAL_DE_TU_EQUIPO:3000'
+node node_modules/prisma/build/index.js db seed
+```
+
+La IP debe ser alcanzable desde el teléfono. El script crea los ocho PNG originales y copia dieciséis fotografías ilustrativas desde `prisma/demo-images/` a `UPLOADS_DIR` o `uploads/`; el backend debe servir ese mismo directorio. Repetir el comando no duplica ni restablece publicaciones existentes. LIVE caduca tras siete días y una nueva ejecución no modifica su horario. Los títulos empiezan con `Demo:` y el contacto del vendedor de prueba no representa una venta real. Quita las dos variables de entorno para ejecutar únicamente el seed de catálogos. Para comprobar la forma de los datos y la repetición sin PostgreSQL, ejecuta `node scripts/verify-demo-seed.cjs`. Con PostgreSQL local y el backend compilado, `node scripts/verify-demo-feed.cjs` comprueba feed e imagen por HTTP en memoria, sin abrir el puerto de la aplicación.
+
 ## Infraestructura y recuperación
 
 Ejecutar desde `Backend/` con Node 24.13 o posterior y `DATABASE_URL` configurada

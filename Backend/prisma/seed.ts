@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { PrismaClient } from '../src/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { zoneNames, categoryNames } from './catalogs';
+import { seedDemoPublications } from './seed-demo-publications';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -101,11 +102,15 @@ async function main() {
     { timeout: 30000 },
   );
   console.log('Seed verificado: 5 zonas, 4 categorías LIVE y 4 STATIC.');
+  if (process.env.SEED_DEMO_SELLER_EMAIL) {
+    const created = await seedDemoPublications(prisma);
+    console.log(`Publicaciones de demo: ${created} nuevas (24 en total).`);
+  }
 }
 main()
   .catch(() => {
     console.error(
-      'Seed detenido; transacción revertida. Revisar inventario y remapeos de catálogos.',
+      'Seed detenido. Revisar catálogos, vendedor y URL de imágenes de demo.',
     );
     process.exitCode = 1;
   })
