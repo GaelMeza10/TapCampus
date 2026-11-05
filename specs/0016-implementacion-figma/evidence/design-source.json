@@ -1,0 +1,78 @@
+{
+  "fileKey": "XvTMHHlXw8yfnd6x0v7Ulh",
+  "sessionId": "3568f3d7-79c7-48aa-8160-4102d96c8823",
+  "frames": {
+    "login": "3:3",
+    "registro": "3:20",
+    "feedLive": "3:42",
+    "catalogo": "3:87",
+    "filtros": "5:2",
+    "filtrosCatalogo": "11:40",
+    "detalleLive": "4:2",
+    "detalleCatalogo": "4:23",
+    "reservaConfirmada": "4:42",
+    "misReservas": "4:62",
+    "formLive": "5:32",
+    "formCatalogo": "5:98",
+    "gangaProgramada": "56:261",
+    "ventas": "5:68",
+    "ventasGanga": "6:86",
+    "ventaFinalizada": "6:116",
+    "ventasCatalogo": "57:132",
+    "articuloVendido": "57:200"
+  },
+  "fonts": {
+    "family": "Inter",
+    "weights": [
+      "400Regular",
+      "500Medium",
+      "600SemiBold",
+      "700Bold"
+    ],
+    "packagedLocally": true
+  },
+  "assets": [
+    {
+      "file": "Frontend/assets/icons/reservation-confirmed.svg",
+      "node": "4:47",
+      "root": [
+        58,
+        58
+      ],
+      "source": "https://www.figma.com/api/mcp/asset/95e79aa9-736c-4b18-829c-3072f3cc1a85/7b51a.svg",
+      "callsite": "Frontend/src/components/status-icon.tsx"
+    },
+    {
+      "file": "Frontend/assets/icons/search-empty.svg",
+      "node": "59:207",
+      "root": [
+        28,
+        28
+      ],
+      "source": "https://www.figma.com/api/mcp/asset/ecdf422c-3de2-44cf-a16f-2b5453cadfdc/fe39a.svg",
+      "callsite": "Frontend/src/components/status-icon.tsx"
+    },
+    {
+      "file": "Frontend/assets/icons/expired-background.svg",
+      "node": "5:195",
+      "root": [
+        72,
+        72
+      ],
+      "source": "https://www.figma.com/api/mcp/asset/570fec0a-222a-4acc-a88d-a6b182849ec9/e4d3d.svg",
+      "callsite": "Frontend/src/components/status-icon.tsx"
+    },
+    {
+      "file": "Frontend/assets/icons/expired-clock.svg",
+      "node": "59:254",
+      "root": [
+        28,
+        28
+      ],
+      "source": "https://www.figma.com/api/mcp/asset/570fec0a-222a-4acc-a88d-a6b182849ec9/88526.svg",
+      "callsite": "Frontend/src/components/status-icon.tsx"
+    }
+  ],
+  "productImages": "Datos dinámicos de API; dibujos de producto de Figma son ejemplos, no assets fijos de la app",
+  "limits": "Chrome/React Native Web permite revisión de composición a tamaño móvil. Cámara, teclado, DateTimePicker nativo y WhatsApp físico se prueban en iPhone."
+}

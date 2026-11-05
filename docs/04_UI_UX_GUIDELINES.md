@@ -11,16 +11,23 @@ Para garantizar una experiencia intuitiva, el diseño se rige bajo las siguiente
 *   **Reconocimiento antes que recuerdo:** Los filtros están expuestos visualmente (botones de categorías) en lugar de requerir que el usuario escriba la categoría exacta en un buscador.
 
 ## 3. Paleta de Colores (`COLORS`)
-* `primary: '#4CAF6F'` - Botones primarios, acentos, y validaciones positivas.
-* `primaryDark: '#3A9B5C'` - Hover o estado presionado.
+Fuente visual vigente: prototipo Figma aprobado en 0015 e implementación 0016. Prevalecen estos tokens y componentes compartidos; las pantallas se adaptan al tamaño y safe areas reales, sin dibujar la barra de estado del teléfono. Inter se empaqueta localmente; controles de al menos 44 puntos y texto escalable.
+
+* `primary: '#17613B'` - CTA y texto de marca, contraste del prototipo.
+* `primaryDark: '#124D2F'` - Estado presionado.
+* `accent: '#4CAF6F'` - Verde original conservado como acento.
 * `background: '#EDEAE3'` - Fondo base para el 100% de las vistas principales.
 * `white: '#FFFFFF'` - Usado exclusivamente dentro de las Cards, Modales y contenedores que flotan sobre el fondo general.
 * `textDark: '#1A1A1A'` - Textos de encabezados (Títulos).
-* `textMedium: '#6B7280'` - Subtítulos, párrafos, o descripciones de publicaciones.
+* `textMedium: '#56615B'` - Subtítulos, párrafos, o descripciones de publicaciones.
 * `textLight: '#A0AEC0'` - Placeholders e íconos inactivos.
 * `inputBg: '#F3F4F6'` - Fondo para `TextInput`.
-* `border: '#E5E7EB'` - Divisiones, líneas separadoras.
-* `error: '#EF4444'` - Mensajes de advertencia o error.
+* `border: '#D7DED8'` - Divisiones, líneas separadoras.
+* `error: '#B42318'` - Acciones destructivas y errores legibles.
+
+Selector «Disponibles ahora / Catálogo» encima de Filtros, hoja con selección provisional y botón Aplicar. Barra inferior Explorar/Reservas/Mis ventas; FAB + de 56 puntos arriba de la barra. Reservas con precio fijado y reloj propio; venta finalizada conserva entregas vigentes y oculta acciones inválidas. Las fotos reales vienen de la API; no usar las ilustraciones de ejemplo como productos fijos.
+
+Evolución del prototipo (0017/0018, 2026-11-05): navegación inferior con iconos de brújula/comprobante/bolsa de 24 px y etiquetas; activo verde e inactivo gris, destinos táctiles de al menos 44 px. Mis ventas separa tipo y estado: selector Con horario/Catálogo debajo del título, con ambas opciones visibles; se retira el botón de tipo del encabezado. Con horario incluye publicaciones LIVE finalizadas. Explorar mantiene Disponibles ahora. Estos dos cambios están verificados en Figma; aún no se han trasladado a Expo.
 
 ## 4. Estilos de Componentes Comunes
 
@@ -36,7 +43,7 @@ Para envolver las publicaciones o secciones importantes de información:
 
 ### Entradas de Texto (Inputs)
 * Fondo: `COLORS.inputBg`.
-* Altura: `52px`.
+* Altura mínima: `52px`; descripción multilínea de al menos 100 puntos; etiquetas visibles y variante blanca en formularios de publicación.
 * Bordes redondeados: `RADIUS.md` (16px).
 * Fuente: `15px`, color `textDark`.
 * Íconos alineados a la izquierda (ej. `<Ionicons>` en color `textLight`).

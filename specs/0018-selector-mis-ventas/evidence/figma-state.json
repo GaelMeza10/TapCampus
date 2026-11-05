@@ -1,0 +1,248 @@
+{
+  "fileKey": "XvTMHHlXw8yfnd6x0v7Ulh",
+  "sessionId": "4dabcfe1-acfb-4982-abe1-d6b7f4961619",
+  "date": "2026-11-05",
+  "createdSelectors": [
+    "72:191",
+    "72:197",
+    "72:203",
+    "72:209",
+    "72:215",
+    "72:221",
+    "72:227"
+  ],
+  "removedButtons": [
+    "57:235",
+    "57:238",
+    "57:241",
+    "57:244",
+    "57:247",
+    "57:197",
+    "57:227"
+  ],
+  "layout": {
+    "createdNodeIds": [],
+    "mutatedNodeIds": [
+      "72:191",
+      "5:79",
+      "52:56",
+      "72:197",
+      "6:67",
+      "52:90",
+      "72:203",
+      "6:97",
+      "52:124",
+      "72:209",
+      "6:127",
+      "52:159",
+      "72:215",
+      "6:157",
+      "52:180",
+      "72:221",
+      "57:145",
+      "57:178",
+      "72:227",
+      "57:213",
+      "57:214"
+    ],
+    "removedNodeIds": [],
+    "screens": [
+      {
+        "id": "5:68",
+        "selector": "72:191",
+        "context": "5:79",
+        "viewport": "52:56",
+        "y": 176,
+        "height": 576,
+        "contentHeight": 549
+      },
+      {
+        "id": "6:56",
+        "selector": "72:197",
+        "context": "6:67",
+        "viewport": "52:90",
+        "y": 176,
+        "height": 576,
+        "contentHeight": 549
+      },
+      {
+        "id": "6:86",
+        "selector": "72:203",
+        "context": "6:97",
+        "viewport": "52:124",
+        "y": 176,
+        "height": 576,
+        "contentHeight": 583
+      },
+      {
+        "id": "6:116",
+        "selector": "72:209",
+        "context": "6:127",
+        "viewport": "52:159",
+        "y": 176,
+        "height": 576,
+        "contentHeight": 473
+      },
+      {
+        "id": "6:146",
+        "selector": "72:215",
+        "context": "6:157",
+        "viewport": "52:180",
+        "y": 176,
+        "height": 576,
+        "contentHeight": 399
+      },
+      {
+        "id": "57:132",
+        "selector": "72:221",
+        "context": "57:145",
+        "viewport": "57:178",
+        "y": 176,
+        "height": 576,
+        "contentHeight": 511
+      },
+      {
+        "id": "57:200",
+        "selector": "72:227",
+        "context": "57:213",
+        "viewport": "57:214",
+        "y": 176,
+        "height": 576,
+        "contentHeight": 373
+      }
+    ]
+  },
+  "audit": {
+    "screens": [
+      {
+        "id": "5:68",
+        "selector": "72:191",
+        "y": 88,
+        "viewport": "52:56",
+        "viewportY": 176,
+        "viewportHeight": 576,
+        "labels": [
+          "Con horario",
+          "Catálogo"
+        ],
+        "destinations": [
+          "57:132"
+        ],
+        "sourceComponent": "38:10",
+        "oldHeaderButtons": 0
+      },
+      {
+        "id": "6:56",
+        "selector": "72:197",
+        "y": 88,
+        "viewport": "52:90",
+        "viewportY": 176,
+        "viewportHeight": 576,
+        "labels": [
+          "Con horario",
+          "Catálogo"
+        ],
+        "destinations": [
+          "57:132"
+        ],
+        "sourceComponent": "38:10",
+        "oldHeaderButtons": 0
+      },
+      {
+        "id": "6:86",
+        "selector": "72:203",
+        "y": 88,
+        "viewport": "52:124",
+        "viewportY": 176,
+        "viewportHeight": 576,
+        "labels": [
+          "Con horario",
+          "Catálogo"
+        ],
+        "destinations": [
+          "57:132"
+        ],
+        "sourceComponent": "38:10",
+        "oldHeaderButtons": 0
+      },
+      {
+        "id": "6:116",
+        "selector": "72:209",
+        "y": 88,
+        "viewport": "52:159",
+        "viewportY": 176,
+        "viewportHeight": 576,
+        "labels": [
+          "Con horario",
+          "Catálogo"
+        ],
+        "destinations": [
+          "57:132"
+        ],
+        "sourceComponent": "38:10",
+        "oldHeaderButtons": 0
+      },
+      {
+        "id": "6:146",
+        "selector": "72:215",
+        "y": 88,
+        "viewport": "52:180",
+        "viewportY": 176,
+        "viewportHeight": 576,
+        "labels": [
+          "Con horario",
+          "Catálogo"
+        ],
+        "destinations": [
+          "57:132"
+        ],
+        "sourceComponent": "38:10",
+        "oldHeaderButtons": 0
+      },
+      {
+        "id": "57:132",
+        "selector": "72:221",
+        "y": 88,
+        "viewport": "57:178",
+        "viewportY": 176,
+        "viewportHeight": 576,
+        "labels": [
+          "Con horario",
+          "Catálogo"
+        ],
+        "destinations": [
+          "5:68"
+        ],
+        "sourceComponent": "38:16",
+        "oldHeaderButtons": 0
+      },
+      {
+        "id": "57:200",
+        "selector": "72:227",
+        "y": 88,
+        "viewport": "57:214",
+        "viewportY": 176,
+        "viewportHeight": 576,
+        "labels": [
+          "Con horario",
+          "Catálogo"
+        ],
+        "destinations": [
+          "5:68"
+        ],
+        "sourceComponent": "38:16",
+        "oldHeaderButtons": 0
+      }
+    ],
+    "errors": [],
+    "badLinks": []
+  },
+  "reviewedScreens": [
+    "5:68",
+    "6:86",
+    "6:116",
+    "57:132",
+    "57:200"
+  ],
+  "scope": "Figma; no Expo ni UAT"
+}

@@ -1,5 +1,15 @@
 # Auditoría del proyecto y decisiones de producto
 
+## Implementación del prototipo — 2026-11-04
+
+[0016](../specs/0016-implementacion-figma/verification.md) aplica el diseño aprobado a las pantallas Expo conservando servicios, JWT, privacidad y reservas. Fuente visual alineada en docs04, Inter local, navegación inferior, selector/FAB por tipo, filtros con borrador/aplicación, cuatro estados y protección contra respuestas antiguas. Formularios incluyen descripción, elección de horario nativa y ganga; ventas muestran reservas por unidad y respetan cierre/vencimiento.
+
+Se añadió price_before_ganga nullable, capturado bajo bloqueo al activar, con respaldo anterior y migración local aditiva. Datos históricos sin procedencia quedan NULL. Prisma al día; integración aislada de 311 solicitudes/16 grupos PASS, 40 pruebas frontend, 9 backend, tsc/lint, 18 capturas y bundles iOS/Android aprobados. Los 24 productos y dos reservas originales se conservaron. La prueba física de teclado/cámara/WhatsApp en iPhone no se realizó; 5.1–5.6 mantienen su aceptación integrada.
+
+## Prototipo UX — 2026-11-04
+
+[0015](../specs/0015-mejoras-prototipo-ux/verification.md) verifica ocho mejoras autorizadas en Figma: descripciones y desplazamiento, acciones por estado, catálogos reales, relojes diferenciados, reservas independientes, configuración de ganga/precios fijos, gestión de artículos y estados con navegación. Evidencia estructural y capturas revisadas; no sustituye implementación Expo ni UAT. TASKS 5.7 completa; 5.1–5.6 conservan su aceptación móvil.
+
 Fecha de corte: 2026-10-05; se conserva la evidencia histórica del 2026-10-01/04. Esta auditoría distingue **documentado**, **implementado** y **verificado**. Una referencia a código prueba que existe una pieza, no que el flujo completo funciona. Los hallazgos abiertos se convierten en decisiones o tareas antes de declarar listo el feature afectado.
 
 ## Migración Expo SDK 58 — 2026-11-03

@@ -1,0 +1,899 @@
+{
+  "fileKey": "XvTMHHlXw8yfnd6x0v7Ulh",
+  "sessionId": "5a5bb62c-04d7-4416-9266-679498bb38f7",
+  "date": "2026-11-05",
+  "createdNodeIds": [
+    "69:191",
+    "69:192",
+    "69:193",
+    "69:194",
+    "69:195",
+    "69:196",
+    "69:197",
+    "69:198",
+    "69:200",
+    "69:201",
+    "69:202",
+    "69:203",
+    "69:205",
+    "69:206",
+    "69:207",
+    "69:209",
+    "69:210",
+    "69:211",
+    "69:212",
+    "69:213",
+    "69:215",
+    "69:216",
+    "69:217",
+    "69:218",
+    "69:220",
+    "69:221",
+    "69:222",
+    "69:224",
+    "69:225",
+    "69:226",
+    "69:227",
+    "69:228",
+    "69:229",
+    "69:230",
+    "69:231",
+    "69:232",
+    "69:234",
+    "69:235",
+    "69:236",
+    "69:238",
+    "69:239",
+    "69:240",
+    "69:241",
+    "69:242",
+    "69:244",
+    "69:245",
+    "69:246",
+    "69:247",
+    "69:248",
+    "69:249",
+    "69:250",
+    "69:252",
+    "69:254",
+    "69:255",
+    "69:256",
+    "69:257",
+    "69:258",
+    "69:260",
+    "69:262",
+    "69:263",
+    "69:264",
+    "69:265",
+    "69:266",
+    "69:267",
+    "69:268",
+    "69:270",
+    "69:272",
+    "69:273",
+    "69:274",
+    "69:275",
+    "69:276",
+    "69:278",
+    "69:280",
+    "69:281",
+    "69:282",
+    "69:283",
+    "69:284",
+    "69:285",
+    "69:286",
+    "69:288",
+    "69:290",
+    "69:291",
+    "69:292",
+    "69:293",
+    "69:294",
+    "69:296",
+    "69:298",
+    "69:299",
+    "69:300",
+    "69:301",
+    "69:302",
+    "69:303",
+    "69:304",
+    "69:306",
+    "69:308",
+    "69:309",
+    "69:310",
+    "69:311",
+    "69:312",
+    "69:314",
+    "69:316",
+    "69:317",
+    "69:318",
+    "69:319",
+    "69:320",
+    "69:321",
+    "69:322",
+    "69:324",
+    "69:326",
+    "69:327",
+    "69:328",
+    "69:329",
+    "69:330",
+    "69:331",
+    "69:332",
+    "69:333",
+    "69:334",
+    "69:336",
+    "69:338",
+    "69:339",
+    "69:340",
+    "69:342",
+    "69:343",
+    "69:344",
+    "69:345",
+    "69:346",
+    "69:348",
+    "69:349",
+    "69:350",
+    "69:351",
+    "69:352",
+    "69:353",
+    "69:354",
+    "69:356",
+    "69:357",
+    "69:358",
+    "69:359",
+    "69:360",
+    "69:362",
+    "69:363",
+    "69:364",
+    "69:365",
+    "69:366",
+    "69:367",
+    "69:368",
+    "69:369",
+    "69:370",
+    "69:371",
+    "69:372",
+    "69:373",
+    "69:375",
+    "69:376",
+    "69:377",
+    "69:378",
+    "69:380",
+    "69:381",
+    "69:382",
+    "69:383",
+    "69:384",
+    "69:385",
+    "69:386",
+    "69:387",
+    "69:389",
+    "69:390",
+    "69:391",
+    "69:392",
+    "69:394",
+    "69:395",
+    "69:396",
+    "69:397",
+    "69:398",
+    "69:399",
+    "69:400",
+    "69:401",
+    "69:403",
+    "69:404",
+    "69:405",
+    "69:406",
+    "69:408",
+    "69:409",
+    "69:410",
+    "69:411",
+    "69:412",
+    "69:413",
+    "69:414",
+    "69:415",
+    "69:417",
+    "69:418",
+    "69:419",
+    "69:420",
+    "69:422",
+    "69:423",
+    "69:424",
+    "69:425",
+    "69:426",
+    "69:427",
+    "69:428",
+    "69:429",
+    "69:431",
+    "69:432",
+    "69:433",
+    "69:434",
+    "69:436",
+    "69:437",
+    "69:438",
+    "69:439",
+    "69:440",
+    "69:441",
+    "69:442",
+    "69:443",
+    "69:445",
+    "69:446",
+    "69:447",
+    "69:448"
+  ],
+  "mutatedNodeIds": [
+    "3:45",
+    "3:90",
+    "4:65",
+    "5:71",
+    "6:59",
+    "6:89",
+    "6:119",
+    "6:149",
+    "6:179",
+    "57:135",
+    "57:203",
+    "59:145",
+    "59:179",
+    "59:220",
+    "59:260",
+    "59:302",
+    "59:351"
+  ],
+  "removedNodeIds": [
+    "3:46",
+    "3:48",
+    "3:50",
+    "3:91",
+    "3:93",
+    "3:95",
+    "4:66",
+    "4:68",
+    "4:70",
+    "5:72",
+    "5:74",
+    "5:76",
+    "6:60",
+    "6:62",
+    "6:64",
+    "6:90",
+    "6:92",
+    "6:94",
+    "6:120",
+    "6:122",
+    "6:124",
+    "6:150",
+    "6:152",
+    "6:154",
+    "6:180",
+    "6:182",
+    "6:184",
+    "57:136",
+    "57:138",
+    "57:140",
+    "57:204",
+    "57:206",
+    "57:208",
+    "59:146",
+    "59:148",
+    "59:150",
+    "59:180",
+    "59:182",
+    "59:184",
+    "59:221",
+    "59:223",
+    "59:225",
+    "59:261",
+    "59:263",
+    "59:265",
+    "59:303",
+    "59:305",
+    "59:307",
+    "59:352",
+    "59:354",
+    "59:356"
+  ],
+  "bars": [
+    {
+      "id": "3:45",
+      "screen": "3:42",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:191",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:194",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "7:34",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:200",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "7:36",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3:90",
+      "screen": "3:87",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:205",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": "7:38",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:209",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "7:40",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:215",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "7:42",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4:65",
+      "screen": "4:62",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:220",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "7:44",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:224",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:229",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "7:46",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5:71",
+      "screen": "5:68",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:234",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "7:48",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:238",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "7:50",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:244",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        }
+      ]
+    },
+    {
+      "id": "6:59",
+      "screen": "6:56",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:248",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:252",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:254",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:260",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:262",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        }
+      ]
+    },
+    {
+      "id": "6:89",
+      "screen": "6:86",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:266",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:270",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:272",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:278",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:280",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        }
+      ]
+    },
+    {
+      "id": "6:119",
+      "screen": "6:116",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:284",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:288",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:290",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:296",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:298",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        }
+      ]
+    },
+    {
+      "id": "6:149",
+      "screen": "6:146",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:302",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:306",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:308",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:314",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:316",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        }
+      ]
+    },
+    {
+      "id": "6:179",
+      "screen": "6:176",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:320",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:324",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:326",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:331",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "69:336",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "57:135",
+      "screen": "57:132",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:338",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "57:142",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:342",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "57:143",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:348",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        }
+      ]
+    },
+    {
+      "id": "57:203",
+      "screen": "57:200",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:352",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "57:210",
+          "destinations": [
+            "3:42"
+          ]
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:356",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "57:211",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:362",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        }
+      ]
+    },
+    {
+      "id": "59:145",
+      "screen": "5:129",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:366",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:369",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:152",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:375",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:153",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "59:179",
+      "screen": "5:140",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:380",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:383",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:186",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:389",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:187",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "59:220",
+      "screen": "5:152",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:394",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:397",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:227",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:403",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:228",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "59:260",
+      "screen": "59:257",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:408",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:411",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:267",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:417",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:268",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "59:302",
+      "screen": "59:299",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:422",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:425",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:309",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:431",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:310",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "59:351",
+      "screen": "59:348",
+      "items": [
+        {
+          "label": "Explorar",
+          "icon": "69:436",
+          "active": true,
+          "token": "VariableID:2:4",
+          "target": null,
+          "destinations": []
+        },
+        {
+          "label": "Reservas",
+          "icon": "69:439",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:358",
+          "destinations": [
+            "4:62"
+          ]
+        },
+        {
+          "label": "Mis ventas",
+          "icon": "69:445",
+          "active": false,
+          "token": "VariableID:2:8",
+          "target": "59:359",
+          "destinations": [
+            "5:68"
+          ]
+        }
+      ]
+    }
+  ],
+  "count": 17,
+  "fontFamilies": [
+    "Inter"
+  ],
+  "audit": {
+    "bars": 17,
+    "icons": 51,
+    "targets": 35,
+    "errors": [],
+    "counts": {
+      "FRAME": 86,
+      "VECTOR": 153,
+      "TEXT": 51
+    },
+    "fonts": [
+      "Inter"
+    ],
+    "imageNodes": []
+  },
+  "sources": [
+    "https://github.com/ionic-team/ionicons/blob/main/src/svg/compass-outline.svg",
+    "https://github.com/ionic-team/ionicons/blob/main/src/svg/receipt-outline.svg",
+    "https://github.com/ionic-team/ionicons/blob/main/src/svg/bag-handle-outline.svg"
+  ]
+}

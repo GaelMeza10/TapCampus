@@ -19,6 +19,14 @@ AC-01/03/04/05/06 → T-04/T-05 y AC-02 → T-05: login/registro usan `KeyboardA
 
 ## Convergencia
 
+### EV-11 — Registro desde Expo Go iPhone en red local (2026-11-05)
+
+AC-02/05/06 → T-05: el usuario intentó crear cuenta desde el iPhone y observó «No se pudo crear la cuenta» tras aproximadamente 15 segundos, coincidente con el timeout del cliente. Las terminales no mostraban errores internos; la base tenía tres usuarios y ninguno creado en los últimos 30 minutos. Metro mantenía conexiones del teléfono, pero eso no demostraba acceso a la API. Las reglas de Windows consultadas permitían Node TCP en la red pública; no se cambiaron reglas ni se desactivó el firewall.
+
+Se reinició únicamente la API fuera del entorno de ejecución restringido, manteniendo `http://10.41.60.121:3000`, Docker y las cinco migraciones existentes. Para observar el reintento se instrumentó el proceso en memoria con logs de llegada y código HTTP de `/auth/register`, sin cuerpo, correo, contraseña ni JWT, y sin archivos nuevos. Una prueba desde la computadora con cuerpo vacío respondió 400 sin crear usuarios. Después, el usuario reintentó y confirmó «Ya me dejó crear la cuenta»: log de solicitud recibida y HTTP 201; consulta agregada de PostgreSQL confirmó cuatro usuarios y uno nuevo en los últimos 30 minutos. Se mantuvo la red local, sin túneles. El cambio de contexto de ejecución resolvió este intento; no se aisló qué control específico del entorno impedía el acceso anterior.
+
+Esta evidencia acredita registro exitoso desde el teléfono contra API/BD reales. No acredita por sí sola persistencia tras cerrar/reabrir Expo Go, login/logout completo ni todos los negativos en dispositivo; T-05 y TASKS 5.1 conservan su estado abierto. No se modificó código funcional ni se repitieron suites ya aprobadas por un reinicio de servicios.
+
 ### EV-07 — Corrección backend para fase 1
 
 Entorno: Windows, Node 24.13, PostgreSQL 16.15. Comandos en `Backend/`: `npm run build`, `node node_modules/typescript/bin/tsc --noEmit --incremental false`, `npm test -- --runInBand`, `npm run test:infra` con `PG_TOOLS_CONTAINER=backend-postgres-1`: salida 0. [0010 EV-01/04](../0010-infraestructura-y-base-de-datos/verification.md) y su resumen adjunto acreditan el respaldo/restore previo y las pruebas reales de auth. Unitarias: 9 pruebas, incluidas DI, JWT UUID/email, bcrypt y conflicto concurrente P2002→409.

@@ -7,6 +7,9 @@ Este documento describe la secuencia de pasos e interacciones (pantallas) por la
 *   **Registro:** Llena el formulario (Nombre, Correo `@uabc.edu.mx`, Teléfono mexicano de cualquier región con o sin `+52`, Contraseña). Al completarlo exitosamente, la API retorna el JWT y la app navega al Feed Principal.
 
 ## 2. Flujo del Comprador (Buscar y Reservar)
+Implementación visual vigente: 0016. Navegación inferior persistente Explorar/Reservas/Mis ventas; selector Disponibles ahora/Catálogo encima de Filtros. La hoja conserva un borrador: cerrar descarta cambios, Aplicar los combina y Restablecer permite volver a todas las opciones. El + abre el formulario del tipo visible.
+
+Prototipo actualizado en 0017/0018 (2026-11-05; traslado a Expo por realizar): la barra inferior usa brújula/comprobante/bolsa con etiquetas. En Mis ventas, tocar Con horario o Catálogo debajo del título cambia la vista y marca el tipo seleccionado; sustituye al botón superior que mostraba solo el destino alternativo. Los diálogos de entrega y estados de venta conservan sus rutas.
 1.  **Feed Principal (Home):** Ve una lista de tarjetas de Publicaciones en Vivo (con temporizador) y otra pestaña/sección de Publicaciones Estáticas. Puede filtrar por "Zonas" o "Categorías".
 2.  **Detalle del Producto:** Toca una tarjeta. Ve la foto grande, descripción, stock restante, y zona exacta.
 3.  **Acción de Reserva:** Presiona el botón "Reservar"; la app genera una clave nueva para esa acción y conserva la misma al reintentar si se pierde la respuesta.

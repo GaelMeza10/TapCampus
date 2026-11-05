@@ -56,12 +56,21 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 - [ ] **5.4 Formulario de Publicación:** Pantalla para el Vendedor. Implementar ImagePicker para la cámara/galería. Formularios con validación (no dejar poner stock negativo).
 - [ ] **5.5 Dashboard de Vendedor (Mis Ventas):** Mostrar reservas activas por separado, incluso varias del mismo comprador, con etiquetas en español y sin IDs visibles; permitir confirmar cada entrega dentro de sus 20 minutos. Añadir controles de "Activar Ganga Manual", "-1 Venta Física" y "Finalizar Publicación".
 - [ ] **5.6 Contacto WhatsApp:** Integrar enlace directo en `STATIC` y enlace tras reserva confirmada en `LIVE`; proteger teléfonos en respuestas públicas y probar URL/errores conforme a 0008.
+- [x] **5.7 Mejoras del prototipo Figma:** Ocho mejoras UX aplicadas y revisadas en 0015 EV-01..09: formularios, estados de venta, catálogos, tiempos, reservas, ganga, gestión estática y navegación. Cubre diseño; implementación y aceptación móvil siguen en 5.1–5.6.
+- [x] **5.8 Implementación del rediseño Figma (técnica):** 0016 EV-01..10: pantallas reales, tema/Inter, filtros, navegación, formularios, reservas y ventas; precio previo aditivo migrado; 40 pruebas frontend, 9 backend, 311 solicitudes de integración y 18 capturas revisadas; bundles iOS/Android aprobados. No cierra 5.1–5.6 ni UAT sin recorrido físico.
+- [x] **5.9 Iconos del prototipo:** 0017 EV-01..03: brújula/comprobante/bolsa en las 17 barras; 51 vectores, tres capturas y navegación inspeccionados. Alcance Figma.
+- [x] **5.10 Selector de Mis ventas (prototipo):** 0018 EV-01..03: pestañas explícitas Con horario/Catálogo en siete estados, navegación y capturas revisadas; entregas completas con ganga. Alcance Figma.
 
 **Avance fase 5 (2026-10-13):** Pantallas, servicios y contratos implementados; frontend tsc, exportación Expo, 8 suites/25 pruebas y contrato HTTP Nest en memoria aprobados. No se inició app/backend ni se usaron puertos de aplicación, según la restricción vigente registrada en el cierre de fase 4. Las casillas 5.1–5.6 siguen abiertas hasta comprobar flujos en dispositivo y contra API/BD/Redis/Socket.io reales; consultar EV nuevos de 0001–0008 y auditoría.
 
 **Corrección de conexión móvil (2026-11-03):** 0014 añade timeout de 15 s y resolución de imágenes en el origen actual; API/PNG/Socket.io por túnel HTTPS y 35 pruebas aprobados. El usuario confirmó productos visibles en iPhone (EV-04); 5.2 sigue abierta por el resto de la aceptación integrada.
 
+**Reanudación del recorrido móvil (2026-11-05):** 0016 EV-11: cinco migraciones aplicadas, servicios y dos túneles renovados; API LIVE 8/STATIC 12, imagen y Socket.io aprobados por HTTPS; bundle iOS 200 con origen nuevo verificado. QR temporal fuera del repositorio entregado al usuario, que confirmó disponer del iPhone. Las casillas 5.1–5.6 conservan su estado hasta obtener evidencia del recorrido en Expo Go.
+
+**Registro en iPhone (2026-11-05):** 0002 EV-11 acredita reintento exitoso por red local tras reiniciar API fuera del entorno restringido: HTTP 201, una cuenta nueva en PostgreSQL y confirmación del usuario. 5.1 sigue abierta para los demás recorridos de sesión y validación móvil.
+
 ## FASE 6: Validación, QA y Despliegue
+
 - [x] **6.1 Pruebas de Estrés:** Ejecutar 50 reservas concurrentes con claves distintas para la última pieza y comprobar 1×201/49×409; probar aparte reintentos concurrentes con la misma clave, sin doble descuento. Registrar resultados en 0001 `verification.md`.
 - [ ] **6.2 Despliegue Backend:** Subir PostgreSQL y Redis a la nube. Configurar variables de entorno y desplegar la API NestJS en producción.
 - [ ] **6.3 Empaquetado Móvil:** Generar APK de prueba usando Expo EAS Build y distribuir localmente.

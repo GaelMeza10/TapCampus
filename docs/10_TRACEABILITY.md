@@ -29,6 +29,12 @@ La [demo 0012](../specs/0012-publicaciones-demo/spec.md) aporta datos locales pa
 
 ## Cómo mantenerla
 
+La implementación visual de RF-01..13 y RNF-01/02/03 se registra en [0016](../specs/0016-implementacion-figma/spec.md), AC-01..10 → T-01..09 → EV-01..10 (TASKS 5.8). Cubre regresión, ampliación nullable de precio previo, compilación móvil y revisión visual automatizada; no sustituye recorridos físicos de los expedientes originales ni UAT.
+
+Evolución Figma 2026-11-05: [0017](../specs/0017-iconos-navegacion/spec.md) RF-05c/06/07, US-05c/04/06 → AC-01..03 → T-01..03 → EV-01..03 (TASKS 5.9), iconos semánticos en 17 barras. [0018](../specs/0018-selector-mis-ventas/spec.md) RF-03/06/08, US-03/04/07 → AC-01..03 → T-01..03 → EV-01..03 (TASKS 5.10), selector explícito en siete estados de Mis ventas. Ambos verificados solo en prototipo, sin atribuir implementación Expo ni UAT.
+
+La representación visual de RF-03/04/05/05b/05c/06/07/08/11/12/13 y RNF-02/03 se revisó en [0015](../specs/0015-mejoras-prototipo-ux/spec.md), AC-01..08 → T-01..09 → EV-01..09. TASKS 5.7 corresponde solo al prototipo Figma; no reemplaza evidencia móvil/API de los expedientes existentes.
+
 La corrección de conexión móvil para RF-05c/RF-06 y RNF-02 se registra en [0014](../specs/0014-conectividad-movil/spec.md): AC-01..03 → T-01..04 → EV-01..04. Transporte HTTPS y pruebas aprobados; el usuario confirmó productos visibles en iPhone. TASKS 5.2 conserva el resto de la aceptación integrada.
 
 El mantenimiento de compatibilidad de RF-01/RF-02 y US-01/US-02 al migrar el frontend se registra en [0013 Expo SDK 58](../specs/0013-expo-sdk-58/spec.md), TASKS 4.4 y sus AC-01..03; no sustituye la aceptación móvil de fase 5.

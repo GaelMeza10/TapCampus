@@ -4,6 +4,10 @@ Cada directorio numerado es un cambio trazable. El número no se reutiliza. `spe
 
 | ID | Feature | Requisitos / historias | Estado | Bloqueo principal |
 | --- | --- | --- | --- | --- |
+| 0018 | [Selector de Mis ventas](0018-selector-mis-ventas/spec.md) | RF-03/06/08; US-03/04/07; TASKS 5.10 | Verificado (prototipo) | EV-01..03: siete selectores explícitos, capturas y destinos inspeccionados. Alcance Figma. |
+| 0017 | [Iconos de navegación](0017-iconos-navegacion/spec.md) | RF-05c/06/07; US-05c/04/06; TASKS 5.9 | Verificado (prototipo) | EV-01..03: 51 SVG en 17 barras, tokens y destinos inspeccionados; tres capturas revisadas. |
+| 0016 | [Implementación Figma](0016-implementacion-figma/spec.md) | RF-01..13, RNF-01/02/03; TASKS 5.8 | Verificado (técnico) | EV-01..10: 40 pruebas frontend, 9 backend, 311 solicitudes reales, 18 capturas y bundles iOS/Android. Recorrido físico y UAT se verifican aparte. |
+| 0015 | [Mejoras del prototipo UX](0015-mejoras-prototipo-ux/spec.md) | RF-03/04/05/05b/05c/06/07/08/11/12/13, RNF-02/03; TASKS 5.7 | Verificado (prototipo) | EV-01..09: ocho mejoras, capturas, capas editables y destinos inspeccionados; aceptación móvil y UAT son trabajos separados. |
 | 0014 | [Conectividad móvil](0014-conectividad-movil/spec.md) | RF-05c/06, RNF-02; US-05c/04; TASKS 5.2 | Verificado | HTTPS de API, imágenes y Socket.io comprobados; 35 pruebas aprobadas; usuario confirma productos visibles en iPhone, EV-04. |
 | 0013 | [Expo SDK 58](0013-expo-sdk-58/spec.md) | RF-01/02; US-01/02; TASKS 4.4 | Verificado | EV-01..03: Doctor 20/20, tipos, 32 pruebas y bundles Android/iOS/web. Ejecución en dispositivo pertenece a fase 5. |
 | 0001 | [Reservas](0001-reservas/spec.md) | RF-07 a RF-09, RF-10 SHOULD, RNF-01; US-06 a US-08 | En verificación; backend verificado y UI probada en Jest | EV-11..13: contrato, reintento y presentación en español; EV-14/recorrido real en dispositivo pendiente. |
