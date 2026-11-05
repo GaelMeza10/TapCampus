@@ -1,28 +1,35 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { memo, useState } from 'react';
+import { Image } from 'expo-image';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Card from './Card';
-import { COLORS } from '@/theme';
+import AppText from './app-text';
+import { COLORS, METRICS, RADIUS, SPACE } from '@/theme';
 import type { Publication } from '@/services/marketplace';
+import { countdown, money } from '@/lib/marketplace-presentation';
 
-export default function PublisherCard({ item, onPress }: { item: Publication; onPress: () => void }) {
-  return <Pressable accessibilityRole="button" accessibilityLabel={`Ver ${item.title}`} onPress={onPress}>
-    <Card style={styles.card}>
-      <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="cover" />
+export default memo(function PublisherCard({ item, onPress, zoneName, now = Date.now(), compact }: { item: Publication; onPress: () => void; zoneName?: string; now?: number; compact?: boolean }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  return <Pressable accessibilityRole="button" accessibilityLabel={`Ver ${item.title}`} onPress={onPress} style={({ pressed }) => pressed && styles.pressed}>
+    {compact ? <Card style={styles.compactCard}>
+      <AppText variant="badge" style={item.is_ganga_active && styles.ganga}>{item.is_ganga_active ? 'GANGA · ' : ''}{item.type === 'LIVE' ? `Venta termina en ${countdown(item.end_time, now)}` : 'CATÁLOGO'}</AppText>
+      <AppText variant="heading" numberOfLines={2}>{item.title}</AppText>
+      {item.is_ganga_active && item.price_before_ganga && Number(item.price_before_ganga) > Number(item.price) ? <AppText variant="caption" style={styles.previous}>{money(item.price_before_ganga)}</AppText> : null}
+      <AppText variant="badge">{money(item.price)} · {item.type === 'LIVE' ? `${item.current_stock} disponibles · ` : ''}{zoneName ?? item.seller?.name}</AppText>
+    </Card> : <Card style={styles.card}>
+      {item.image_url && !imageFailed ? <Image source={{ uri: item.image_url }} style={styles.image} contentFit="cover" onError={() => setImageFailed(true)} accessibilityLabel={`Foto de ${item.title}`} /> : <View style={[styles.image, styles.fallback]}><AppText variant="caption">Sin imagen</AppText></View>}
       <View style={styles.body}>
-        <Text style={styles.type}>{item.type === 'LIVE' ? 'EN VIVO' : 'ESTÁTICO'}{item.is_ganga_active ? ' · GANGA' : ''}</Text>
-        <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
-        <Text style={styles.meta}>{item.seller.name}</Text>
-        <View style={styles.row}>
-          <Text style={styles.price}>${item.price}</Text>
-          {item.type === 'LIVE' ? <Text style={styles.stock}>{item.current_stock} disponibles</Text> : null}
-        </View>
+        <AppText variant="badge" style={item.is_ganga_active && styles.ganga}>{item.is_ganga_active ? 'GANGA · ' : ''}{item.type === 'LIVE' ? item.end_time ? `Venta termina en ${countdown(item.end_time, now)}` : 'DISPONIBLE AHORA' : 'CATÁLOGO'}</AppText>
+        <AppText variant="heading" numberOfLines={2}>{item.title}</AppText>
+        <AppText variant="caption" numberOfLines={2}>{zoneName ?? item.seller?.name}</AppText>
+        <View style={styles.prices}>{item.is_ganga_active && item.price_before_ganga && Number(item.price_before_ganga) > Number(item.price) ? <AppText variant="caption" style={styles.previous}>{money(item.price_before_ganga)}</AppText> : null}<AppText variant="price">{money(item.price)}</AppText></View>
+        <AppText variant="badge">{item.type === 'LIVE' ? `${item.current_stock} disponibles` : 'Ver detalles →'}</AppText>
       </View>
-    </Card>
+    </Card>}
   </Pressable>;
-}
+});
 const styles = StyleSheet.create({
-  card: { marginBottom: 12, overflow: 'hidden' }, image: { width: '100%', height: 150, backgroundColor: COLORS.primarySoft },
-  body: { padding: 16, gap: 5 }, type: { color: COLORS.primary, fontWeight: '700', fontSize: 12 },
-  title: { color: COLORS.textDark, fontSize: 17, fontWeight: '700' }, meta: { color: COLORS.textMedium },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  price: { color: COLORS.primaryDark, fontSize: 20, fontWeight: '800' }, stock: { color: COLORS.textMedium },
+  compactCard: { padding: SPACE.lg, gap: SPACE.xs, minHeight: 118 },
+  card: { flexDirection: 'row', padding: SPACE.md, gap: SPACE.md, minHeight: 192 }, image: { width: METRICS.photoWidth, height: METRICS.photoHeight, borderRadius: RADIUS.md, backgroundColor: COLORS.primarySoft },
+  fallback: { alignItems: 'center', justifyContent: 'center' }, body: { flex: 1, gap: SPACE.sm }, prices: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: SPACE.sm },
+  previous: { textDecorationLine: 'line-through' }, ganga: { color: COLORS.ganga }, pressed: { opacity: 0.75 },
 });

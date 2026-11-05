@@ -5,6 +5,7 @@ export type PublicationType = 'LIVE' | 'STATIC';
 export type Publication = {
   id: string; type: PublicationType; title: string; description: string;
   price: string; image_url: string; status: 'ACTIVE' | 'FINISHED';
+  price_before_ganga?: string | null;
   seller_id: string; seller: { id: string; name: string };
   zone_id: number; category_id: number; current_stock: number | null;
   initial_stock: number | null; start_time: string | null; end_time: string | null;

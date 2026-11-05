@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
-import { COLORS } from '../theme';
+import { COLORS, SPACE, TYPE } from '../theme';
+import AppText from '@/components/app-text';
 import { useAuth } from '@/context/AuthContext';
 import Card from '@/components/Card';
 import CustomInput from '@/components/CustomInput';
@@ -32,29 +33,24 @@ export default function Login() {
     <StatusBar barStyle="dark-content" />
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.fill}>
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <Text style={styles.brand}>TapCampus</Text>
+        <View style={styles.brandGroup}><AppText variant="brand">TapCampus</AppText><AppText style={styles.subtitle}>Tu campus, más cerca</AppText></View>
         <Card style={styles.card}>
-          <Text style={styles.title}>Bienvenido a TapCampus</Text>
-          <Text style={styles.subtitle}>Accede con tu correo institucional.</Text>
-          <CustomInput icon="mail-outline" accessibilityLabel="Correo institucional" placeholder="tu.nombre@uabc.edu.mx" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={value => { setEmail(value); setError(''); }} error={error && !uabcEmail(email) ? error : undefined} />
-          <CustomInput icon="lock-closed-outline" accessibilityLabel="Contraseña" placeholder="Contraseña" secureTextEntry value={password} onChangeText={value => { setPassword(value); setError(''); }} error={error && !!uabcEmail(email) ? error : undefined} />
+          <AppText variant="section">Bienvenido de nuevo</AppText>
+          <AppText variant="caption">Entra con tu cuenta universitaria.</AppText>
+          <CustomInput label="Correo institucional" placeholder="tu.nombre@uabc.edu.mx" keyboardType="email-address" autoCapitalize="none" autoComplete="email" textContentType="username" value={email} onChangeText={value => { setEmail(value); setError(''); }} error={error && !uabcEmail(email) ? error : undefined} />
+          <CustomInput label="Contraseña" placeholder="Contraseña" textContentType="password" autoComplete="current-password" secureTextEntry value={password} onChangeText={value => { setPassword(value); setError(''); }} error={error && !!uabcEmail(email) ? error : undefined} />
           <PrimaryButton title="Iniciar sesión" loading={loading} onPress={submit} />
         </Card>
-        <View style={styles.footer}><Text style={styles.footerText}>¿Aún no tienes cuenta? </Text><Link href="/register" asChild><Pressable accessibilityRole="link"><Text style={styles.link}>Regístrate</Text></Pressable></Link></View>
+        <View style={styles.footer}><AppText style={styles.link}>¿Aún no tienes cuenta? </AppText><Link href="/register" asChild><Pressable accessibilityRole="link" style={styles.footerLink}><AppText style={styles.link}>Regístrate</AppText></Pressable></Link></View>
       </ScrollView>
     </KeyboardAvoidingView>
   </SafeAreaView>;
 }
-
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background },
-  fill: { flex: 1 },
-  scroll: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 32 },
-  brand: { fontSize: 20, fontWeight: '800', color: COLORS.primary, marginBottom: 24 },
-  card: { padding: 24 },
-  title: { color: COLORS.textDark, fontSize: 30, fontWeight: '800', marginBottom: 8 },
-  subtitle: { color: COLORS.textMedium, fontSize: 14, marginBottom: 24 },
-  footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 28 },
-  footerText: { color: COLORS.textMedium, fontSize: 14 },
-  link: { color: COLORS.primary, fontSize: 14, fontWeight: '700' },
+  screen: { flex: 1, backgroundColor: COLORS.background }, fill: { flex: 1 },
+  scroll: { flexGrow: 1, paddingHorizontal: SPACE.page, paddingTop: SPACE.section, paddingBottom: SPACE.xl },
+  brandGroup: { gap: SPACE.xs, paddingHorizontal: SPACE.xs, marginBottom: 52 }, subtitle: { color: COLORS.textMedium },
+  card: { padding: SPACE.xl, gap: SPACE.lg },
+  footer: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', marginTop: SPACE.xl },
+  footerLink: { minHeight: 44, justifyContent: 'center' }, link: { ...TYPE.label, color: COLORS.primary },
 });

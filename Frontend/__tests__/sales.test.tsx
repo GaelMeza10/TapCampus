@@ -3,13 +3,20 @@ import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import Sales from '../src/app/sales';
 import { completeReservation, publicationAction } from '../src/services/marketplace';
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn() }), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
+jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn(), navigate: jest.fn() }), useLocalSearchParams: () => ({}), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
 jest.mock('../src/context/AuthContext', () => ({ useAuth: () => ({ logout: jest.fn() }) }));
 jest.mock('../src/services/whatsapp', () => ({ openWhatsApp: jest.fn() }));
 const mockPublication = { id: 'p1', title: 'Burrito', type: 'LIVE', status: 'ACTIVE', price: '30.00', current_stock: 2, end_time: '2099-01-01T12:00:00.000Z', ganga_activation_mode: 'MANUAL', is_ganga_active: false };
 const mockReservation = { id: 'r1', publicationId: 'p1', publicationTitle: 'Burrito', status: 'ACTIVE', unitPrice: '30.00', reservedAt: '2026-10-19T12:00:00.000Z', expiresAt: '2099-01-01T12:00:00.000Z', buyer: { id: 'b1', name: 'Luis' }, buyerContact: { phone: '+526641234567' } };
-beforeEach(() => { jest.clearAllMocks(); });
+beforeEach(() => {
+  jest.clearAllMocks();
+  const market = require('../src/services/marketplace');
+  market.myPublications.mockResolvedValue([mockPublication]);
+  market.sellerReservations.mockResolvedValue([mockReservation]);
+  market.publicationAction.mockResolvedValue({ ...mockPublication, current_stock: 1 });
+});
 jest.mock('../src/services/marketplace', () => ({
+  zones: jest.fn(async () => []),
   myPublications: jest.fn(async () => [mockPublication]), sellerReservations: jest.fn(async () => [mockReservation]),
   completeReservation: jest.fn(async () => ({ ...mockReservation, status: 'COMPLETED' })),
   publicationAction: jest.fn(async () => ({ ...mockPublication, current_stock: 1 })), apiMessage: () => 'Error de red',
@@ -17,18 +24,18 @@ jest.mock('../src/services/marketplace', () => ({
 
 test('confirmar entrega y venta física requieren confirmación visual y conservan ID', async () => {
   const view = await render(<Sales />);
-  await view.findByText('Comprador: Luis');
+  await view.findByText('Unidad 1 · Luis');
   expect(view.queryByText(/Reserva r1|Publicación p1|LIVE|ACTIVE/)).toBeNull();
-  fireEvent.press(view.getByLabelText(/Confirmar entrega de Burrito/));
+  await fireEvent.press(view.getByLabelText(/Confirmar entrega de Burrito/));
   expect(completeReservation).not.toHaveBeenCalled();
   const confirmation = await view.findByText(/¿Confirmar la entrega de Burrito/);
   expect(confirmation.props.children).not.toMatch(/r1|p1|ACTIVE|LIVE/);
-  fireEvent.press(view.getByText('Confirmar entrega'));
+  await fireEvent.press(view.getByRole('button', { name: 'Confirmar entrega' }));
   await waitFor(() => expect(completeReservation).toHaveBeenCalledWith('r1'));
-  fireEvent.press(view.getByText('−1 venta física'));
+  await fireEvent.press(view.getByText('−1 venta física'));
   expect(publicationAction).not.toHaveBeenCalled();
   expect(await view.findByText(/venta física de Burrito/)).toBeTruthy();
-  fireEvent.press(view.getByText('Registrar venta física'));
+  await fireEvent.press(view.getByRole('button', { name: 'Registrar venta física' }));
   await waitFor(() => expect(publicationAction).toHaveBeenCalledWith('p1', 'physical-sale'));
 });
 
@@ -38,13 +45,13 @@ test('dos apartados del mismo segundo conservan acciones independientes y nombre
   marketplace.sellerReservations.mockResolvedValueOnce([second, mockReservation])
     .mockResolvedValue([mockReservation, { ...second, status: 'COMPLETED' }]);
   const view = await render(<Sales />);
-  await view.findByText('Burrito · Unidad 2 de 2');
-  expect(view.getByText('Burrito · Unidad 1 de 2')).toBeTruthy();
+  await view.findByText('Unidad 2 de 2 · Marta');
+  expect(view.getByText('Unidad 1 de 2 · Luis')).toBeTruthy();
   expect(view.queryByText(/r1|r2|p1|LIVE|ACTIVE/)).toBeNull();
-  fireEvent.press(view.getByLabelText(/Confirmar entrega de Burrito · Unidad 2 de 2/));
+  await fireEvent.press(view.getByLabelText(/Confirmar entrega de Burrito · Unidad 2 de 2/));
   const confirmation = await view.findByText(/¿Confirmar la entrega de .*Marta/);
   expect(confirmation.props.children).not.toMatch(/r2|p1|ACTIVE|LIVE/);
-  fireEvent.press(view.getByText('Confirmar entrega'));
+  await fireEvent.press(view.getByRole('button', { name: 'Confirmar entrega' }));
   await waitFor(() => expect(completeReservation).toHaveBeenCalledWith('r2'));
   expect(completeReservation).not.toHaveBeenCalledWith('r1');
   await view.findByText(/Estado: Entrega confirmada/);
@@ -63,8 +70,41 @@ test('vendedor lee cuatro estados en español y etiquetas accesibles sin identif
   await view.findByText(/Estado: Entrega confirmada/);
   expect(view.getByText(/Estado: Cancelada/)).toBeTruthy();
   expect(view.getByText(/Estado: Vencida/)).toBeTruthy();
-  expect(view.getByText(/En vivo · Activa/)).toBeTruthy();
+  expect(view.getByText(/VENTA CON HORARIO · ACTIVA/)).toBeTruthy();
   const label = view.getByLabelText(/Confirmar entrega de Burrito · Unidad 1 de 4/).props.accessibilityLabel;
   expect(label).toContain('Luis');
   expect(label).not.toMatch(/r1|p1|LIVE|ACTIVE/);
+});
+
+test('venta finalizada oculta acciones de publicación y permite entregar una reserva vigente', async () => {
+  const market = require('../src/services/marketplace');
+  market.myPublications.mockResolvedValue([{ ...mockPublication, status: 'FINISHED', end_time: '2000-01-01T12:00:00Z' }]);
+  market.sellerReservations.mockResolvedValueOnce([mockReservation]).mockResolvedValue([{ ...mockReservation, status: 'COMPLETED' }]);
+  const view = await render(<Sales />);
+  await view.findByText(/VENTA CON HORARIO · FINALIZADA/);
+  expect(view.queryByText('−1 venta física')).toBeNull();
+  expect(view.queryByText('Editar publicación')).toBeNull();
+  expect(view.queryByText(/Activar Ganga/)).toBeNull();
+  await fireEvent.press(view.getByLabelText(/Confirmar entrega de Burrito/));
+  await fireEvent.press(view.getByRole('button', { name: 'Confirmar entrega' }));
+  await waitFor(() => expect(completeReservation).toHaveBeenCalledWith('r1'));
+  await view.findByText(/Estado: Entrega confirmada/);
+});
+
+test('Catálogo permite marcar vendido con confirmación y retira acciones al terminar', async () => {
+  const market = require('../src/services/marketplace');
+  const book = { ...mockPublication, id: 'book', type: 'STATIC', title: 'Cálculo I', description: 'Libro completo.', price: '180.00', current_stock: null };
+  market.myPublications.mockResolvedValueOnce([book]).mockResolvedValue([{ ...book, status: 'FINISHED' }]);
+  market.publicationAction.mockResolvedValue({ ...book, status: 'FINISHED' });
+  const view = await render(<Sales />);
+  await fireEvent.press(view.getByRole('button', { name: 'Catálogo' }));
+  await view.findByText('Cálculo I');
+  expect(view.queryByText('−1 venta física')).toBeNull();
+  expect(view.queryByText(/Reservas por entregar/)).toBeNull();
+  await fireEvent.press(view.getByRole('button', { name: 'Marcar vendido' }));
+  expect(publicationAction).not.toHaveBeenCalled();
+  await fireEvent.press(view.getByRole('button', { name: 'Marcar vendida' }));
+  await waitFor(() => expect(publicationAction).toHaveBeenCalledWith('book', 'sold'));
+  await view.findByText(/CATÁLOGO · VENDIDO/);
+  expect(view.queryByText('Editar publicación')).toBeNull();
 });

@@ -11,7 +11,7 @@ describe('componentes de fase 4', () => {
     const press = jest.fn();
     const view = await render(<PrimaryButton title="Entrar" onPress={press} loading />);
     expect(view.getByRole('button').props.accessibilityState).toEqual({ disabled: true, busy: true });
-    fireEvent.press(view.getByRole('button'));
+    await fireEvent.press(view.getByRole('button'));
     expect(press).not.toHaveBeenCalled();
   });
 
@@ -19,7 +19,7 @@ describe('componentes de fase 4', () => {
     const view = await render(<CustomInput icon="lock-closed-outline" placeholder="Contraseña" secureTextEntry error="Revisa el dato" />);
     expect(view.getByText('Revisa el dato')).toBeTruthy();
     expect(view.getByPlaceholderText('Contraseña').props.secureTextEntry).toBe(true);
-    fireEvent.press(view.getByRole('button', { name: 'Mostrar contraseña' }));
+    await fireEvent.press(view.getByRole('button', { name: 'Mostrar contraseña' }));
     await waitFor(() => expect(view.getByPlaceholderText('Contraseña').props.secureTextEntry).toBe(false));
   });
 

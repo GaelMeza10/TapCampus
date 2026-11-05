@@ -1,19 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
 import { useAuth } from '@/context/AuthContext';
-import { COLORS, RADIUS } from '@/theme';
-import { apiMessage, completeReservation, myPublications, publicationAction, sellerReservations, type Publication, type Reservation } from '@/services/marketplace';
+import { COLORS, RADIUS, SPACE } from '@/theme';
+import AppText from '@/components/app-text';
+import ReservationCard from '@/components/reservation-card';
+import { ConfirmationDialog, DataState, InlineMessage } from '@/components/feedback';
+import { MarketplaceShell, PageHeader } from '@/components/marketplace-shell';
+import { useMarketplaceSync } from '@/hooks/use-marketplace-sync';
+import { money, countdown, saleHasStarted, saleIsOpen } from '@/lib/marketplace-presentation';
+import { apiMessage, completeReservation, myPublications, publicationAction, sellerReservations, zones, type Zone, type PublicationType, type Publication, type Reservation } from '@/services/marketplace';
 import { openWhatsApp } from '@/services/whatsapp';
-import { canActOnReservation, formatReservationDate, presentReservations, publicationStatusLabel, publicationTypeLabel, reservationDescription, reservationStatusLabel, validTime } from '@/lib/reservation-presentation';
+import { canActOnReservation, formatReservationDate, presentReservations, reservationDescription, validTime } from '@/lib/reservation-presentation';
 
 type Sale = { publication: Publication; reservations: Reservation[] };
 type Action = { kind: 'complete' | 'physical-sale' | 'finish' | 'sold' | 'ganga'; publicationId: string; reservationId?: string };
 export default function Sales() {
   const router = useRouter();
+  const { type: initialType } = useLocalSearchParams<{ type?: string }>();
+  const [saleType, setSaleType] = useState<PublicationType>(initialType === 'STATIC' ? 'STATIC' : 'LIVE');
+  const [refreshing, setRefreshing] = useState(false);
+  const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
+  const sequence = useRef(0);
   const { logout } = useAuth();
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,14 +33,17 @@ export default function Sales() {
   const [now, setNow] = useState(Date.now());
   const refreshedDeadlines = useRef(new Set<string>());
   const refresh = useCallback(async () => {
+    const request = ++sequence.current; setRefreshing(true);
     try {
       const publications = await myPublications();
       const rows = await Promise.all(publications.map(async publication => ({ publication, reservations: publication.type === 'LIVE' ? await sellerReservations(publication.id) : [] })));
-      setSales(rows); setError('');
-    } catch (cause) { setError(apiMessage(cause)); }
-    finally { setLoading(false); }
+      if (request === sequence.current) { setSales(rows); setError(''); }
+    } catch (cause) { if (request === sequence.current) setError(apiMessage(cause)); }
+    finally { if (request === sequence.current) { setLoading(false); setRefreshing(false); } }
   }, []);
-  useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
+  useMarketplaceSync(refresh);
+  useEffect(() => () => { sequence.current++; }, []);
+  useEffect(() => { let current = true; void zones().then(rows => { if (current) setZoneOptions(rows); }).catch(() => {}); return () => { current = false; }; }, []);
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   useEffect(() => {
     let shouldRefresh = false;
@@ -51,9 +64,9 @@ export default function Sales() {
     ? `¿Confirmar la entrega de ${reservationDescription(selectedReservation.reservation, selectedReservation.unitLabel)} para ${selectedReservation.reservation.buyer?.name ?? 'el comprador'} por $${selectedReservation.reservation.unitPrice}?`
     : action && selectedSale ? ({
       'physical-sale': `¿Registrar una venta física de ${selectedSale.publication.title}? Se restará una unidad disponible.`,
-      finish: `¿Finalizar la publicación ${selectedSale.publication.title}?`,
+      finish: `¿Finalizar la publicación ${selectedSale.publication.title}? No se aceptarán nuevos apartados; las reservas previas conservan su plazo.`,
       sold: `¿Marcar ${selectedSale.publication.title} como vendida?`,
-      ganga: `¿Activar el precio ganga de ${selectedSale.publication.title}?`,
+      ganga: `¿Activar el precio ganga de ${selectedSale.publication.title} por ${money(selectedSale.publication.ganga_min_price ?? selectedSale.publication.price)}? Las reservas anteriores conservan su precio.`,
     } as Record<string, string>)[action.kind] : '';
   const actionButtonTitle = action ? ({
     complete: 'Confirmar entrega', 'physical-sale': 'Registrar venta física',
@@ -61,6 +74,7 @@ export default function Sales() {
   } as Record<Action['kind'], string>)[action.kind] : 'Confirmar';
   async function run() {
     if (!action || busy) return;
+    if (action.kind === 'complete' && (!selectedReservation || !canActOnReservation(selectedReservation.reservation, now))) { setAction(undefined); await refresh(); setError('El plazo de esta reserva terminó. Actualizamos su estado.'); return; }
     setBusy(true); setError('');
     try {
       if (action.kind === 'complete' && action.reservationId) {
@@ -79,60 +93,47 @@ export default function Sales() {
     try { await openWhatsApp(phone, title, true); setError(''); }
     catch (cause) { setError((cause as Error).message); }
   }
-  return <SafeAreaView style={styles.screen}>
-    <View style={styles.top}><Pressable onPress={() => router.back()}><Text style={styles.link}>‹ Feed</Text></Pressable><Text style={styles.heading}>Mis Ventas</Text><Pressable onPress={() => void logout()}><Text style={styles.link}>Salir</Text></Pressable></View>
-    {error ? <View style={styles.error}><Text style={styles.errorText}>{error}</Text><Pressable onPress={() => void refresh()}><Text style={styles.link}>Reintentar</Text></Pressable></View> : null}
-    {loading ? <ActivityIndicator color={COLORS.primary} /> : null}
-    <FlatList data={sales} keyExtractor={item => item.publication.id} contentContainerStyle={styles.list} refreshing={busy} onRefresh={() => void refresh()}
-      ListEmptyComponent={!loading ? <Text style={styles.empty}>Aún no tienes publicaciones.</Text> : undefined}
+
+  const visibleSales = sales.filter(sale => sale.publication.type === saleType);
+  return <MarketplaceShell active="sales">
+    <PageHeader title="Mis ventas" subtitle={saleType === 'LIVE' ? 'Controla stock y entregas en tiempo real' : 'Artículos publicados · contacto directo'} action={<PrimaryButton compact variant="secondary" title={saleType === 'LIVE' ? 'Catálogo' : 'Disponibles ahora'} disabled={busy} onPress={() => setSaleType(saleType === 'LIVE' ? 'STATIC' : 'LIVE')} />} />
+    <FlatList data={visibleSales} keyExtractor={item => item.publication.id} contentContainerStyle={styles.list} extraData={now} refreshing={refreshing && !loading} onRefresh={() => void refresh()}
+      ListHeaderComponent={error && sales.length > 0 ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : undefined}
+      ListEmptyComponent={loading ? <DataState kind="loading" title="Cargando tus ventas…" /> : error ? <DataState kind="error" title="No pudimos cargar tus ventas" description={error} action="Reintentar" onAction={() => void refresh()} /> : <DataState kind="empty" title="Aún no tienes publicaciones" description={saleType === 'LIVE' ? 'Publica lo que tienes disponible y recibe apartados.' : 'Publica un artículo y coordina la entrega por WhatsApp.'} />}
+      ListFooterComponent={<View style={styles.footer}><PrimaryButton title={saleType === 'LIVE' ? '+ Nueva publicación' : '+ Publicar otro artículo'} variant="secondary" disabled={busy} onPress={() => router.push({ pathname: '/publication/edit', params: { type: saleType } })} /><PrimaryButton title="Cerrar sesión" variant="ghost" disabled={busy} onPress={() => void logout().catch(cause => setError(apiMessage(cause)))} /></View>}
       renderItem={({ item: sale }) => {
         const p = sale.publication;
-        const active = p.status === 'ACTIVE' && (p.type === 'STATIC' || !!p.end_time && new Date(p.end_time).getTime() > now);
-        return <Card style={styles.card}>
-          <Text style={styles.title}>{p.title}</Text>
-          <Text style={styles.meta}>{publicationTypeLabel(p.type)} · {publicationStatusLabel(p.status, p.type)} · ${p.price}{p.type === 'LIVE' ? ` · ${p.current_stock} disponibles` : ''}</Text>
-          {active ? <>
-            <Pressable onPress={() => router.push({ pathname: '/publication/edit', params: { id: p.id } })}><Text style={styles.link}>Editar publicación</Text></Pressable>
-            {p.type === 'LIVE' ? <>
-              {p.ganga_activation_mode === 'MANUAL' && !p.is_ganga_active ? <Pressable onPress={() => setAction({ kind: 'ganga', publicationId: p.id })}><Text style={styles.link}>Activar ganga manual</Text></Pressable> : null}
-              <Pressable onPress={() => setAction({ kind: 'physical-sale', publicationId: p.id })}><Text style={styles.link}>−1 venta física</Text></Pressable>
-              <Pressable onPress={() => setAction({ kind: 'finish', publicationId: p.id })}><Text style={styles.danger}>Finalizar publicación</Text></Pressable>
-            </> : <Pressable onPress={() => setAction({ kind: 'sold', publicationId: p.id })}><Text style={styles.danger}>Marcar vendido</Text></Pressable>}
-          </> : null}
+        const active = saleIsOpen(p, now);
+        const started = saleHasStarted(p, now);
+        const rows = presentReservations(sale.reservations);
+        const pendingRows = rows.filter(({ reservation }) => canActOnReservation(reservation, now)).sort((a, b) => (validTime(a.reservation.expiresAt) ?? Infinity) - (validTime(b.reservation.expiresAt) ?? Infinity));
+        const historyRows = rows.filter(({ reservation }) => !canActOnReservation(reservation, now));
+        return <View style={styles.sale}>
+          <Card style={styles.card}>
+            <AppText variant="badge">{p.type === 'LIVE' ? 'VENTA CON HORARIO' : 'CATÁLOGO'} · {active ? p.is_ganga_active ? 'GANGA ACTIVA' : 'ACTIVA' : p.type === 'STATIC' ? 'VENDIDO' : 'FINALIZADA'}</AppText>
+            <AppText variant="heading">{p.title}</AppText>
+            {p.type === 'STATIC' || p.is_ganga_active || !active ? <View style={styles.priceRow}>{p.is_ganga_active && p.price_before_ganga && Number(p.price_before_ganga) > Number(p.price) ? <AppText variant="caption" style={styles.previous}>{money(p.price_before_ganga)}</AppText> : null}<AppText variant={p.type === 'STATIC' || p.is_ganga_active ? 'price' : 'label'}>{money(p.price)}{p.is_ganga_active ? ' · Ganga' : ''}</AppText></View> : null}
+            {p.type === 'LIVE' ? <AppText variant="caption">{active ? `${!p.is_ganga_active ? `${money(p.price)} · ` : ''}${p.current_stock} disponibles · ${started ? `Termina ${new Date(p.end_time!).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false })}` : `Inicia ${formatReservationDate(p.start_time)}`}` : 'Venta cerrada · sin nuevos apartados'}</AppText> : <><AppText variant="caption">{zoneOptions.find(z => z.id === p.zone_id)?.name}</AppText><AppText variant="caption">{p.description}</AppText></>}
+            {active ? <>
+              {p.type === 'LIVE' ? <View style={styles.row}>
+                <PrimaryButton compact variant="secondary" title="−1 venta física" style={styles.flex} disabled={busy || !started || !p.current_stock} onPress={() => setAction({ kind: 'physical-sale', publicationId: p.id })} />
+                {p.ganga_activation_mode === 'MANUAL' && p.ganga_min_price && !p.is_ganga_active ? <PrimaryButton compact variant="secondary" title={`Activar Ganga · ${money(p.ganga_min_price)}`} disabled={busy || !started} style={styles.flex} onPress={() => setAction({ kind: 'ganga', publicationId: p.id })} /> : p.is_ganga_active ? <AppText variant="badge" style={styles.ganga}>Ganga activa</AppText> : p.ganga_activation_mode === 'SCHEDULED' ? <AppText variant="caption" style={styles.flex}>Ganga programada · {p.ganga_minutes_before} min antes del fin</AppText> : null}
+              </View> : <View style={styles.info}><AppText variant="label" style={styles.link}>Sin apartados ni plazo de venta</AppText><AppText variant="caption">Coordina la entrega por WhatsApp y marca el artículo como vendido al terminar.</AppText></View>}
+              <View style={styles.row}><PrimaryButton compact style={styles.flex} title={p.type === 'LIVE' ? 'Editar' : 'Editar publicación'} accessibilityLabel="Editar publicación" variant="secondary" disabled={busy} onPress={() => router.push({ pathname: '/publication/edit', params: { id: p.id } })} /><PrimaryButton compact style={styles.flex} title={p.type === 'LIVE' ? 'Finalizar' : 'Marcar vendido'} accessibilityLabel={p.type === 'LIVE' ? 'Finalizar publicación' : 'Marcar vendido'} variant="destructive" disabled={busy} onPress={() => setAction({ kind: p.type === 'LIVE' ? 'finish' : 'sold', publicationId: p.id })} /></View>
+            </> : <AppText variant="caption">{p.type === 'LIVE' ? 'Puedes entregar las reservas que sigan vigentes.' : 'Ya no aparece en el catálogo activo.'}</AppText>}
+          </Card>
           {p.type === 'LIVE' ? <>
-            <Text style={styles.section}>Reservas ({sale.reservations.length})</Text>
-            {sale.reservations.length === 0 ? <Text style={styles.meta}>Sin reservas</Text> : presentReservations(sale.reservations).map(({ reservation: r, unitLabel }) => {
-              const canConfirm = canActOnReservation(r, now);
-              return <View key={r.id} style={styles.reservation}>
-                <Text style={styles.reservationTitle}>{r.publicationTitle}{unitLabel ? ` · ${unitLabel}` : ''}</Text>
-                <Text style={styles.meta}>Comprador: {r.buyer?.name ?? 'No disponible'}</Text>
-                <Text style={styles.meta}>Apartada el {formatReservationDate(r.reservedAt)}</Text>
-                <Text style={styles.meta}>Estado: {reservationStatusLabel(r, now)} · Precio fijado: ${r.unitPrice}</Text>
-                {canConfirm ? <Text style={styles.meta}>Vence: {formatReservationDate(r.expiresAt)}</Text> : null}
-                {r.resolvedAt ? <Text style={styles.meta}>Resuelta el {formatReservationDate(r.resolvedAt)}</Text> : null}
-                {canConfirm ? <>
-                  <Pressable accessibilityRole="button" accessibilityLabel={`Confirmar entrega de ${reservationDescription(r, unitLabel)} para ${r.buyer?.name ?? 'el comprador'}`} onPress={() => setAction({ kind: 'complete', publicationId: p.id, reservationId: r.id })}><Text style={styles.link}>Confirmar entrega de esta reserva</Text></Pressable>
-                  {r.buyerContact?.phone ? <Pressable accessibilityRole="button" accessibilityLabel={`Contactar a ${r.buyer?.name ?? 'el comprador'} por WhatsApp sobre ${reservationDescription(r, unitLabel)}`} onPress={() => void contact(r.buyerContact!.phone, p.title)}><Text style={styles.link}>Contactar comprador por WhatsApp</Text></Pressable> : null}
-                </> : null}
-              </View>;
-            })}
+            <AppText variant="heading">Reservas por entregar · {pendingRows.length}</AppText>
+            {pendingRows.length === 0 ? <AppText variant="caption">No quedan entregas pendientes.</AppText> : pendingRows.map(({ reservation, unitLabel }) => <ReservationCard key={reservation.id} reservation={reservation} unitLabel={unitLabel} now={now} seller combineTitle disabled={busy} onConfirm={() => setAction({ kind: 'complete', publicationId: p.id, reservationId: reservation.id })} onContact={() => void contact(reservation.buyerContact!.phone, p.title)} />)}
+            {historyRows.length > 0 ? <><AppText variant="label">Historial</AppText>{historyRows.map(({ reservation, unitLabel }) => <ReservationCard key={reservation.id} reservation={reservation} unitLabel={unitLabel} now={now} seller combineTitle />)}</> : null}
           </> : null}
-        </Card>;
+        </View>;
       }} />
-    <Modal transparent visible={!!action} animationType="fade" onRequestClose={() => setAction(undefined)}><View style={styles.shade}><Card style={styles.modal}>
-      <Text style={styles.section}>Confirmar acción</Text><Text style={styles.meta}>{actionText}</Text>
-      <PrimaryButton title={actionButtonTitle} loading={busy} onPress={() => void run()} />
-      <Pressable onPress={() => setAction(undefined)}><Text style={styles.link}>Volver</Text></Pressable>
-    </Card></View></Modal>
-  </SafeAreaView>;
+    <ConfirmationDialog visible={!!action} title={action?.kind === 'complete' ? 'Confirmar entrega' : actionButtonTitle} description={actionText} confirmTitle={actionButtonTitle} busy={busy} variant={action?.kind === 'finish' || action?.kind === 'sold' ? 'destructive' : action?.kind === 'ganga' ? 'warning' : 'primary'} onConfirm={() => void run()} onClose={() => setAction(undefined)} />
+  </MarketplaceShell>;
 }
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background }, top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
-  heading: { color: COLORS.textDark, fontSize: 22, fontWeight: '800' }, link: { color: COLORS.primaryDark, fontWeight: '700', paddingVertical: 8 },
-  list: { padding: 20, gap: 14, flexGrow: 1 }, card: { padding: 18, gap: 8 }, title: { color: COLORS.textDark, fontSize: 19, fontWeight: '700' },
-  meta: { color: COLORS.textMedium }, reservationTitle: { color: COLORS.textDark, fontWeight: '700' }, section: { color: COLORS.textDark, fontSize: 17, fontWeight: '700', marginTop: 8 },
-  reservation: { borderTopWidth: 1, borderColor: COLORS.border, paddingTop: 12, gap: 5 }, danger: { color: COLORS.error, fontWeight: '700', paddingVertical: 8 },
-  error: { backgroundColor: COLORS.errorBg, padding: 12, marginHorizontal: 20, borderRadius: RADIUS.md }, errorText: { color: COLORS.error },
-  empty: { textAlign: 'center', color: COLORS.textMedium, padding: 30 }, shade: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: COLORS.overlay },
-  modal: { padding: 20, gap: 14 },
+  list: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.page, gap: SPACE.xl, flexGrow: 1 }, sale: { gap: SPACE.md }, card: { padding: SPACE.lg, gap: SPACE.sm },
+  priceRow: { flexDirection: 'row', alignItems: 'center', gap: SPACE.md }, previous: { textDecorationLine: 'line-through' }, row: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm },
+  flex: { flex: 1 }, ganga: { color: COLORS.ganga }, link: { color: COLORS.primary }, info: { padding: SPACE.md, borderRadius: RADIUS.md, backgroundColor: COLORS.primarySoft, gap: SPACE.sm }, footer: { paddingTop: SPACE.xl, gap: SPACE.md },
 });

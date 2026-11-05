@@ -13,8 +13,8 @@ test('traduce estados, tipos y valores futuros sin filtrar enums', () => {
     .toEqual(['Activa', 'Entrega confirmada', 'Cancelada', 'Vencida']);
   expect(reservationStatusLabel(base, Date.parse(base.expiresAt))).toBe('Plazo terminado; actualizando');
   expect(reservationStatusLabel({ ...base, status: 'UNKNOWN' as Reservation['status'] }, now)).toBe('Estado no disponible');
-  expect(publicationTypeLabel('LIVE')).toBe('En vivo');
-  expect(publicationTypeLabel('STATIC')).toBe('Estática');
+  expect(publicationTypeLabel('LIVE')).toBe('Disponibles ahora');
+  expect(publicationTypeLabel('STATIC')).toBe('Catálogo');
   expect(publicationTypeLabel('UNKNOWN')).toBe('Tipo no disponible');
   expect(publicationStatusLabel('FINISHED', 'STATIC')).toBe('Vendida');
   expect(publicationStatusLabel('FINISHED', 'LIVE')).toBe('Finalizada');

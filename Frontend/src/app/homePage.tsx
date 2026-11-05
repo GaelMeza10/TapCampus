@@ -1,82 +1,93 @@
-import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, AppState, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { io } from 'socket.io-client';
-import { API_BASE_URL } from '@/constants/api.constants';
-import { COLORS, RADIUS } from '@/theme';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { COLORS, RADIUS, SPACE } from '@/theme';
 import PublisherCard from '@/components/Publisher_Card';
+import AppText from '@/components/app-text';
+import PrimaryButton from '@/components/PrimaryButton';
+import OptionGrid from '@/components/option-grid';
+import { DataState, InlineMessage, Sheet } from '@/components/feedback';
+import { MarketplaceShell, PageHeader, PublishButton, TypeSelector } from '@/components/marketplace-shell';
+import { useMarketplaceSync } from '@/hooks/use-marketplace-sync';
+import { useClock } from '@/hooks/use-clock';
 import { apiMessage, categories, listPublications, zones, type Category, type Publication, type PublicationType, type Zone } from '@/services/marketplace';
 
+type Filters = { zoneId?: number; categoryId?: number };
 export default function HomePage() {
   const router = useRouter();
   const [type, setType] = useState<PublicationType>('LIVE');
-  const [zoneId, setZoneId] = useState<number>();
-  const [categoryId, setCategoryId] = useState<number>();
+  const [filters, setFilters] = useState<Filters>({});
+  const [draft, setDraft] = useState<Filters>({});
+  const [showFilters, setShowFilters] = useState(false);
   const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
+  const [catalogError, setCatalogError] = useState('');
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogAttempt, setCatalogAttempt] = useState(0);
   const [items, setItems] = useState<Publication[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const generation = useRef(0);
+  const observedEnds = useRef(new Set<string>());
+  const now = useClock();
   const refresh = useCallback(async (initial = false) => {
+    const request = ++generation.current;
     if (initial) setLoading(true); else setRefreshing(true);
-    try { setItems(await listPublications(type, zoneId, categoryId)); setError(''); }
-    catch (cause) { setError(apiMessage(cause)); }
-    finally { setLoading(false); setRefreshing(false); }
-  }, [type, zoneId, categoryId]);
-  useEffect(() => { void refresh(true); }, [refresh]);
-  useEffect(() => { void zones().then(setZoneOptions).catch(cause => setError(apiMessage(cause))); }, []);
-  useEffect(() => { void categories(type).then(setCategoryOptions).catch(cause => setError(apiMessage(cause))); }, [type]);
-  useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
-  useFocusEffect(useCallback(() => {
-    const socket = io(API_BASE_URL, { autoConnect: true });
-    const sync = () => { void refresh(); };
-    socket.on('connect', sync);
-    socket.on('stock_updated', sync);
-    socket.on('publication_expired', sync);
-    socket.on('ganga_activated', sync);
-    const app = AppState.addEventListener('change', state => { if (state === 'active') sync(); });
-    return () => { app.remove(); socket.disconnect(); };
-  }, [refresh]));
-  const changeType = (next: PublicationType) => { setType(next); setCategoryId(undefined); };
-  return <SafeAreaView style={styles.screen}>
-    <View style={styles.top}>
-      <Text style={styles.heading}>TapCampus</Text>
-      <View style={styles.nav}><Pressable accessibilityRole="button" onPress={() => router.push('/reservations')}><Text style={styles.link}>Reservas</Text></Pressable><Pressable accessibilityRole="button" onPress={() => router.push('/sales')}><Text style={styles.link}>Mis Ventas</Text></Pressable></View>
+    try { const rows = await listPublications(type, filters.zoneId, filters.categoryId); if (request === generation.current) { setItems(rows); setError(''); } }
+    catch (cause) { if (request === generation.current) setError(apiMessage(cause)); }
+    finally { if (request === generation.current) { setLoading(false); setRefreshing(false); } }
+  }, [type, filters.zoneId, filters.categoryId]);
+  useEffect(() => { void refresh(true); return () => { generation.current++; }; }, [refresh]);
+  useMarketplaceSync(refresh, false);
+  useEffect(() => {
+    const ended = items.filter(p => p.type === 'LIVE' && p.end_time && new Date(p.end_time).getTime() <= now && !observedEnds.current.has(`${p.id}:${p.end_time}`));
+    for (const p of ended) observedEnds.current.add(`${p.id}:${p.end_time}`);
+    if (ended.length) void refresh();
+  }, [items, now, refresh]);
+  useEffect(() => {
+    let current = true;
+    setCatalogLoading(true); setCategoryOptions([]); setCatalogError('');
+    void Promise.all([zones(), categories(type)]).then(([z, c]) => { if (current) { setZoneOptions(z); setCategoryOptions(c); } })
+      .catch(cause => { if (current) setCatalogError(apiMessage(cause)); }).finally(() => { if (current) setCatalogLoading(false); });
+    return () => { current = false; };
+  }, [type, catalogAttempt]);
+  function changeType(next: PublicationType) {
+    if (next === type) return;
+    generation.current++; setItems([]); setLoading(true); setError(''); setType(next); setFilters(previous => ({ zoneId: previous.zoneId }));
+  }
+  function apply(next: Filters) {
+    if (next.zoneId !== filters.zoneId || next.categoryId !== filters.categoryId) { generation.current++; setItems([]); setLoading(true); setFilters(next); }
+    setShowFilters(false);
+  }
+  const zoneName = zoneOptions.find(z => z.id === filters.zoneId)?.name ?? 'Todas las zonas';
+  const categoryName = categoryOptions.find(c => c.id === filters.categoryId)?.name ?? 'Todas las categorías';
+  const title = type === 'LIVE' ? 'Disponibles ahora' : 'Catálogo';
+  const visibleItems = items.filter(p => p.type !== 'LIVE' || (!p.end_time || new Date(p.end_time).getTime() > now) && (p.current_stock ?? 0) > 0);
+  return <MarketplaceShell active="explore">
+    <PageHeader title="TapCampus" subtitle="Encuentra algo cerca de ti" brand />
+    <View style={styles.controls}>
+      <TypeSelector value={type} onChange={changeType} />
+      <Pressable accessibilityRole="button" accessibilityLabel={`Filtros. ${zoneName}. ${categoryName}`} onPress={() => { setDraft(filters); setShowFilters(true); }} style={({ pressed }) => [styles.filter, pressed && styles.pressed]}>
+        <View style={styles.filterBody}><AppText variant="label">Filtros</AppText><View style={styles.summary}><AppText variant="caption" style={styles.summaryText}>{zoneName}</AppText><AppText variant="caption" style={styles.summaryText}>{categoryName}</AppText></View></View><AppText variant="section" style={styles.arrow}>⌄</AppText>
+      </Pressable>
     </View>
-    <View style={styles.tabs}>
-      <Pressable accessibilityRole="tab" accessibilityState={{ selected: type === 'LIVE' }} style={[styles.tab, type === 'LIVE' && styles.activeTab]} onPress={() => changeType('LIVE')}><Text style={styles.tabText}>En Vivo</Text></Pressable>
-      <Pressable accessibilityRole="tab" accessibilityState={{ selected: type === 'STATIC' }} style={[styles.tab, type === 'STATIC' && styles.activeTab]} onPress={() => changeType('STATIC')}><Text style={styles.tabText}>Estático</Text></Pressable>
-    </View>
-    <FlatList data={items} keyExtractor={item => item.id}
-      renderItem={({ item }) => <PublisherCard item={item} onPress={() => router.push({ pathname: '/publication/[id]', params: { id: item.id } })} />}
-      contentContainerStyle={styles.list} refreshing={refreshing} onRefresh={() => void refresh()}
-      ListHeaderComponent={<View>
-        <Text style={styles.filterLabel}>Zona</Text>
-        <FlatList horizontal data={[{ id: 0, name: 'Todas' }, ...zoneOptions]} keyExtractor={item => String(item.id)} showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => <Pressable style={[styles.chip, (zoneId ?? 0) === item.id && styles.selectedChip]} onPress={() => setZoneId(item.id || undefined)}><Text style={styles.chipText}>{item.name}</Text></Pressable>} />
-        <Text style={styles.filterLabel}>Categoría</Text>
-        <FlatList horizontal data={[{ id: 0, name: 'Todas', type }, ...categoryOptions]} keyExtractor={item => String(item.id)} showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => <Pressable style={[styles.chip, (categoryId ?? 0) === item.id && styles.selectedChip]} onPress={() => setCategoryId(item.id || undefined)}><Text style={styles.chipText}>{item.name}</Text></Pressable>} />
-        {error ? <View style={styles.error}><Text style={styles.errorText}>{error}</Text><Pressable onPress={() => void refresh()}><Text style={styles.link}>Reintentar</Text></Pressable></View> : null}
-      </View>}
-      ListEmptyComponent={loading ? <ActivityIndicator color={COLORS.primary} /> : <Text style={styles.empty}>{error ? 'No se pudieron cargar las publicaciones.' : 'No hay publicaciones para estos filtros.'}</Text>}
+    <FlatList data={visibleItems} keyExtractor={item => item.id} extraData={now}
+      renderItem={({ item, index }) => <PublisherCard item={item} compact={index > 0} zoneName={zoneOptions.find(z => z.id === item.zone_id)?.name} now={now} onPress={() => router.push({ pathname: '/publication/[id]', params: { id: item.id } })} />}
+      contentContainerStyle={styles.list} refreshing={refreshing && !loading} onRefresh={() => void refresh()}
+      ListHeaderComponent={<View style={styles.listHeading}><AppText variant="section">{title}</AppText><AppText variant="caption">{type === 'LIVE' ? 'Aparta por 20 minutos y recoge' : 'Explora y contacta al vendedor'}</AppText>{error && visibleItems.length > 0 ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}</View>}
+      ListEmptyComponent={loading ? <DataState kind="loading" title="Cargando publicaciones…" /> : error ? <DataState kind="error" title="No se pudieron cargar las publicaciones." description={error} action="Reintentar" onAction={() => void refresh()} /> : <View style={styles.empty}><DataState kind="empty" title="Sin resultados" description="No hay publicaciones que coincidan con tus filtros." action="Cambiar filtros" onAction={() => { setDraft(filters); setShowFilters(true); }} /><PrimaryButton variant="secondary" title={type === 'LIVE' ? 'Ver Catálogo' : 'Ver Disponibles ahora'} onPress={() => changeType(type === 'LIVE' ? 'STATIC' : 'LIVE')} /></View>}
     />
-    <Pressable style={styles.create} accessibilityRole="button" onPress={() => router.push('/publication/edit')}><Text style={styles.createText}>+ Publicar</Text></Pressable>
-  </SafeAreaView>;
+    <PublishButton type={type} />
+    <Sheet visible={showFilters} title="Filtros" subtitle={`${title} · Zona y categoría`} onClose={() => setShowFilters(false)} footer={<><PrimaryButton title="Ver publicaciones" onPress={() => apply(draft)} /><PrimaryButton title="Restablecer filtros" variant="secondary" onPress={() => setDraft({})} /></>}>
+      {catalogLoading ? <DataState kind="loading" title="Cargando filtros…" /> : catalogError ? <InlineMessage onRetry={() => setCatalogAttempt(n => n + 1)}>{catalogError}</InlineMessage> : <><AppText variant="heading">Zona</AppText><OptionGrid options={zoneOptions} value={draft.zoneId} allLabel="Todas" onChange={zoneId => setDraft(previous => ({ ...previous, zoneId }))} /><AppText variant="heading">Categoría</AppText><OptionGrid options={categoryOptions} value={draft.categoryId} allLabel="Todas" onChange={categoryId => setDraft(previous => ({ ...previous, categoryId }))} /><View style={styles.filterSummary}><AppText variant="caption">{zoneOptions.find(z => z.id === draft.zoneId)?.name ?? 'Todas las zonas'}</AppText><AppText variant="caption">{categoryOptions.find(c => c.id === draft.categoryId)?.name ?? 'Todas las categorías'}</AppText></View></>}
+    </Sheet>
+  </MarketplaceShell>;
 }
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background }, top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
-  nav: { flexDirection: 'row', gap: 12 },
-  heading: { color: COLORS.textDark, fontSize: 24, fontWeight: '800' }, link: { color: COLORS.primaryDark, fontWeight: '700' },
-  tabs: { flexDirection: 'row', marginHorizontal: 20, marginBottom: 8 }, tab: { flex: 1, alignItems: 'center', padding: 12, borderBottomWidth: 2, borderColor: COLORS.border },
-  activeTab: { borderColor: COLORS.primary }, tabText: { color: COLORS.textDark, fontWeight: '700' },
-  list: { paddingHorizontal: 20, paddingBottom: 90, flexGrow: 1 }, filterLabel: { color: COLORS.textMedium, fontWeight: '700', marginTop: 10, marginBottom: 8 },
-  chip: { backgroundColor: COLORS.white, borderRadius: RADIUS.full, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8, marginBottom: 8 },
-  selectedChip: { backgroundColor: COLORS.primarySoft, borderWidth: 1, borderColor: COLORS.primary }, chipText: { color: COLORS.textDark },
-  error: { padding: 12, backgroundColor: COLORS.errorBg, borderRadius: RADIUS.md, marginBottom: 8 }, errorText: { color: COLORS.error },
-  empty: { textAlign: 'center', color: COLORS.textMedium, padding: 30 },
-  create: { position: 'absolute', bottom: 28, right: 20, backgroundColor: COLORS.primary, borderRadius: RADIUS.full, paddingHorizontal: 22, paddingVertical: 16 },
-  createText: { color: COLORS.white, fontWeight: '800' },
+  controls: { paddingHorizontal: SPACE.page, gap: SPACE.md, paddingBottom: SPACE.lg },
+  filter: { flexDirection: 'row', alignItems: 'center', minHeight: 72, padding: SPACE.lg, backgroundColor: COLORS.white, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.border, gap: SPACE.sm },
+  filterBody: { flex: 1, gap: SPACE.xs }, summary: { flexDirection: 'row', gap: SPACE.sm }, summaryText: { flex: 1, fontSize: 11 }, arrow: { color: COLORS.primary },
+  list: { paddingHorizontal: SPACE.page, paddingBottom: 88, gap: SPACE.lg, flexGrow: 1 }, listHeading: { gap: SPACE.xs, paddingTop: SPACE.md, paddingBottom: SPACE.sm },
+  empty: { gap: SPACE.md }, filterSummary: { padding: SPACE.md, borderRadius: RADIUS.md, backgroundColor: COLORS.primarySoft, gap: SPACE.xs }, pressed: { opacity: 0.75 },
 });

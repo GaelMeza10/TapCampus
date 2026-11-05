@@ -37,6 +37,8 @@ export function  AuthProvider({children}: {children: React.ReactNode}){
             try {
                 const token = await SecureStore.getItemAsync(TOKEN_KEY);
                 if (active) setEstaAutenticado(Boolean(token));
+            } catch {
+                if (active) setEstaAutenticado(false);
             } finally {
                 if (active) setEstaCargando(false);
             }

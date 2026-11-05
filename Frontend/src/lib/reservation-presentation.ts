@@ -32,7 +32,7 @@ export function reservationStatusLabel(row: Reservation, now: number): string {
 }
 
 export function publicationTypeLabel(type: string): string {
-  return ({ LIVE: 'En vivo', STATIC: 'Estática' } as Record<string, string>)[type] ?? 'Tipo no disponible';
+  return ({ LIVE: 'Disponibles ahora', STATIC: 'Catálogo' } as Record<string, string>)[type] ?? 'Tipo no disponible';
 }
 
 export function publicationStatusLabel(status: string, type: string): string {

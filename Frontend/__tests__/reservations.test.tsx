@@ -22,10 +22,10 @@ test('comprador distingue dos reservas del mismo segundo y cancela solo la elegi
   await view.findByText('Unidad 2 de 2');
   expect(view.getByText('Unidad 1 de 2')).toBeTruthy();
   expect(view.queryByText(/r1|r2|ACTIVE/)).toBeNull();
-  fireEvent.press(view.getByLabelText(/Cancelar Burrito · Unidad 2 de 2/));
+  await fireEvent.press(view.getByLabelText(/Cancelar Burrito · Unidad 2 de 2/));
   expect(view.getByLabelText(/Cancelar Burrito · Unidad 2 de 2/).props.accessibilityLabel).not.toMatch(/r2|ACTIVE/);
   expect(await view.findByText(/¿Cancelar Burrito · Unidad 2 de 2/)).toBeTruthy();
-  fireEvent.press(view.getByText('Sí, cancelar reserva'));
+  await fireEvent.press(view.getByText('Sí, cancelar reserva'));
   await waitFor(() => expect(cancelReservation).toHaveBeenCalledWith('r2'));
   expect(cancelReservation).not.toHaveBeenCalledWith('r1');
   await view.findByText(/Estado: Cancelada/);

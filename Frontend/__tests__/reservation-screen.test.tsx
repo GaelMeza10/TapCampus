@@ -7,7 +7,8 @@ import { randomUUID } from 'expo-crypto';
 jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn() }), useLocalSearchParams: () => ({ id: 'p1' }), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
 jest.mock('expo-crypto', () => ({ randomUUID: jest.fn() }));
 jest.mock('../src/services/marketplace', () => ({
-  publicationDetail: jest.fn(async () => ({ id: 'p1', type: 'LIVE', title: 'Burrito', description: 'Caliente', price: '30.00', image_url: 'https://example.com/a.jpg', seller: { id: 's1', name: 'Ana' }, current_stock: 2, end_time: '2099-01-01T12:00:00.000Z', is_ganga_active: false })),
+  zones: jest.fn(async () => []),
+  publicationDetail: jest.fn(async () => ({ id: 'p1', type: 'LIVE', status: 'ACTIVE', title: 'Burrito', description: 'Caliente', price: '30.00', image_url: 'https://example.com/a.jpg', seller: { id: 's1', name: 'Ana' }, current_stock: 2, end_time: '2099-01-01T12:00:00.000Z', is_ganga_active: false })),
   myReservations: jest.fn(async () => []), reserve: jest.fn(), cancelReservation: jest.fn(), apiMessage: () => 'Error de red',
 }));
 
@@ -20,24 +21,24 @@ test('reintento conserva UUID; apartar otra unidad inicia UUID nuevo y muestra r
     .mockResolvedValueOnce({ id: 'r2', publicationId: 'p1', publicationTitle: 'Burrito', status: 'ACTIVE', unitPrice: '30.00', expiresAt: '2099-01-01T12:00:00.000Z', sellerContact: { phone: '+526641234567' } });
   const view = await render(<Detail />);
   await view.findByText('Burrito');
-  fireEvent.press(view.getByText('Apartar una unidad'));
+  await fireEvent.press(view.getByText('Apartar una unidad'));
   await view.findByText('Error de red');
-  fireEvent.press(view.getByText('Apartar una unidad'));
+  await fireEvent.press(view.getByText('Apartar una unidad'));
   await view.findByText('Reserva confirmada');
   expect((reserve as jest.Mock).mock.calls.slice(0, 2).map(call => call[1])).toEqual(['uuid-uno', 'uuid-uno']);
-  fireEvent.press(view.getByText('Apartar otra unidad'));
+  await fireEvent.press(view.getByText('Apartar otra unidad'));
   await waitFor(() => expect(reserve).toHaveBeenCalledTimes(3));
   expect((reserve as jest.Mock).mock.calls[2][1]).toBe('uuid-dos');
 });
 
 test('409 muestra agotamiento sin crear una reserva local', async () => {
   (randomUUID as jest.Mock).mockReturnValue('uuid-409');
-  (publicationDetail as jest.Mock).mockResolvedValueOnce({ id: 'p1', type: 'LIVE', title: 'Burrito', description: 'Caliente', price: '30.00', image_url: 'https://example.com/a.jpg', seller: { id: 's1', name: 'Ana' }, current_stock: 1, end_time: '2099-01-01T12:00:00.000Z', is_ganga_active: false })
+  (publicationDetail as jest.Mock).mockResolvedValueOnce({ id: 'p1', type: 'LIVE', status: 'ACTIVE', title: 'Burrito', description: 'Caliente', price: '30.00', image_url: 'https://example.com/a.jpg', seller: { id: 's1', name: 'Ana' }, current_stock: 1, end_time: '2099-01-01T12:00:00.000Z', is_ganga_active: false })
     .mockRejectedValueOnce({ response: { status: 404 } });
   (reserve as jest.Mock).mockRejectedValueOnce({ response: { status: 409 } });
   const view = await render(<Detail />);
   await view.findByText('Burrito');
-  fireEvent.press(view.getByText('Apartar una unidad'));
+  await fireEvent.press(view.getByText('Apartar una unidad'));
   await view.findByText(/Sin stock o publicación no disponible/);
   expect(view.queryByText('Reserva confirmada')).toBeNull();
   expect(reserve).toHaveBeenCalledWith('p1', 'uuid-409');
@@ -52,9 +53,9 @@ test('detalle muestra dos unidades sin UUID y cancela la tarjeta seleccionada', 
   await view.findByText('Burrito · Unidad 2 de 2');
   expect(view.getByText('Burrito · Unidad 1 de 2')).toBeTruthy();
   expect(view.queryByText(/r1|r2|ACTIVE/)).toBeNull();
-  fireEvent.press(view.getByLabelText(/Cancelar Burrito · Unidad 2 de 2/));
+  await fireEvent.press(view.getByLabelText(/Cancelar Burrito · Unidad 2 de 2/));
   expect(await view.findByText(/¿Cancelar Burrito · Unidad 2 de 2/)).toBeTruthy();
-  fireEvent.press(view.getByText('Sí, cancelar reserva'));
+  await fireEvent.press(view.getByText('Sí, cancelar reserva'));
   await waitFor(() => expect(cancelReservation).toHaveBeenCalledWith('r2'));
   expect(cancelReservation).not.toHaveBeenCalledWith('r1');
 });

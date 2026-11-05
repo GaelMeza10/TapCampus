@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
 import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
-import { COLORS, RADIUS } from '@/theme';
-import { apiMessage, cancelReservation, myReservations, publicationDetail, reserve, type Publication, type Reservation } from '@/services/marketplace';
+import { COLORS, RADIUS, SPACE } from '@/theme';
+import { Image as ExpoImage } from 'expo-image';
+import AppText from '@/components/app-text';
+import ReservationCard from '@/components/reservation-card';
+import StatusIcon from '@/components/status-icon';
+import { ConfirmationDialog, DataState, InlineMessage } from '@/components/feedback';
+import { useMarketplaceSync } from '@/hooks/use-marketplace-sync';
+import { countdown, money, saleHasStarted, saleIsOpen } from '@/lib/marketplace-presentation';
+import { apiMessage, cancelReservation, myReservations, publicationDetail, reserve, zones, type Zone, type Publication, type Reservation } from '@/services/marketplace';
 import { openWhatsApp } from '@/services/whatsapp';
 import { canActOnReservation, formatReservationDate, presentReservations, reservationDescription, reservationStatusLabel, validTime } from '@/lib/reservation-presentation';
-
-function remaining(expiresAt: string, now: number) {
-  const seconds = Math.max(0, Math.ceil(((validTime(expiresAt) ?? now) - now) / 1000));
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
-}
 
 export default function PublicationDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,18 +28,33 @@ export default function PublicationDetail() {
   const [now, setNow] = useState(Date.now());
   const [confirmId, setConfirmId] = useState<string>();
   const [successId, setSuccessId] = useState<string>();
+  const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
+  const [lastConfirmed, setLastConfirmed] = useState<Reservation>();
+  const sequence = useRef(0);
+  const reservationBusy = useRef(false);
   const actionKey = useRef<string | undefined>(undefined);
   const refreshedDeadlines = useRef(new Set<string>());
   const refresh = useCallback(async () => {
     if (!id) return;
+    const request = ++sequence.current;
     const results = await Promise.allSettled([publicationDetail(id), myReservations()]);
+    if (request !== sequence.current) return;
+    setError('');
     if (results[0].status === 'fulfilled') setItem(results[0].value);
-    else { setItem(undefined); setError(apiMessage(results[0].reason)); }
-    if (results[1].status === 'fulfilled') setReservations(results[1].value.filter(r => r.publicationId === id));
-    else setError(apiMessage(results[1].reason));
+    else {
+      if ((results[0].reason as { response?: { status?: number } }).response?.status === 404) setItem(undefined);
+      setError(apiMessage(results[0].reason));
+    }
+    if (results[1].status === 'fulfilled') {
+      const rows = results[1].value.filter(r => r.publicationId === id);
+      setReservations(rows);
+      setLastConfirmed(previous => previous ? rows.find(r => r.id === previous.id) ?? previous : previous);
+    } else setError(apiMessage(results[1].reason));
     setLoading(false);
   }, [id]);
-  useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
+  useMarketplaceSync(refresh, false);
+  useEffect(() => { setItem(undefined); setReservations([]); setSuccessId(undefined); setLastConfirmed(undefined); actionKey.current = undefined; setLoading(true); void refresh(); return () => { sequence.current++; }; }, [refresh]);
+  useEffect(() => { let current = true; void zones().then(rows => { if (current) setZoneOptions(rows); }).catch(() => {}); return () => { current = false; }; }, []);
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   useEffect(() => {
     let shouldRefresh = false;
@@ -52,14 +69,16 @@ export default function PublicationDetail() {
     if (shouldRefresh) void refresh();
   }, [reservations, now, refresh]);
   const presented = presentReservations(reservations);
-  const selected = presented.find(({ reservation }) => reservation.id === confirmId);
+  const selected = presented.find(({ reservation }) => reservation.id === confirmId) ?? (lastConfirmed && lastConfirmed.id === confirmId ? { reservation: lastConfirmed, unitLabel: '' } : undefined);
   async function makeReservation(newAction = false) {
-    if (!item || pending) return;
+    if (!item || pending || reservationBusy.current) return;
+    reservationBusy.current = true;
+    if (newAction) setSuccessId(undefined);
     if (newAction || !actionKey.current) actionKey.current = randomUUID();
     setPending(true); setError('');
     try {
       const result = await reserve(item.id, actionKey.current);
-      setSuccessId(result.id);
+      setSuccessId(result.id); setLastConfirmed(result);
       setReservations(previous => [result, ...previous.filter(r => r.id !== result.id)]);
       await refresh();
       setError('');
@@ -67,7 +86,7 @@ export default function PublicationDetail() {
       const message = apiMessage(cause);
       await refresh();
       setError((cause as { response?: { status?: number } }).response?.status === 409 ? `Sin stock o publicación no disponible. ${message}` : message);
-    } finally { setPending(false); }
+    } finally { setPending(false); reservationBusy.current = false; }
   }
   async function cancel() {
     if (!confirmId || pending) return;
@@ -76,6 +95,7 @@ export default function PublicationDetail() {
       const result = await cancelReservation(confirmId);
       setReservations(previous => previous.map(r => r.id === result.id ? result : r));
       setConfirmId(undefined);
+      setLastConfirmed(previous => previous?.id === result.id ? result : previous);
       await refresh();
     } catch (cause) { const message = apiMessage(cause); setConfirmId(undefined); await refresh(); setError(message); }
     finally { setPending(false); }
@@ -85,60 +105,61 @@ export default function PublicationDetail() {
     try { await openWhatsApp(phone, product ?? item!.title, reserved); setError(''); }
     catch (cause) { setError((cause as Error).message); }
   }
+
+  const confirmed = successId && lastConfirmed?.id === successId ? lastConfirmed : undefined;
+  const canReserve = item?.type === 'LIVE' && saleIsOpen(item, now) && saleHasStarted(item, now) && (item.current_stock ?? 0) > 0;
+  const zone = item ? zoneOptions.find(z => z.id === item.zone_id)?.name : undefined;
   return <SafeAreaView style={styles.screen}>
-    <ScrollView contentContainerStyle={styles.scroll}>
-      <Pressable onPress={() => router.back()}><Text style={styles.link}>‹ Volver</Text></Pressable>
-      {loading ? <ActivityIndicator color={COLORS.primary} /> : null}
-      {error ? <View style={styles.error}><Text style={styles.errorText}>{error}</Text><Pressable onPress={() => void refresh()}><Text style={styles.link}>Actualizar</Text></Pressable></View> : null}
-      {item ? <>
-        <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="cover" />
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.price}>${item.price}{item.is_ganga_active ? ' · Ganga' : ''}</Text>
-        <Text style={styles.body}>{item.description}</Text>
-        <Text style={styles.body}>Vendedor: {item.seller.name}</Text>
-        {item.type === 'LIVE' ? <>
-          <Text style={styles.body}>Disponibles: {item.current_stock}</Text>
-          <Text style={styles.body}>Termina: {item.end_time ? formatReservationDate(item.end_time) : '—'}</Text>
-          <PrimaryButton title="Apartar una unidad" loading={pending} disabled={!item.current_stock || !!successId} onPress={() => void makeReservation()} />
-        </> : item.sellerContact?.phone ? <PrimaryButton title="Contactar por WhatsApp" onPress={() => void contact(item.sellerContact!.phone, false)} /> : null}
-      </> : !loading ? <View><Text style={styles.body}>La publicación ya no está disponible en el feed.</Text><Pressable onPress={() => router.push('/reservations')}><Text style={styles.link}>Ver mis reservas</Text></Pressable></View> : null}
-      {successId ? <Card style={styles.success}>
-        <Text style={styles.successTitle}>Reserva confirmada</Text>
-        <Text style={styles.body}>Consulta el precio y plazo de esta reserva abajo.</Text>
-        {item?.type === 'LIVE' && !!item.current_stock ? <PrimaryButton title="Apartar otra unidad" loading={pending} onPress={() => { setSuccessId(undefined); void makeReservation(true); }} /> : null}
-      </Card> : null}
-      {item?.type === 'LIVE' || reservations.length > 0 ? <>
-        <Text style={styles.section}>Mis reservas de esta publicación</Text>
-        {presented.length === 0 ? <Text style={styles.body}>Todavía no tienes reservas.</Text> : presented.map(({ reservation: r, unitLabel }) => <Card key={r.id} style={styles.reservation}>
-          <Text style={styles.reservationId}>{r.publicationTitle}{unitLabel ? ` · ${unitLabel}` : ''}</Text>
-          <Text style={styles.body}>Apartada el {formatReservationDate(r.reservedAt)}</Text>
-          <Text style={styles.body}>Estado: {reservationStatusLabel(r, now)} · Precio fijado: ${r.unitPrice}</Text>
-          {canActOnReservation(r, now) ? <Text style={styles.body}>Vence: {formatReservationDate(r.expiresAt)} · {remaining(r.expiresAt, now)}</Text> : null}
-          {r.resolvedAt ? <Text style={styles.body}>Resuelta el {formatReservationDate(r.resolvedAt)}</Text> : null}
-          {canActOnReservation(r, now) ? <>
-            {r.sellerContact?.phone ? <Pressable accessibilityRole="button" accessibilityLabel={`Contactar por WhatsApp sobre ${reservationDescription(r, unitLabel)}`} onPress={() => void contact(r.sellerContact!.phone, true, r.publicationTitle)}><Text style={styles.link}>Contactar por WhatsApp</Text></Pressable> : null}
-            <Pressable accessibilityRole="button" accessibilityLabel={`Cancelar ${reservationDescription(r, unitLabel)}`} onPress={() => setConfirmId(r.id)}><Text style={styles.cancel}>Cancelar esta reserva</Text></Pressable>
-          </> : null}
-        </Card>)}
-      </> : null}
-    </ScrollView>
-    <Modal transparent visible={!!confirmId} animationType="fade" onRequestClose={() => setConfirmId(undefined)}>
-      <View style={styles.modalShade}><Card style={styles.modal}>
-        <Text style={styles.section}>Cancelar reserva</Text><Text style={styles.body}>¿Cancelar {selected ? reservationDescription(selected.reservation, selected.unitLabel) : 'esta reserva'}? Se liberará esta unidad.</Text>
-        <PrimaryButton title="Sí, cancelar reserva" loading={pending} onPress={() => void cancel()} />
-        <Pressable onPress={() => setConfirmId(undefined)}><Text style={styles.link}>Volver</Text></Pressable>
-      </Card></View>
-    </Modal>
+    {confirmed ? <ScrollView contentContainerStyle={styles.successScroll}>
+      <Pressable accessibilityRole="button" style={styles.back} onPress={() => { setSuccessId(undefined); actionKey.current = undefined; }}><AppText style={styles.link}>‹ Volver al producto</AppText></Pressable>
+      <Card style={styles.successCard}>
+        <StatusIcon kind={canActOnReservation(confirmed, now) ? 'success' : 'expired'} />
+        <AppText variant="title" style={styles.center}>{canActOnReservation(confirmed, now) ? 'Reserva confirmada' : reservationStatusLabel(confirmed, now)}</AppText>
+        <AppText variant="caption">{confirmed.publicationTitle}</AppText>
+        <View style={styles.timer}><AppText variant="caption">Tu apartado vence en</AppText><AppText variant="price">{countdown(confirmed.expiresAt, now)}</AppText></View>
+        <View style={styles.priceRow}><AppText variant="caption">Precio fijado</AppText><AppText variant="price">{money(confirmed.unitPrice)}</AppText></View>
+        {zone ? <AppText variant="caption">{zone}</AppText> : null}
+        {canActOnReservation(confirmed, now) ? <>
+          {confirmed.sellerContact?.phone ? <PrimaryButton title="Contactar por WhatsApp" onPress={() => void contact(confirmed.sellerContact!.phone, true, confirmed.publicationTitle)} /> : null}
+          <PrimaryButton variant="danger-ghost" title="Cancelar esta reserva" onPress={() => setConfirmId(confirmed.id)} />
+        </> : <AppText variant="caption">Cada reserva conserva su estado y plazo propios.</AppText>}
+      </Card>
+      {error ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}
+      {canReserve ? <PrimaryButton title="Apartar otra unidad" variant="secondary" loading={pending} onPress={() => void makeReservation(true)} /> : null}
+      <PrimaryButton title="Ver mis reservas" variant="secondary" onPress={() => router.push('/reservations')} />
+    </ScrollView> : <>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Pressable accessibilityRole="button" style={styles.back} onPress={() => router.back()}><AppText style={styles.link}>‹ Explorar</AppText></Pressable>
+        {loading ? <DataState kind="loading" title="Cargando publicación…" /> : null}
+        {error ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}
+        {item ? <>
+          <ExpoImage source={{ uri: item.image_url }} style={styles.image} contentFit="cover" accessibilityLabel={`Foto de ${item.title}`} />
+          <AppText variant="badge" style={item.is_ganga_active && styles.ganga}>{item.type === 'LIVE' ? `${item.is_ganga_active ? 'GANGA' : 'DISPONIBLE AHORA'} · Venta termina en ${countdown(item.end_time, now)}` : 'CATÁLOGO · Sin reserva'}</AppText>
+          <AppText variant="title">{item.title}</AppText>
+          <View style={styles.priceRow}><View style={styles.prices}>{item.is_ganga_active && item.price_before_ganga && Number(item.price_before_ganga) > Number(item.price) ? <AppText variant="caption" style={styles.previous}>{money(item.price_before_ganga)}</AppText> : null}<AppText variant="price">{money(item.price)}{item.is_ganga_active ? ' · Ganga' : ''}</AppText></View>{item.type === 'LIVE' ? <AppText variant="badge">{item.current_stock} disponibles</AppText> : null}</View>
+          <AppText variant="label">{item.type === 'LIVE' ? 'Dónde recogerlo' : 'Dónde se encuentra'}</AppText>
+          <AppText variant="caption">{zone ?? 'Consulta el punto de entrega con el vendedor.'}</AppText>
+          <AppText variant="label">{item.type === 'LIVE' ? 'Sobre el producto' : 'Descripción'}</AppText>
+          <AppText variant="caption">{item.description}</AppText>
+          <AppText variant="caption">Vendedor: {item.seller.name}</AppText>
+          <View style={styles.info}><AppText variant="label" style={styles.link}>{item.type === 'LIVE' ? 'Apartas 1 unidad durante 20 min' : 'Aquí puedes escribir sin apartar.'}</AppText><AppText variant="caption">{item.type === 'LIVE' ? 'El precio se fija al confirmarse la reserva.' : 'Coordina la entrega directamente por WhatsApp.'}</AppText></View>
+        </> : !loading ? <DataState kind="empty" title="Publicación no disponible" description="Ya no se aceptan nuevos apartados. Las reservas vigentes conservan su propio plazo." action="Ver mis reservas" onAction={() => router.push('/reservations')} /> : null}
+        {item?.type === 'LIVE' || reservations.length > 0 ? <>
+          <AppText variant="heading">Mis reservas de esta publicación</AppText>
+          {presented.length === 0 ? <AppText variant="caption">Todavía no tienes reservas.</AppText> : presented.map(({ reservation: r, unitLabel }) => <ReservationCard key={r.id} reservation={r} unitLabel={unitLabel} now={now} combineTitle disabled={pending} onCancel={() => setConfirmId(r.id)} onContact={() => void contact(r.sellerContact!.phone, true, r.publicationTitle)} />)}
+        </> : null}
+      </ScrollView>
+      {item ? <View style={styles.footer}>{item.type === 'LIVE' ? <PrimaryButton title={canReserve ? 'Apartar una unidad' : saleIsOpen(item, now) ? 'Sin stock disponible' : 'Venta finalizada'} loading={pending} disabled={!canReserve} onPress={() => void makeReservation()} /> : item.sellerContact?.phone ? <PrimaryButton title="Contactar por WhatsApp" onPress={() => void contact(item.sellerContact!.phone, false)} /> : null}</View> : null}
+    </>}
+    <ConfirmationDialog visible={!!confirmId} title="Cancelar reserva" description={`¿Cancelar ${selected ? reservationDescription(selected.reservation, selected.unitLabel) : 'esta reserva'}? Se liberará esta unidad.`} confirmTitle="Sí, cancelar reserva" variant="destructive" busy={pending} onConfirm={() => void cancel()} onClose={() => setConfirmId(undefined)} />
   </SafeAreaView>;
 }
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background }, scroll: { padding: 20, gap: 12 },
-  link: { color: COLORS.primaryDark, fontWeight: '700', paddingVertical: 8 }, image: { width: '100%', height: 240, borderRadius: RADIUS.lg, backgroundColor: COLORS.primarySoft },
-  title: { color: COLORS.textDark, fontSize: 26, fontWeight: '800' }, price: { color: COLORS.primaryDark, fontSize: 24, fontWeight: '800' },
-  body: { color: COLORS.textMedium, fontSize: 15 }, section: { color: COLORS.textDark, fontSize: 19, fontWeight: '700', marginTop: 12 },
-  reservation: { padding: 16, gap: 8 }, reservationId: { color: COLORS.textDark, fontWeight: '700' },
-  success: { padding: 16, gap: 10 }, successTitle: { color: COLORS.primaryDark, fontSize: 18, fontWeight: '700' },
-  error: { backgroundColor: COLORS.errorBg, padding: 12, borderRadius: RADIUS.md }, errorText: { color: COLORS.error },
-  cancel: { color: COLORS.error, fontWeight: '700', paddingVertical: 8 },
-  modalShade: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: COLORS.overlay }, modal: { padding: 20, gap: 14 },
+  screen: { flex: 1, backgroundColor: COLORS.background }, scroll: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.page, gap: SPACE.lg },
+  back: { minHeight: 44, justifyContent: 'center' }, link: { color: COLORS.primary }, image: { width: '100%', height: 240, borderRadius: RADIUS.lg, backgroundColor: COLORS.primarySoft },
+  priceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm, flexWrap: 'wrap' }, prices: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, flexWrap: 'wrap' },
+  previous: { textDecorationLine: 'line-through' }, ganga: { color: COLORS.ganga }, info: { backgroundColor: COLORS.primarySoft, padding: SPACE.lg, borderRadius: RADIUS.md, gap: SPACE.sm },
+  footer: { padding: SPACE.page }, successScroll: { padding: SPACE.page, gap: SPACE.lg, flexGrow: 1 },
+  successCard: { padding: SPACE.xl, gap: SPACE.lg }, center: { textAlign: 'center' },
+  timer: { padding: SPACE.lg, borderRadius: RADIUS.md, backgroundColor: COLORS.primarySoft, gap: SPACE.sm, alignItems: 'center' },
 });

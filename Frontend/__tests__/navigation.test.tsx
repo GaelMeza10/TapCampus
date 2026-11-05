@@ -82,7 +82,7 @@ describe('navegación Expo Router SDK 58', () => {
   test('cerrar sesión en home lleva a login', async () => {
     mockToken = 'jwt';
     await renderRouter(routes, { initialUrl: '/homePage' });
-    fireEvent.press(await screen.findByText('Home'));
+    await fireEvent.press(await screen.findByText('Home'));
     await waitFor(() => expect(screen.getByText('Login')).toBeTruthy());
   });
 });
