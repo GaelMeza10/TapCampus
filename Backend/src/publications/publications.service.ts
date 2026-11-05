@@ -397,7 +397,7 @@ export class PublicationsService {
       }
       return tx.publication.update({
         where: { id },
-        data: { price: p.ganga_min_price!, is_ganga_active: true },
+        data: { price_before_ganga: p.price, price: p.ganga_min_price!, is_ganga_active: true },
         select: publicationSelect,
       });
     });

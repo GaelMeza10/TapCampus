@@ -742,6 +742,7 @@ try {
   });
   const beforeGanga = await reserve(manual.id);
   assert.equal(manual.price, '12.50');
+  assert.equal(manual.price_before_ganga, null);
   assert.equal(manual.is_ganga_active, false);
   await ganga(manual.id, other.token, 403);
   await ganga(manual.id, null, 401);
@@ -749,6 +750,8 @@ try {
   await ganga('invalid', owner.token, 400);
   const active = await ganga(manual.id);
   assert.equal(active.price, '9.25');
+  assert.equal(active.price_before_ganga, '12.50');
+  assert.equal(Number((await pub(manual.id)).price_before_ganga).toFixed(2), '12.50');
   assert.equal(active.is_ganga_active, true);
   await eventCount('ganga_activated', manual.id, 1, {
     publicationId: manual.id,
@@ -831,6 +834,7 @@ try {
     current_stock: 3,
   });
   assert.equal(titleEdited.price, '7.50');
+  assert.equal(titleEdited.price_before_ganga, '12.50');
   assert.equal(titleEdited.is_ganga_active, true);
   assert.equal(titleEdited.current_stock, 3);
   const stoppedGanga = await live(1, {

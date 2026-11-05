@@ -73,6 +73,7 @@ model Publication {
   title       String
   description String            @db.Text
   price       Decimal           @db.Decimal(10, 2)
+  price_before_ganga Decimal?    @db.Decimal(10, 2)
   image_url   String
   status      PublicationStatus @default(ACTIVE)
   created_at  DateTime          @default(now())

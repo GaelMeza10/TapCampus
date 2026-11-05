@@ -29,6 +29,7 @@
 *   `title`: String
 *   `description`: Text
 *   `price`: Decimal (Precisión: 10,2)
+*   `price_before_ganga`: Decimal(10,2) nullable; ampliación aditiva 0016. Se captura del precio real bajo el bloqueo de activación y se expone como string/null para tachar el precio previo; no se edita desde DTO ni se reconstruyen históricos.
 *   `image_url`: String
 *   `status`: Enum `PublicationStatus` (`ACTIVE`, `FINISHED`, `HIDDEN_BY_REPORTS`)
 *   `zone_id`: Int (FK -> Zone)

@@ -7,6 +7,7 @@ export const publicationSelect = {
   title: true,
   description: true,
   price: true,
+  price_before_ganga: true,
   image_url: true,
   status: true,
   created_at: true,
@@ -31,6 +32,7 @@ export function publicationResponse(publication: PublicPublication) {
   return {
     ...publication,
     price: publication.price.toFixed(2),
+    price_before_ganga: publication.price_before_ganga?.toFixed(2) ?? null,
     ganga_min_price: publication.ganga_min_price?.toFixed(2) ?? null,
   };
 }
