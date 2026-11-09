@@ -1,5 +1,56 @@
 # Auditoría del proyecto y decisiones de producto
 
+## Mi cuenta y gangas locales — 2026-11-09
+
+[0026](../specs/0026-navegacion-y-mi-cuenta/verification.md) sustituye la hoja de 0024 por la cuarta pestaña Cuenta con datos registrados. Selección suavizada según petición, fondo verde al 12 % y texto/icono verde oscuro (6.20:1); icono person-outline instalado. La UI no expone Cannot GET /auth/me y recupera con Reintentar. API actual arrancada: perfil 200 en loopback y ruta LAN 401 anónima. 77 pruebas frontend/13 backend, 54 capturas, tipos/build/lint y bundles iOS/Android PASS. No se declara reproducido/resuelto en el iPhone hasta confirmación física; la causa histórica exacta del 404 no se pudo verificar.
+
+[0027](../specs/0027-gangas-demo/verification.md) agrega tres gangas Demo locales, fotos existentes y descuentos reales en fixtures: seed 3→0, hashes de datos previos intactos, GET feed/fotos 200. Sin cambios de inventario previo ni nuevas funciones. Aceptación de fase 5 y despliegue siguen abiertos.
+
+## Búsqueda incorporada al alcance e implementada — 2026-11-06
+
+El usuario identifica la ausencia de barra como crucial y solicita resolverla. RF-05c/US-05c ampliados en [0025](../specs/0025-busqueda-publicaciones/verification.md): búsqueda servidor por título/descripción, combinada con tipo/zona/categoría, con barra visible, limpiar, pausa de escritura y recuperación. 66 pruebas frontend, 12 backend, tipos/build/lint/exports, GET reales y 51 capturas aprobados. API actualizada sin modificar datos. La revisión anterior que indicaba ausencia de buscador corresponde al estado previo a esta petición; ya no es un faltante de implementación. Teclado/lector y aceptación física siguen separados.
+
+## Revisión de alcance y pendientes reales — 2026-11-06
+
+Revisión de requisitos RF/RNF, historias, TASKS, expedientes y código actual (no solo casillas). No se modificó funcionalidad ni se repitieron operaciones de reservas/pruebas de estrés. `node scripts/check-sdd.mjs` PASS; los resultados funcionales citados son evidencia existente, no una nueva ejecución completa de QA.
+
+| Área | Estado observado | Pendiente real |
+| --- | --- | --- |
+| MVP obligatorio | Hay código para registro/login/sesión, LIVE/STATIC con fotos, filtros de zona/categoría, reservas independientes de 20 minutos/precio fijado, cancelación/entrega, venta física, ganga manual/programada, eventos/reconexión y WhatsApp condicionado. No se detectó otro módulo MUST completamente ausente en esta revisión. | Aceptación integrada móvil de 5.1–5.6; no declarar MVP terminado solo por existencia de código. |
+| Validación móvil | Registro y apertura/Volver del modal cuentan con confirmaciones puntuales del usuario. Automatización reciente: frontend 62 pruebas, backend 10, exportaciones móviles y capturas auxiliares. | Recorridos comprador/vendedor completos contra servicios reales, cámara/galería/permisos, WhatsApp en teléfono, dos dispositivos/reconexión, VoiceOver/texto ampliado y piloto UAT de docs07. |
+| Reportes/moderación | RF-14 SHOULD no implementado: hay modelo Report/flag, pero no módulo/rutas ni interfaz de reporte/revisión. | Si se incluye: cerrar 0009 DEC-01/02, unicidad de reportantes, conteo/ocultamiento y revisión. Opcional; no convertirlo en bloqueo MUST. |
+| Aviso y términos del registro | register.tsx exige marcar aceptación, pero el texto solo alterna el checkbox. No se encontró enlace/pantalla/recurso del proyecto para consultar esos documentos. | Completar acceso a los textos suministrados/aprobados por el responsable; no inventar su contenido. Es una terminación pendiente de la UI existente, no una conclusión legal. |
+| Producción/distribución | TASKS 6.2/6.3 abiertos. No se encontró eas.json, APK/AAB/IPA ni evidencia de despliegue final en el repositorio. app.json conserva nombre AM_PF_Meza_376163 y no declara package/bundleIdentifier. | Configurar entorno público persistente y build/distribución; ajustar identidad e identificadores del paquete. Exportar JS para iOS/Android no equivale a entregar app instalable. |
+| Alcance adicional | Feed implementa filtros, no búsqueda por texto. Perfil editable, reputación y push están fuera de los RF/RNF actuales; chat propio, pagos y GPS tampoco son módulos pendientes del MVP aprobado. | Acordar requisitos nuevos si se desean; no agregarlos silenciosamente al backlog obligatorio. |
+
+Las tareas 5.1–5.6 y algunas T de 0001–0008 mezclan implementación e integración/aceptación: que sigan abiertas no significa que falten sus pantallas o endpoints. Mantenerlas abiertas hasta adjuntar evidencia reproducible. Prioridad: cerrar pruebas de ambos roles y la consulta de documentos del registro; después preparar entrega y despliegue. La moderación se decide aparte. Esta revisión no certifica ausencia de todos los bugs ni sustituye el piloto de usuarios.
+
+## Sesión separada de Mis ventas — 2026-11-06
+
+Refinamiento solicitado con Impeccable y ui-ux-pro-max en 0024 EV-04: foco/retorno de hoja, anuncios, 48 dp Android y movimiento reducido. 62 pruebas, tipos, exports y 47 capturas incluyendo 375/horizontal aprobados. Sin cambio de autenticación o sesión real; aceptación física de lector/foco pendiente.
+
+[0024](../specs/0024-menu-cuenta/verification.md) corrige logout dentro del listado de ventas. Cuenta aparece consistentemente en los tres encabezados y abre la hoja de sesión. Sin nuevas pestañas o funciones de perfil, AuthContext/guardas conservados. 61 pruebas, tipos, 45 capturas, exports móviles y convergencia aprobados. Sin cierre de sesión real del usuario ni aceptación física afirmada.
+
+## Foto del producto en reservas — 2026-11-06
+
+[0023](../specs/0023-fotos-en-reservas/verification.md) corrige que las reservas solo mostraban texto: añade publicationImageUrl a proyecciones autorizadas y miniatura compartida con alternativa al fallo, sin consultas al detalle público. 56 pruebas frontend, 10 backend, tipos/build/lint, 40 capturas y exportaciones móviles aprobados. Serializer/DB reales e imagen HTTP 200 verificados en solo lectura; API reiniciada para iPhone. La confirmación física de la foto sigue pendiente, sin afirmar cierre de 5.3.
+
+## Confirmación de apartado pendiente — 2026-11-06
+
+[0022](../specs/0022-confirmacion-apartado/verification.md) incorpora ConfirmationDialog antes del POST en primer apartado y otra unidad, conservando privacidad, 20 minutos e idempotencia. 54 pruebas, tipos, 38 capturas y exportaciones móviles aprobados. El usuario confirma apertura y Volver sin crear reserva en iPhone. VoiceOver, texto ampliado y retorno de foco nativos pendientes; la feature sigue en verificación.
+
+## Pulido con Impeccable aplicado al código — 2026-11-06
+
+[0021](../specs/0021-impeccable-init-critique-polish/verification.md): contexto confirmado para comprador/vendedor con igual prioridad. Crítica provisional 27/40 de código y evidencia auxiliar, sin acreditación de hardware. Corregidos en React Native el campo inválido fuera de vista (foco/desplazamiento y borrador conservado) y la alternativa de foto fallida/ausente compartida entre listado/detalle. Tipos, 44 pruebas, exportaciones Android/iOS y 33 capturas web a 320/390/430 puntos aprobados; convergencia documental y check-sdd aprobados. Sin nuevas ediciones Figma. Teclado, lector de pantalla y aceptación integrada siguen pendientes en dispositivo; 5.1–5.6 permanecen abiertas.
+
+## Aplicación de las copias revisadas a Expo — 2026-11-05
+
+[0020](../specs/0020-aplicacion-prototipo-revisado/verification.md) aplica 0017/0018/0019: SVG locales en navegación, selector explícito Con horario/Catálogo, encabezados compactos, tarjetas uniformes y errores por campo con bloqueo durante envío. Servicios, contratos, privacidad y reglas de reservas conservados. Tipos, 43 pruebas y exportaciones Android/iOS aprobados; 31 capturas web a 320/390/430 puntos sin desbordamiento horizontal, excepciones ni recursos faltantes. La ejecución de cámara/teclado/WhatsApp y la aceptación integrada en teléfono siguen separadas; 5.1–5.6 conservan su estado.
+
+## Auditoría UX Figma sobre copias — 2026-11-05
+
+[0019](../specs/0019-auditoria-ux-figma/verification.md) conserva las tres páginas originales y aplica correcciones a copias identificadas con «Revisión UX 05 nov». Revisión de 47 pantallas, ocho estados de formulario añadidos, tarjetas/campos/barra inferior reutilizables y contenido adaptable. Auditoría: 416 destinos internos válidos, cero controles conectados menores de 44 puntos, componentes independientes de originales, solo Inter. Muestras de 320/430 puntos revisadas. Verificación de diseño/estructura; no acredita reproductor completo, WhatsApp, cámara, selectores nativos o API. Expo conserva su estado anterior.
+
 ## Implementación del prototipo — 2026-11-04
 
 [0016](../specs/0016-implementacion-figma/verification.md) aplica el diseño aprobado a las pantallas Expo conservando servicios, JWT, privacidad y reservas. Fuente visual alineada en docs04, Inter local, navegación inferior, selector/FAB por tipo, filtros con borrador/aplicación, cuatro estados y protección contra respuestas antiguas. Formularios incluyen descripción, elección de horario nativa y ganga; ventas muestran reservas por unidad y respetan cierre/vencimiento.

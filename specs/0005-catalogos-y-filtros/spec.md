@@ -8,6 +8,8 @@ RF-05c y RNF-03; US-05c. Arquitectura define cinco zonas y ocho categorías sepa
 
 ## Alcance y contratos observables
 
+Ampliación aprobada 2026-11-06 en [0025](../0025-busqueda-publicaciones/spec.md): búsqueda por q opcional combinada con los filtros existentes. Las restricciones históricas de query de fase 2 que aparecen debajo describen el contrato anterior; el actual admite también q según 0025. Evidencia nueva en ese expediente, sin reescribir resultados de 0005.
+
 - `GET /zones` entrega las cinco zonas definidas en arquitectura. `GET /categories?type=LIVE|STATIC` entrega cuatro categorías por tipo, sin mezclar conjuntos.
 - `GET /publications?type=LIVE|STATIC&zoneId=<id>&categoryId=<id>` permite omitir filtros y combinar los presentes por intersección. Devuelve solo publicaciones visibles del tipo solicitado según 0003/0004.
 - La app expone controles de zona y categoría, preserva filtros al cambiar vistas según navegación y usa catálogo, sin GPS ni solicitud de permiso de ubicación. No hay búsqueda por coordenadas.

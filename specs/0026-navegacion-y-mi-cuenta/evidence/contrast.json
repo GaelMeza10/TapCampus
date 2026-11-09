@@ -1,0 +1,12 @@
+{
+  "background": "rgba(23,97,59,0.12)",
+  "compositedOnWhite": [
+    227,
+    236,
+    231
+  ],
+  "foreground": "#17613B",
+  "textContrast": 6.2,
+  "threshold": 4.5,
+  "pass": true
+}

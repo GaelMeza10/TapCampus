@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-06T22:28:04.641Z",
+  "expo": "exp://10.41.60.121:8081",
+  "runtime": "exposdk:58.0.0",
+  "bundleStatus": 200,
+  "bundleBytes": 7085773,
+  "apiIncluded": true,
+  "imageStatus": 200,
+  "imageType": "image/png",
+  "socket": "connected"
+}

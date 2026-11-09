@@ -17,6 +17,7 @@ Este documento detalla los requerimientos funcionales (RF) y no funcionales (RNF
     *   **Criterios de Aceptación:**
         *   Si falta alguno de los 4 campos, el botón de registro estará deshabilitado.
         *   El teléfono puede ser de cualquier región de México: se aceptan diez dígitos nacionales con o sin prefijo `+52` y se almacena como `+52XXXXXXXXXX`. Se rechazan números no mexicanos o ambiguos.
+        *   El usuario autenticado puede consultar su nombre, correo y teléfono en Mi cuenta y cerrar sesión desde ese módulo (0026, elección explícita del usuario). Consulta en lectura, sin exponer contraseña/hash ni datos de otros usuarios; no incluye edición.
 
 ### Módulo de Publicaciones (Ventas en Vivo)
 *   **RF-03: Creación de Publicación en Vivo [MUST]**
@@ -35,10 +36,11 @@ Este documento detalla los requerimientos funcionales (RF) y no funcionales (RNF
     *   **Descripción:** El sistema deberá permitir al vendedor restar el stock manualmente con un botón ("-1") si vende el producto a alguien que llegó sin usar la aplicación.
     *   **Criterios de Aceptación:**
         *   Este descuento manual no debe afectar nunca a las piezas que ya están en estado "Reservado".
-*   **RF-05c: Filtrado por Zona y Categoría [MUST]**
-    *   **Descripción:** El sistema deberá proveer controles visuales para filtrar el feed principal.
+*   **RF-05c: Búsqueda y Filtrado por Zona y Categoría [MUST]**
+    *   **Descripción:** El sistema deberá proveer búsqueda por texto y controles visuales para filtrar el feed principal.
     *   **Criterios de Aceptación:**
         *   Los filtros deben combinarse (ej. Mostrar "Snacks" en la "Facultad de Ingeniería").
+        *   La barra de búsqueda consulta título o descripción sin distinguir mayúsculas y combina texto, tipo, zona y categoría por intersección. Limpiar el texto conserva los otros filtros. Ampliación solicitada por el usuario en 0025.
 
 ### Módulo de Publicaciones (Ventas Estáticas)
 *   **RF-06: Catálogo Estático [MUST]**
@@ -51,6 +53,8 @@ Este documento detalla los requerimientos funcionales (RF) y no funcionales (RNF
 *   **RF-07: Reserva Temporal [MUST]**
     *   **Descripción:** El sistema deberá permitir al comprador apartar una unidad del producto, descontando el stock disponible e iniciando un temporizador de 20 minutos.
     *   **Criterios de Aceptación:**
+        *   Mis reservas muestra la foto actual del producto junto al nombre y precio fijado, incluso si la publicación deja de estar visible; si falta o falla, conserva la información y acciones con alternativa «Sin foto» (0023).
+        *   Antes de enviar un primer apartado o una unidad adicional, el comprador confirma en un diálogo con producto, una unidad, precio actual y plazo de 20 minutos. Abrir o volver no reserva ni inicia el plazo; envío único y reintentos con la misma clave (0022).
         *   El comprador solo puede ver el contacto de WhatsApp del vendedor *después* de que la reserva ha sido confirmada por el sistema.
         *   El precio unitario se fija cuando se confirma cada reserva y no cambia por una ganga o edición posterior.
         *   Un comprador puede apartar varias unidades de la misma publicación mediante reservas independientes si hay stock. Reintentar la misma solicitud devuelve la reserva original y no descuenta otra pieza; una nueva acción crea otra reserva con clave de idempotencia nueva.

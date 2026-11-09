@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-09T20:33:46.923Z",
+  "fields": [
+    "email",
+    "id",
+    "name",
+    "phone"
+  ],
+  "checks": [
+    {
+      "origin": "http://127.0.0.1:3000",
+      "authenticatedStatus": 200,
+      "ownProfileMatches": true,
+      "anonymousStatus": 401,
+      "invalidStatus": 401,
+      "clientIdCannotChangeOwner": true
+    }
+  ],
+  "lan": {
+    "origin": "http://10.41.60.121:3000",
+    "anonymousStatus": 401
+  },
+  "note": "JWT temporal de 60s solo loopback; no se registran token ni datos personales; LAN sin credenciales."
+}

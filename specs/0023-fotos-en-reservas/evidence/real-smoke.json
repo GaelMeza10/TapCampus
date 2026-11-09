@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-06T23:07:30.493Z",
+  "reservations": 1,
+  "withPhotos": 1,
+  "imageStatus": 200,
+  "imageType": "image/png",
+  "anonymousStatus": 401,
+  "method": "Prisma y serializer real; HTTP imagen y guard; solo lectura"
+}

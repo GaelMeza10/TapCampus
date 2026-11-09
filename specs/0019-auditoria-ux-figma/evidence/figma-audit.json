@@ -1,0 +1,84 @@
+{
+  "sessionId": "5e8de999-0913-43b5-a3e9-e3d579bc44a7",
+  "fileKey": "XvTMHHlXw8yfnd6x0v7Ulh",
+  "screens": 55,
+  "links": 416,
+  "bad": [],
+  "small": [],
+  "external": [],
+  "fonts": [
+    "Inter"
+  ],
+  "counts": {
+    "FRAME": 548,
+    "TEXT": 849,
+    "INSTANCE": 197,
+    "ELLIPSE": 9,
+    "VECTOR": 159,
+    "RECTANGLE": 22
+  },
+  "pages": [
+    {
+      "id": "0:1",
+      "name": "00 · Fundamentos y componentes"
+    },
+    {
+      "id": "3:2",
+      "name": "01 · Flujos principales"
+    },
+    {
+      "id": "5:128",
+      "name": "02 · Estados y confirmaciones"
+    },
+    {
+      "id": "78:2",
+      "name": "00 · Fundamentos y componentes · Revisión UX 05 nov"
+    },
+    {
+      "id": "78:43",
+      "name": "02 · Estados y confirmaciones · Revisión UX 05 nov"
+    },
+    {
+      "id": "78:292",
+      "name": "01 · Flujos principales · Revisión UX 05 nov"
+    }
+  ],
+  "flows": [
+    {
+      "nodeId": "78:293",
+      "name": "Comprar · desde acceso"
+    },
+    {
+      "nodeId": "83:1606",
+      "name": "Validación · 01 · Iniciar sesión · Error"
+    },
+    {
+      "nodeId": "83:1633",
+      "name": "Comprar · desde acceso"
+    },
+    {
+      "nodeId": "78:630",
+      "name": "Vender · Mis ventas"
+    },
+    {
+      "nodeId": "78:1161",
+      "name": "Vender · Mis ventas"
+    },
+    {
+      "nodeId": "78:1198",
+      "name": "Vender · Mis ventas"
+    },
+    {
+      "nodeId": "83:1666",
+      "name": "Validación · 02 · Registro · Error"
+    },
+    {
+      "nodeId": "83:1754",
+      "name": "Validación · 10 · Nueva publicación · Disponibles ahora · Error"
+    },
+    {
+      "nodeId": "83:1898",
+      "name": "Validación · 12 · Nueva publicación · Catálogo · Error"
+    }
+  ]
+}

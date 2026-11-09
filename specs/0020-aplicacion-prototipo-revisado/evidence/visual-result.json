@@ -1,0 +1,394 @@
+{
+  "viewport": [
+    390,
+    844
+  ],
+  "shots": [
+    {
+      "name": "feed",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "TapCampus\nDisponibles ahora\nCatálogo\nFiltros\nTodas las zonas\nTodas las categorías\n⌄\nDisponibles ahora\nDisponible · termina en 12:00\nTorta de pollo\n$85\nFacultad de Ingeniería\n3 disponibles\nGanga · termina en 08:00\nBrownie de chocolate\n$25\nBiblioteca Central\nAntes $35 · 5 disponibles\nDisponible · termina en 25:00\nGalletas caseras\n$15\nFacultad de Ingeniería\n8 disponibles\n+\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "filters",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "TapCampus\nDisponibles ahora\nCatálogo\nFiltros\nTodas las zonas\nTodas las categorías\n⌄\nDisponibles ahora\nDisponible · termina en 11:59\nTorta de pollo\n$85\nFacultad de Ingeniería\n3 disponibles\nGanga · termina en 07:59\nBrownie de chocolate\n$25\nBiblioteca Central\nAntes $35 · 5 disponibles\nDisponible · termina en 24:59\nGalletas caseras\n$15\nFacultad de Ingeniería\n8 disponibles\n+\nExplorar\nReservas\nMis ventas\nFiltros\nDisponibles ahora · Zona y categoría\n×\nZona\nTodas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nCategoría\nTodas\nComida Fuerte\nSnacks\nBebidas\nPostres\nTodas las zonas\nTodas las categorías\nVer publicaciones\nRestablecer filtros"
+    },
+    {
+      "name": "login",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "TapCampus\nBienvenido de nuevo\nCorreo institucional\nContraseña\n\nIniciar sesión\n¿Aún no tienes cuenta? \nRegístrate"
+    },
+    {
+      "name": "register",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_600SemiBold",
+        "Inter_700Bold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "‹ Volver\nCrea tu cuenta\nNombre completo\nCorreo institucional\nTeléfono mexicano\nContraseña\n\n☐ Acepto el aviso de privacidad y los términos de uso de TapCampus.\nCrear cuenta\n¿Ya tienes cuenta? \nInicia sesión"
+    },
+    {
+      "name": "detail",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "‹ Explorar\nDISPONIBLE AHORA · Venta termina en 12:00\nTorta de pollo\n$85\n3 disponibles\nDónde recogerlo\nFacultad de Ingeniería\nSobre el producto\nPollo con arroz y verduras. Entrego en la entrada de la Facultad de Ingeniería.\nVendedor: Ana Pérez\nApartas 1 unidad durante 20 min\nEl precio se fija al confirmarse la reserva.\nMis reservas de esta publicación\nEstado: Activa\nTorta de pollo · Unidad 1 de 2\nPrecio fijado: $85\nApartado vence en 08:32\nVence: 5 de noviembre de 2026 a las 03:50 p.m.\nWhatsApp\nCancelar esta reserva\nEstado: Activa\nTorta de pollo · Unidad 2 de 2\nPrecio fijado: $85\nApartado vence en 16:08\nVence: 5 de noviembre de 2026 a las 03:57 p.m.\nWhatsApp\nCancelar esta reserva\nApartar una unidad"
+    },
+    {
+      "name": "reservation-success",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "‹ Volver al producto\n✓\nReserva confirmada\nTorta de pollo\nTu apartado vence en\n20:01\nPrecio fijado\n$85\nFacultad de Ingeniería\nContactar por WhatsApp\nCancelar esta reserva\nApartar otra unidad\nVer mis reservas"
+    },
+    {
+      "name": "reservations",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "Mis reservas\nEstado: Activa\nTorta de pollo\nUnidad 1 de 2\nPrecio fijado: $85\nApartado vence en 08:32\nVence: 5 de noviembre de 2026 a las 03:50 p.m.\nWhatsApp\nCancelar esta reserva\nEstado: Activa\nTorta de pollo\nUnidad 2 de 2\nPrecio fijado: $85\nApartado vence en 16:08\nVence: 5 de noviembre de 2026 a las 03:57 p.m.\nWhatsApp\nCancelar esta reserva\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "reservations-expired",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "Mis reservas\nEstado: Vencida\nTorta de pollo\nUnidad 1 de 2\nPrecio fijado: $85\nResuelta el 5 de noviembre de 2026 a las 03:40 p.m.\nEstado: Vencida\nTorta de pollo\nUnidad 2 de 2\nPrecio fijado: $85\nResuelta el 5 de noviembre de 2026 a las 03:40 p.m.\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "sales",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "Mis ventas\nCon horario\nCatálogo\nVENTA CON HORARIO · ACTIVA\nTorta de pollo\n$85 · 3 disponibles · Termina 15:53\n−1 venta física\nActivar Ganga · $65\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\n+ Nueva publicación\nCerrar sesión\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "sales-ganga",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "Mis ventas\nCon horario\nCatálogo\nVENTA CON HORARIO · GANGA ACTIVA\nTorta de pollo\n$85\n$65 · Ganga\n3 disponibles · Termina 15:53\n−1 venta física\nGanga activa\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\n+ Nueva publicación\nCerrar sesión\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "sales-finished",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "Mis ventas\nCon horario\nCatálogo\nVENTA CON HORARIO · FINALIZADA\nTorta de pollo\n$85\nVenta cerrada · sin nuevos apartados\nPuedes entregar las reservas que sigan vigentes.\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\n+ Nueva publicación\nCerrar sesión\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "catalog-sales",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "Mis ventas\nCon horario\nCatálogo\nCATÁLOGO · ACTIVA\nCálculo I\n$180\nFacultad de Ingeniería\nLibro usado, completo y con algunas anotaciones.\nSin apartados ni plazo de venta\nCoordina la entrega por WhatsApp y marca el artículo como vendido al terminar.\nEditar publicación\nMarcar vendido\n+ Publicar otro artículo\nCerrar sesión\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "catalog-sold",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "Mis ventas\nCon horario\nCatálogo\nCATÁLOGO · VENDIDO\nCálculo I\n$180\nFacultad de Ingeniería\nLibro usado, completo y con algunas anotaciones.\nYa no aparece en el catálogo activo.\n+ Publicar otro artículo\nCerrar sesión\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "form-live",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "‹ Mis ventas\nNueva publicación\nDisponibles ahora\nCatálogo\n+\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nTítulo\nDescripción\nPrecio normal\nStock disponible\nZona\nSeleccionar zona\nCategoría\nSeleccionar categoría\nHorario de venta\nInicio\n5 nov, 03:41 p.m.\nFin\n5 nov, 04:41 p.m.\nPrecio Ganga · Configurar →\nSin configurar · opcional\nPublicar"
+    },
+    {
+      "name": "ganga-config",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "‹ Mis ventas\nNueva publicación\nDisponibles ahora\nCatálogo\n+\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nTítulo\nDescripción\nPrecio normal\nStock disponible\nZona\nSeleccionar zona\nCategoría\nSeleccionar categoría\nHorario de venta\nInicio\n5 nov, 03:41 p.m.\nFin\n5 nov, 04:41 p.m.\nPrecio Ganga · Configurar →\nSin configurar · opcional\nPublicar\nPrecio Ganga\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin ganga\nManual\nProgramada\nPrecio mínimo\nPrecio normal: $85. El mínimo no puede ser mayor.\nMinutos antes del fin\nActivación: 5 nov, 04:31 p.m.\nLa venta termina 5 nov, 04:41 p.m..\nGuardar configuración"
+    },
+    {
+      "name": "form-catalog",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "‹ Mis ventas\nNueva publicación\nDisponibles ahora\nCatálogo\n+\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nTítulo\nDescripción\nPrecio\nZona\nSeleccionar zona\nCategoría\nSeleccionar categoría\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar artículo"
+    },
+    {
+      "name": "empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "TapCampus\nDisponibles ahora\nCatálogo\nFiltros\nTodas las zonas\nTodas las categorías\n⌄\nDisponibles ahora\nSin resultados\nNo hay publicaciones que coincidan con tus filtros.\nCambiar filtros\nVer Catálogo\n+\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "TapCampus\nDisponibles ahora\nCatálogo\nFiltros\nTodas las zonas\nTodas las categorías\n⌄\nDisponibles ahora\n!\nNo se pudieron cargar las publicaciones.\nNo pudimos conectar. Revisa tu conexión e inténtalo de nuevo.\nReintentar\n+\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "login-validation",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "TapCampus\nBienvenido de nuevo\nCorreo institucional\n\nIngresa tu correo @uabc.edu.mx.\nContraseña\n\nIniciar sesión\n¿Aún no tienes cuenta? \nRegístrate"
+    },
+    {
+      "name": "form-validation",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "ionicons"
+      ],
+      "text": "‹ Mis ventas\nNueva publicación\nDisponibles ahora\nCatálogo\n+\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\nPrecio normal\nStock disponible\nZona\nSeleccionar zona\nCategoría\nSeleccionar categoría\nHorario de venta\nInicio\n5 nov, 03:42 p.m.\nFin\n5 nov, 04:42 p.m.\nPrecio Ganga · Configurar →\nSin configurar · opcional\nPublicar"
+    },
+    {
+      "name": "register-sending",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "Inter_600SemiBold",
+        "Inter_700Bold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "‹ Volver\nCrea tu cuenta\nNombre completo\nCorreo institucional\nTeléfono mexicano\nContraseña\n\n☑ Acepto el aviso de privacidad y los términos de uso de TapCampus.\nCreando cuenta…\n¿Ya tienes cuenta? \nInicia sesión"
+    },
+    {
+      "name": "feed-long-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "TapCampus\nDisponibles ahora\nCatálogo\nFiltros\nTodas las zonas\nTodas las categorías\n⌄\nDisponibles ahora\nDisponible · termina en 12:00\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n$85\nFacultad de Ingeniería\n3 disponibles\nGanga · termina en 08:00\nBrownie de chocolate\n$25\nBiblioteca Central\nAntes $35 · 5 disponibles\nDisponible · termina en 25:00\nGalletas caseras\n$15\nFacultad de Ingeniería\n8 disponibles\n+\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "detail-long-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "‹ Explorar\nDISPONIBLE AHORA · Venta termina en 12:00\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n$85\n3 disponibles\nDónde recogerlo\nFacultad de Ingeniería\nSobre el producto\nPollo con arroz y verduras. Entrego en la entrada de la Facultad de Ingeniería.\nVendedor: Ana Pérez\nApartas 1 unidad durante 20 min\nEl precio se fija al confirmarse la reserva.\nMis reservas de esta publicación\nEstado: Activa\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería · Unidad 1 de 2\nPrecio fijado: $85\nApartado vence en 08:32\nVence: 5 de noviembre de 2026 a las 03:50 p.m.\nWhatsApp\nCancelar esta reserva\nEstado: Activa\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería · Unidad 2 de 2\nPrecio fijado: $85\nApartado vence en 16:08\nVence: 5 de noviembre de 2026 a las 03:58 p.m.\nWhatsApp\nCancelar esta reserva\nApartar una unidad"
+    },
+    {
+      "name": "sales-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "Mis ventas\nCon horario\nCatálogo\nVENTA CON HORARIO · ACTIVA\nTorta de pollo\n$85 · 3 disponibles · Termina 15:54\n−1 venta física\nActivar Ganga · $65\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\n+ Nueva publicación\nCerrar sesión\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "register-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "Inter_600SemiBold",
+        "Inter_700Bold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "‹ Volver\nCrea tu cuenta\nNombre completo\nCorreo institucional\nTeléfono mexicano\nContraseña\n\n☐ Acepto el aviso de privacidad y los términos de uso de TapCampus.\nCrear cuenta\n¿Ya tienes cuenta? \nInicia sesión"
+    },
+    {
+      "name": "form-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "‹ Mis ventas\nNueva publicación\nDisponibles ahora\nCatálogo\n+\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nTítulo\nDescripción\nPrecio normal\nStock disponible\nZona\nSeleccionar zona\nCategoría\nSeleccionar categoría\nHorario de venta\nInicio\n5 nov, 03:42 p.m.\nFin\n5 nov, 04:42 p.m.\nPrecio Ganga · Configurar →\nSin configurar · opcional\nPublicar"
+    },
+    {
+      "name": "feed-long-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular"
+      ],
+      "text": "TapCampus\nDisponibles ahora\nCatálogo\nFiltros\nTodas las zonas\nTodas las categorías\n⌄\nDisponibles ahora\nDisponible · termina en 12:00\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n$85\nFacultad de Ingeniería\n3 disponibles\nGanga · termina en 08:00\nBrownie de chocolate\n$25\nBiblioteca Central\nAntes $35 · 5 disponibles\nDisponible · termina en 25:00\nGalletas caseras\n$15\nFacultad de Ingeniería\n8 disponibles\n+\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "detail-long-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430,
+      "font": [
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "‹ Explorar\nDISPONIBLE AHORA · Venta termina en 12:00\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n$85\n3 disponibles\nDónde recogerlo\nFacultad de Ingeniería\nSobre el producto\nPollo con arroz y verduras. Entrego en la entrada de la Facultad de Ingeniería.\nVendedor: Ana Pérez\nApartas 1 unidad durante 20 min\nEl precio se fija al confirmarse la reserva.\nMis reservas de esta publicación\nEstado: Activa\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería · Unidad 1 de 2\nPrecio fijado: $85\nApartado vence en 08:32\nVence: 5 de noviembre de 2026 a las 03:50 p.m.\nWhatsApp\nCancelar esta reserva\nEstado: Activa\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería · Unidad 2 de 2\nPrecio fijado: $85\nApartado vence en 16:08\nVence: 5 de noviembre de 2026 a las 03:58 p.m.\nWhatsApp\nCancelar esta reserva\nApartar una unidad"
+    },
+    {
+      "name": "sales-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430,
+      "font": [
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "Mis ventas\nCon horario\nCatálogo\nVENTA CON HORARIO · ACTIVA\nTorta de pollo\n$85 · 3 disponibles · Termina 15:54\n−1 venta física\nActivar Ganga · $65\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\n+ Nueva publicación\nCerrar sesión\nExplorar\nReservas\nMis ventas"
+    },
+    {
+      "name": "register-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430,
+      "font": [
+        "Inter_600SemiBold",
+        "Inter_700Bold",
+        "Inter_400Regular",
+        "ionicons"
+      ],
+      "text": "‹ Volver\nCrea tu cuenta\nNombre completo\nCorreo institucional\nTeléfono mexicano\nContraseña\n\n☐ Acepto el aviso de privacidad y los términos de uso de TapCampus.\nCrear cuenta\n¿Ya tienes cuenta? \nInicia sesión"
+    },
+    {
+      "name": "form-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430,
+      "font": [
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "‹ Mis ventas\nNueva publicación\nDisponibles ahora\nCatálogo\n+\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nTítulo\nDescripción\nPrecio normal\nStock disponible\nZona\nSeleccionar zona\nCategoría\nSeleccionar categoría\nHorario de venta\nInicio\n5 nov, 03:42 p.m.\nFin\n5 nov, 04:42 p.m.\nPrecio Ganga · Configurar →\nSin configurar · opcional\nPublicar"
+    }
+  ],
+  "exceptions": [],
+  "missingAssets": []
+}

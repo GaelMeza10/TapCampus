@@ -1,0 +1,287 @@
+{
+  "fileKey": "XvTMHHlXw8yfnd6x0v7Ulh",
+  "page": "78:292",
+  "removedNodeIds": [
+    "78:297",
+    "78:300",
+    "78:315",
+    "78:354",
+    "78:356",
+    "78:407",
+    "78:409",
+    "78:520",
+    "78:652",
+    "78:825",
+    "78:968",
+    "78:1183",
+    "78:1220",
+    "78:1255",
+    "78:1292",
+    "78:1332",
+    "78:1409",
+    "78:1446",
+    "78:1486",
+    "83:1610",
+    "83:1615",
+    "83:1637",
+    "83:1642",
+    "83:1670",
+    "83:1707"
+  ],
+  "removed": [
+    {
+      "id": "78:297",
+      "text": "Tu campus, más cerca",
+      "screen": "78:293"
+    },
+    {
+      "id": "78:300",
+      "text": "Entra con tu cuenta universitaria.",
+      "screen": "78:293"
+    },
+    {
+      "id": "78:315",
+      "text": "Solo con correo @uabc.edu.mx",
+      "screen": "78:310"
+    },
+    {
+      "id": "78:354",
+      "text": "Encuentra algo cerca de ti",
+      "screen": "78:332"
+    },
+    {
+      "id": "78:356",
+      "text": "Aparta por 20 minutos y recoge",
+      "screen": "78:332"
+    },
+    {
+      "id": "78:407",
+      "text": "Artículos de tu comunidad",
+      "screen": "78:384"
+    },
+    {
+      "id": "78:409",
+      "text": "Explora y contacta al vendedor",
+      "screen": "78:384"
+    },
+    {
+      "id": "78:520",
+      "text": "Cada apartado conserva su precio y plazo",
+      "screen": "78:498"
+    },
+    {
+      "id": "78:652",
+      "text": "Controla stock y entregas en tiempo real",
+      "screen": "78:630"
+    },
+    {
+      "id": "78:825",
+      "text": "Controla stock y entregas en tiempo real",
+      "screen": "78:803"
+    },
+    {
+      "id": "78:968",
+      "text": "Cada apartado conserva su precio y plazo",
+      "screen": "78:946"
+    },
+    {
+      "id": "78:1183",
+      "text": "Artículos publicados · contacto directo",
+      "screen": "78:1161"
+    },
+    {
+      "id": "78:1220",
+      "text": "Artículos publicados · contacto directo",
+      "screen": "78:1198"
+    },
+    {
+      "id": "78:1255",
+      "text": "Encuentra algo cerca de ti",
+      "screen": "78:1233"
+    },
+    {
+      "id": "78:1292",
+      "text": "Encuentra algo cerca de ti",
+      "screen": "78:1270"
+    },
+    {
+      "id": "78:1332",
+      "text": "Encuentra algo cerca de ti",
+      "screen": "78:1310"
+    },
+    {
+      "id": "78:1409",
+      "text": "Encuentra algo cerca de ti",
+      "screen": "78:1387"
+    },
+    {
+      "id": "78:1446",
+      "text": "Encuentra algo cerca de ti",
+      "screen": "78:1424"
+    },
+    {
+      "id": "78:1486",
+      "text": "Encuentra algo cerca de ti",
+      "screen": "78:1464"
+    },
+    {
+      "id": "83:1610",
+      "text": "Tu campus, más cerca",
+      "screen": "83:1606"
+    },
+    {
+      "id": "83:1615",
+      "text": "Entra con tu cuenta universitaria.",
+      "screen": "83:1606"
+    },
+    {
+      "id": "83:1637",
+      "text": "Tu campus, más cerca",
+      "screen": "83:1633"
+    },
+    {
+      "id": "83:1642",
+      "text": "Entra con tu cuenta universitaria.",
+      "screen": "83:1633"
+    },
+    {
+      "id": "83:1670",
+      "text": "Solo con correo @uabc.edu.mx",
+      "screen": "83:1666"
+    },
+    {
+      "id": "83:1707",
+      "text": "Solo con correo @uabc.edu.mx",
+      "screen": "83:1703"
+    }
+  ],
+  "mutatedNodeIds": [
+    "78:309",
+    "83:342",
+    "83:363",
+    "78:358",
+    "80:345",
+    "78:411",
+    "80:347",
+    "83:2012",
+    "78:653",
+    "78:826",
+    "83:2016",
+    "78:1184",
+    "78:1221",
+    "78:1263",
+    "80:349",
+    "78:1300",
+    "80:351",
+    "78:1340",
+    "80:353",
+    "78:1417",
+    "80:355",
+    "78:1454",
+    "80:357",
+    "78:1494",
+    "80:359",
+    "83:1611",
+    "83:1612",
+    "83:1638",
+    "83:1639",
+    "83:1673",
+    "83:1710"
+  ],
+  "screens": [
+    {
+      "id": "78:293",
+      "name": "01 · Iniciar sesión"
+    },
+    {
+      "id": "78:310",
+      "name": "02 · Registro"
+    },
+    {
+      "id": "78:332",
+      "name": "03 · Disponibles ahora"
+    },
+    {
+      "id": "78:384",
+      "name": "04 · Catálogo"
+    },
+    {
+      "id": "78:498",
+      "name": "08 · Mis reservas"
+    },
+    {
+      "id": "78:630",
+      "name": "11 · Mis ventas"
+    },
+    {
+      "id": "78:803",
+      "name": "20 · Ganga activa"
+    },
+    {
+      "id": "78:946",
+      "name": "23 · Reserva cancelada"
+    },
+    {
+      "id": "78:1161",
+      "name": "UX · Mis ventas · Catálogo activo"
+    },
+    {
+      "id": "78:1198",
+      "name": "UX · Mis ventas · Artículo vendido"
+    },
+    {
+      "id": "78:1233",
+      "name": "S1 · Cargando publicaciones"
+    },
+    {
+      "id": "78:1270",
+      "name": "S2 · Sin resultados"
+    },
+    {
+      "id": "78:1310",
+      "name": "S3 · Error de conexión"
+    },
+    {
+      "id": "78:1387",
+      "name": "UX · Catálogo · Cargando"
+    },
+    {
+      "id": "78:1424",
+      "name": "UX · Catálogo · Sin resultados"
+    },
+    {
+      "id": "78:1464",
+      "name": "UX · Catálogo · Error"
+    },
+    {
+      "id": "83:1606",
+      "name": "01 · Iniciar sesión · Error"
+    },
+    {
+      "id": "83:1633",
+      "name": "01 · Iniciar sesión · Enviando"
+    },
+    {
+      "id": "83:1666",
+      "name": "02 · Registro · Error"
+    },
+    {
+      "id": "83:1703",
+      "name": "02 · Registro · Enviando"
+    }
+  ],
+  "validation": {
+    "screens": 55,
+    "internalDestinations": 416,
+    "invalidDestinations": 0,
+    "connectedTargetsUnder44": 0,
+    "remainingRedundantTaglines": 0,
+    "visualChecks": [
+      "78:332",
+      "78:630",
+      "78:498",
+      "78:310",
+      "78:1270"
+    ]
+  }
+}

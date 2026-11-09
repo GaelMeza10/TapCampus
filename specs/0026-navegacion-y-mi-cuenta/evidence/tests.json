@@ -1,0 +1,169 @@
+{
+  "success": true,
+  "suites": 14,
+  "tests": 77,
+  "failed": 0,
+  "results": [
+    {
+      "name": "api-session.test.tsx",
+      "status": "passed",
+      "tests": [
+        "401 de /auth/me respeta si el recurso es privado",
+        "401 de /reservations/mine respeta si el recurso es privado",
+        "401 de /auth/login respeta si el recurso es privado",
+        "401 de /auth/register respeta si el recurso es privado"
+      ]
+    },
+    {
+      "name": "navigation.test.tsx",
+      "status": "passed",
+      "tests": [
+        "navegación Expo Router SDK 58 sin sesión: inicio lleva a login",
+        "navegación Expo Router SDK 58 sin sesión: registro permanece visible",
+        "navegación Expo Router SDK 58 sin sesión: enlace profundo a home lleva a login",
+        "navegación Expo Router SDK 58 sin sesión: Mis Ventas y reservas requieren autenticación",
+        "navegación Expo Router SDK 58 Mi cuenta también requiere sesión",
+        "navegación Expo Router SDK 58 con token almacenado: login lleva a home",
+        "navegación Expo Router SDK 58 401 invalida AuthProvider y protege home",
+        "navegación Expo Router SDK 58 cerrar sesión en home lleva a login"
+      ]
+    },
+    {
+      "name": "publication-form.test.tsx",
+      "status": "passed",
+      "tests": [
+        "permiso de cámara denegado muestra error visible y conserva formulario",
+        "stock negativo se bloquea antes de subir imagen o llamar API",
+        "Catálogo publica solo sus campos y conserva el borrador ante error",
+        "configurar ganga valida precio, programa y cerrar descarta cambios no guardados"
+      ]
+    },
+    {
+      "name": "reservation-screen.test.tsx",
+      "status": "passed",
+      "tests": [
+        "foto fallida en detalle conserva información y permite apartar",
+        "reintento conserva UUID; apartar otra unidad inicia UUID nuevo y muestra reserva propia",
+        "409 muestra agotamiento sin crear una reserva local",
+        "detalle muestra dos unidades sin UUID y cancela la tarjeta seleccionada",
+        "abrir, volver y cerrar con el sistema no envía ni crea clave",
+        "confirmación pendiente bloquea doble toque y ambos cierres",
+        "otra unidad conserva reserva anterior al volver y clave al fallar/cerrar/reabrir",
+        "resultado incierto permite recuperar misma clave aunque detalle refrescado sea 404",
+        "cambio conocido de disponibilidad {\"current_stock\":0} impide envío nuevo",
+        "cambio conocido de disponibilidad {\"end_time\":\"2000-01-01T00:00:00.000Z\"} impide envío nuevo",
+        "precio actualizado requiere revisión y otra confirmación",
+        "STATIC conserva contacto directo y no ofrece apartado",
+        "fin por reloj impide confirmar aunque el modal estuviera abierto",
+        "cambiar de producto descarta el diálogo y una respuesta anterior no invade la nueva pantalla"
+      ]
+    },
+    {
+      "name": "feed.test.tsx",
+      "status": "passed",
+      "tests": [
+        "filtros se aplican juntos, cerrar descarta borrador y los eventos reconsultan",
+        "fallo de red termina la carga y reintentar muestra publicaciones",
+        "cambiar tipo ignora respuestas antiguas y el + conserva el tipo visible",
+        "error al refrescar mantiene las publicaciones y la navegación",
+        "buscar combina filtros; enviar es inmediato y limpiar conserva zona/categoría",
+        "espera 300 ms sin consultar por cada letra y conserva búsqueda al cambiar tipo",
+        "otra búsqueda ignora respuesta antigua, error conserva consulta y reintenta"
+      ]
+    },
+    {
+      "name": "account.test.tsx",
+      "status": "passed",
+      "tests": [
+        "módulo explore tiene selección única, fondo translúcido y etiqueta legible",
+        "módulo reservations tiene selección única, fondo translúcido y etiqueta legible",
+        "módulo sales tiene selección única, fondo translúcido y etiqueta legible",
+        "módulo account tiene selección única, fondo translúcido y etiqueta legible",
+        "Cuenta navega a su módulo desde otra pestaña",
+        "Mi cuenta muestra datos recibidos, sin contraseña/identificador ni opciones de edición",
+        "carga no inventa información; error permite reintentar",
+        "un error técnico 404 nunca muestra mensajes del servidor y permite recuperar el perfil",
+        "un error técnico 500 nunca muestra mensajes del servidor y permite recuperar el perfil",
+        "cierre fallido conserva datos y permite reintentar",
+        "cierre pendiente bloquea repetición y navegación"
+      ]
+    },
+    {
+      "name": "sales.test.tsx",
+      "status": "passed",
+      "tests": [
+        "confirmar entrega y venta física requieren confirmación visual y conservan ID",
+        "dos apartados del mismo segundo conservan acciones independientes y nombres accesibles",
+        "vendedor lee cuatro estados en español y etiquetas accesibles sin identificadores",
+        "venta finalizada oculta acciones de publicación y permite entregar una reserva vigente",
+        "Catálogo permite marcar vendido con confirmación y retira acciones al terminar"
+      ]
+    },
+    {
+      "name": "reservations.test.tsx",
+      "status": "passed",
+      "tests": [
+        "comprador distingue dos reservas del mismo segundo y cancela solo la elegida",
+        "muestra los cuatro estados y avisa al vencer antes de la confirmación del servidor",
+        "reserva muestra foto sin consultar detalle público y conserva precio/acciones si falla"
+      ]
+    },
+    {
+      "name": "auth-screens.test.tsx",
+      "status": "passed",
+      "tests": [
+        "registro atribuye dominio y teléfono al campo correcto, sin perder los datos",
+        "login bloquea edición y doble envío, muestra error real y permite reintentar"
+      ]
+    },
+    {
+      "name": "publisher-card.test.tsx",
+      "status": "passed",
+      "tests": [
+        "foto fallida conserva precio, ubicación y acción; una URL nueva vuelve a cargar"
+      ]
+    },
+    {
+      "name": "marketplace-contracts.test.tsx",
+      "status": "passed",
+      "tests": [
+        "Mi cuenta consulta solo auth/me sin pedir un usuario por parámetros",
+        "feed usa el origen actual para uploads guardados con una IP anterior y conserva otras imágenes",
+        "timeout muestra un error recuperable y conserva el mensaje de validación del servidor",
+        "búsqueda se envía normalizada al servidor y texto vacío no añade q",
+        "fotos de reservas usan origen actual en listados y acciones; campo ausente conserva compatibilidad",
+        "reserva transmite la misma clave al reintentar y permite otra acción con clave nueva",
+        "Mis Ventas consulta la ruta autenticada propia y no el feed público",
+        "upload usa multipart con campo file y conserva la URL del servidor",
+        "crear STATIC envía solo campos del catálogo estático a la API",
+        "WhatsApp usa teléfono canónico y codifica título sin duplicar 52",
+        "fallo de Linking se muestra como error útil"
+      ]
+    },
+    {
+      "name": "components.test.tsx",
+      "status": "passed",
+      "tests": [
+        "componentes de fase 4 el botón comunica carga y bloquea pulsaciones",
+        "componentes de fase 4 el input muestra error arriba y permite revelar contraseña",
+        "componentes de fase 4 la tarjeta usa el radio y la sombra compartidos"
+      ]
+    },
+    {
+      "name": "reservation-presentation.test.tsx",
+      "status": "passed",
+      "tests": [
+        "traduce estados, tipos y valores futuros sin filtrar enums",
+        "fecha española local, fecha inválida y desempate interno sin mostrar ID"
+      ]
+    },
+    {
+      "name": "auth-validation.test.tsx",
+      "status": "passed",
+      "tests": [
+        "correo UABC exige dominio exacto y parte local",
+        "teléfono de cualquier región admite diez dígitos o +52 y normaliza igual"
+      ]
+    }
+  ]
+}

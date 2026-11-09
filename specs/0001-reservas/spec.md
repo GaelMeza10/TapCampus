@@ -16,6 +16,10 @@ El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CH
 
 ## Reglas y contratos observables
 
+Ampliación móvil 2026-11-06: [0022-confirmacion-apartado](../0022-confirmacion-apartado/spec.md) incorpora confirmación de intención antes de enviar primera/otra unidad, sin cambiar este contrato ni los resultados históricos. Su evidencia técnica y aceptación nativa se registran en 0022.
+
+Ampliación aditiva 0023: las proyecciones autorizadas incorporan `publicationImageUrl: string | null`, foto actual de la publicación relacionada, para tarjetas de reserva reconocibles aun cuando salga del feed. Sin modificar precio histórico, permisos, stock o reglas temporales. Evidencia en [0023](../0023-fotos-en-reservas/verification.md).
+
 - `POST /reservations` recibe `{ publicationId }`, JWT y encabezado obligatorio `Idempotency-Key` (UUID nuevo por acción del comprador; ausente o inválido `400`). La primera creación devuelve `201` con `id`, `publicationId`, `status: ACTIVE`, `reservedAt`, `expiresAt` ISO 8601, `unitPrice` cadena decimal de dos posiciones y `sellerContact.phone` canónico. Un reintento del mismo comprador, clave y publicación devuelve la misma reserva y su estado actual con `200`, sin otro descuento de stock; reutilizar la clave para otra publicación responde `409`.
 - `GET /reservations/mine` permite al comprador consultar cada reserva propia; `GET /publications/:id/reservations` permite al vendedor propietario ver las de su publicación; `GET /reservations/:id` da detalle a comprador o vendedor relacionados. Otro actor recibe `403`. Los contactos se exponen solo conforme a RF-13.
 - Cada proyección autorizada de reserva incluye `publicationTitle` para identificar el producto y construir el mensaje de contacto aun cuando la última unidad o el fin de horario oculten el detalle público. La lista `mine` sigue disponible con publicaciones invisibles; el feed y el detalle público no reciben teléfonos nuevos.

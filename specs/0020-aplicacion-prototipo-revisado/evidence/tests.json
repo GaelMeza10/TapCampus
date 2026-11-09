@@ -1,0 +1,256 @@
+﻿{
+    "command":  "npm.cmd test -- --silent --json --outputFile=.local/prototype-0020-tests.json",
+    "success":  true,
+    "suites":  12,
+    "passedSuites":  12,
+    "tests":  43,
+    "passedTests":  43,
+    "failedTests":  0,
+    "startTime":  1793923263778,
+    "results":  [
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\navigation.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "navegación Expo Router SDK 58 sin sesión: inicio lleva a login",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "navegación Expo Router SDK 58 sin sesión: registro permanece visible",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "navegación Expo Router SDK 58 sin sesión: enlace profundo a home lleva a login",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "navegación Expo Router SDK 58 sin sesión: Mis Ventas y reservas requieren autenticación",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "navegación Expo Router SDK 58 con token almacenado: login lleva a home",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "navegación Expo Router SDK 58 401 invalida AuthProvider y protege home",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "navegación Expo Router SDK 58 cerrar sesión en home lleva a login",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\auth-screens.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "registro atribuye dominio y teléfono al campo correcto, sin perder los datos",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "login bloquea edición y doble envío, muestra error real y permite reintentar",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\sales.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "confirmar entrega y venta física requieren confirmación visual y conservan ID",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "dos apartados del mismo segundo conservan acciones independientes y nombres accesibles",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "vendedor lee cuatro estados en español y etiquetas accesibles sin identificadores",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "venta finalizada oculta acciones de publicación y permite entregar una reserva vigente",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "Catálogo permite marcar vendido con confirmación y retira acciones al terminar",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\publication-form.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "permiso de cámara denegado muestra error visible y conserva formulario",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "stock negativo se bloquea antes de subir imagen o llamar API",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "Catálogo publica solo sus campos y conserva el borrador ante error",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "configurar ganga valida precio, programa y cerrar descarta cambios no guardados",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\feed.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "filtros se aplican juntos, cerrar descarta borrador y los eventos reconsultan",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "fallo de red termina la carga y reintentar muestra publicaciones",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "cambiar tipo ignora respuestas antiguas y el + conserva el tipo visible",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "error al refrescar mantiene las publicaciones y la navegación",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\reservation-screen.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "reintento conserva UUID; apartar otra unidad inicia UUID nuevo y muestra reserva propia",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "409 muestra agotamiento sin crear una reserva local",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "detalle muestra dos unidades sin UUID y cancela la tarjeta seleccionada",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\reservations.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "comprador distingue dos reservas del mismo segundo y cancela solo la elegida",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "muestra los cuatro estados y avisa al vencer antes de la confirmación del servidor",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\publisher-card.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "foto fallida conserva precio, ubicación y acción; una URL nueva vuelve a cargar",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\components.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "componentes de fase 4 el botón comunica carga y bloquea pulsaciones",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "componentes de fase 4 el input muestra error arriba y permite revelar contraseña",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "componentes de fase 4 la tarjeta usa el radio y la sombra compartidos",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\marketplace-contracts.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "feed usa el origen actual para uploads guardados con una IP anterior y conserva otras imágenes",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "timeout muestra un error recuperable y conserva el mensaje de validación del servidor",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "reserva transmite la misma clave al reintentar y permite otra acción con clave nueva",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "Mis Ventas consulta la ruta autenticada propia y no el feed público",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "upload usa multipart con campo file y conserva la URL del servidor",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "crear STATIC envía solo campos del catálogo estático a la API",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "WhatsApp usa teléfono canónico y codifica título sin duplicar 52",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "fallo de Linking se muestra como error útil",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\reservation-presentation.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "traduce estados, tipos y valores futuros sin filtrar enums",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "fecha española local, fecha inválida y desempate interno sin mostrar ID",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    },
+                    {
+                        "name":  "C:\\AM_PF\\ProyectoFinal\\Frontend\\__tests__\\auth-validation.test.tsx",
+                        "status":  "passed",
+                        "assertions":  [
+                                           {
+                                               "name":  "correo UABC exige dominio exacto y parte local",
+                                               "status":  "passed"
+                                           },
+                                           {
+                                               "name":  "teléfono de cualquier región admite diez dígitos o +52 y normaliza igual",
+                                               "status":  "passed"
+                                           }
+                                       ]
+                    }
+                ]
+}

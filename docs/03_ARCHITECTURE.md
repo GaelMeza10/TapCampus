@@ -71,9 +71,11 @@ No se impone unicidad por `(buyer_id, publication_id)`: varias reservas activas 
 Para garantizar consistencia, el Backend deberá exponer las siguientes rutas base:
 
 *   **Autenticación**
+    *   `GET /auth/me` (JWT, CurrentUser): `{id,name,email,phone}` del propio usuario; 401 sin sesión válida. Proyección explícita, sin hash/token/flags internos, sin parámetro de propietario. Ampliación 0026, sin cambio de login/register.
     *   `POST /auth/register` (Body: email, password, name, phone; diez dígitos mexicanos con o sin `+52`, persistidos como `+52XXXXXXXXXX`)
     *   `POST /auth/login` -> Retorna JWT Token.
 *   **Publicaciones**
+    *   Búsqueda 0025: `GET /publications` admite `q` opcional (frase hasta 100 caracteres tras trim/normalización de espacios). Coincidencia parcial en título o descripción, case-insensitive, intersectada con type/zoneId/categoryId y visibilidad. Vacío equivale a omitir; arrays/no string/longitud inválida →400. %, _ y barra inversa literales. Misma proyección pública y orden; sin migración ni nueva ruta.
     *   `POST /publications` (Requiere JWT, crea Viva o Estática)
     *   `GET /publications?type=LIVE&zoneId=X` (Filtros por query params)
     *   `GET /publications/mine` (JWT; solo publicaciones del vendedor, incluidas agotadas, futuras y finalizadas; sin teléfonos)
@@ -94,6 +96,8 @@ Para garantizar consistencia, el Backend deberá exponer las siguientes rutas ba
     *   `POST /reservations/:id/cancel` (Solo permitido para el `buyer_id`).
 
 ## 4. Estándar de Respuestas de Error
+
+Ampliación aditiva de reservas (0023, 2026-11-06): las respuestas autorizadas de creación/reintento, consulta, listados y resolución añaden `publicationImageUrl: string | null`, obtenida de `Publication.image_url` junto a `publicationTitle`. Es la fotografía actual; no representa una instantánea histórica. Sigue disponible para la reserva aunque la publicación deje de ser pública por stock/horario. Sin migración, nuevos endpoints o cambios de permisos/contactos. El cliente normaliza uploads al origen API actual y admite campo ausente en servidores anteriores.
 
 ### Contratos concretos de fase 3 — 2026-10-05
 

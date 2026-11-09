@@ -1,0 +1,330 @@
+{
+  "success": true,
+  "suites": 13,
+  "tests": 61,
+  "failed": 0,
+  "results": [
+    {
+      "file": "account-menu.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "Cuenta en TapCampus abre/cierra sin salir; cerrar sesión es explícito",
+          "status": "passed"
+        },
+        {
+          "title": "Cuenta en Mis reservas abre/cierra sin salir; cerrar sesión es explícito",
+          "status": "passed"
+        },
+        {
+          "title": "Cuenta en Mis ventas abre/cierra sin salir; cerrar sesión es explícito",
+          "status": "passed"
+        },
+        {
+          "title": "error conserva hoja y permite reintentar cierre de sesión",
+          "status": "passed"
+        },
+        {
+          "title": "cierre pendiente bloquea duplicados y descartar la hoja",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "navigation.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "navegación Expo Router SDK 58 sin sesión: inicio lleva a login",
+          "status": "passed"
+        },
+        {
+          "title": "navegación Expo Router SDK 58 sin sesión: registro permanece visible",
+          "status": "passed"
+        },
+        {
+          "title": "navegación Expo Router SDK 58 sin sesión: enlace profundo a home lleva a login",
+          "status": "passed"
+        },
+        {
+          "title": "navegación Expo Router SDK 58 sin sesión: Mis Ventas y reservas requieren autenticación",
+          "status": "passed"
+        },
+        {
+          "title": "navegación Expo Router SDK 58 con token almacenado: login lleva a home",
+          "status": "passed"
+        },
+        {
+          "title": "navegación Expo Router SDK 58 401 invalida AuthProvider y protege home",
+          "status": "passed"
+        },
+        {
+          "title": "navegación Expo Router SDK 58 cerrar sesión en home lleva a login",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "reservations.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "comprador distingue dos reservas del mismo segundo y cancela solo la elegida",
+          "status": "passed"
+        },
+        {
+          "title": "muestra los cuatro estados y avisa al vencer antes de la confirmación del servidor",
+          "status": "passed"
+        },
+        {
+          "title": "reserva muestra foto sin consultar detalle público y conserva precio/acciones si falla",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "reservation-screen.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "foto fallida en detalle conserva información y permite apartar",
+          "status": "passed"
+        },
+        {
+          "title": "reintento conserva UUID; apartar otra unidad inicia UUID nuevo y muestra reserva propia",
+          "status": "passed"
+        },
+        {
+          "title": "409 muestra agotamiento sin crear una reserva local",
+          "status": "passed"
+        },
+        {
+          "title": "detalle muestra dos unidades sin UUID y cancela la tarjeta seleccionada",
+          "status": "passed"
+        },
+        {
+          "title": "abrir, volver y cerrar con el sistema no envía ni crea clave",
+          "status": "passed"
+        },
+        {
+          "title": "confirmación pendiente bloquea doble toque y ambos cierres",
+          "status": "passed"
+        },
+        {
+          "title": "otra unidad conserva reserva anterior al volver y clave al fallar/cerrar/reabrir",
+          "status": "passed"
+        },
+        {
+          "title": "resultado incierto permite recuperar misma clave aunque detalle refrescado sea 404",
+          "status": "passed"
+        },
+        {
+          "title": "cambio conocido de disponibilidad {\"current_stock\":0} impide envío nuevo",
+          "status": "passed"
+        },
+        {
+          "title": "cambio conocido de disponibilidad {\"end_time\":\"2000-01-01T00:00:00.000Z\"} impide envío nuevo",
+          "status": "passed"
+        },
+        {
+          "title": "precio actualizado requiere revisión y otra confirmación",
+          "status": "passed"
+        },
+        {
+          "title": "STATIC conserva contacto directo y no ofrece apartado",
+          "status": "passed"
+        },
+        {
+          "title": "fin por reloj impide confirmar aunque el modal estuviera abierto",
+          "status": "passed"
+        },
+        {
+          "title": "cambiar de producto descarta el diálogo y una respuesta anterior no invade la nueva pantalla",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "publication-form.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "permiso de cámara denegado muestra error visible y conserva formulario",
+          "status": "passed"
+        },
+        {
+          "title": "stock negativo se bloquea antes de subir imagen o llamar API",
+          "status": "passed"
+        },
+        {
+          "title": "Catálogo publica solo sus campos y conserva el borrador ante error",
+          "status": "passed"
+        },
+        {
+          "title": "configurar ganga valida precio, programa y cerrar descarta cambios no guardados",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "sales.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "confirmar entrega y venta física requieren confirmación visual y conservan ID",
+          "status": "passed"
+        },
+        {
+          "title": "dos apartados del mismo segundo conservan acciones independientes y nombres accesibles",
+          "status": "passed"
+        },
+        {
+          "title": "vendedor lee cuatro estados en español y etiquetas accesibles sin identificadores",
+          "status": "passed"
+        },
+        {
+          "title": "venta finalizada oculta acciones de publicación y permite entregar una reserva vigente",
+          "status": "passed"
+        },
+        {
+          "title": "Catálogo permite marcar vendido con confirmación y retira acciones al terminar",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "feed.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "filtros se aplican juntos, cerrar descarta borrador y los eventos reconsultan",
+          "status": "passed"
+        },
+        {
+          "title": "fallo de red termina la carga y reintentar muestra publicaciones",
+          "status": "passed"
+        },
+        {
+          "title": "cambiar tipo ignora respuestas antiguas y el + conserva el tipo visible",
+          "status": "passed"
+        },
+        {
+          "title": "error al refrescar mantiene las publicaciones y la navegación",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "auth-screens.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "registro atribuye dominio y teléfono al campo correcto, sin perder los datos",
+          "status": "passed"
+        },
+        {
+          "title": "login bloquea edición y doble envío, muestra error real y permite reintentar",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "publisher-card.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "foto fallida conserva precio, ubicación y acción; una URL nueva vuelve a cargar",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "components.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "componentes de fase 4 el botón comunica carga y bloquea pulsaciones",
+          "status": "passed"
+        },
+        {
+          "title": "componentes de fase 4 el input muestra error arriba y permite revelar contraseña",
+          "status": "passed"
+        },
+        {
+          "title": "componentes de fase 4 la tarjeta usa el radio y la sombra compartidos",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "marketplace-contracts.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "feed usa el origen actual para uploads guardados con una IP anterior y conserva otras imágenes",
+          "status": "passed"
+        },
+        {
+          "title": "timeout muestra un error recuperable y conserva el mensaje de validación del servidor",
+          "status": "passed"
+        },
+        {
+          "title": "fotos de reservas usan origen actual en listados y acciones; campo ausente conserva compatibilidad",
+          "status": "passed"
+        },
+        {
+          "title": "reserva transmite la misma clave al reintentar y permite otra acción con clave nueva",
+          "status": "passed"
+        },
+        {
+          "title": "Mis Ventas consulta la ruta autenticada propia y no el feed público",
+          "status": "passed"
+        },
+        {
+          "title": "upload usa multipart con campo file y conserva la URL del servidor",
+          "status": "passed"
+        },
+        {
+          "title": "crear STATIC envía solo campos del catálogo estático a la API",
+          "status": "passed"
+        },
+        {
+          "title": "WhatsApp usa teléfono canónico y codifica título sin duplicar 52",
+          "status": "passed"
+        },
+        {
+          "title": "fallo de Linking se muestra como error útil",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "auth-validation.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "correo UABC exige dominio exacto y parte local",
+          "status": "passed"
+        },
+        {
+          "title": "teléfono de cualquier región admite diez dígitos o +52 y normaliza igual",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "reservation-presentation.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "traduce estados, tipos y valores futuros sin filtrar enums",
+          "status": "passed"
+        },
+        {
+          "title": "fecha española local, fecha inválida y desempate interno sin mostrar ID",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}

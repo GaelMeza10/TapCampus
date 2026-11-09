@@ -20,7 +20,7 @@ Este documento traduce los Requerimientos Funcionales en Historias de Usuario (M
 *   **US-05 (Precio Ganga):** *Como vendedor, quiero activar un "precio ganga" al final de mi turno para rematar el inventario sobrante rápidamente.*
     *   *Tarea Backend:* Endpoint `PATCH /publications/:id/ganga`, crear Job en BullMQ para activación programada.
 *   **US-05b (Venta Física):** *Como vendedor, quiero descontar el stock manualmente con un botón si alguien me compra el producto en persona, para que la app no ofrezca piezas que ya no tengo.*
-*   **US-05c (Filtros):** *Como comprador, quiero filtrar el feed por Facultad o Categoría para encontrar rápidamente lo que estoy buscando sin ver cosas que me quedan lejos.*
+*   **US-05c (Búsqueda y filtros):** *Como comprador, quiero buscar por texto y filtrar el feed por Facultad o Categoría para encontrar rápidamente lo que estoy buscando sin ver cosas que me quedan lejos.*
 *   **US-05d (Cierre Anticipado):** *Como vendedor, quiero finalizar una publicación en vivo antes del horario previsto para dejar de recibir reservas sin perder las ya activas.*
 
 ## 3. Épica: Reservas (Core)

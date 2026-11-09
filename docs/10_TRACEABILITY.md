@@ -1,5 +1,21 @@
 # Matriz de trazabilidad de TapCampus
 
+Búsqueda 2026-11-06: [0025](../specs/0025-busqueda-publicaciones/verification.md), RF-05c/RNF-03 → US-05c → AC-01..05 → T-01..05 → EV-01..05 (TASKS 5.18). Texto servidor y filtros AND, 66 pruebas frontend/12 backend, 51 capturas, GET real y exports aprobados. Aceptación física de 5.2 separada.
+
+Ampliación de calidad 0024: AC-03 → T-04 → EV-04, revisión Impeccable/ui-ux-pro-max con foco, anuncios, objetivos Android y movimiento reducido; 62 pruebas/47 capturas/exports aprobados. La comprobación web de foco no sustituye la nativa.
+
+Gestión de sesión 2026-11-06: [0024](../specs/0024-menu-cuenta/verification.md), RF-01/02 → US-01/02 → AC-01..03 → T-01..03 → EV-01..03 (TASKS 5.17). Logout reubicado a Cuenta global; 61 pruebas, tipos, 45 capturas, bundles móviles y convergencia PASS. Aceptación física por separado.
+
+Fotos en reservas 2026-11-06: [0023](../specs/0023-fotos-en-reservas/verification.md), RF-07/13 → US-06/09 → AC-01..03 → T-01..03 → EV-01..03 (TASKS 5.16). Proyección autorizada aditiva y miniatura; pruebas técnicas, capturas auxiliares y datos existentes verificados. Confirmación física pendiente, sin cerrar aceptación integrada de 5.3.
+
+Confirmación de apartado 2026-11-06: [0022](../specs/0022-confirmacion-apartado/verification.md), RF-07/13 y RNF-01/02 → US-06/09 → AC-01..05 → T-01..06 → EV-01..06 (TASKS 5.15). Modal implementado, 54 pruebas, tipos, 38 capturas y bundles móviles aprobados; usuario confirma apertura/Volver en iPhone. AC-05 nativo específico pendiente; no se modifica evidencia histórica de 0001.
+
+Pulido en código 2026-11-06: [0021](../specs/0021-impeccable-init-critique-polish/verification.md), RF-03/05c/06/07/08/13 → US-03/04/05c/06/07/09/11 → AC-01..04 → T-01..04 → EV-01..04 (TASKS 5.14). Contexto y crítica, recuperación de campos inválidos y alternativa compartida de fotografía; 44 pruebas, tipos, 33 capturas auxiliares y exportaciones Android/iOS. Convergencia documental y check-sdd aprobados. No acredita teclado/foco nativos ni cierra la aceptación integrada de 5.1–5.6.
+
+Aplicación del prototipo 2026-11-05: [0020](../specs/0020-aplicacion-prototipo-revisado/verification.md), RF-01/02/03/05c/06/07/08/11/12/13 y RNF-03 → US-01/02/03/04/05/05c/06/07/09/11 → AC-01..04 → T-01..04 → EV-01..04. Navegación, tarjetas, encabezados y formularios aplicados a Expo; verificación técnica/visual web, sin sustituir aceptación física de 5.1–5.6.
+
+Auditoría de diseño 2026-11-05: [0019](../specs/0019-auditoria-ux-figma/verification.md), RF-04/07/13 y RNF-01 → US-01/02/05c/06/09/11 → AC-01..04 → T-01..04 → EV-01..05. Tres páginas copiadas, 47 pantallas revisadas y ocho estados, componentes compartidos y 416 destinos inspeccionados. Evidencia de diseño/estructura; no sustituye recorrido completo del reproductor ni aceptación móvil de 5.1–5.6.
+
 Fecha: 2026-10-19. Esta matriz cubre **todos los requisitos identificados** en `02_REQUIREMENTS.md`. `TASKS.md` aporta tareas globales; solo `specs/` aporta `AC → T → EV`. Fases 1/2/3 backend y fase 4 arquitectura verificadas; fase 5 implementada con pruebas en memoria, aceptación de dispositivo e integración real pendiente. La presentación de reservas AC-11..13 tiene EV-12/13 automatizadas; EV-14 requiere recorrido móvil.
 
 | Requisito | Historia | Tarea global | Feature / criterio | Evidencia y estado |
@@ -44,3 +60,9 @@ El mantenimiento de compatibilidad de RF-01/RF-02 y US-01/US-02 al migrar el fro
 RF-01/02 → 0002 AC-01..06/T-04/05/EV-10: formularios y sesión compilados; registro/login real en dispositivo pendiente. RF-03/04/05/05b → 0003 AC-01..08/T-06/07/10/EV-11: `mine` JWT aislado, formulario/feed/Mis Ventas; cámara y API reales pendientes. RF-05c/RNF-03 → 0005 AC-02/04/T-04/05/EV-07: filtros sin GPS simulados. RF-06 → 0004 AC-01..04/T-04/05/EV-07: STATIC UI implementada. RF-07/08/10 → 0001 AC-01/03/04/05/07/08/09/10/T-06/07/11/EV-11: reservas por ID, reintento/clave nueva y confirmación/cancelación UI; integración real pendiente. RF-11/12 → 0006 AC-01..06/T-05/06/EV-07: controles ganga UI. RNF-02 → 0007 AC-01..04/T-03/04/EV-06: listeners y reconsulta simulados. RF-13 → 0008 AC-01..05/T-03/04/EV-06: URL/fallo simulados; Linking real pendiente. Ninguna casilla 5.1–5.6 se cierra sin evidencia en dispositivo/API real.
 
 Al verificar un feature, enlazar sus `EV` reales y resultado. Si un requisito comparte features, conservar exactamente qué parte cubre cada uno. Una evidencia planificada jamás se registra como aprobada. El estado del producto solo puede declararse completo cuando todas las filas `MUST` tienen evidencia aprobada y los `SHOULD` incluidos en el alcance acordado también la tienen.
+
+## Revisiones 2026-11-09
+
+RF-01/02 → US-01/02 → TASKS 5.19 → [0026](../specs/0026-navegacion-y-mi-cuenta/spec.md) AC-01..04 → T-01..05 → [EV-01..04](../specs/0026-navegacion-y-mi-cuenta/verification.md): navegación y selección, perfil autorizado, recuperación y compatibilidad verificados técnicamente. Sustituye presentación de sesión 0024; aceptación física separada.
+
+RF-03/11/12 → US-03/05 → TASKS 1.6 → [0027](../specs/0027-gangas-demo/spec.md) AC-01..03 → T-01..03 → [EV-01..03](../specs/0027-gangas-demo/verification.md): tres gangas locales, repetición/conservación y feed/fotos reales PASS. Datos optativos; no sustituye UAT de 0006.

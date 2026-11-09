@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-07T01:34:01.119Z",
+  "sourceCount": 13,
+  "caseInsensitiveMatches": 1,
+  "combinedMatches": 1,
+  "emptyStatus": 200,
+  "blankSameCount": true,
+  "longStatus": 400,
+  "duplicateStatus": 400,
+  "wildcardLiteral": true,
+  "publicContactsAbsent": true,
+  "operations": "GET only; no mutations"
+}
