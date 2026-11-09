@@ -4,6 +4,9 @@ Cada directorio numerado es un cambio trazable. El número no se reutiliza. `spe
 
 | ID | Feature | Requisitos / historias | Estado | Bloqueo principal |
 | --- | --- | --- | --- | --- |
+| 0030 | [Oferta en lenguaje visible](0030-textos-oferta/spec.md) | RF-11/12; US-05; TASKS 5.22 | Verificado (técnico y visual auxiliar) | Textos y tres títulos Demo; 96 pruebas, tipos, 66 capturas, bundle iOS y feed reales PASS. Hardware separado. |
+| 0029 | [Gangas reconocibles](0029-presentacion-gangas/spec.md) | RF-11/12; RNF-03; US-05; TASKS 5.21 | Verificado (técnico y visual auxiliar) | Precio actual/anterior/ahorro y naranja en tres vistas; 96 pruebas, 66 capturas, tipos y bundles Android/iOS PASS. Hardware separado. |
+| 0028 | [Pestañas sin pila](0028-tabs-sin-pila/spec.md) | RF-01/02/05c/06/07; RNF-03; TASKS 5.20 | Verificado (técnico) | Tabs reales protegidas, estado conservado y retornos sin duplicación; 84 pruebas, tipos, bundles Android/iOS y check-sdd PASS. Gestos físicos por separado. |
 | 0027 | [Gangas de demostración](0027-gangas-demo/spec.md) | RF-03/11/12; US-03/05; TASKS 1.6 | Verificado (datos locales y HTTP) | Tres ejemplos, seed 3→0, datos anteriores conservados y feed/fotos HTTP 200. Aceptación física separada. |
 | 0026 | [Navegación y Mi cuenta](0026-navegacion-y-mi-cuenta/spec.md) | RF-01/02; US-01/02; TASKS 5.19 | Verificado (técnico y visual auxiliar) | Cuatro tabs, selección translúcida, perfil real y errores controlados; 77 pruebas frontend/13 backend, 54 capturas, exports y HTTP aprobados. Hardware separado. |
 | 0025 | [Barra de búsqueda](0025-busqueda-publicaciones/spec.md) | RF-05c; RNF-03; US-05c; TASKS 5.18 | Verificado (técnico y visual auxiliar) | Texto servidor combinado con filtros, 66 pruebas frontend/12 backend, 51 capturas y GET real aprobados. Tipos/build/lint/exports PASS; aceptación física separada. |

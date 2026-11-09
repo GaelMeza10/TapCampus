@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-09T21:31:24.384Z",
+  "changed": 3,
+  "repeated": 0,
+  "allOtherPublicationFieldsPreserved": true,
+  "titles": [
+    {
+      "id": "27000000-0000-4000-8000-000000000001",
+      "title": "Demo: Brownie de chocolate en oferta"
+    },
+    {
+      "id": "27000000-0000-4000-8000-000000000002",
+      "title": "Demo: Café frío de vainilla en oferta"
+    },
+    {
+      "id": "27000000-0000-4000-8000-000000000003",
+      "title": "Demo: Torta de pollo en oferta"
+    }
+  ]
+}

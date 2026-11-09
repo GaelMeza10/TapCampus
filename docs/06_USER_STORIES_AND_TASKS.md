@@ -17,7 +17,7 @@ Este documento traduce los Requerimientos Funcionales en Historias de Usuario (M
 *   **US-04 (Catálogo Estático):** *Como vendedor, quiero publicar artículos escolares sin límite de tiempo para que permanezcan en un catálogo hasta que los venda.*
     *   *Tarea Backend:* Crear publicación `STATIC` y transición a `FINISHED` cuando su vendedor la marque «Vendida».
     *   *Tarea Frontend:* Mostrar detalle sin temporizador ni reserva y acción «Marcar como vendida» al propietario.
-*   **US-05 (Precio Ganga):** *Como vendedor, quiero activar un "precio ganga" al final de mi turno para rematar el inventario sobrante rápidamente.*
+*   **US-05 (Precio de oferta):** *Como vendedor, quiero activar un "precio de oferta" al final de mi turno para rematar el inventario sobrante rápidamente.*
     *   *Tarea Backend:* Endpoint `PATCH /publications/:id/ganga`, crear Job en BullMQ para activación programada.
 *   **US-05b (Venta Física):** *Como vendedor, quiero descontar el stock manualmente con un botón si alguien me compra el producto en persona, para que la app no ofrezca piezas que ya no tengo.*
 *   **US-05c (Búsqueda y filtros):** *Como comprador, quiero buscar por texto y filtrar el feed por Facultad o Categoría para encontrar rápidamente lo que estoy buscando sin ver cosas que me quedan lejos.*

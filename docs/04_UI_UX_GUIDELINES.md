@@ -2,6 +2,10 @@
 
 ## 1. Principios de Consistencia Visual
 
+Vocabulario vigente 0030: Oferta, Precio de oferta, Activar oferta, Oferta activa/programada y Sin oferta sustituyen Ganga en todo texto visible, ayudas, errores y confirmaciones. Se conserva el naranja de 0029 para diferenciar descuentos de errores/acciones destructivas rojas. Los identificadores técnicos ganga* permanecen por compatibilidad; los títulos Demo de 0027 usan en oferta.
+
+Gangas 0029: tarjetas de feed y venta activa con fondo gangaSoft (#FFF1E4), precio ganga (#A44B16), etiqueta sólida naranja con texto blanco e icono de etiqueta. Detalle usa el mismo distintivo y panel de precios suave. Orden actual → anterior menor/tachado a la derecha → Ahorras; comparar solo precio previo válido mayor al actual. Temporizador separado de la etiqueta en comprador; wrap antes que recorte. Reservas conservan su precio fijado. Contraste medido: naranja/fondo suave 5.27:1; blanco/naranja 5.84:1.
+
 Búsqueda 0025: barra Buscar productos debajo de TapCampus/Cuenta, encima del selector; blanca, lupa y limpieza accesible, usando CustomInput/tokens actuales. Texto y filtros se combinan, se conserva la consulta al cambiar tipo, y limpiar texto conserva zona/categoría. Debounce 300 ms, tecla Buscar inmediata, carga/error y vacío recuperables; no mostrar resultados antiguos para texto nuevo.
 
 Gestión de sesión vigente (0026, sustituye la hoja 0024): cuarta pestaña Cuenta con icono de persona y etiqueta. Abre Mi cuenta con nombre, correo y teléfono reales en lectura y Cerrar sesión. Retirar el acceso redundante del encabezado; no colocar logout en ventas. Bloquear repetición/navegación durante logout y mostrar error recuperable. La carga del perfil nunca muestra mensajes técnicos del servidor.

@@ -1,5 +1,7 @@
 # Flujos de Usuario (User Journeys) - TapCampus
 
+Corrección 0028: Explorar/Reservas/Mis ventas/Cuenta son destinos de un navegador de pestañas protegido, con estado conservado al cambiar. Atrás desde otra pestaña vuelve a Explorar; no recorre todas las selecciones anteriores. Detalle y formulario permanecen en una pila superior y Atrás recupera el origen. Ver mis reservas y guardar publicación regresan al grupo existente con dismissTo, sin duplicarlo; guardar selecciona el tipo correspondiente en ventas. Las URLs públicas se conservan.
+
 Este documento describe la secuencia de pasos e interacciones (pantallas) por las que pasa un usuario al utilizar las funciones principales de la aplicación. Es la guía definitiva para la navegación (React Navigation / Expo Router).
 
 ## 1. Flujo de Autenticación
@@ -34,10 +36,10 @@ Prototipo actualizado en 0017/0018 y aplicado a Expo en 0020: la barra inferior 
     *   Selecciona Zona y Categoría (menús desplegables).
     *   Ingresa Stock.
     *   Configura tiempo: Hora inicio y fin.
-    *   (Opcional) Activa "Precio Ganga" programado o manual.
+    *   (Opcional) Activa "Precio de oferta" programado o manual.
 2.  **Gestión (Mis Ventas):** Pantalla donde el vendedor ve sus publicaciones activas.
     *   Ve un panel con la cantidad y el detalle separado de todas las reservas activas, incluso varias del mismo comprador.
-    *   Tiene el botón manual de "Activar Precio Ganga" (si no lo programó).
+    *   Tiene el botón manual de "Activar Precio de oferta" (si no lo programó).
     *   Tiene el botón rojo "Finalizar Publicación" por si debe irse temprano.
 3.  **Confirmar Entrega:** Cuando un comprador llega frente a él, el vendedor entra a la reserva específica y presiona "Confirmar Entrega" antes del vencimiento de sus 20 minutos, aunque el horario de la publicación ya terminó. El precio fijado de esa reserva no cambia y el stock reservado pasa a vendido permanentemente.
 4.  **Venta Directa (Física):** Si alguien llega sin usar la app, el vendedor en su panel de "Mis Ventas" presiona un botón de "Restar 1 al Stock" para mantener su inventario digital actualizado.

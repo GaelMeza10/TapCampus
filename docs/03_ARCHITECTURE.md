@@ -1,5 +1,7 @@
 # Arquitectura y Stack Tecnológico (TapCampus)
 
+Navegación 0028: Stack raíz nativo con Stack.Protected para `(tabs)` y rutas publication/[id] y publication/edit. `(tabs)/_layout.tsx` usa Tabs de Expo Router, backBehavior initialRoute y homePage inicial. Las cuatro pantallas conservan sus URLs y MarketplaceShell mantiene la barra aprobada; se oculta la barra automática para evitar duplicación. navigate cambia de pestaña; dismissTo retorna de detalle/edición a un destino principal existente. Se preservan AuthContext, guardas e interceptor 401.
+
 ## 1. Stack Seleccionado
 | Capa | Tecnología | Justificación |
 | :--- | :--- | :--- |

@@ -1,5 +1,17 @@
 # Auditoría del proyecto y decisiones de producto
 
+## Oferta como término visible — 2026-11-09
+
+[0030](../specs/0030-textos-oferta/verification.md) sustituye Ganga por Oferta en comprador y vendedor, incluye validación y confirmaciones; adapta mensajes heredados del servidor y renombra solo los tres títulos Demo exactos de 0027. Mantiene naranja, ahorro y contratos internos. La evidencia histórica usa el vocabulario de su fecha; no se reescribe para aparentar nuevas pruebas.
+
+## Presentación de gangas — 2026-11-09
+
+[0029](../specs/0029-presentacion-gangas/verification.md) aplica la propuesta ui-ux-pro-max aprobada: actual/anterior tachado/ahorro en feed, detalle y ventas; etiqueta con icono y superficies naranja. Sustituye la presentación dispersa de «Antes» debajo del stock y el orden invertido en detalle/ventas. Sin cambio a activación, inventario o precio fijado de reservas. Evidencia y límites en el expediente; no cierra UAT de 0006.
+
+## Pestañas principales sin apilamiento — 2026-11-09
+
+[0028](../specs/0028-tabs-sin-pila/verification.md) corrige el modelo de navegación de 0026: la barra ya usaba navigate, pero sus destinos eran pantallas Stack. Ahora pertenecen a Tabs protegidas; detalles/formularios conservan pila y retornan con dismissTo sin crear otro grupo. Estado local y URLs conservados; Atrás desde pestañas vuelve a Explorar. 14 pruebas de navegación, 84 frontend en total, tipos, bundles Android/iOS y check-sdd PASS. Sin nueva evidencia física ni cierre de 5.1–5.6.
+
 ## Mi cuenta y gangas locales — 2026-11-09
 
 [0026](../specs/0026-navegacion-y-mi-cuenta/verification.md) sustituye la hoja de 0024 por la cuarta pestaña Cuenta con datos registrados. Selección suavizada según petición, fondo verde al 12 % y texto/icono verde oscuro (6.20:1); icono person-outline instalado. La UI no expone Cannot GET /auth/me y recupera con Reintentar. API actual arrancada: perfil 200 en loopback y ruta LAN 401 anónima. 77 pruebas frontend/13 backend, 54 capturas, tipos/build/lint y bundles iOS/Android PASS. No se declara reproducido/resuelto en el iPhone hasta confirmación física; la causa histórica exacta del 404 no se pudo verificar.

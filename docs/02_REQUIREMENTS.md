@@ -86,13 +86,13 @@ stateDiagram-v2
 ```
 *(Nota para la IA: El backend debe rechazar cualquier transición no definida en este diagrama, ej. pasar de EXPIRED a COMPLETED es inválido).*
 
-### Módulo de Precios y Ofertas (Precio Ganga)
-*   **RF-11: Configuración de Precio Ganga [MUST]**
+### Módulo de Precios y Ofertas (Precio de oferta)
+*   **RF-11: Configuración de Precio de oferta [MUST]**
     *   **Descripción:** El sistema deberá permitir al vendedor definir un "Precio mínimo" y un método de activación (manual o programado) al momento de crear o editar una publicación en vivo.
 *   **RF-12: Activación Instantánea [MUST]**
-    *   **Descripción:** Al momento de activarse (ya sea por el botón del vendedor o por el job de tiempo), el sistema deberá reemplazar el precio normal por el precio ganga de forma inmediata (sin transiciones graduales).
+    *   **Descripción:** Al momento de activarse (ya sea por el botón del vendedor o por el job de tiempo), el sistema deberá reemplazar el precio normal por el precio de oferta de forma inmediata (sin transiciones graduales).
     *   **Criterios de Aceptación:**
-        *   La interfaz de la publicación cambiará para incluir un distintivo visual ("Ganga") y subirá de posición en el feed.
+        *   La interfaz de la publicación cambiará para incluir un distintivo visual ("Oferta") y subirá de posición en el feed.
         *   El nuevo precio aplica a reservas creadas después de la activación; las anteriores conservan su precio fijado.
 
 ### Módulo de Interacción y Moderación
@@ -130,7 +130,7 @@ stateDiagram-v2
 
 | Prioridad | Funcionalidad |
 | :--- | :--- |
-| **MUST (MVP definido por RF/RNF)** | Registro y perfil obligatorio, publicaciones en vivo y estáticas, venta física, filtros de zona/categoría, reserva de 20 min y confirmación, bloqueo pesimista, expiración, precio ganga manual/programado, WhatsApp tras reserva y Socket.io. |
+| **MUST (MVP definido por RF/RNF)** | Registro y perfil obligatorio, publicaciones en vivo y estáticas, venta física, filtros de zona/categoría, reserva de 20 min y confirmación, bloqueo pesimista, expiración, precio de oferta manual/programado, WhatsApp tras reserva y Socket.io. |
 | **SHOULD** | Cierre manual anticipado, cancelación por comprador y ocultamiento por tres reportes distintos. |
 | **Fuera de estos RF/RNF** | Edición de perfil, reputación y notificaciones push requieren nuevos requisitos antes de planificarse. |
 

@@ -63,6 +63,12 @@ Al verificar un feature, enlazar sus `EV` reales y resultado. Si un requisito co
 
 ## Revisiones 2026-11-09
 
+RF-11/12 → US-05 → TASKS 5.22 → [0030](../specs/0030-textos-oferta/spec.md) AC-01..03 → T-01..04 → [EV-01..03](../specs/0030-textos-oferta/verification.md): término Oferta en experiencia visible y tres títulos Demo, contratos y paleta conservados.
+
+RF-11/12 y RNF-03 → US-05 → TASKS 5.21 → [0029](../specs/0029-presentacion-gangas/spec.md) AC-01..03 → T-01..03 → [EV-01/02](../specs/0029-presentacion-gangas/verification.md): presentación consistente de ganga y ahorro, sin alterar precios fijados de reservas; aceptación física separada.
+
 RF-01/02 → US-01/02 → TASKS 5.19 → [0026](../specs/0026-navegacion-y-mi-cuenta/spec.md) AC-01..04 → T-01..05 → [EV-01..04](../specs/0026-navegacion-y-mi-cuenta/verification.md): navegación y selección, perfil autorizado, recuperación y compatibilidad verificados técnicamente. Sustituye presentación de sesión 0024; aceptación física separada.
 
 RF-03/11/12 → US-03/05 → TASKS 1.6 → [0027](../specs/0027-gangas-demo/spec.md) AC-01..03 → T-01..03 → [EV-01..03](../specs/0027-gangas-demo/verification.md): tres gangas locales, repetición/conservación y feed/fotos reales PASS. Datos optativos; no sustituye UAT de 0006.
+
+RF-01/02/05c/06/07 y RNF-03 → US-01/02/04/05c/06 → TASKS 5.20 → [0028](../specs/0028-tabs-sin-pila/spec.md) AC-01..03 → T-01..04 → [EV-01/02](../specs/0028-tabs-sin-pila/verification.md): pestañas protegidas reales, estado y retornos sin duplicar, 84 pruebas frontend, tipos y bundles móviles PASS. Corrección técnica de 0026, sin sustituir aceptación física.

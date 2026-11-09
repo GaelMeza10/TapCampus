@@ -81,7 +81,16 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 
 **Registro en iPhone (2026-11-05):** 0002 EV-11 acredita reintento exitoso por red local tras reiniciar API fuera del entorno restringido: HTTP 201, una cuenta nueva en PostgreSQL y confirmación del usuario. 5.1 sigue abierta para los demás recorridos de sesión y validación móvil.
 
+- [x] **5.20 Pestañas sin pila (técnica):** 0028 EV-01/02: Tabs protegidas reales, estado conservado y retornos desde detalle/formulario con dismissTo; 84 pruebas, tipos, bundles Android/iOS y check-sdd PASS. Gestos y aceptación física separados.
+
+- [x] **5.21 Gangas reconocibles (técnica):** 0029 EV-01/02: precio actual primero, anterior tachado a la derecha, ahorro, etiqueta e identidad naranja en feed/detalle/ventas; 96 pruebas, 66 capturas auxiliares, tipos y exportaciones Android/iOS PASS. Reservas con precio fijado conservado; aceptación física separada.
+
+- [x] **5.22 Oferta en lenguaje visible:** 0030 EV-01..03: textos de comprador/vendedor y tres títulos Demo actualizados; naranja y contratos conservados. 96 pruebas, tipos, 66 capturas, feed real y bundle iOS 200 con nuevo texto. Aceptación física separada.
+
 ## FASE 6: Validación, QA y Despliegue
+
+
+
 
 - [x] **6.1 Pruebas de Estrés:** Ejecutar 50 reservas concurrentes con claves distintas para la última pieza y comprobar 1×201/49×409; probar aparte reintentos concurrentes con la misma clave, sin doble descuento. Registrar resultados en 0001 `verification.md`.
 - [ ] **6.2 Despliegue Backend:** Subir PostgreSQL y Redis a la nube. Configurar variables de entorno y desplegar la API NestJS en producción.
