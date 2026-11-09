@@ -27,7 +27,8 @@ api.interceptors.response.use(
     response => response,
     async error => {
         const path = error.config?.url ?? '';
-        if (error.response?.status === 401 && !path.startsWith('/auth/') && onUnauthorized) {
+        const publicAuth = ['/auth/login', '/auth/register'].includes(path.split('?')[0]);
+        if (error.response?.status === 401 && !publicAuth && onUnauthorized) {
             await onUnauthorized();
         }
         return Promise.reject(error);

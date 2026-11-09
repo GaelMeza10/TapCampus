@@ -1,6 +1,7 @@
 import api from '../src/services/api';
 import * as Linking from 'expo-linking';
-import { apiMessage, listPublications, myPublications, reserve, savePublication, uploadImage } from '../src/services/marketplace';
+import { myProfile } from '../src/services/auth.service';
+import { apiMessage, cancelReservation, completeReservation, listPublications, myPublications, myReservations, reserve, savePublication, sellerReservations, uploadImage } from '../src/services/marketplace';
 import { openWhatsApp, whatsappUrl } from '../src/services/whatsapp';
 
 jest.mock('../src/services/api', () => ({ __esModule: true, default: { get: jest.fn(), post: jest.fn(), patch: jest.fn() } }));
@@ -12,6 +13,13 @@ const get = api.get as jest.Mock;
 const open = Linking.openURL as jest.Mock;
 
 beforeEach(() => { jest.clearAllMocks(); });
+
+test('Mi cuenta consulta solo auth/me sin pedir un usuario por parámetros', async () => {
+  const profile = { id: 'u1', name: 'Ana', email: 'ana@uabc.edu.mx', phone: '+526641234567' };
+  get.mockResolvedValue({ data: profile });
+  expect(await myProfile()).toEqual(profile);
+  expect(get).toHaveBeenLastCalledWith('/auth/me');
+});
 
 test('feed usa el origen actual para uploads guardados con una IP anterior y conserva otras imágenes', async () => {
   const path = '/uploads/10000000-0000-4000-8000-000000000009.png';
@@ -27,6 +35,27 @@ test('feed usa el origen actual para uploads guardados con una IP anterior y con
 test('timeout muestra un error recuperable y conserva el mensaje de validación del servidor', () => {
   expect(apiMessage({ code: 'ECONNABORTED' })).toContain('tardó demasiado');
   expect(apiMessage({ response: { status: 400, data: { message: 'Zona inválida' } } })).toBe('Zona inválida');
+});
+
+test('búsqueda se envía normalizada al servidor y texto vacío no añade q', async () => {
+  get.mockResolvedValue({ data: [] });
+  await listPublications('LIVE', 1, 2, '  Café   frío  ');
+  expect(get).toHaveBeenLastCalledWith('/publications', { params: { type: 'LIVE', zoneId: 1, categoryId: 2, q: 'Café frío' } });
+  await listPublications('STATIC', undefined, undefined, '   ');
+  expect(get).toHaveBeenLastCalledWith('/publications', { params: { type: 'STATIC', zoneId: undefined, categoryId: undefined } });
+});
+
+test('fotos de reservas usan origen actual en listados y acciones; campo ausente conserva compatibilidad', async () => {
+  const path = '/uploads/10000000-0000-4000-8000-000000000009.png';
+  const row = { id: 'r1', publicationImageUrl: `http://old.example${path}` };
+  get.mockResolvedValue({ data: [row, { id: 'old' }, { id: 'missing', publicationImageUrl: null }] });
+  for (const rows of [await myReservations(), await sellerReservations('p1')]) {
+    expect(rows[0].publicationImageUrl).toBe(`https://api.example${path}`);
+    expect(rows[1]).toEqual({ id: 'old' });
+    expect(rows[2].publicationImageUrl).toBeNull();
+  }
+  post.mockResolvedValue({ data: { ...row, publicationImageUrl: path } });
+  for (const result of [await reserve('p1', 'same-key'), await cancelReservation('r1'), await completeReservation('r1')]) expect(result.publicationImageUrl).toBe(`https://api.example${path}`);
 });
 
 test('reserva transmite la misma clave al reintentar y permite otra acción con clave nueva', async () => {

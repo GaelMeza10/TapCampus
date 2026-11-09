@@ -97,7 +97,9 @@ test('Catálogo permite marcar vendido con confirmación y retira acciones al te
   market.myPublications.mockResolvedValueOnce([book]).mockResolvedValue([{ ...book, status: 'FINISHED' }]);
   market.publicationAction.mockResolvedValue({ ...book, status: 'FINISHED' });
   const view = await render(<Sales />);
-  await fireEvent.press(view.getByRole('button', { name: 'Catálogo' }));
+  expect(view.getByRole('tab', { name: 'Con horario' }).props.accessibilityState.selected).toBe(true);
+  await fireEvent.press(view.getByRole('tab', { name: 'Catálogo' }));
+  expect(view.getByRole('tab', { name: 'Catálogo' }).props.accessibilityState.selected).toBe(true);
   await view.findByText('Cálculo I');
   expect(view.queryByText('−1 venta física')).toBeNull();
   expect(view.queryByText(/Reservas por entregar/)).toBeNull();

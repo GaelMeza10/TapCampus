@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState, type ComponentRef } from 'react';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -41,6 +41,13 @@ export default function EditPublication() {
   const [gangaMode, setGangaMode] = useState<'MANUAL' | 'SCHEDULED'>('MANUAL');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
+  const titleRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const descriptionRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const priceRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const stockRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const fieldPositions = useRef<Partial<Record<keyof Draft, number>>>({});
   const [panel, setPanel] = useState<'photo' | 'zone' | 'category' | 'ganga' | 'start' | 'end'>();
   const [config, setConfig] = useState({ mode: 'NONE' as 'NONE' | 'MANUAL' | 'SCHEDULED', price: '', minutes: '' });
   const [configError, setConfigError] = useState('');
@@ -51,7 +58,13 @@ export default function EditPublication() {
   const [catalogAttempt, setCatalogAttempt] = useState(0);
   const [zoneLoading, setZoneLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(true);
-  const change = (field: keyof Draft, value: string) => { setDraft(previous => ({ ...previous, [field]: value })); setError(''); };
+  const change = (field: keyof Draft, value: string) => { setDraft(previous => ({ ...previous, [field]: value })); setFieldErrors(previous => ({ ...previous, [field]: undefined })); setError(''); };
+  function invalid(field: 'title' | 'description' | 'price' | 'stock', message: string) {
+    setFieldErrors({ [field]: message }); setError('');
+    const inputs = { title: titleRef, description: descriptionRef, price: priceRef, stock: stockRef };
+    inputs[field].current?.focus();
+    scrollRef.current?.scrollTo({ y: Math.max(0, (fieldPositions.current[field] ?? 0) - SPACE.lg), animated: false });
+  }
   useEffect(() => { let current = true; setZoneLoading(true); void zones().then(rows => { if (current) setZoneOptions(rows); }).catch(cause => { if (current) setError(apiMessage(cause)); }).finally(() => { if (current) setZoneLoading(false); }); return () => { current = false; }; }, [catalogAttempt]);
   useEffect(() => { let current = true; setCategoryLoading(true); setCategoryOptions([]); void categories(type).then(rows => { if (current) setCategoryOptions(rows); }).catch(cause => { if (current) setError(apiMessage(cause)); }).finally(() => { if (current) setCategoryLoading(false); }); return () => { current = false; }; }, [type, catalogAttempt]);
   useEffect(() => {
@@ -89,12 +102,15 @@ export default function EditPublication() {
   }
   async function submit() {
     if (loading) return;
-    if (type === 'LIVE' && draft.stock && (!/^\d+$/.test(draft.stock) || Number(draft.stock) < (id ? 0 : 1))) { setError('El stock debe ser un entero no negativo; al crear debe ser mayor que cero.'); return; }
-    if (!draft.title.trim() || !draft.description.trim() || !zoneId || !categoryId || (!asset && !existingImage)) { setError('Completa título, descripción, foto, zona y categoría.'); return; }
+    setFieldErrors({});
+    if (type === 'LIVE' && draft.stock && (!/^\d+$/.test(draft.stock) || Number(draft.stock) < (id ? 0 : 1))) { invalid('stock', 'El stock debe ser un entero no negativo; al crear debe ser mayor que cero.'); return; }
+    if (!draft.title.trim()) { invalid('title', 'Escribe un título para identificar el producto.'); return; }
+    if (!draft.description.trim()) { invalid('description', 'Describe el producto y agrega una referencia para la entrega.'); return; }
+    if (!zoneId || !categoryId || (!asset && !existingImage)) { setError('Completa foto, zona y categoría.'); return; }
     if (id && !original) { setError('Espera a que cargue la publicación antes de editarla.'); return; }
-    if (!validPrice(draft.price)) { setError('El precio debe ser positivo y tener hasta dos decimales.'); return; }
+    if (!validPrice(draft.price)) { invalid('price', 'El precio debe ser positivo y tener hasta dos decimales.'); return; }
     const start = localDate(draft.start); const end = localDate(draft.end);
-    if (type === 'LIVE' && (!/^\d+$/.test(draft.stock) || Number(draft.stock) < (id ? 0 : 1))) { setError('El stock debe ser un entero no negativo; al crear debe ser mayor que cero.'); return; }
+    if (type === 'LIVE' && (!/^\d+$/.test(draft.stock) || Number(draft.stock) < (id ? 0 : 1))) { invalid('stock', 'El stock debe ser un entero no negativo; al crear debe ser mayor que cero.'); return; }
     if (type === 'LIVE' && (!start || !end || start >= end || end.getTime() <= Date.now())) { setError('Ingresa inicio y fin locales válidos; el fin debe ser futuro y posterior al inicio.'); return; }
     if (type === 'LIVE' && draft.gangaPrice && (!validPrice(draft.gangaPrice) || Number(draft.gangaPrice) > Number(draft.price))) { setError('El precio ganga debe ser positivo y no superar el precio normal.'); return; }
     if (original?.ganga_min_price && !draft.gangaPrice) { setError('La ganga configurada no se puede quitar; conserva el precio o ajusta sus valores.'); return; }
@@ -153,29 +169,29 @@ export default function EditPublication() {
   return <SafeAreaView style={styles.screen}>
     <KeyboardAvoidingView style={styles.fill} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.header}>
-        <Pressable accessibilityRole="button" style={styles.back} onPress={() => router.back()}><AppText style={styles.link}>‹ Mis ventas</AppText></Pressable>
+        <Pressable accessibilityRole="button" disabled={loading} style={styles.back} onPress={() => router.back()}><AppText style={styles.link}>‹ Mis ventas</AppText></Pressable>
         <AppText variant="title">{id ? 'Editar publicación' : 'Nueva publicación'}</AppText>
         <TypeSelector value={type} disabled={!!id || loading} onChange={next => { if (next !== type) { setType(next); setCategoryId(undefined); } }} />
       </View>
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scroll}>
+      <ScrollView ref={scrollRef} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scroll}>
         {id && !editingReady ? <DataState kind="loading" title="Cargando publicación…" /> : <>
-          <Pressable accessibilityRole="button" accessibilityLabel={asset || existingImage ? 'Cambiar foto del producto' : 'Añadir foto del producto'} style={({ pressed }) => [styles.photo, pressed && styles.pressed]} onPress={() => setPanel('photo')}>
+          <Pressable accessibilityRole="button" disabled={loading} accessibilityLabel={asset || existingImage ? 'Cambiar foto del producto' : 'Añadir foto del producto'} style={({ pressed }) => [styles.photo, pressed && styles.pressed]} onPress={() => setPanel('photo')}>
             {asset || existingImage ? <ExpoImage testID="selected-publication-image" source={{ uri: asset?.uri ?? existingImage }} style={styles.image} contentFit="cover" /> : <><AppText style={styles.photoPlus}>+</AppText><View style={styles.photoBody}><AppText variant="label">Añadir foto del {type === 'LIVE' ? 'producto' : 'artículo'}</AppText><AppText variant="caption">Cámara o galería · máx. 5 MiB</AppText></View></>}
           </Pressable>
-          <CustomInput label="Título" surface="white" placeholder="¿Qué vendes?" value={draft.title} onChangeText={value => change('title', value)} />
-          <CustomInput label="Descripción" surface="white" placeholder="Describe el producto y agrega una referencia para la entrega." value={draft.description} onChangeText={value => change('description', value)} multiline />
-          <View style={styles.row}><View style={styles.flex}><CustomInput label={type === 'LIVE' ? 'Precio normal' : 'Precio'} accessibilityLabel="Precio" surface="white" placeholder="$0.00" value={draft.price} onChangeText={value => change('price', value)} keyboardType="decimal-pad" editable={!original?.is_ganga_active} /></View>{type === 'LIVE' ? <View style={styles.flex}><CustomInput label="Stock disponible" surface="white" placeholder="Unidades" value={draft.stock} onChangeText={value => change('stock', value)} keyboardType="number-pad" /></View> : null}</View>
-          <View style={styles.field}><AppText variant="label" style={styles.muted}>Zona</AppText><PrimaryButton title={zoneOptions.find(z => z.id === zoneId)?.name ?? 'Seleccionar zona'} variant="field" onPress={() => setPanel('zone')} /></View>
-          <View style={styles.field}><AppText variant="label" style={styles.muted}>Categoría</AppText><PrimaryButton title={categoryOptions.find(c => c.id === categoryId)?.name ?? 'Seleccionar categoría'} variant="field" onPress={() => setPanel('category')} /></View>
+          <View onLayout={event => { fieldPositions.current.title = event.nativeEvent.layout.y; }}><CustomInput ref={titleRef} label="Título" editable={!loading} error={fieldErrors.title} placeholder="¿Qué vendes?" value={draft.title} onChangeText={value => change('title', value)} /></View>
+          <View onLayout={event => { fieldPositions.current.description = event.nativeEvent.layout.y; }}><CustomInput ref={descriptionRef} label="Descripción" editable={!loading} error={fieldErrors.description} surface="white" placeholder="Describe el producto y agrega una referencia para la entrega." value={draft.description} onChangeText={value => change('description', value)} multiline /></View>
+          <View style={styles.row} onLayout={event => { fieldPositions.current.price = event.nativeEvent.layout.y; fieldPositions.current.stock = event.nativeEvent.layout.y; }}><View style={styles.flex}><CustomInput ref={priceRef} label={type === 'LIVE' ? 'Precio normal' : 'Precio'} accessibilityLabel="Precio" error={fieldErrors.price} placeholder="$0.00" value={draft.price} onChangeText={value => change('price', value)} keyboardType="decimal-pad" editable={!loading && !original?.is_ganga_active} /></View>{type === 'LIVE' ? <View style={styles.flex}><CustomInput ref={stockRef} label="Stock disponible" editable={!loading} error={fieldErrors.stock} placeholder="Unidades" value={draft.stock} onChangeText={value => change('stock', value)} keyboardType="number-pad" /></View> : null}</View>
+          <View style={styles.field}><AppText variant="label" style={styles.muted}>Zona</AppText><PrimaryButton disabled={loading} title={zoneOptions.find(z => z.id === zoneId)?.name ?? 'Seleccionar zona'} variant="field" onPress={() => setPanel('zone')} /></View>
+          <View style={styles.field}><AppText variant="label" style={styles.muted}>Categoría</AppText><PrimaryButton disabled={loading} title={categoryOptions.find(c => c.id === categoryId)?.name ?? 'Seleccionar categoría'} variant="field" onPress={() => setPanel('category')} /></View>
           {type === 'LIVE' ? <>
             <AppText variant="label">Horario de venta</AppText>
-            <View style={styles.row}><View style={styles.flex}><AppText variant="caption">Inicio</AppText><PrimaryButton title={localLabel(draft.start)} accessibilityLabel="Elegir inicio de venta" variant="field" onPress={() => openTime('start')} /></View><View style={styles.flex}><AppText variant="caption">Fin</AppText><PrimaryButton title={localLabel(draft.end)} accessibilityLabel="Elegir fin de venta" variant="field" onPress={() => openTime('end')} /></View></View>
-            <Pressable accessibilityRole="button" style={styles.ganga} onPress={openConfig}><AppText variant="label" style={styles.gangaText}>Precio Ganga · {original?.is_ganga_active ? 'Activa' : 'Configurar →'}</AppText><AppText variant="caption">{draft.gangaPrice ? `${gangaMode === 'MANUAL' ? 'Manual' : 'Programada'} · $${draft.gangaPrice}${gangaMode === 'SCHEDULED' ? ` · ${draft.gangaMinutes} min antes del fin` : ''}` : 'Sin configurar · opcional'}</AppText></Pressable>
+            <View style={styles.row}><View style={styles.flex}><AppText variant="caption">Inicio</AppText><PrimaryButton disabled={loading} title={localLabel(draft.start)} accessibilityLabel="Elegir inicio de venta" variant="field" onPress={() => openTime('start')} /></View><View style={styles.flex}><AppText variant="caption">Fin</AppText><PrimaryButton disabled={loading} title={localLabel(draft.end)} accessibilityLabel="Elegir fin de venta" variant="field" onPress={() => openTime('end')} /></View></View>
+            <Pressable accessibilityRole="button" disabled={loading} style={styles.ganga} onPress={openConfig}><AppText variant="label" style={styles.gangaText}>Precio Ganga · {original?.is_ganga_active ? 'Activa' : 'Configurar →'}</AppText><AppText variant="caption">{draft.gangaPrice ? `${gangaMode === 'MANUAL' ? 'Manual' : 'Programada'} · $${draft.gangaPrice}${gangaMode === 'SCHEDULED' ? ` · ${draft.gangaMinutes} min antes del fin` : ''}` : 'Sin configurar · opcional'}</AppText></Pressable>
           </> : <View style={styles.info}><AppText variant="label" style={styles.link}>Sin stock ni temporizador</AppText><AppText variant="caption">Los compradores contactan por WhatsApp directamente.</AppText></View>}
         </>}
         {error ? <InlineMessage onRetry={id ? () => setAttempt(n => n + 1) : undefined}>{error}</InlineMessage> : null}
       </ScrollView>
-      <View style={styles.submit}><PrimaryButton title={id ? 'Guardar cambios' : type === 'STATIC' ? 'Publicar artículo' : 'Publicar'} disabled={!!id && (!editingReady || !original)} loading={loading} onPress={() => void submit()} /></View>
+      <View style={styles.submit}><PrimaryButton title={id ? 'Guardar cambios' : type === 'STATIC' ? 'Publicar artículo' : 'Publicar'} loadingTitle={id ? 'Guardando…' : 'Publicando…'} disabled={!!id && (!editingReady || !original)} loading={loading} onPress={() => void submit()} /></View>
     </KeyboardAvoidingView>
     <Sheet visible={panel === 'photo'} title="Foto del producto" onClose={() => setPanel(undefined)}><PrimaryButton title="Tomar foto" onPress={() => { setPanel(undefined); void pick('camera'); }} /><PrimaryButton title="Elegir de galería" variant="secondary" onPress={() => { setPanel(undefined); void pick('gallery'); }} /></Sheet>
     <Sheet visible={panel === 'zone' || panel === 'category'} title={panel === 'zone' ? 'Zona' : 'Categoría'} onClose={() => setPanel(undefined)}>

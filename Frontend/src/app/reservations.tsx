@@ -54,7 +54,7 @@ export default function MyReservations() {
     catch (cause) { setError((cause as Error).message); }
   }
   return <MarketplaceShell active="reservations">
-    <PageHeader title="Mis reservas" subtitle="Cada apartado conserva su precio y plazo" />
+    <PageHeader title="Mis reservas" />
     <FlatList data={presented} keyExtractor={({ reservation }) => reservation.id} extraData={now} contentContainerStyle={styles.list} refreshing={refreshing && !loading} onRefresh={() => void refresh()}
       ListHeaderComponent={error && rows.length > 0 ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : undefined}
       ListEmptyComponent={loading ? <DataState kind="loading" title="Cargando reservas…" /> : error ? <DataState kind="error" title="No pudimos cargar tus reservas" description={error} action="Reintentar" onAction={() => void refresh()} /> : <DataState kind="empty" title="Aún no tienes reservas" description="Explora lo disponible y aparta una unidad para recogerla en 20 minutos." action="Explorar publicaciones" onAction={() => router.navigate('/homePage')} />}

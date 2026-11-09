@@ -3,12 +3,11 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
-import { useAuth } from '@/context/AuthContext';
 import { COLORS, RADIUS, SPACE } from '@/theme';
 import AppText from '@/components/app-text';
 import ReservationCard from '@/components/reservation-card';
 import { ConfirmationDialog, DataState, InlineMessage } from '@/components/feedback';
-import { MarketplaceShell, PageHeader } from '@/components/marketplace-shell';
+import { MarketplaceShell, PageHeader, TypeSelector } from '@/components/marketplace-shell';
 import { useMarketplaceSync } from '@/hooks/use-marketplace-sync';
 import { money, countdown, saleHasStarted, saleIsOpen } from '@/lib/marketplace-presentation';
 import { apiMessage, completeReservation, myPublications, publicationAction, sellerReservations, zones, type Zone, type PublicationType, type Publication, type Reservation } from '@/services/marketplace';
@@ -24,7 +23,6 @@ export default function Sales() {
   const [refreshing, setRefreshing] = useState(false);
   const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
   const sequence = useRef(0);
-  const { logout } = useAuth();
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -96,11 +94,12 @@ export default function Sales() {
 
   const visibleSales = sales.filter(sale => sale.publication.type === saleType);
   return <MarketplaceShell active="sales">
-    <PageHeader title="Mis ventas" subtitle={saleType === 'LIVE' ? 'Controla stock y entregas en tiempo real' : 'Artículos publicados · contacto directo'} action={<PrimaryButton compact variant="secondary" title={saleType === 'LIVE' ? 'Catálogo' : 'Disponibles ahora'} disabled={busy} onPress={() => setSaleType(saleType === 'LIVE' ? 'STATIC' : 'LIVE')} />} />
+    <PageHeader title="Mis ventas" />
+    <View style={styles.typeSelector}><TypeSelector value={saleType} liveLabel="Con horario" disabled={busy} onChange={setSaleType} /></View>
     <FlatList data={visibleSales} keyExtractor={item => item.publication.id} contentContainerStyle={styles.list} extraData={now} refreshing={refreshing && !loading} onRefresh={() => void refresh()}
       ListHeaderComponent={error && sales.length > 0 ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : undefined}
       ListEmptyComponent={loading ? <DataState kind="loading" title="Cargando tus ventas…" /> : error ? <DataState kind="error" title="No pudimos cargar tus ventas" description={error} action="Reintentar" onAction={() => void refresh()} /> : <DataState kind="empty" title="Aún no tienes publicaciones" description={saleType === 'LIVE' ? 'Publica lo que tienes disponible y recibe apartados.' : 'Publica un artículo y coordina la entrega por WhatsApp.'} />}
-      ListFooterComponent={<View style={styles.footer}><PrimaryButton title={saleType === 'LIVE' ? '+ Nueva publicación' : '+ Publicar otro artículo'} variant="secondary" disabled={busy} onPress={() => router.push({ pathname: '/publication/edit', params: { type: saleType } })} /><PrimaryButton title="Cerrar sesión" variant="ghost" disabled={busy} onPress={() => void logout().catch(cause => setError(apiMessage(cause)))} /></View>}
+      ListFooterComponent={<View style={styles.footer}><PrimaryButton title={saleType === 'LIVE' ? '+ Nueva publicación' : '+ Publicar otro artículo'} variant="secondary" disabled={busy} onPress={() => router.push({ pathname: '/publication/edit', params: { type: saleType } })} /></View>}
       renderItem={({ item: sale }) => {
         const p = sale.publication;
         const active = saleIsOpen(p, now);
@@ -133,6 +132,7 @@ export default function Sales() {
   </MarketplaceShell>;
 }
 const styles = StyleSheet.create({
+  typeSelector: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.sm },
   list: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.page, gap: SPACE.xl, flexGrow: 1 }, sale: { gap: SPACE.md }, card: { padding: SPACE.lg, gap: SPACE.sm },
   priceRow: { flexDirection: 'row', alignItems: 'center', gap: SPACE.md }, previous: { textDecorationLine: 'line-through' }, row: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm },
   flex: { flex: 1 }, ganga: { color: COLORS.ganga }, link: { color: COLORS.primary }, info: { padding: SPACE.md, borderRadius: RADIUS.md, backgroundColor: COLORS.primarySoft, gap: SPACE.sm }, footer: { paddingTop: SPACE.xl, gap: SPACE.md },

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ComponentRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -6,7 +6,7 @@ import { randomUUID } from 'expo-crypto';
 import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
 import { COLORS, RADIUS, SPACE } from '@/theme';
-import { Image as ExpoImage } from 'expo-image';
+import PublicationPhoto from '@/components/publication-photo';
 import AppText from '@/components/app-text';
 import ReservationCard from '@/components/reservation-card';
 import StatusIcon from '@/components/status-icon';
@@ -16,6 +16,8 @@ import { countdown, money, saleHasStarted, saleIsOpen } from '@/lib/marketplace-
 import { apiMessage, cancelReservation, myReservations, publicationDetail, reserve, zones, type Zone, type Publication, type Reservation } from '@/services/marketplace';
 import { openWhatsApp } from '@/services/whatsapp';
 import { canActOnReservation, formatReservationDate, presentReservations, reservationDescription, reservationStatusLabel, validTime } from '@/lib/reservation-presentation';
+
+type ReservationIntent = { publicationId: string; title: string; price: string; key?: string; rejected?: boolean };
 
 export default function PublicationDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -32,7 +34,12 @@ export default function PublicationDetail() {
   const [lastConfirmed, setLastConfirmed] = useState<Reservation>();
   const sequence = useRef(0);
   const reservationBusy = useRef(false);
-  const actionKey = useRef<string | undefined>(undefined);
+  const [reservationOpen, setReservationOpen] = useState(false);
+  const [intent, setIntent] = useState<ReservationIntent>();
+  const [reservationError, setReservationError] = useState('');
+  const intentRef = useRef<ReservationIntent | undefined>(undefined);
+  const reserveTrigger = useRef<ComponentRef<typeof Pressable>>(null);
+  const routeEpoch = useRef(0);
   const refreshedDeadlines = useRef(new Set<string>());
   const refresh = useCallback(async () => {
     if (!id) return;
@@ -53,7 +60,7 @@ export default function PublicationDetail() {
     setLoading(false);
   }, [id]);
   useMarketplaceSync(refresh, false);
-  useEffect(() => { setItem(undefined); setReservations([]); setSuccessId(undefined); setLastConfirmed(undefined); actionKey.current = undefined; setLoading(true); void refresh(); return () => { sequence.current++; }; }, [refresh]);
+  useEffect(() => { routeEpoch.current++; setItem(undefined); setReservations([]); setSuccessId(undefined); setLastConfirmed(undefined); intentRef.current = undefined; setIntent(undefined); setReservationOpen(false); setReservationError(''); reservationBusy.current = false; setPending(false); setLoading(true); void refresh(); return () => { sequence.current++; routeEpoch.current++; }; }, [refresh]);
   useEffect(() => { let current = true; void zones().then(rows => { if (current) setZoneOptions(rows); }).catch(() => {}); return () => { current = false; }; }, []);
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   useEffect(() => {
@@ -70,23 +77,52 @@ export default function PublicationDetail() {
   }, [reservations, now, refresh]);
   const presented = presentReservations(reservations);
   const selected = presented.find(({ reservation }) => reservation.id === confirmId) ?? (lastConfirmed && lastConfirmed.id === confirmId ? { reservation: lastConfirmed, unitLabel: '' } : undefined);
-  async function makeReservation(newAction = false) {
-    if (!item || pending || reservationBusy.current) return;
+  const canReserve = item?.type === 'LIVE' && saleIsOpen(item, now) && saleHasStarted(item, now) && (item.current_stock ?? 0) > 0;
+  const unresolved = !!intent?.key && !intent.rejected;
+  const priceChanged = !!intent && !intent.key && !!item && Number(intent.price) !== Number(item.price);
+  const reservationBlocked = !!intent?.rejected || (!unresolved && !canReserve);
+  function updateIntent(next: ReservationIntent | undefined) { intentRef.current = next; setIntent(next); }
+  function openReservation() {
+    if (pending || reservationBusy.current) return;
+    if (!intentRef.current?.key || intentRef.current.rejected) {
+      if (!canReserve || !item) return;
+      updateIntent({ publicationId: item.id, title: item.title, price: item.price });
+      setReservationError('');
+    }
+    setReservationOpen(true);
+  }
+  function closeReservation() {
+    if (pending || reservationBusy.current) return;
+    setReservationOpen(false);
+    if (!intentRef.current?.key || intentRef.current.rejected) updateIntent(undefined);
+  }
+  async function makeReservation() {
+    const current = intentRef.current;
+    if (!current || current.publicationId !== id || current.rejected || pending || reservationBusy.current) return;
+    if (!current.key) {
+      if (!item || item.type !== 'LIVE' || !saleIsOpen(item, Date.now()) || !saleHasStarted(item, Date.now()) || (item.current_stock ?? 0) <= 0) { setReservationError('Ya no se pueden apartar unidades de esta publicación.'); return; }
+      if (Number(current.price) !== Number(item.price)) { updateIntent({ ...current, price: item.price }); setReservationError('El precio cambió. Revisa el precio actualizado y confirma de nuevo.'); return; }
+    }
     reservationBusy.current = true;
-    if (newAction) setSuccessId(undefined);
-    if (newAction || !actionKey.current) actionKey.current = randomUUID();
-    setPending(true); setError('');
+    const attempt = { ...current, key: current.key ?? randomUUID() };
+    updateIntent(attempt);
+    const epoch = routeEpoch.current;
+    setPending(true); setError(''); setReservationError('');
     try {
-      const result = await reserve(item.id, actionKey.current);
+      const result = await reserve(attempt.publicationId, attempt.key);
+      if (epoch !== routeEpoch.current) return;
       setSuccessId(result.id); setLastConfirmed(result);
       setReservations(previous => [result, ...previous.filter(r => r.id !== result.id)]);
+      updateIntent(undefined); setReservationOpen(false);
       await refresh();
-      setError('');
+      if (epoch === routeEpoch.current) setError('');
     } catch (cause) {
-      const message = apiMessage(cause);
+      if (epoch !== routeEpoch.current) return;
+      const rejected = (cause as { response?: { status?: number } }).response?.status === 409;
+      if (rejected) updateIntent({ ...attempt, rejected: true });
+      setReservationError(rejected ? `Sin stock o publicación no disponible. ${apiMessage(cause)}` : apiMessage(cause));
       await refresh();
-      setError((cause as { response?: { status?: number } }).response?.status === 409 ? `Sin stock o publicación no disponible. ${message}` : message);
-    } finally { setPending(false); reservationBusy.current = false; }
+    } finally { if (epoch === routeEpoch.current) { setPending(false); reservationBusy.current = false; } }
   }
   async function cancel() {
     if (!confirmId || pending) return;
@@ -107,11 +143,11 @@ export default function PublicationDetail() {
   }
 
   const confirmed = successId && lastConfirmed?.id === successId ? lastConfirmed : undefined;
-  const canReserve = item?.type === 'LIVE' && saleIsOpen(item, now) && saleHasStarted(item, now) && (item.current_stock ?? 0) > 0;
   const zone = item ? zoneOptions.find(z => z.id === item.zone_id)?.name : undefined;
   return <SafeAreaView style={styles.screen}>
+    <View style={styles.fill} accessibilityElementsHidden={reservationOpen || !!confirmId} importantForAccessibility={reservationOpen || confirmId ? 'no-hide-descendants' : 'auto'}>
     {confirmed ? <ScrollView contentContainerStyle={styles.successScroll}>
-      <Pressable accessibilityRole="button" style={styles.back} onPress={() => { setSuccessId(undefined); actionKey.current = undefined; }}><AppText style={styles.link}>‹ Volver al producto</AppText></Pressable>
+      <Pressable accessibilityRole="button" style={styles.back} disabled={pending} onPress={() => setSuccessId(undefined)}><AppText style={styles.link}>‹ Volver al producto</AppText></Pressable>
       <Card style={styles.successCard}>
         <StatusIcon kind={canActOnReservation(confirmed, now) ? 'success' : 'expired'} />
         <AppText variant="title" style={styles.center}>{canActOnReservation(confirmed, now) ? 'Reserva confirmada' : reservationStatusLabel(confirmed, now)}</AppText>
@@ -125,7 +161,7 @@ export default function PublicationDetail() {
         </> : <AppText variant="caption">Cada reserva conserva su estado y plazo propios.</AppText>}
       </Card>
       {error ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}
-      {canReserve ? <PrimaryButton title="Apartar otra unidad" variant="secondary" loading={pending} onPress={() => void makeReservation(true)} /> : null}
+      {canReserve || unresolved ? <PrimaryButton ref={reserveTrigger} title={unresolved ? 'Reintentar apartado' : 'Apartar otra unidad'} variant="secondary" loading={pending} onPress={openReservation} /> : null}
       <PrimaryButton title="Ver mis reservas" variant="secondary" onPress={() => router.push('/reservations')} />
     </ScrollView> : <>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -133,10 +169,10 @@ export default function PublicationDetail() {
         {loading ? <DataState kind="loading" title="Cargando publicación…" /> : null}
         {error ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}
         {item ? <>
-          <ExpoImage source={{ uri: item.image_url }} style={styles.image} contentFit="cover" accessibilityLabel={`Foto de ${item.title}`} />
+          <PublicationPhoto uri={item.image_url} title={item.title} style={styles.image} />
           <AppText variant="badge" style={item.is_ganga_active && styles.ganga}>{item.type === 'LIVE' ? `${item.is_ganga_active ? 'GANGA' : 'DISPONIBLE AHORA'} · Venta termina en ${countdown(item.end_time, now)}` : 'CATÁLOGO · Sin reserva'}</AppText>
           <AppText variant="title">{item.title}</AppText>
-          <View style={styles.priceRow}><View style={styles.prices}>{item.is_ganga_active && item.price_before_ganga && Number(item.price_before_ganga) > Number(item.price) ? <AppText variant="caption" style={styles.previous}>{money(item.price_before_ganga)}</AppText> : null}<AppText variant="price">{money(item.price)}{item.is_ganga_active ? ' · Ganga' : ''}</AppText></View>{item.type === 'LIVE' ? <AppText variant="badge">{item.current_stock} disponibles</AppText> : null}</View>
+          <View style={styles.detailPrices}><View style={styles.prices}>{item.is_ganga_active && item.price_before_ganga && Number(item.price_before_ganga) > Number(item.price) ? <AppText variant="caption" style={styles.previous}>{money(item.price_before_ganga)}</AppText> : null}<AppText variant="price">{money(item.price)}{item.is_ganga_active ? ' · Ganga' : ''}</AppText></View>{item.type === 'LIVE' ? <AppText variant="badge">{item.current_stock} disponibles</AppText> : null}</View>
           <AppText variant="label">{item.type === 'LIVE' ? 'Dónde recogerlo' : 'Dónde se encuentra'}</AppText>
           <AppText variant="caption">{zone ?? 'Consulta el punto de entrega con el vendedor.'}</AppText>
           <AppText variant="label">{item.type === 'LIVE' ? 'Sobre el producto' : 'Descripción'}</AppText>
@@ -149,14 +185,18 @@ export default function PublicationDetail() {
           {presented.length === 0 ? <AppText variant="caption">Todavía no tienes reservas.</AppText> : presented.map(({ reservation: r, unitLabel }) => <ReservationCard key={r.id} reservation={r} unitLabel={unitLabel} now={now} combineTitle disabled={pending} onCancel={() => setConfirmId(r.id)} onContact={() => void contact(r.sellerContact!.phone, true, r.publicationTitle)} />)}
         </> : null}
       </ScrollView>
-      {item ? <View style={styles.footer}>{item.type === 'LIVE' ? <PrimaryButton title={canReserve ? 'Apartar una unidad' : saleIsOpen(item, now) ? 'Sin stock disponible' : 'Venta finalizada'} loading={pending} disabled={!canReserve} onPress={() => void makeReservation()} /> : item.sellerContact?.phone ? <PrimaryButton title="Contactar por WhatsApp" onPress={() => void contact(item.sellerContact!.phone, false)} /> : null}</View> : null}
+      {item || unresolved ? <View style={styles.footer}>{item?.type === 'LIVE' || unresolved ? <PrimaryButton ref={reserveTrigger} title={unresolved ? 'Reintentar apartado' : canReserve ? 'Apartar una unidad' : item && saleIsOpen(item, now) ? 'Sin stock disponible' : 'Venta finalizada'} loading={pending} disabled={!canReserve && !unresolved} onPress={openReservation} /> : item?.sellerContact?.phone ? <PrimaryButton title="Contactar por WhatsApp" onPress={() => void contact(item.sellerContact!.phone, false)} /> : null}</View> : null}
     </>}
+    </View>
+    <ConfirmationDialog visible={reservationOpen} title="¿Quieres apartar una unidad?" description={intent ? `${intent.title}\n1 unidad · Precio actual: ${money(!intent.key && item ? item.price : intent.price)}\n\nTendrás 20 minutos para recogerla. El precio se fija al confirmarse la reserva.` : ''} confirmTitle={unresolved ? 'Reintentar apartado' : priceChanged ? 'Revisar nuevo precio' : 'Sí, apartar'} loadingTitle="Apartando…" confirmDisabled={reservationBlocked} busy={pending} error={reservationError || (reservationBlocked ? 'Ya no se pueden apartar unidades de esta publicación.' : priceChanged ? 'El precio cambió. Revisa el precio actualizado antes de confirmar.' : undefined)} returnFocusRef={reserveTrigger} onConfirm={() => void makeReservation()} onClose={closeReservation} />
     <ConfirmationDialog visible={!!confirmId} title="Cancelar reserva" description={`¿Cancelar ${selected ? reservationDescription(selected.reservation, selected.unitLabel) : 'esta reserva'}? Se liberará esta unidad.`} confirmTitle="Sí, cancelar reserva" variant="destructive" busy={pending} onConfirm={() => void cancel()} onClose={() => setConfirmId(undefined)} />
   </SafeAreaView>;
 }
 const styles = StyleSheet.create({
+  fill: { flex: 1 },
   screen: { flex: 1, backgroundColor: COLORS.background }, scroll: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.page, gap: SPACE.lg },
-  back: { minHeight: 44, justifyContent: 'center' }, link: { color: COLORS.primary }, image: { width: '100%', height: 240, borderRadius: RADIUS.lg, backgroundColor: COLORS.primarySoft },
+  back: { minHeight: 44, justifyContent: 'center' }, link: { color: COLORS.primary }, image: { width: '100%', height: 221, borderRadius: RADIUS.lg, backgroundColor: COLORS.primarySoft },
+  detailPrices: { gap: SPACE.sm },
   priceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm, flexWrap: 'wrap' }, prices: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, flexWrap: 'wrap' },
   previous: { textDecorationLine: 'line-through' }, ganga: { color: COLORS.ganga }, info: { backgroundColor: COLORS.primarySoft, padding: SPACE.lg, borderRadius: RADIUS.md, gap: SPACE.sm },
   footer: { padding: SPACE.page }, successScroll: { padding: SPACE.page, gap: SPACE.lg, flexGrow: 1 },

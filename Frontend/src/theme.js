@@ -13,6 +13,7 @@ export const COLORS = {
   errorBg: '#FEF2F2',
   disabled: '#B9C2B9',
   primarySoft: '#E8F5EE',
+  navigationSelected: 'rgba(23, 97, 59, 0.12)',
   staticSoft: '#F0EDE8',
   staticAccent: '#8B7355',
   gangaSoft: '#FFF1E4',
@@ -53,4 +54,4 @@ export const TYPE = {
   price: { fontFamily: FONTS.bold, fontSize: 24, lineHeight: 32, color: COLORS.primary },
   countdown: { fontFamily: FONTS.bold, fontSize: 20, lineHeight: 28, color: COLORS.primary },
 };
-export const METRICS = { control: 52, compactControl: 44, fab: 56, tabBar: 76, photoWidth: 136, photoHeight: 120 };
+export const METRICS = { control: 52, compactControl: 44, fab: 56, tabBar: 76, photoWidth: 100, photoHeight: 100 };

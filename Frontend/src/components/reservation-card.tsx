@@ -2,11 +2,12 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import type { Reservation } from '@/services/marketplace';
 import { canActOnReservation, formatReservationDate, reservationDescription, reservationStatusLabel } from '@/lib/reservation-presentation';
 import { countdown, money } from '@/lib/marketplace-presentation';
-import { COLORS, SPACE } from '@/theme';
+import { COLORS, RADIUS, SPACE } from '@/theme';
 import Card from './Card';
 import AppText from './app-text';
 import PrimaryButton from './PrimaryButton';
 import StatusIcon from './status-icon';
+import PublicationPhoto from './publication-photo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function ReservationCard({ reservation: r, unitLabel, now, seller, combineTitle, onConfirm, onCancel, onContact, disabled }: { reservation: Reservation; unitLabel: string; now: number; seller?: boolean; combineTitle?: boolean; onConfirm?: () => void; onCancel?: () => void; onContact?: () => void; disabled?: boolean }) {
@@ -22,10 +23,15 @@ export default function ReservationCard({ reservation: r, unitLabel, now, seller
   return <Card style={styles.card}>
     {r.status === 'EXPIRED' ? <StatusIcon kind="expired" /> : null}
     <AppText variant="badge" style={!active && styles.inactive}>Estado: {reservationStatusLabel(r, now)}</AppText>
-    <AppText variant="heading">{r.publicationTitle}{combineTitle && unitLabel ? ` · ${unitLabel}` : ''}</AppText>
-    {!combineTitle && unitLabel ? <AppText variant="label">{unitLabel}</AppText> : null}
-    {seller ? <AppText variant="caption">Comprador: {r.buyer?.name ?? 'No disponible'}</AppText> : null}
-    <AppText variant="label">Precio fijado: {money(r.unitPrice)}</AppText>
+    <View style={styles.productHeader}>
+      {!seller ? <PublicationPhoto uri={r.publicationImageUrl} title={r.publicationTitle} style={styles.photo} /> : null}
+      <View style={styles.productBody}>
+        <AppText variant="heading">{r.publicationTitle}{combineTitle && unitLabel ? ` · ${unitLabel}` : ''}</AppText>
+        {!combineTitle && unitLabel ? <AppText variant="label">{unitLabel}</AppText> : null}
+        {seller ? <AppText variant="caption">Comprador: {r.buyer?.name ?? 'No disponible'}</AppText> : null}
+        <AppText variant="label">Precio fijado: {money(r.unitPrice)}</AppText>
+      </View>
+    </View>
     {active ? <><AppText variant="label" style={styles.clock}>Apartado vence en {countdown(r.expiresAt, now)}</AppText><AppText variant="caption">Vence: {formatReservationDate(r.expiresAt)}</AppText></> : null}
     {r.resolvedAt ? <AppText variant="caption">Resuelta el {formatReservationDate(r.resolvedAt)}</AppText> : null}
     {active ? <>
@@ -38,6 +44,8 @@ export default function ReservationCard({ reservation: r, unitLabel, now, seller
   </Card>;
 }
 const styles = StyleSheet.create({
+  productHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.md }, productBody: { flex: 1, minWidth: 0, gap: SPACE.sm },
+  photo: { width: 80, height: 80, borderRadius: RADIUS.md, backgroundColor: COLORS.inputBg },
   sellerCard: { padding: SPACE.md, gap: SPACE.xs }, sellerHeader: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm }, contactIcon: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   card: { padding: SPACE.lg, gap: SPACE.sm }, clock: { color: COLORS.primary }, inactive: { color: COLORS.textMedium },
   actions: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, flexWrap: 'wrap' }, flex: { flex: 1 }, cancel: { minHeight: 44, paddingHorizontal: SPACE.sm, paddingVertical: SPACE.md, justifyContent: 'center' }, danger: { color: COLORS.error },

@@ -34,6 +34,7 @@ const routes = {
   homePage: Home,
   sales: () => <Text>Ventas</Text>,
   reservations: () => <Text>Reservas</Text>,
+  account: () => <Text>Mi cuenta</Text>,
   'publication/[id]': () => <Text>Detalle</Text>,
   'publication/edit': () => <Text>Editar</Text>,
 };
@@ -60,6 +61,12 @@ describe('navegación Expo Router SDK 58', () => {
   test('sin sesión: Mis Ventas y reservas requieren autenticación', async () => {
     mockToken = null;
     await renderRouter(routes, { initialUrl: '/sales' });
+    await waitFor(() => expect(screen.getByText('Login')).toBeTruthy());
+  });
+
+  test('Mi cuenta también requiere sesión', async () => {
+    mockToken = null;
+    await renderRouter(routes, { initialUrl: '/account' });
     await waitFor(() => expect(screen.getByText('Login')).toBeTruthy());
   });
 

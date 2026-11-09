@@ -15,6 +15,7 @@ export type Publication = {
   sellerContact?: { phone: string };
 };
 export type Reservation = {
+  publicationImageUrl?: string | null;
   id: string; publicationId: string; publicationTitle: string; status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
   reservedAt: string; expiresAt: string; resolvedAt: string | null; unitPrice: string;
   sellerContact?: { phone: string }; buyer?: { id: string; name: string };
@@ -23,19 +24,24 @@ export type Reservation = {
 export type Zone = { id: number; name: string };
 export type Category = Zone & { type: PublicationType };
 
-function publicationForClient(publication: Publication): Publication {
-  if (!publication.image_url) return publication;
+function imageForClient(uri: string) {
   try {
-    const url = new URL(publication.image_url);
+    const url = new URL(uri, API_BASE_URL);
     if (/^\/uploads\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(url.pathname)) {
-      return { ...publication, image_url: new URL(url.pathname, API_BASE_URL).href };
+      return new URL(url.pathname, API_BASE_URL).href;
     }
   } catch { /* Las URLs ajenas al almacenamiento del backend se conservan. */ }
-  return publication;
+  return uri;
+}
+function publicationForClient(publication: Publication): Publication {
+  return publication.image_url ? { ...publication, image_url: imageForClient(publication.image_url) } : publication;
+}
+function reservationForClient(reservation: Reservation): Reservation {
+  return reservation.publicationImageUrl ? { ...reservation, publicationImageUrl: imageForClient(reservation.publicationImageUrl) } : reservation;
 }
 
-export async function listPublications(type: PublicationType, zoneId?: number, categoryId?: number) {
-  const { data } = await api.get<Publication[]>('/publications', { params: { type, zoneId, categoryId } });
+export async function listPublications(type: PublicationType, zoneId?: number, categoryId?: number, q?: string) {
+  const { data } = await api.get<Publication[]>('/publications', { params: { type, zoneId, categoryId, ...(q?.trim() ? { q: q.trim().replace(/\s+/g, ' ') } : {}) } });
   return data.map(publicationForClient);
 }
 export async function publicationDetail(id: string) {
@@ -56,23 +62,23 @@ export async function categories(type: PublicationType) {
 }
 export async function reserve(publicationId: string, key: string) {
   const { data } = await api.post<Reservation>('/reservations', { publicationId }, { headers: { 'Idempotency-Key': key } });
-  return data;
+  return reservationForClient(data);
 }
 export async function myReservations() {
   const { data } = await api.get<Reservation[]>('/reservations/mine');
-  return data;
+  return data.map(reservationForClient);
 }
 export async function sellerReservations(publicationId: string) {
   const { data } = await api.get<Reservation[]>(`/publications/${publicationId}/reservations`);
-  return data;
+  return data.map(reservationForClient);
 }
 export async function cancelReservation(id: string) {
   const { data } = await api.post<Reservation>(`/reservations/${id}/cancel`, {});
-  return data;
+  return reservationForClient(data);
 }
 export async function completeReservation(id: string) {
   const { data } = await api.post<Reservation>(`/reservations/${id}/complete`, {});
-  return data;
+  return reservationForClient(data);
 }
 export async function publicationAction(id: string, action: 'physical-sale' | 'finish' | 'sold' | 'ganga') {
   const { data } = action === 'ganga'

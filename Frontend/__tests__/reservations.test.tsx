@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import MyReservations from '../src/app/reservations';
 import { cancelReservation, myReservations } from '../src/services/marketplace';
+jest.mock('../src/context/AuthContext', () => ({ useAuth: () => ({ logout: jest.fn() }) }));
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn() }), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
 jest.mock('../src/services/whatsapp', () => ({ openWhatsApp: jest.fn() }));
@@ -48,4 +49,16 @@ test('muestra los cuatro estados y avisa al vencer antes de la confirmación del
   expect(view.getByText(/Plazo terminado; actualizando/)).toBeTruthy();
   await waitFor(() => expect(myReservations).toHaveBeenCalledTimes(2));
   expect(view.queryByText(/r1|r2|r3|r4|r5|ACTIVE|COMPLETED|CANCELLED|EXPIRED/)).toBeNull();
+});
+
+test('reserva muestra foto sin consultar detalle público y conserva precio/acciones si falla', async () => {
+  (myReservations as jest.Mock).mockResolvedValue([{ ...base, id: 'r1', status: 'ACTIVE', publicationImageUrl: 'https://api.example/photo.png', sellerContact: { phone: '+526641234567' } }]);
+  const view = await render(<MyReservations />);
+  const photo = await view.findByLabelText('Foto de Burrito');
+  expect(photo.props.source).toEqual([{ uri: 'https://api.example/photo.png' }]);
+  await fireEvent(photo, 'error', { nativeEvent: { error: 'offline' } });
+  expect(view.getByLabelText('Foto no disponible de Burrito')).toBeTruthy();
+  expect(view.getByText('Precio fijado: $30')).toBeTruthy();
+  expect(view.getByLabelText(/Cancelar Burrito/)).toBeTruthy();
+  expect(view.getByText('WhatsApp')).toBeTruthy();
 });

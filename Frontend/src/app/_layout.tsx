@@ -25,6 +25,7 @@ function RootNavigator() {
         <Stack.Screen name="publication/edit" />
         <Stack.Screen name="sales" />
         <Stack.Screen name="reservations" />
+        <Stack.Screen name="account" />
       </Stack.Protected>
     </Stack>
   );

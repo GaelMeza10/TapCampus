@@ -17,6 +17,7 @@ import Sales from '../src/app/sales';
 import Reservations from '../src/app/reservations';
 import Detail from '../src/app/publication/[id]';
 import Edit from '../src/app/publication/edit';
+import Account from '../src/app/account';
 import { COLORS } from '../src/theme';
 
 const now = Date.now();
@@ -27,23 +28,35 @@ const book: Publication = { ...publication, id: 'book', type: 'STATIC', title: '
 // Contenido de muestra: la API real suministra las fotografías y textos del producto.
 publication.image_url = '/uploads/10000000-0000-4000-8000-000000000009.png';
 publication.title = 'Torta de pollo';
+if (scenario === 'missing-photo') publication.image_url = '';
+if (scenario === 'long') publication.title = 'Torta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería';
 const otherRows: Publication[] = [{ ...publication, id: 'p2', title: 'Brownie de chocolate', price: '25.00', price_before_ganga: '35.00', is_ganga_active: true, current_stock: 5, zone_id: 3, end_time: new Date(now + 8 * 60000).toISOString() }, { ...publication, id: 'p3', title: 'Galletas caseras', price: '15.00', current_stock: 8, end_time: new Date(now + 25 * 60000).toISOString() }];
 let reservations: Reservation[] = [8.53, 16.13].map((minutes, i) => ({ id: `r${i + 1}`, publicationId: 'p1', publicationTitle: publication.title, status: 'ACTIVE', reservedAt: new Date(now - (20 - minutes) * 60000).toISOString(), expiresAt: new Date(now + minutes * 60000).toISOString(), resolvedAt: null, unitPrice: '85.00', buyer: { id: 'b1', name: 'Ana Pérez' }, buyerContact: { phone: '+526641234567' }, sellerContact: { phone: '+526641234567' } }));
 if (scenario === 'expired') reservations = reservations.map(r => ({ ...r, status: 'EXPIRED', expiresAt: new Date(now - 60000).toISOString(), resolvedAt: new Date(now - 60000).toISOString() }));
+reservations = reservations.map(r => ({ ...r, publicationImageUrl: publication.image_url }));
 const zoneRows = ['Facultad de Ingeniería', 'Facultad de Artes', 'Biblioteca Central', 'Cafetería Principal', 'Gimnasio'].map((name, i) => ({ id: i + 1, name }));
 api.interceptors.request.clear();
 api.defaults.adapter = async config => {
   const path = config.url ?? '';
   const fail = (status: number, message: string): never => { throw { response: { status, data: { message } } }; };
   let data: unknown;
+  if (scenario === 'sending' && (path === '/auth/login' || path === '/auth/register')) await new Promise(() => {});
   if (path === '/zones') data = zoneRows;
+  else if (path === '/auth/me') {
+    if (scenario === 'profile-loading') await new Promise(() => {});
+      if (scenario === 'profile-error') fail(404, 'Cannot GET /auth/me');
+    data = { id: 'fixture-user', name: scenario === 'long' ? 'María Fernanda García López de la Facultad de Ingeniería' : 'Ana Pérez', email: scenario === 'long' ? 'maria.fernanda.garcia.lopez.estudiante.ingenieria@uabc.edu.mx' : 'ana@uabc.edu.mx', phone: '+526641234567' };
+  }
   else if (path === '/categories') data = (config.params.type === 'LIVE' ? ['Comida Fuerte', 'Snacks', 'Bebidas', 'Postres'] : ['Libros', 'Material Escolar', 'Batas/Uniformes', 'Electrónica']).map((name, i) => ({ id: i + (config.params.type === 'LIVE' ? 1 : 5), name, type: config.params.type }));
   else if (path === '/publications/mine') data = [publication, book];
   else if (path === '/publications') {
     if (scenario === 'error') fail(503, 'No pudimos conectar. Revisa tu conexión e inténtalo de nuevo.');
-    data = scenario === 'empty' ? [] : [publication, ...otherRows, book].filter(p => p.type === config.params.type && p.status === 'ACTIVE' && (!config.params.zoneId || p.zone_id === config.params.zoneId) && (!config.params.categoryId || p.category_id === config.params.categoryId));
+    const text = String(config.params.q ?? '').toLowerCase();
+    data = scenario === 'empty' ? [] : [publication, ...otherRows, book].filter(p => p.type === config.params.type && p.status === 'ACTIVE' && (!config.params.zoneId || p.zone_id === config.params.zoneId) && (!config.params.categoryId || p.category_id === config.params.categoryId) && (!text || p.title.toLowerCase().includes(text) || p.description.toLowerCase().includes(text)));
   } else if (path === '/reservations/mine' || (path.startsWith('/publications/') && path.endsWith('/reservations'))) data = reservations;
   else if (path === '/reservations' && config.method === 'post') {
+    if (scenario === 'reserve-sending') await new Promise(() => {});
+    if (scenario === 'reserve-error') fail(503, 'No se pudo apartar. Inténtalo de nuevo.');
     const row: Reservation = { ...reservations[0], id: `r${reservations.length + 1}`, unitPrice: publication.price, reservedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 1200000).toISOString() };
     reservations = [...reservations, row]; publication.current_stock!--; data = row;
   } else if (/\/reservations\/r\d+\/(complete|cancel)$/.test(path)) {
@@ -57,7 +70,7 @@ api.defaults.adapter = async config => {
   else data = {};
   return { data: JSON.parse(JSON.stringify(data)), status: 200, statusText: 'OK', headers: {}, config };
 };
-const pages = { './_layout.tsx': { default: () => <AuthProvider><Stack screenOptions={{ headerShown: false, animation: 'none' }} /></AuthProvider> }, './index.tsx': { default: Home }, './homePage.tsx': { default: Home }, './login.tsx': { default: Login }, './register.tsx': { default: Register }, './sales.tsx': { default: Sales }, './reservations.tsx': { default: Reservations }, './publication/[id].tsx': { default: Detail }, './publication/edit.tsx': { default: Edit } };
+const pages = { './_layout.tsx': { default: () => <AuthProvider><Stack screenOptions={{ headerShown: false, animation: 'none' }} /></AuthProvider> }, './index.tsx': { default: Home }, './homePage.tsx': { default: Home }, './login.tsx': { default: Login }, './register.tsx': { default: Register }, './sales.tsx': { default: Sales }, './reservations.tsx': { default: Reservations }, './account.tsx': { default: Account }, './publication/[id].tsx': { default: Detail }, './publication/edit.tsx': { default: Edit } };
 const context = Object.assign((key: string) => pages[key as keyof typeof pages], { keys: () => Object.keys(pages), resolve: (key: string) => key, id: 'visual-fixture' }) as unknown as Parameters<typeof ExpoRoot>[0]['context'];
 function Preview() {
   const [ready] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });

@@ -18,6 +18,12 @@ interface AuthResponse {
     access_token: string;
 }
 
+export type UserProfile = { id: string; name: string; email: string; phone: string };
+export async function myProfile(): Promise<UserProfile> {
+    const { data } = await api.get<UserProfile>('/auth/me');
+    return data;
+}
+
 export async function register(payload: RegistrarPayload): Promise<void> {
     const {data} = await api.post<AuthResponse>('/auth/register', payload);
     await SecureStore.setItemAsync(TOKEN_KEY, data.access_token);

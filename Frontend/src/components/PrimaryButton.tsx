@@ -1,11 +1,14 @@
-import { ActivityIndicator, Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import type { ComponentRef, Ref } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { COLORS, FONTS, METRICS, RADIUS, SPACE } from '@/theme';
 import AppText from './app-text';
 
 interface Props {
+  ref?: Ref<ComponentRef<typeof Pressable>>;
   title: string;
   onPress: () => void;
   loading?: boolean;
+  loadingTitle?: string;
   disabled?: boolean;
   testID?: string;
   accessibilityLabel?: string;
@@ -14,11 +17,12 @@ interface Props {
   style?: StyleProp<ViewStyle>;
 }
 
-export default function PrimaryButton({ title, onPress, loading = false, disabled = false, testID, accessibilityLabel, variant = 'primary', compact, style }: Props) {
+export default function PrimaryButton({ ref, title, onPress, loading = false, loadingTitle, disabled = false, testID, accessibilityLabel, variant = 'primary', compact, style }: Props) {
   const blocked = loading || disabled;
   const textColor = variant === 'field' ? COLORS.textDark : variant === 'danger-ghost' ? COLORS.error : variant === 'secondary' || variant === 'ghost' ? COLORS.primary : COLORS.white;
   return (
     <Pressable
+      ref={ref}
       testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? title}
@@ -27,12 +31,13 @@ export default function PrimaryButton({ title, onPress, loading = false, disable
       onPress={onPress}
       style={({ pressed }) => [styles.button, styles[variant], compact && styles.compact, blocked && styles.disabled, pressed && !blocked && styles.pressed, style]}
     >
-      {loading ? <ActivityIndicator color={textColor} /> : <AppText variant="label" style={[styles.label, compact && styles.compactLabel, variant === 'field' && styles.fieldLabel, { color: textColor }]}>{title}</AppText>}
+      <View style={[styles.content, variant === 'field' && styles.fieldContent]}>{loading ? <ActivityIndicator color={textColor} /> : null}<AppText variant="label" style={[styles.label, compact && styles.compactLabel, variant === 'field' && styles.fieldLabel, { color: textColor }]}>{loading ? loadingTitle ?? title : title}</AppText></View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  content: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACE.sm, maxWidth: '100%' }, fieldContent: { alignSelf: 'stretch', justifyContent: 'flex-start' },
   button: { minHeight: METRICS.control, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.md, borderRadius: RADIUS.full, alignItems: 'center', justifyContent: 'center' },
   primary: { backgroundColor: COLORS.primary },
   secondary: { backgroundColor: COLORS.primarySoft },

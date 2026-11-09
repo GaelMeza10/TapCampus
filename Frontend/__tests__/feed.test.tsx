@@ -2,6 +2,7 @@ import React from 'react';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import HomePage from '../src/app/homePage';
 import { listPublications } from '../src/services/marketplace';
+jest.mock('../src/context/AuthContext', () => ({ useAuth: () => ({ logout: jest.fn() }) }));
 
 const mockListeners: Record<string, () => void> = {};
 const mockPush = jest.fn();
@@ -21,9 +22,9 @@ test('filtros se aplican juntos, cerrar descarta borrador y los eventos reconsul
   await view.findByRole('radio', { name: 'Ingeniería' });
   await fireEvent.press(view.getByRole('radio', { name: 'Ingeniería' }));
   await fireEvent.press(view.getByRole('radio', { name: 'Comida' }));
-  expect(listPublications).not.toHaveBeenCalledWith('LIVE', 1, 2);
+  expect(listPublications).not.toHaveBeenCalledWith('LIVE', 1, 2, undefined);
   await fireEvent.press(view.getByRole('button', { name: 'Ver publicaciones' }));
-  await waitFor(() => expect(listPublications).toHaveBeenCalledWith('LIVE', 1, 2));
+  await waitFor(() => expect(listPublications).toHaveBeenCalledWith('LIVE', 1, 2, undefined));
   await fireEvent.press(view.getByRole('button', { name: /^Filtros\./ }));
   await fireEvent.press(view.getByRole('button', { name: 'Restablecer filtros' }));
   await fireEvent.press(view.getByRole('button', { name: 'Cerrar panel' }));
@@ -66,4 +67,61 @@ test('error al refrescar mantiene las publicaciones y la navegación', async () 
   await view.findByText('Error de red');
   expect(view.getByText('Torta de pollo')).toBeTruthy();
   expect(view.getByRole('tab', { name: 'Reservas' })).toBeTruthy();
+});
+
+test('buscar combina filtros; enviar es inmediato y limpiar conserva zona/categoría', async () => {
+  const view = await render(<HomePage />);
+  await fireEvent.press(view.getByRole('button', { name: /^Filtros\./ }));
+  await fireEvent.press(await view.findByRole('radio', { name: 'Ingeniería' }));
+  await fireEvent.press(view.getByRole('radio', { name: 'Comida' }));
+  await fireEvent.press(view.getByRole('button', { name: 'Ver publicaciones' }));
+  await fireEvent.changeText(view.getByLabelText('Buscar productos'), '  Torta   de pollo  ');
+  await fireEvent(view.getByLabelText('Buscar productos'), 'submitEditing');
+  await waitFor(() => expect(listPublications).toHaveBeenLastCalledWith('LIVE', 1, 2, 'Torta de pollo'));
+  expect(await view.findByText(/No encontramos publicaciones para «Torta de pollo»/)).toBeTruthy();
+  await fireEvent.press(view.getByLabelText('Limpiar texto de búsqueda'));
+  await waitFor(() => expect(listPublications).toHaveBeenLastCalledWith('LIVE', 1, 2, undefined));
+  expect(view.getByLabelText('Buscar productos').props.value).toBe('');
+});
+
+test('espera 300 ms sin consultar por cada letra y conserva búsqueda al cambiar tipo', async () => {
+  const view = await render(<HomePage />);
+  await view.findByText('Sin resultados');
+  const count = (listPublications as jest.Mock).mock.calls.length;
+  jest.useFakeTimers();
+  try {
+    await fireEvent.changeText(view.getByLabelText('Buscar productos'), 'Li');
+    await act(async () => { jest.advanceTimersByTime(200); });
+    expect(listPublications).toHaveBeenCalledTimes(count);
+    await fireEvent.changeText(view.getByLabelText('Buscar productos'), 'Libro');
+    await act(async () => { jest.advanceTimersByTime(299); });
+    expect(listPublications).toHaveBeenCalledTimes(count);
+    await act(async () => { jest.advanceTimersByTime(1); });
+    expect(listPublications).toHaveBeenLastCalledWith('LIVE', undefined, undefined, 'Libro');
+    await fireEvent.press(view.getByRole('tab', { name: 'Catálogo' }));
+    expect(listPublications).toHaveBeenLastCalledWith('STATIC', undefined, undefined, 'Libro');
+    expect(view.getByLabelText('Buscar productos').props.value).toBe('Libro');
+  } finally { jest.useRealTimers(); }
+});
+
+test('otra búsqueda ignora respuesta antigua, error conserva consulta y reintenta', async () => {
+  const pending: Record<string, (rows: unknown[]) => void> = {};
+  (listPublications as jest.Mock).mockImplementation((_type, _zone, _category, q) => q ? new Promise(resolve => { pending[q] = resolve; }) : Promise.resolve([]));
+  const view = await render(<HomePage />);
+  await fireEvent.changeText(view.getByLabelText('Buscar productos'), 'Torta');
+  await fireEvent(view.getByLabelText('Buscar productos'), 'submitEditing');
+  await fireEvent.changeText(view.getByLabelText('Buscar productos'), 'Libro');
+  await fireEvent(view.getByLabelText('Buscar productos'), 'submitEditing');
+  await act(async () => { pending.Libro([{ ...product, title: 'Libro', id: 'book' }]); });
+  await view.findByText('Libro');
+  await act(async () => { pending.Torta([product]); });
+  expect(view.queryByText('Torta de pollo')).toBeNull();
+  (listPublications as jest.Mock).mockRejectedValue(new Error('offline'));
+  await fireEvent.changeText(view.getByLabelText('Buscar productos'), 'Café');
+  await fireEvent(view.getByLabelText('Buscar productos'), 'submitEditing');
+  await view.findByText('No se pudieron cargar las publicaciones.');
+  expect(view.getByLabelText('Buscar productos').props.value).toBe('Café');
+  (listPublications as jest.Mock).mockResolvedValue([]);
+  await fireEvent.press(view.getByRole('button', { name: 'Reintentar' }));
+  await waitFor(() => expect(listPublications).toHaveBeenLastCalledWith('LIVE', undefined, undefined, 'Café'));
 });
