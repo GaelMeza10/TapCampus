@@ -138,6 +138,13 @@ export class PublicationsService {
 
   async list(query: PublicationQueryDto) {
     await this.catalogs.validate(query.zoneId, query.categoryId, query.type);
+    const text = query.q?.replace(/[\\%_]/g, '\\$&');
+    const search: Prisma.PublicationWhereInput[] = text ? [{
+      OR: [
+        { title: { contains: text, mode: 'insensitive' } },
+        { description: { contains: text, mode: 'insensitive' } },
+      ],
+    }] : [];
     const publications = await this.prisma.publication.findMany({
       where: {
         AND: [
@@ -147,6 +154,7 @@ export class PublicationsService {
             zone_id: query.zoneId,
             category_id: query.categoryId,
           },
+          ...search,
         ],
       },
       select: publicationSelect,
