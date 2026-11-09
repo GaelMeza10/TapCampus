@@ -7,9 +7,9 @@ import { PrismaClient } from '../src/generated/prisma/client';
 import { uploadsDirectory } from '../src/uploads/uploads.config';
 
 const samples = [
-  { title: 'Brownie de chocolate en ganga', image: 'brownie.png', category: 'Postres', zone: 'Biblioteca Central', before: '30.00', price: '24.00', description: 'Brownie individual de chocolate. Contiene gluten, huevo y lácteos.' },
-  { title: 'Café frío de vainilla en ganga', image: 'cafe-frio.png', category: 'Bebidas', zone: 'Facultad de Ingeniería', before: '35.00', price: '27.00', description: 'Vaso de 500 ml con café, leche, hielo y vainilla.' },
-  { title: 'Torta de pollo en ganga', image: 'torta-pollo.png', category: 'Comida Fuerte', zone: 'Cafetería Principal', before: '62.00', price: '49.00', description: 'Bolillo con pollo asado, aguacate y lechuga; aderezo aparte.' },
+  { title: 'Brownie de chocolate en oferta', image: 'brownie.png', category: 'Postres', zone: 'Biblioteca Central', before: '30.00', price: '24.00', description: 'Brownie individual de chocolate. Contiene gluten, huevo y lácteos.' },
+  { title: 'Café frío de vainilla en oferta', image: 'cafe-frio.png', category: 'Bebidas', zone: 'Facultad de Ingeniería', before: '35.00', price: '27.00', description: 'Vaso de 500 ml con café, leche, hielo y vainilla.' },
+  { title: 'Torta de pollo en oferta', image: 'torta-pollo.png', category: 'Comida Fuerte', zone: 'Cafetería Principal', before: '62.00', price: '49.00', description: 'Bolillo con pollo asado, aguacate y lechuga; aderezo aparte.' },
 ] as const;
 
 export async function seedDemoGangas(prisma: PrismaClient) {
