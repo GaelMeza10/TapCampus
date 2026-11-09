@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-09T20:34:18.612Z",
+  "status": 200,
+  "rows": [
+    {
+      "id": "27000000-0000-4000-8000-000000000003",
+      "title": "Demo: Torta de pollo en ganga",
+      "price": "49.00",
+      "price_before_ganga": "62.00",
+      "is_ganga_active": true,
+      "photoStatus": 200
+    },
+    {
+      "id": "27000000-0000-4000-8000-000000000002",
+      "title": "Demo: Café frío de vainilla en ganga",
+      "price": "27.00",
+      "price_before_ganga": "35.00",
+      "is_ganga_active": true,
+      "photoStatus": 200
+    },
+    {
+      "id": "27000000-0000-4000-8000-000000000001",
+      "title": "Demo: Brownie de chocolate en ganga",
+      "price": "24.00",
+      "price_before_ganga": "30.00",
+      "is_ganga_active": true,
+      "photoStatus": 200
+    }
+  ]
+}

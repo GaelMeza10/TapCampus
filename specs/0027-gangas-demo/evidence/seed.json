@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-09T20:32:53.290Z",
+  "firstCreated": 3,
+  "secondCreated": 0,
+  "count": 3,
+  "allDiscountsValid": true,
+  "unchanged": [
+    "publications",
+    "users",
+    "reservations",
+    "zones",
+    "categories"
+  ],
+  "before": {
+    "publications": "4640478f4261b1450c4ddf9dac88db2ffd31eacee031d8916a931b37b4609b23",
+    "users": "644580bc1846df77f4a639bf3eca9800dd34d9076cef71ca721e202472409d27",
+    "reservations": "b73f9952ce9fed5afbd0cddb85ea1f8a1c6087a9b0f4255bf3d335bca3537a5d",
+    "zones": "c955f50ce75b1e5142b774e0bcf4a8a03cbd4e434f6eb546520d696e937752df",
+    "categories": "4e03be2c43b5b9366f3f3165d7f0aa8a3aa94a32d8e5a36d2cc11bc5a9b84948"
+  },
+  "after": {
+    "publications": "4640478f4261b1450c4ddf9dac88db2ffd31eacee031d8916a931b37b4609b23",
+    "users": "644580bc1846df77f4a639bf3eca9800dd34d9076cef71ca721e202472409d27",
+    "reservations": "b73f9952ce9fed5afbd0cddb85ea1f8a1c6087a9b0f4255bf3d335bca3537a5d",
+    "zones": "c955f50ce75b1e5142b774e0bcf4a8a03cbd4e434f6eb546520d696e937752df",
+    "categories": "4e03be2c43b5b9366f3f3165d7f0aa8a3aa94a32d8e5a36d2cc11bc5a9b84948"
+  }
+}
