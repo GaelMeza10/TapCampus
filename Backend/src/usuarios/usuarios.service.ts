@@ -1,4 +1,4 @@
-﻿import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../generated/prisma/client';
@@ -40,5 +40,11 @@ export class UsuariosService {
     return this.prisma.user.findUnique({
       where: { email: email.toLowerCase() },
     });
+  }
+
+  async perfil(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id }, select: { id: true, name: true, email: true, phone: true } });
+    if (!user) throw new UnauthorizedException('La sesión ya no es válida.');
+    return user;
   }
 }

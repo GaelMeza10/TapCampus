@@ -39,4 +39,8 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  miCuenta(usuarioId: string) {
+    return this.usuariosService.perfil(usuarioId);
+  }
 }

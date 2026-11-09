@@ -4,6 +4,15 @@ import { Prisma } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 
 describe('UsuariosService', () => {
+  it('perfil usa id autenticado y select mínimo; usuario inexistente invalida la sesión', async () => {
+    const profile = { id: 'own-id', name: 'Ana', email: 'ana@uabc.edu.mx', phone: '+526641234567' };
+    const db = { user: { findUnique: jest.fn().mockResolvedValue(profile) } };
+    const service = new UsuariosService(db as unknown as PrismaService);
+    expect(await service.perfil('own-id')).toEqual(profile);
+    expect(db.user.findUnique).toHaveBeenCalledWith({ where: { id: 'own-id' }, select: { id: true, name: true, email: true, phone: true } });
+    db.user.findUnique.mockResolvedValue(null);
+    await expect(service.perfil('missing')).rejects.toThrow('La sesión ya no es válida.');
+  });
   const dto = {
     name: 'Fixture',
     email: 'FIXTURE@UABC.EDU.MX',
