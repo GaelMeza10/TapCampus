@@ -142,3 +142,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Motor descargable y preferencias locales de Impeccable
+.agents/skills/impeccable/scripts/bin/
+.impeccable/config.local.json
