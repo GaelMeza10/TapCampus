@@ -5,6 +5,7 @@ import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
 import { COLORS, RADIUS, SPACE } from '@/theme';
 import AppText from '@/components/app-text';
+import PublicationPrice, { GangaBadge } from '@/components/publication-price';
 import ReservationCard from '@/components/reservation-card';
 import { ConfirmationDialog, DataState, InlineMessage } from '@/components/feedback';
 import { MarketplaceShell, PageHeader, TypeSelector } from '@/components/marketplace-shell';
@@ -20,6 +21,9 @@ export default function Sales() {
   const router = useRouter();
   const { type: initialType } = useLocalSearchParams<{ type?: string }>();
   const [saleType, setSaleType] = useState<PublicationType>(initialType === 'STATIC' ? 'STATIC' : 'LIVE');
+  useEffect(() => {
+    if (initialType === 'LIVE' || initialType === 'STATIC') setSaleType(initialType);
+  }, [initialType]);
   const [refreshing, setRefreshing] = useState(false);
   const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
   const sequence = useRef(0);
@@ -64,11 +68,11 @@ export default function Sales() {
       'physical-sale': `¿Registrar una venta física de ${selectedSale.publication.title}? Se restará una unidad disponible.`,
       finish: `¿Finalizar la publicación ${selectedSale.publication.title}? No se aceptarán nuevos apartados; las reservas previas conservan su plazo.`,
       sold: `¿Marcar ${selectedSale.publication.title} como vendida?`,
-      ganga: `¿Activar el precio ganga de ${selectedSale.publication.title} por ${money(selectedSale.publication.ganga_min_price ?? selectedSale.publication.price)}? Las reservas anteriores conservan su precio.`,
+      ganga: `¿Activar el precio de oferta de ${selectedSale.publication.title} por ${money(selectedSale.publication.ganga_min_price ?? selectedSale.publication.price)}? Las reservas anteriores conservan su precio.`,
     } as Record<string, string>)[action.kind] : '';
   const actionButtonTitle = action ? ({
     complete: 'Confirmar entrega', 'physical-sale': 'Registrar venta física',
-    finish: 'Finalizar publicación', sold: 'Marcar vendida', ganga: 'Activar ganga',
+    finish: 'Finalizar publicación', sold: 'Marcar vendida', ganga: 'Activar oferta',
   } as Record<Action['kind'], string>)[action.kind] : 'Confirmar';
   async function run() {
     if (!action || busy) return;
@@ -95,7 +99,7 @@ export default function Sales() {
   const visibleSales = sales.filter(sale => sale.publication.type === saleType);
   return <MarketplaceShell active="sales">
     <PageHeader title="Mis ventas" />
-    <View style={styles.typeSelector}><TypeSelector value={saleType} liveLabel="Con horario" disabled={busy} onChange={setSaleType} /></View>
+    <View style={styles.typeSelector}><TypeSelector value={saleType} liveLabel="Con horario" disabled={busy} onChange={type => { setSaleType(type); router.setParams({ type }); }} /></View>
     <FlatList data={visibleSales} keyExtractor={item => item.publication.id} contentContainerStyle={styles.list} extraData={now} refreshing={refreshing && !loading} onRefresh={() => void refresh()}
       ListHeaderComponent={error && sales.length > 0 ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : undefined}
       ListEmptyComponent={loading ? <DataState kind="loading" title="Cargando tus ventas…" /> : error ? <DataState kind="error" title="No pudimos cargar tus ventas" description={error} action="Reintentar" onAction={() => void refresh()} /> : <DataState kind="empty" title="Aún no tienes publicaciones" description={saleType === 'LIVE' ? 'Publica lo que tienes disponible y recibe apartados.' : 'Publica un artículo y coordina la entrega por WhatsApp.'} />}
@@ -108,15 +112,16 @@ export default function Sales() {
         const pendingRows = rows.filter(({ reservation }) => canActOnReservation(reservation, now)).sort((a, b) => (validTime(a.reservation.expiresAt) ?? Infinity) - (validTime(b.reservation.expiresAt) ?? Infinity));
         const historyRows = rows.filter(({ reservation }) => !canActOnReservation(reservation, now));
         return <View style={styles.sale}>
-          <Card style={styles.card}>
-            <AppText variant="badge">{p.type === 'LIVE' ? 'VENTA CON HORARIO' : 'CATÁLOGO'} · {active ? p.is_ganga_active ? 'GANGA ACTIVA' : 'ACTIVA' : p.type === 'STATIC' ? 'VENDIDO' : 'FINALIZADA'}</AppText>
+          <Card style={[styles.card, p.is_ganga_active && active && styles.gangaCard]}>
+            {p.is_ganga_active && active ? <GangaBadge /> : null}
+            <AppText variant="badge">{p.type === 'LIVE' ? 'VENTA CON HORARIO' : 'CATÁLOGO'} · {active ? 'ACTIVA' : p.type === 'STATIC' ? 'VENDIDO' : 'FINALIZADA'}</AppText>
             <AppText variant="heading">{p.title}</AppText>
-            {p.type === 'STATIC' || p.is_ganga_active || !active ? <View style={styles.priceRow}>{p.is_ganga_active && p.price_before_ganga && Number(p.price_before_ganga) > Number(p.price) ? <AppText variant="caption" style={styles.previous}>{money(p.price_before_ganga)}</AppText> : null}<AppText variant={p.type === 'STATIC' || p.is_ganga_active ? 'price' : 'label'}>{money(p.price)}{p.is_ganga_active ? ' · Ganga' : ''}</AppText></View> : null}
+            {p.type === 'STATIC' || p.is_ganga_active || !active ? <PublicationPrice item={p} compact={p.type === 'LIVE' && !p.is_ganga_active} /> : null}
             {p.type === 'LIVE' ? <AppText variant="caption">{active ? `${!p.is_ganga_active ? `${money(p.price)} · ` : ''}${p.current_stock} disponibles · ${started ? `Termina ${new Date(p.end_time!).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false })}` : `Inicia ${formatReservationDate(p.start_time)}`}` : 'Venta cerrada · sin nuevos apartados'}</AppText> : <><AppText variant="caption">{zoneOptions.find(z => z.id === p.zone_id)?.name}</AppText><AppText variant="caption">{p.description}</AppText></>}
             {active ? <>
               {p.type === 'LIVE' ? <View style={styles.row}>
                 <PrimaryButton compact variant="secondary" title="−1 venta física" style={styles.flex} disabled={busy || !started || !p.current_stock} onPress={() => setAction({ kind: 'physical-sale', publicationId: p.id })} />
-                {p.ganga_activation_mode === 'MANUAL' && p.ganga_min_price && !p.is_ganga_active ? <PrimaryButton compact variant="secondary" title={`Activar Ganga · ${money(p.ganga_min_price)}`} disabled={busy || !started} style={styles.flex} onPress={() => setAction({ kind: 'ganga', publicationId: p.id })} /> : p.is_ganga_active ? <AppText variant="badge" style={styles.ganga}>Ganga activa</AppText> : p.ganga_activation_mode === 'SCHEDULED' ? <AppText variant="caption" style={styles.flex}>Ganga programada · {p.ganga_minutes_before} min antes del fin</AppText> : null}
+                {p.ganga_activation_mode === 'MANUAL' && p.ganga_min_price && !p.is_ganga_active ? <PrimaryButton compact variant="secondary" title={`Activar oferta · ${money(p.ganga_min_price)}`} disabled={busy || !started} style={styles.flex} onPress={() => setAction({ kind: 'ganga', publicationId: p.id })} /> : p.is_ganga_active ? <AppText variant="badge" style={styles.ganga}>Oferta activa</AppText> : p.ganga_activation_mode === 'SCHEDULED' ? <AppText variant="caption" style={styles.flex}>Oferta programada · {p.ganga_minutes_before} min antes del fin</AppText> : null}
               </View> : <View style={styles.info}><AppText variant="label" style={styles.link}>Sin apartados ni plazo de venta</AppText><AppText variant="caption">Coordina la entrega por WhatsApp y marca el artículo como vendido al terminar.</AppText></View>}
               <View style={styles.row}><PrimaryButton compact style={styles.flex} title={p.type === 'LIVE' ? 'Editar' : 'Editar publicación'} accessibilityLabel="Editar publicación" variant="secondary" disabled={busy} onPress={() => router.push({ pathname: '/publication/edit', params: { id: p.id } })} /><PrimaryButton compact style={styles.flex} title={p.type === 'LIVE' ? 'Finalizar' : 'Marcar vendido'} accessibilityLabel={p.type === 'LIVE' ? 'Finalizar publicación' : 'Marcar vendido'} variant="destructive" disabled={busy} onPress={() => setAction({ kind: p.type === 'LIVE' ? 'finish' : 'sold', publicationId: p.id })} /></View>
             </> : <AppText variant="caption">{p.type === 'LIVE' ? 'Puedes entregar las reservas que sigan vigentes.' : 'Ya no aparece en el catálogo activo.'}</AppText>}
@@ -134,6 +139,6 @@ export default function Sales() {
 const styles = StyleSheet.create({
   typeSelector: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.sm },
   list: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.page, gap: SPACE.xl, flexGrow: 1 }, sale: { gap: SPACE.md }, card: { padding: SPACE.lg, gap: SPACE.sm },
-  priceRow: { flexDirection: 'row', alignItems: 'center', gap: SPACE.md }, previous: { textDecorationLine: 'line-through' }, row: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm },
+  gangaCard: { backgroundColor: COLORS.gangaSoft }, row: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm },
   flex: { flex: 1 }, ganga: { color: COLORS.ganga }, link: { color: COLORS.primary }, info: { padding: SPACE.md, borderRadius: RADIUS.md, backgroundColor: COLORS.primarySoft, gap: SPACE.sm }, footer: { paddingTop: SPACE.xl, gap: SPACE.md },
 });

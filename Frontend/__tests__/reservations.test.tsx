@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
-import MyReservations from '../src/app/reservations';
+import MyReservations from '../src/app/(tabs)/reservations';
 import { cancelReservation, myReservations } from '../src/services/marketplace';
 jest.mock('../src/context/AuthContext', () => ({ useAuth: () => ({ logout: jest.fn() }) }));
 

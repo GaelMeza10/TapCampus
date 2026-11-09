@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
-import MyAccount from '../src/app/account';
+import MyAccount from '../src/app/(tabs)/account';
 import { BottomNavigation, type MarketTab } from '../src/components/marketplace-shell';
 import { myProfile } from '../src/services/auth.service';
 import { COLORS } from '../src/theme';

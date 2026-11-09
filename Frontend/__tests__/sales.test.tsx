@@ -1,19 +1,34 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
-import Sales from '../src/app/sales';
+import Sales from '../src/app/(tabs)/sales';
 import { completeReservation, publicationAction } from '../src/services/marketplace';
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn(), navigate: jest.fn() }), useLocalSearchParams: () => ({}), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
+let mockRouteType: string | undefined;
+const mockSetParams = jest.fn();
+jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn(), navigate: jest.fn(), setParams: mockSetParams }), useLocalSearchParams: () => ({ type: mockRouteType }), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
 jest.mock('../src/context/AuthContext', () => ({ useAuth: () => ({ logout: jest.fn() }) }));
 jest.mock('../src/services/whatsapp', () => ({ openWhatsApp: jest.fn() }));
 const mockPublication = { id: 'p1', title: 'Burrito', type: 'LIVE', status: 'ACTIVE', price: '30.00', current_stock: 2, end_time: '2099-01-01T12:00:00.000Z', ganga_activation_mode: 'MANUAL', is_ganga_active: false };
 const mockReservation = { id: 'r1', publicationId: 'p1', publicationTitle: 'Burrito', status: 'ACTIVE', unitPrice: '30.00', reservedAt: '2026-10-19T12:00:00.000Z', expiresAt: '2099-01-01T12:00:00.000Z', buyer: { id: 'b1', name: 'Luis' }, buyerContact: { phone: '+526641234567' } };
 beforeEach(() => {
   jest.clearAllMocks();
+  mockRouteType = undefined;
   const market = require('../src/services/marketplace');
   market.myPublications.mockResolvedValue([mockPublication]);
   market.sellerReservations.mockResolvedValue([mockReservation]);
   market.publicationAction.mockResolvedValue({ ...mockPublication, current_stock: 1 });
+});
+
+test('volver de guardar cambia el tipo en ventas ya montada y el selector mantiene la URL sincronizada', async () => {
+  const view = await render(<Sales />);
+  await view.findByText('Unidad 1 · Luis');
+  mockRouteType = 'STATIC';
+  await view.rerender(<Sales />);
+  expect(view.getByRole('tab', { name: 'Catálogo' }).props.accessibilityState.selected).toBe(true);
+  expect(view.queryByText('Unidad 1 · Luis')).toBeNull();
+  await fireEvent.press(view.getByRole('tab', { name: 'Con horario' }));
+  expect(mockSetParams).toHaveBeenCalledWith({ type: 'LIVE' });
+  expect(view.getByRole('tab', { name: 'Con horario' }).props.accessibilityState.selected).toBe(true);
 });
 jest.mock('../src/services/marketplace', () => ({
   zones: jest.fn(async () => []),
@@ -84,7 +99,7 @@ test('venta finalizada oculta acciones de publicación y permite entregar una re
   await view.findByText(/VENTA CON HORARIO · FINALIZADA/);
   expect(view.queryByText('−1 venta física')).toBeNull();
   expect(view.queryByText('Editar publicación')).toBeNull();
-  expect(view.queryByText(/Activar Ganga/)).toBeNull();
+  expect(view.queryByText(/Activar oferta/)).toBeNull();
   await fireEvent.press(view.getByLabelText(/Confirmar entrega de Burrito/));
   await fireEvent.press(view.getByRole('button', { name: 'Confirmar entrega' }));
   await waitFor(() => expect(completeReservation).toHaveBeenCalledWith('r1'));

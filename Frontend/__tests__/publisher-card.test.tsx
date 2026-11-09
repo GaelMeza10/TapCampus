@@ -12,7 +12,9 @@ test('foto fallida conserva precio, ubicación y acción; una URL nueva vuelve a
   expect(view.getByText('Sin foto')).toBeTruthy();
   expect(view.getByText('$25')).toBeTruthy();
   expect(view.getByText('Biblioteca')).toBeTruthy();
-  expect(view.getByText('Antes $35 · 5 disponibles')).toBeTruthy();
+  expect(view.getByText('$35')).toBeTruthy();
+  expect(view.getByText('Ahorras $10')).toBeTruthy();
+  expect(view.getByText('5 disponibles')).toBeTruthy();
   await fireEvent.press(view.getByRole('button', { name: `Ver ${item.title}` }));
   expect(press).toHaveBeenCalledTimes(1);
   await view.rerender(<PublisherCard item={{ ...item, image_url: 'https://example.test/new.png' }} onPress={press} />);

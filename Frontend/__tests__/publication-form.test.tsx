@@ -4,8 +4,8 @@ import * as ImagePicker from 'expo-image-picker';
 import EditPublication from '../src/app/publication/edit';
 import { savePublication, uploadImage } from '../src/services/marketplace';
 
-const mockReplace = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), replace: mockReplace }), useLocalSearchParams: () => ({}) }));
+const mockDismissTo = jest.fn();
+jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), dismissTo: mockDismissTo }), useLocalSearchParams: () => ({}) }));
 jest.mock('expo-image-picker', () => ({ requestCameraPermissionsAsync: jest.fn(), requestMediaLibraryPermissionsAsync: jest.fn(), launchCameraAsync: jest.fn(), launchImageLibraryAsync: jest.fn() }));
 jest.mock('../src/services/marketplace', () => ({
   zones: jest.fn(async () => [{ id: 1, name: 'Ingeniería' }]), categories: jest.fn(async (type: string) => type === 'LIVE' ? [{ id: 2, name: 'Comida', type }] : [{ id: 3, name: 'Libros', type }]),
@@ -56,7 +56,7 @@ test('Catálogo publica solo sus campos y conserva el borrador ante error', asyn
   await fireEvent.press(view.getByRole('button', { name: 'Publicar artículo' }));
   await view.findByText('Error de red');
   expect(view.getByLabelText('Título').props.value).toBe('Libro de cálculo');
-  expect(mockReplace).not.toHaveBeenCalled();
+  expect(mockDismissTo).not.toHaveBeenCalled();
   const payload = (savePublication as jest.Mock).mock.calls[0][0];
   expect(payload).toMatchObject({ type: 'STATIC', title: 'Libro de cálculo', zone_id: 1, category_id: 3, price: 180 });
   expect(payload).not.toHaveProperty('initial_stock');
@@ -67,17 +67,17 @@ test('Catálogo publica solo sus campos y conserva el borrador ante error', asyn
 test('configurar ganga valida precio, programa y cerrar descarta cambios no guardados', async () => {
   const view = await render(<EditPublication />);
   await fireEvent.changeText(view.getByLabelText('Precio'), '85');
-  await fireEvent.press(view.getByText(/Precio Ganga ·/));
+  await fireEvent.press(view.getByText(/Precio de oferta ·/));
   await fireEvent.press(view.getByRole('button', { name: 'Programada' }));
-  await fireEvent.changeText(view.getByLabelText('Precio ganga opcional'), '90');
+  await fireEvent.changeText(view.getByLabelText('Precio de oferta opcional'), '90');
   await fireEvent.changeText(view.getByLabelText('Minutos antes del fin'), '10');
   await fireEvent.press(view.getByRole('button', { name: 'Guardar configuración' }));
   await view.findByText(/El precio mínimo debe ser positivo/);
-  await fireEvent.changeText(view.getByLabelText('Precio ganga opcional'), '65');
+  await fireEvent.changeText(view.getByLabelText('Precio de oferta opcional'), '65');
   await fireEvent.press(view.getByRole('button', { name: 'Guardar configuración' }));
   await view.findByText('Programada · $65 · 10 min antes del fin');
-  await fireEvent.press(view.getByText(/Precio Ganga ·/));
-  await fireEvent.changeText(view.getByLabelText('Precio ganga opcional'), '60');
+  await fireEvent.press(view.getByText(/Precio de oferta ·/));
+  await fireEvent.changeText(view.getByLabelText('Precio de oferta opcional'), '60');
   await fireEvent.press(view.getByRole('button', { name: 'Cerrar panel' }));
   expect(view.getByText('Programada · $65 · 10 min antes del fin')).toBeTruthy();
 });

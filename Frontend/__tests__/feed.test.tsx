@@ -1,6 +1,6 @@
 import React from 'react';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
-import HomePage from '../src/app/homePage';
+import HomePage from '../src/app/(tabs)/homePage';
 import { listPublications } from '../src/services/marketplace';
 jest.mock('../src/context/AuthContext', () => ({ useAuth: () => ({ logout: jest.fn() }) }));
 

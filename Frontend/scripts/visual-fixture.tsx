@@ -10,20 +10,21 @@ import { Inter_700Bold } from '@expo-google-fonts/inter/700Bold';
 import { AuthProvider } from '../src/context/AuthContext';
 import api from '../src/services/api';
 import type { Publication, Reservation } from '../src/services/marketplace';
-import Home from '../src/app/homePage';
+import Home from '../src/app/(tabs)/homePage';
+import MarketplaceTabs, { unstable_settings as tabSettings } from '../src/app/(tabs)/_layout';
 import Login from '../src/app/login';
 import Register from '../src/app/register';
-import Sales from '../src/app/sales';
-import Reservations from '../src/app/reservations';
+import Sales from '../src/app/(tabs)/sales';
+import Reservations from '../src/app/(tabs)/reservations';
 import Detail from '../src/app/publication/[id]';
 import Edit from '../src/app/publication/edit';
-import Account from '../src/app/account';
+import Account from '../src/app/(tabs)/account';
 import { COLORS } from '../src/theme';
 
 const now = Date.now();
 let scenario = new URLSearchParams(window.location.search).get('scenario') ?? 'normal';
 Object.assign(window, { recoverPreview: () => { scenario = 'normal'; } });
-const publication: Publication = { id: 'p1', type: 'LIVE', title: 'Bowl de pollo', description: 'Pollo con arroz y verduras. Entrego en la entrada de la Facultad de Ingeniería.', price: scenario === 'ganga' ? '65.00' : '85.00', price_before_ganga: scenario === 'ganga' ? '85.00' : null, image_url: '/uploads/10000000-0000-4000-8000-000000000011.png', status: scenario === 'finished' ? 'FINISHED' : 'ACTIVE', seller_id: 's1', seller: { id: 's1', name: 'Ana Pérez' }, zone_id: 1, category_id: 1, current_stock: 3, initial_stock: 5, start_time: new Date(now - 3600000).toISOString(), end_time: new Date(now + 12 * 60000).toISOString(), is_ganga_active: scenario === 'ganga', ganga_min_price: '65.00', ganga_activation_mode: 'MANUAL', ganga_minutes_before: null };
+const publication: Publication = { id: 'p1', type: 'LIVE', title: 'Bowl de pollo', description: 'Pollo con arroz y verduras. Entrego en la entrada de la Facultad de Ingeniería.', price: scenario === 'ganga' ? '49.00' : '85.00', price_before_ganga: scenario === 'ganga' ? '62.00' : null, image_url: '/uploads/10000000-0000-4000-8000-000000000011.png', status: scenario === 'finished' ? 'FINISHED' : 'ACTIVE', seller_id: 's1', seller: { id: 's1', name: 'Ana Pérez' }, zone_id: 1, category_id: 1, current_stock: 3, initial_stock: 5, start_time: new Date(now - 3600000).toISOString(), end_time: new Date(now + 12 * 60000).toISOString(), is_ganga_active: scenario === 'ganga', ganga_min_price: '65.00', ganga_activation_mode: 'MANUAL', ganga_minutes_before: null };
 const book: Publication = { ...publication, id: 'book', type: 'STATIC', title: 'Cálculo I', description: 'Libro usado, completo y con algunas anotaciones.', price: '180.00', price_before_ganga: null, image_url: '/uploads/10000000-0000-4000-8000-000000000017.png', status: scenario === 'sold' ? 'FINISHED' : 'ACTIVE', category_id: 5, current_stock: null, initial_stock: null, start_time: null, end_time: null, is_ganga_active: false, ganga_min_price: null, ganga_activation_mode: null, sellerContact: { phone: '+526641234567' } };
 // Contenido de muestra: la API real suministra las fotografías y textos del producto.
 publication.image_url = '/uploads/10000000-0000-4000-8000-000000000009.png';
@@ -70,7 +71,7 @@ api.defaults.adapter = async config => {
   else data = {};
   return { data: JSON.parse(JSON.stringify(data)), status: 200, statusText: 'OK', headers: {}, config };
 };
-const pages = { './_layout.tsx': { default: () => <AuthProvider><Stack screenOptions={{ headerShown: false, animation: 'none' }} /></AuthProvider> }, './index.tsx': { default: Home }, './homePage.tsx': { default: Home }, './login.tsx': { default: Login }, './register.tsx': { default: Register }, './sales.tsx': { default: Sales }, './reservations.tsx': { default: Reservations }, './account.tsx': { default: Account }, './publication/[id].tsx': { default: Detail }, './publication/edit.tsx': { default: Edit } };
+const pages = { './_layout.tsx': { default: () => <AuthProvider><Stack screenOptions={{ headerShown: false, animation: 'none' }} /></AuthProvider> }, './(tabs)/_layout.tsx': { default: MarketplaceTabs, unstable_settings: tabSettings }, './(tabs)/homePage.tsx': { default: Home }, './login.tsx': { default: Login }, './register.tsx': { default: Register }, './(tabs)/sales.tsx': { default: Sales }, './(tabs)/reservations.tsx': { default: Reservations }, './(tabs)/account.tsx': { default: Account }, './publication/[id].tsx': { default: Detail }, './publication/edit.tsx': { default: Edit } };
 const context = Object.assign((key: string) => pages[key as keyof typeof pages], { keys: () => Object.keys(pages), resolve: (key: string) => key, id: 'visual-fixture' }) as unknown as Parameters<typeof ExpoRoot>[0]['context'];
 function Preview() {
   const [ready] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });

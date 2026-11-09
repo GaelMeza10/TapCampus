@@ -112,13 +112,13 @@ export default function EditPublication() {
     const start = localDate(draft.start); const end = localDate(draft.end);
     if (type === 'LIVE' && (!/^\d+$/.test(draft.stock) || Number(draft.stock) < (id ? 0 : 1))) { invalid('stock', 'El stock debe ser un entero no negativo; al crear debe ser mayor que cero.'); return; }
     if (type === 'LIVE' && (!start || !end || start >= end || end.getTime() <= Date.now())) { setError('Ingresa inicio y fin locales válidos; el fin debe ser futuro y posterior al inicio.'); return; }
-    if (type === 'LIVE' && draft.gangaPrice && (!validPrice(draft.gangaPrice) || Number(draft.gangaPrice) > Number(draft.price))) { setError('El precio ganga debe ser positivo y no superar el precio normal.'); return; }
-    if (original?.ganga_min_price && !draft.gangaPrice) { setError('La ganga configurada no se puede quitar; conserva el precio o ajusta sus valores.'); return; }
-    if (original?.ganga_activation_mode === 'SCHEDULED' && gangaMode === 'MANUAL') { setError('La ganga programada no se puede cambiar a manual en esta edición.'); return; }
+    if (type === 'LIVE' && draft.gangaPrice && (!validPrice(draft.gangaPrice) || Number(draft.gangaPrice) > Number(draft.price))) { setError('El precio de oferta debe ser positivo y no superar el precio normal.'); return; }
+    if (original?.ganga_min_price && !draft.gangaPrice) { setError('La oferta configurada no se puede quitar; conserva el precio o ajusta sus valores.'); return; }
+    if (original?.ganga_activation_mode === 'SCHEDULED' && gangaMode === 'MANUAL') { setError('La oferta programada no se puede cambiar a manual en esta edición.'); return; }
     const changedSchedule = !original || draft.end !== (original.end_time ? localInput(new Date(original.end_time)) : '') ||
       draft.gangaMinutes !== String(original.ganga_minutes_before ?? '') || gangaMode !== original.ganga_activation_mode ||
       draft.gangaPrice !== (original.ganga_min_price ?? '');
-    if (type === 'LIVE' && draft.gangaPrice && gangaMode === 'SCHEDULED' && changedSchedule && (!/^\d+$/.test(draft.gangaMinutes) || Number(draft.gangaMinutes) < 1 || !start || !end || end.getTime() - Number(draft.gangaMinutes) * 60000 <= Math.max(start.getTime(), Date.now()))) { setError('Programa la ganga dentro del horario y en el futuro.'); return; }
+    if (type === 'LIVE' && draft.gangaPrice && gangaMode === 'SCHEDULED' && changedSchedule && (!/^\d+$/.test(draft.gangaMinutes) || Number(draft.gangaMinutes) < 1 || !start || !end || end.getTime() - Number(draft.gangaMinutes) * 60000 <= Math.max(start.getTime(), Date.now()))) { setError('Programa la oferta dentro del horario y en el futuro.'); return; }
     setLoading(true); setError('');
     try {
       const imageUrl = asset ? await uploadImage(asset) : existingImage;
@@ -139,7 +139,7 @@ export default function EditPublication() {
         if (!Object.keys(patch).length) { setError('No hay cambios para guardar.'); return; }
         await savePublication(patch, id);
       } else await savePublication(payload);
-      router.replace({ pathname: '/sales', params: { type } });
+      router.dismissTo({ pathname: '/sales', params: { type } });
     } catch (cause) { setError(apiMessage(cause)); }
     finally { setLoading(false); }
   }
@@ -151,13 +151,13 @@ export default function EditPublication() {
   function saveConfig() {
     if (original?.is_ganga_active) { setPanel(undefined); return; }
     if (config.mode === 'NONE') {
-      if (original?.ganga_min_price) { setConfigError('La ganga configurada no se puede quitar.'); return; }
+      if (original?.ganga_min_price) { setConfigError('La oferta configurada no se puede quitar.'); return; }
       change('gangaPrice', ''); change('gangaMinutes', ''); setPanel(undefined); return;
     }
     if (!validPrice(config.price) || !validPrice(draft.price) || Number(config.price) > Number(draft.price)) { setConfigError('El precio mínimo debe ser positivo y no superar el precio normal.'); return; }
-    if (original?.ganga_activation_mode === 'SCHEDULED' && config.mode === 'MANUAL') { setConfigError('La ganga programada no se puede cambiar a manual.'); return; }
+    if (original?.ganga_activation_mode === 'SCHEDULED' && config.mode === 'MANUAL') { setConfigError('La oferta programada no se puede cambiar a manual.'); return; }
     const end = localDate(draft.end), start = localDate(draft.start);
-    if (config.mode === 'SCHEDULED' && (!/^\d+$/.test(config.minutes) || Number(config.minutes) < 1 || !end || !start || end.getTime() - Number(config.minutes) * 60000 <= Math.max(Date.now(), start.getTime()))) { setConfigError('Programa la ganga dentro del horario y en el futuro.'); return; }
+    if (config.mode === 'SCHEDULED' && (!/^\d+$/.test(config.minutes) || Number(config.minutes) < 1 || !end || !start || end.getTime() - Number(config.minutes) * 60000 <= Math.max(Date.now(), start.getTime()))) { setConfigError('Programa la oferta dentro del horario y en el futuro.'); return; }
     setGangaMode(config.mode); change('gangaPrice', config.price); change('gangaMinutes', config.mode === 'SCHEDULED' ? config.minutes : ''); setPanel(undefined);
   }
   function openTime(field: 'start' | 'end') {
@@ -186,7 +186,7 @@ export default function EditPublication() {
           {type === 'LIVE' ? <>
             <AppText variant="label">Horario de venta</AppText>
             <View style={styles.row}><View style={styles.flex}><AppText variant="caption">Inicio</AppText><PrimaryButton disabled={loading} title={localLabel(draft.start)} accessibilityLabel="Elegir inicio de venta" variant="field" onPress={() => openTime('start')} /></View><View style={styles.flex}><AppText variant="caption">Fin</AppText><PrimaryButton disabled={loading} title={localLabel(draft.end)} accessibilityLabel="Elegir fin de venta" variant="field" onPress={() => openTime('end')} /></View></View>
-            <Pressable accessibilityRole="button" disabled={loading} style={styles.ganga} onPress={openConfig}><AppText variant="label" style={styles.gangaText}>Precio Ganga · {original?.is_ganga_active ? 'Activa' : 'Configurar →'}</AppText><AppText variant="caption">{draft.gangaPrice ? `${gangaMode === 'MANUAL' ? 'Manual' : 'Programada'} · $${draft.gangaPrice}${gangaMode === 'SCHEDULED' ? ` · ${draft.gangaMinutes} min antes del fin` : ''}` : 'Sin configurar · opcional'}</AppText></Pressable>
+            <Pressable accessibilityRole="button" disabled={loading} style={styles.ganga} onPress={openConfig}><AppText variant="label" style={styles.gangaText}>Precio de oferta · {original?.is_ganga_active ? 'Activa' : 'Configurar →'}</AppText><AppText variant="caption">{draft.gangaPrice ? `${gangaMode === 'MANUAL' ? 'Manual' : 'Programada'} · $${draft.gangaPrice}${gangaMode === 'SCHEDULED' ? ` · ${draft.gangaMinutes} min antes del fin` : ''}` : 'Sin configurar · opcional'}</AppText></Pressable>
           </> : <View style={styles.info}><AppText variant="label" style={styles.link}>Sin stock ni temporizador</AppText><AppText variant="caption">Los compradores contactan por WhatsApp directamente.</AppText></View>}
         </>}
         {error ? <InlineMessage onRetry={id ? () => setAttempt(n => n + 1) : undefined}>{error}</InlineMessage> : null}
@@ -197,9 +197,9 @@ export default function EditPublication() {
     <Sheet visible={panel === 'zone' || panel === 'category'} title={panel === 'zone' ? 'Zona' : 'Categoría'} onClose={() => setPanel(undefined)}>
       {(panel === 'zone' ? zoneLoading : categoryLoading) ? <DataState kind="loading" title="Cargando opciones…" /> : (panel === 'zone' ? zoneOptions : categoryOptions).length === 0 ? <DataState kind="error" title="No pudimos cargar las opciones" action="Reintentar" onAction={() => setCatalogAttempt(n => n + 1)} /> : <OptionGrid options={panel === 'zone' ? zoneOptions : categoryOptions} value={panel === 'zone' ? zoneId : categoryId} onChange={value => { if (panel === 'zone') setZoneId(value); else setCategoryId(value); setPanel(undefined); }} />}
     </Sheet>
-    <Sheet visible={panel === 'ganga'} title="Precio Ganga" subtitle="El descuento se aplica únicamente a reservas nuevas." onClose={() => setPanel(undefined)} footer={<PrimaryButton title={original?.is_ganga_active ? 'Cerrar' : 'Guardar configuración'} onPress={saveConfig} />}>
-      <View style={styles.row}>{(['NONE', 'MANUAL', 'SCHEDULED'] as const).map(mode => <PrimaryButton key={mode} title={mode === 'NONE' ? 'Sin ganga' : mode === 'MANUAL' ? 'Manual' : 'Programada'} compact style={styles.flex} variant={config.mode === mode ? 'primary' : 'secondary'} disabled={!!original?.is_ganga_active || (mode === 'NONE' && !!original?.ganga_min_price) || (mode === 'MANUAL' && original?.ganga_activation_mode === 'SCHEDULED')} onPress={() => { setConfig(previous => ({ ...previous, mode })); setConfigError(''); }} />)}</View>
-      {config.mode !== 'NONE' ? <><CustomInput label="Precio mínimo" accessibilityLabel="Precio ganga opcional" surface="white" placeholder="$65" value={config.price} editable={!original?.is_ganga_active} keyboardType="decimal-pad" onChangeText={price => { setConfig(previous => ({ ...previous, price })); setConfigError(''); }} /><AppText variant="caption">Precio normal: ${draft.price || '—'}. El mínimo no puede ser mayor.</AppText>{config.mode === 'SCHEDULED' ? <><CustomInput label="Minutos antes del fin" surface="white" value={config.minutes} keyboardType="number-pad" editable={!original?.is_ganga_active} onChangeText={minutes => { setConfig(previous => ({ ...previous, minutes })); setConfigError(''); }} /><View style={styles.info}><AppText variant="label" style={styles.link}>Activación: {scheduledAt ? scheduledAt.toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Elige los minutos'}</AppText><AppText variant="caption">La venta termina {localLabel(draft.end)}.</AppText></View></> : <View style={styles.info}><AppText variant="label" style={styles.link}>Tú decides cuándo activar</AppText><AppText variant="caption">Activa la ganga desde Mis ventas mientras la publicación siga en horario.</AppText></View>}</> : <AppText variant="caption">Puedes publicar con el precio normal. Configurar una ganga es opcional.</AppText>}
+    <Sheet visible={panel === 'ganga'} title="Precio de oferta" subtitle="El descuento se aplica únicamente a reservas nuevas." onClose={() => setPanel(undefined)} footer={<PrimaryButton title={original?.is_ganga_active ? 'Cerrar' : 'Guardar configuración'} onPress={saveConfig} />}>
+      <View style={styles.row}>{(['NONE', 'MANUAL', 'SCHEDULED'] as const).map(mode => <PrimaryButton key={mode} title={mode === 'NONE' ? 'Sin oferta' : mode === 'MANUAL' ? 'Manual' : 'Programada'} compact style={styles.flex} variant={config.mode === mode ? 'primary' : 'secondary'} disabled={!!original?.is_ganga_active || (mode === 'NONE' && !!original?.ganga_min_price) || (mode === 'MANUAL' && original?.ganga_activation_mode === 'SCHEDULED')} onPress={() => { setConfig(previous => ({ ...previous, mode })); setConfigError(''); }} />)}</View>
+      {config.mode !== 'NONE' ? <><CustomInput label="Precio mínimo" accessibilityLabel="Precio de oferta opcional" surface="white" placeholder="$65" value={config.price} editable={!original?.is_ganga_active} keyboardType="decimal-pad" onChangeText={price => { setConfig(previous => ({ ...previous, price })); setConfigError(''); }} /><AppText variant="caption">Precio normal: ${draft.price || '—'}. El mínimo no puede ser mayor.</AppText>{config.mode === 'SCHEDULED' ? <><CustomInput label="Minutos antes del fin" surface="white" value={config.minutes} keyboardType="number-pad" editable={!original?.is_ganga_active} onChangeText={minutes => { setConfig(previous => ({ ...previous, minutes })); setConfigError(''); }} /><View style={styles.info}><AppText variant="label" style={styles.link}>Activación: {scheduledAt ? scheduledAt.toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Elige los minutos'}</AppText><AppText variant="caption">La venta termina {localLabel(draft.end)}.</AppText></View></> : <View style={styles.info}><AppText variant="label" style={styles.link}>Tú decides cuándo activar</AppText><AppText variant="caption">Activa la oferta desde Mis ventas mientras la publicación siga en horario.</AppText></View>}</> : <AppText variant="caption">Puedes publicar con el precio normal. Configurar una oferta es opcional.</AppText>}
       {configError ? <InlineMessage>{configError}</InlineMessage> : null}
     </Sheet>
     <Sheet visible={timedPanel} title={panel === 'start' ? 'Inicio de venta' : 'Fin de venta'} onClose={() => setPanel(undefined)} footer={<PrimaryButton title="Guardar horario" onPress={() => { if (panel === 'start' || panel === 'end') change(panel, localInput(pickedTime)); setPanel(undefined); }} />}>

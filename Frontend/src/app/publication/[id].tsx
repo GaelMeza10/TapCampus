@@ -7,6 +7,7 @@ import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
 import { COLORS, RADIUS, SPACE } from '@/theme';
 import PublicationPhoto from '@/components/publication-photo';
+import PublicationPrice, { GangaBadge } from '@/components/publication-price';
 import AppText from '@/components/app-text';
 import ReservationCard from '@/components/reservation-card';
 import StatusIcon from '@/components/status-icon';
@@ -162,7 +163,7 @@ export default function PublicationDetail() {
       </Card>
       {error ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}
       {canReserve || unresolved ? <PrimaryButton ref={reserveTrigger} title={unresolved ? 'Reintentar apartado' : 'Apartar otra unidad'} variant="secondary" loading={pending} onPress={openReservation} /> : null}
-      <PrimaryButton title="Ver mis reservas" variant="secondary" onPress={() => router.push('/reservations')} />
+      <PrimaryButton title="Ver mis reservas" variant="secondary" onPress={() => router.dismissTo('/reservations')} />
     </ScrollView> : <>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Pressable accessibilityRole="button" style={styles.back} onPress={() => router.back()}><AppText style={styles.link}>‹ Explorar</AppText></Pressable>
@@ -170,16 +171,17 @@ export default function PublicationDetail() {
         {error ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}
         {item ? <>
           <PublicationPhoto uri={item.image_url} title={item.title} style={styles.image} />
-          <AppText variant="badge" style={item.is_ganga_active && styles.ganga}>{item.type === 'LIVE' ? `${item.is_ganga_active ? 'GANGA' : 'DISPONIBLE AHORA'} · Venta termina en ${countdown(item.end_time, now)}` : 'CATÁLOGO · Sin reserva'}</AppText>
+          {item.is_ganga_active ? <GangaBadge /> : null}
+          <AppText variant="badge">{item.type === 'LIVE' ? `${item.is_ganga_active ? 'Venta termina en' : 'DISPONIBLE AHORA · Venta termina en'} ${countdown(item.end_time, now)}` : 'CATÁLOGO · Sin reserva'}</AppText>
           <AppText variant="title">{item.title}</AppText>
-          <View style={styles.detailPrices}><View style={styles.prices}>{item.is_ganga_active && item.price_before_ganga && Number(item.price_before_ganga) > Number(item.price) ? <AppText variant="caption" style={styles.previous}>{money(item.price_before_ganga)}</AppText> : null}<AppText variant="price">{money(item.price)}{item.is_ganga_active ? ' · Ganga' : ''}</AppText></View>{item.type === 'LIVE' ? <AppText variant="badge">{item.current_stock} disponibles</AppText> : null}</View>
+          <View style={[styles.detailPrices, item.is_ganga_active && styles.gangaPanel]}><PublicationPrice item={item} />{item.type === 'LIVE' ? <AppText variant="badge">{item.current_stock} disponibles</AppText> : null}</View>
           <AppText variant="label">{item.type === 'LIVE' ? 'Dónde recogerlo' : 'Dónde se encuentra'}</AppText>
           <AppText variant="caption">{zone ?? 'Consulta el punto de entrega con el vendedor.'}</AppText>
           <AppText variant="label">{item.type === 'LIVE' ? 'Sobre el producto' : 'Descripción'}</AppText>
           <AppText variant="caption">{item.description}</AppText>
           <AppText variant="caption">Vendedor: {item.seller.name}</AppText>
           <View style={styles.info}><AppText variant="label" style={styles.link}>{item.type === 'LIVE' ? 'Apartas 1 unidad durante 20 min' : 'Aquí puedes escribir sin apartar.'}</AppText><AppText variant="caption">{item.type === 'LIVE' ? 'El precio se fija al confirmarse la reserva.' : 'Coordina la entrega directamente por WhatsApp.'}</AppText></View>
-        </> : !loading ? <DataState kind="empty" title="Publicación no disponible" description="Ya no se aceptan nuevos apartados. Las reservas vigentes conservan su propio plazo." action="Ver mis reservas" onAction={() => router.push('/reservations')} /> : null}
+        </> : !loading ? <DataState kind="empty" title="Publicación no disponible" description="Ya no se aceptan nuevos apartados. Las reservas vigentes conservan su propio plazo." action="Ver mis reservas" onAction={() => router.dismissTo('/reservations')} /> : null}
         {item?.type === 'LIVE' || reservations.length > 0 ? <>
           <AppText variant="heading">Mis reservas de esta publicación</AppText>
           {presented.length === 0 ? <AppText variant="caption">Todavía no tienes reservas.</AppText> : presented.map(({ reservation: r, unitLabel }) => <ReservationCard key={r.id} reservation={r} unitLabel={unitLabel} now={now} combineTitle disabled={pending} onCancel={() => setConfirmId(r.id)} onContact={() => void contact(r.sellerContact!.phone, true, r.publicationTitle)} />)}
@@ -197,8 +199,8 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: COLORS.background }, scroll: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.page, gap: SPACE.lg },
   back: { minHeight: 44, justifyContent: 'center' }, link: { color: COLORS.primary }, image: { width: '100%', height: 221, borderRadius: RADIUS.lg, backgroundColor: COLORS.primarySoft },
   detailPrices: { gap: SPACE.sm },
-  priceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm, flexWrap: 'wrap' }, prices: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, flexWrap: 'wrap' },
-  previous: { textDecorationLine: 'line-through' }, ganga: { color: COLORS.ganga }, info: { backgroundColor: COLORS.primarySoft, padding: SPACE.lg, borderRadius: RADIUS.md, gap: SPACE.sm },
+  priceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm, flexWrap: 'wrap' },
+  gangaPanel: { backgroundColor: COLORS.gangaSoft, padding: SPACE.lg, borderRadius: RADIUS.md }, info: { backgroundColor: COLORS.primarySoft, padding: SPACE.lg, borderRadius: RADIUS.md, gap: SPACE.sm },
   footer: { padding: SPACE.page }, successScroll: { padding: SPACE.page, gap: SPACE.lg, flexGrow: 1 },
   successCard: { padding: SPACE.xl, gap: SPACE.lg }, center: { textAlign: 'center' },
   timer: { padding: SPACE.lg, borderRadius: RADIUS.md, backgroundColor: COLORS.primarySoft, gap: SPACE.sm, alignItems: 'center' },

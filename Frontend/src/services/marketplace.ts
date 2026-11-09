@@ -113,8 +113,9 @@ export function apiMessage(error: unknown): string {
     return 'El servidor tardó demasiado en responder. Revisa tu conexión y vuelve a intentarlo.';
   }
   const message = cause.response?.data?.message;
-  if (Array.isArray(message)) return message.join('\n');
-  if (typeof message === 'string') return message;
+  const visibleMessage = (value: string) => value.replace(/precio ganga/gi, 'precio de oferta').replace(/\bgangas\b/gi, 'ofertas').replace(/\bganga\b/gi, 'oferta');
+  if (Array.isArray(message)) return visibleMessage(message.join('\n'));
+  if (typeof message === 'string') return visibleMessage(message);
   if (cause.response?.status === 409) return 'La acción ya no está disponible. Actualiza los datos e inténtalo de nuevo.';
   return 'No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.';
 }

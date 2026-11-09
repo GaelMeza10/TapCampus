@@ -20,12 +20,9 @@ function RootNavigator() {
         <Stack.Screen name="register" />
       </Stack.Protected>
       <Stack.Protected guard={estaAutenticado}>
-        <Stack.Screen name="homePage" />
+        <Stack.Screen name="(tabs)" />
         <Stack.Screen name="publication/[id]" />
         <Stack.Screen name="publication/edit" />
-        <Stack.Screen name="sales" />
-        <Stack.Screen name="reservations" />
-        <Stack.Screen name="account" />
       </Stack.Protected>
     </Stack>
   );

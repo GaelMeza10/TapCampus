@@ -95,6 +95,19 @@ async function capture(name) {
   await cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   const shots = [];
   async function open(route, text) { console.log('Revisando ' + route); await cdp('Page.navigate', { url: origin + route }); await until(`document.body.innerText.includes(${JSON.stringify(text)})`); await evaluate('document.fonts.ready.then(()=>true)'); }
+  for (const [width, height] of [[320, 844], [375, 812], [430, 932], [844, 390]]) {
+    viewportWidth = width;
+    await cdp('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: true });
+    await cdp('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    for (const [route, name] of [['/homePage?scenario=ganga', 'ganga-feed'], ['/publication/p1?scenario=ganga', 'ganga-detail'], ['/sales?scenario=ganga', 'ganga-sales']]) {
+      await open(route, 'Ahorras $13');
+      const comparison = await evaluate(`(()=>{const a=document.querySelector('[aria-label="Precio actual: $49"]'); const b=document.querySelector('[aria-label="Precio anterior: $62"]'); if(!a||!b)return null;const ar=a.getBoundingClientRect(),br=b.getBoundingClientRect();return {order:!!(a.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING),strike:getComputedStyle(b).textDecorationLine,current:getComputedStyle(a).color,fit:ar.right<=innerWidth&&br.right<=innerWidth};})()`);
+      assert(comparison?.order && comparison.strike.includes('line-through') && comparison.fit, 'Comparación incorrecta: ' + JSON.stringify(comparison));
+      shots.push(await capture(name + '-' + width));
+    }
+  }
+  viewportWidth = 390;
+  await cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await open('/homePage', 'Torta de pollo'); shots.push(await capture('feed'));
   await type('Buscar productos', 'torta'); await until(`document.body.innerText.includes('Resultados') && !document.body.innerText.includes('Brownie de chocolate') && document.body.innerText.includes('Torta de pollo')`); shots.push(await capture('search-results'));
   await type('Buscar productos', 'sin coincidencias'); await until(`document.body.innerText.includes('No encontramos publicaciones para')`); shots.push(await capture('search-empty'));
@@ -126,12 +139,12 @@ async function capture(name) {
   await open('/account?scenario=profile-error', 'No pudimos cargar tu información'); shots.push(await capture('account-error'));
   await evaluate('window.recoverPreview()'); await click('Reintentar'); await until(`document.body.innerText.includes('ana@uabc.edu.mx')`); shots.push(await capture('account-retry'));
   await open('/account?scenario=profile-loading', 'Cargando tu cuenta…'); shots.push(await capture('account-loading'));
-  await open('/sales?scenario=ganga', 'GANGA ACTIVA'); shots.push(await capture('sales-ganga'));
+  await open('/sales?scenario=ganga', 'Ahorras $13'); shots.push(await capture('sales-ganga'));
   await open('/sales?scenario=finished', 'FINALIZADA'); shots.push(await capture('sales-finished'));
   await open('/sales?type=STATIC', 'Cálculo I'); shots.push(await capture('catalog-sales'));
   await open('/sales?type=STATIC&scenario=sold', 'VENDIDO'); shots.push(await capture('catalog-sold'));
   await open('/publication/edit', 'Nueva publicación'); shots.push(await capture('form-live'));
-  await type('Precio', '85'); await click('Precio Ganga'); await click('Programada'); await type('Precio ganga opcional', '65'); await type('Minutos antes del fin', '10'); shots.push(await capture('ganga-config'));
+  await type('Precio', '85'); await click('Precio de oferta'); await click('Programada'); await type('Precio de oferta opcional', '65'); await type('Minutos antes del fin', '10'); shots.push(await capture('ganga-config'));
   await open('/publication/edit?type=STATIC', 'Publicar artículo'); shots.push(await capture('form-catalog'));
   await open('/homePage?scenario=empty', 'Sin resultados'); shots.push(await capture('empty'));
   await open('/homePage?scenario=error', 'No se pudieron cargar'); shots.push(await capture('error'));
