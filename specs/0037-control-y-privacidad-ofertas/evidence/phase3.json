@@ -1,0 +1,269 @@
+{
+  "date": "2026-11-21T22:42:36.888Z",
+  "node": "v24.13.0",
+  "database": "tapcampus_phase3_1795300956887",
+  "redisPrefix": "tapcampus_phase3_1795300956887",
+  "requests": 374,
+  "checks": [
+    {
+      "name": "reservas EV-01/09: JWT, DTO, 20 minutos, precio fijo, múltiples acciones, consultas y privacidad",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-03: STATIC, FINISHED, fuera de horario y sin stock ->409 sin mutación",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-02: 50 compradores/claves distintas, exactamente 1x201 / 49x409",
+      "result": "PASS",
+      "counts": {
+        "201": 1,
+        "409": 49
+      }
+    },
+    {
+      "name": "reservas EV-09: 50 reintentos misma clave = 1x201/49x200, ID único; clave cruzada simultánea 201/409",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-04/05: solo vendedor completa, solo comprador cancela, terminales 409, jobs atrasados no cambian stock",
+      "result": "PASS"
+    },
+    {
+      "name": "publicaciones EV-04/07, reservas EV-07/08: cierre/fin únicos, confirma tras end_time, libera sin reactivar FINISHED",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-06/08: job temprano no actúa, plazo vencido rechaza acciones, expiración y duplicado liberan una vez",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-04/05/06: 10 carreras confirmación/cancelación/worker, transición única e inventario conservado",
+      "result": "PASS",
+      "races": [
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        }
+      ]
+    },
+    {
+      "name": "publicaciones EV-05: 10 carreras HTTP reserva/venta física por stock 1, un solo ganador",
+      "result": "PASS",
+      "races": [
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        }
+      ]
+    },
+    {
+      "name": "reservas EV-02/04/05/06, sockets EV-05: bloqueo real, sin evento antes del commit, plazo releído tras espera",
+      "result": "PASS"
+    },
+    {
+      "name": "ganga EV-01/02/03/06: configuración, validación sin jobs, manual/propiedad, prioridad, decimal y precio histórico",
+      "result": "PASS"
+    },
+    {
+      "name": "ganga EV-04/05/06: job real con delay, reprogramación ignora job antiguo, duplicado y fin sin activación",
+      "result": "PASS"
+    },
+    {
+      "name": "0037 EV-02/03/04/06: privacidad pública/propietario, igualdad, modos/nulls/retirada, permisos y legado",
+      "result": "PASS",
+      "configured": "14f04d95-631b-4ec8-b543-878f015a1553",
+      "privateActive": "bdce6cfe-786f-4fae-8f12-dc01973684ad",
+      "equalLegacy": "fa234638-a010-4e09-a28d-299ccd55b247"
+    },
+    {
+      "name": "0037 EV-05/06: ambos órdenes y seis carreras HTTP retirada/activación/reserva, estado y evento únicos",
+      "result": "PASS"
+    },
+    {
+      "name": "0037 EV-05: retirada persistida no se activa tras reinicio real y conciliación con job Redis anterior",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-06, ganga EV-04: proceso worker detenido/reiniciado, jobs Redis persistentes, jobs perdidos y conciliación periódica",
+      "result": "PASS"
+    },
+    {
+      "name": "publicaciones EV-04: fin natural job API + conciliación, evento único y reserva previa confirmable",
+      "result": "PASS"
+    },
+    {
+      "name": "sockets EV-01..05: dos clientes, payloads exactos/públicos, cambios postcommit, rechazos sin eventos y REST al reconectar",
+      "result": "PASS"
+    },
+    {
+      "name": "base original intacta: inventario/hash antes y después idénticos",
+      "result": "PASS"
+    }
+  ],
+  "postgres": "16.15 (Debian 16.15-1.pgdg13+2)",
+  "originalBefore": {
+    "_prisma_migrations": {
+      "count": 5,
+      "sha256": "7f16c1e6b2c0af12616ad3e388ba6e84f54dc50363214ed8b9a79e7c615b609b"
+    },
+    "categories": {
+      "count": 8,
+      "sha256": "9c7a9a5e7277dc1e7029857954ce09a2a7057c0e918e53cd1f71440bf6d5a7f6"
+    },
+    "publications": {
+      "count": 29,
+      "sha256": "a6d1279ff6386236323df4deab9c89c92eff761c89995d291000b5393ffa55ec"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 5,
+      "sha256": "0dd1c3cb811b96dda468ce63e8acecbec7d0e8f927617c7cc3e2fd0fb6974550"
+    },
+    "users": {
+      "count": 5,
+      "sha256": "1460bf4717b46dbe78c9dc7f5006ae3b5d88df884ced8547a1283729539e18fe"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "redis": "7.4.11",
+  "originalAfter": {
+    "_prisma_migrations": {
+      "count": 5,
+      "sha256": "7f16c1e6b2c0af12616ad3e388ba6e84f54dc50363214ed8b9a79e7c615b609b"
+    },
+    "categories": {
+      "count": 8,
+      "sha256": "9c7a9a5e7277dc1e7029857954ce09a2a7057c0e918e53cd1f71440bf6d5a7f6"
+    },
+    "publications": {
+      "count": 29,
+      "sha256": "a6d1279ff6386236323df4deab9c89c92eff761c89995d291000b5393ffa55ec"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 5,
+      "sha256": "0dd1c3cb811b96dda468ce63e8acecbec7d0e8f927617c7cc3e2fd0fb6974550"
+    },
+    "users": {
+      "count": 5,
+      "sha256": "1460bf4717b46dbe78c9dc7f5006ae3b5d88df884ced8547a1283729539e18fe"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "result": "PASS"
+}

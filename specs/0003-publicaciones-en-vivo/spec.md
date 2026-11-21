@@ -4,6 +4,8 @@ Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Contexto y fuentes
 
+Actualización normativa 2026-11-21: RF-05 pasa a MUST; [0037](../0037-control-y-privacidad-ofertas/spec.md) sustituye reglas de mínimo/configuración y proyección pública, [0038](../0038-filtro-palabras-publicaciones/spec.md) incorpora filtro al crear/editar texto y [0039](../0039-contacto-live-sin-reserva/spec.md) añade consulta previa en detalle LIVE visible. Los contratos de fase 2/3 fechados más abajo conservan su valor histórico; no son instrucciones para mantener esas diferencias. Revalidación nueva pendiente en esos expedientes.
+
 RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relacionado. Fuentes: `docs/02_REQUIREMENTS.md`, `docs/03_ARCHITECTURE.md`, `docs/04_UI_UX_GUIDELINES.md`, `docs/05_USER_FLOWS.md`, `README.md` y `TASKS.md` 2.3–2.7, 3.5, 5.2, 5.4–5.5. API de creación/edición/lectura/venta física y uploads implementada/verificada en EV-08..10; UI sigue parcial; reservas/jobs/eventos verificados en fase 3.
 
 ## Alcance y contratos observables
@@ -36,7 +38,7 @@ RF-03, RF-04, RF-05b, RNF-03; US-03 y US-05b. RF-05 (US-05d) es SHOULD relaciona
 ### AC-06 — Propiedad y edición
 **Dado** una publicación activa, **cuando** su vendedor actualiza datos permitidos, **entonces** se guardan valores válidos sin afectar reservas; otro usuario recibe `403` y ningún cambio.
 
-### AC-07 — Cierre manual SHOULD
+### AC-07 — Cierre manual MUST (desde 2026-11-21)
 **Dado** una `LIVE` con reserva activa, **cuando** el vendedor la finaliza, **entonces** desaparece del feed, bloquea reservas nuevas y conserva la reserva existente hasta su resolución; otro usuario recibe `403`.
 
 ### AC-08 — Lista propia de ventas

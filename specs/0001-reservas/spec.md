@@ -4,6 +4,8 @@ Estado: **En verificación; backend fases 2/3 verificado y presentación móvil 
 
 ## Contexto y fuentes
 
+Actualización normativa 2026-11-21: RF-10 pasa a MUST sin alterar su máquina de estados; el contacto previo del vendedor desde detalle LIVE visible se amplía en [0039](../0039-contacto-live-sin-reserva/spec.md). No cambia permisos/contacto de reservas ni privacidad del comprador. La evidencia de reservas previa conserva su alcance; la nueva consulta se verifica aparte.
+
 El comprador necesita apartar una pieza durante 20 minutos y el vendedor confirmar su entrega. Fuentes: `docs/02_REQUIREMENTS.md` (RF-04, RF-05, RF-05b, RF-07 a RF-10, RNF-01, RNF-02), `docs/03_ARCHITECTURE.md` (Reservation, rutas y eventos), `docs/05_USER_FLOWS.md`, `docs/06_USER_STORIES_AND_TASKS.md` (US-06, US-07, US-07b, US-08), `docs/07_VALIDATION.md` y `TASKS.md` (3.1–3.5, 5.3, 6.1).
 
 El esquema contiene `Reservation` con precio/idempotencia y `Publication` con CHECK de stock, migrados y verificados por 0010 (2026-10-04). Fases 1/2 revalidadas y reservas backend verificadas en fase 3; presentación móvil probada en Jest y recorrido en dispositivo pendiente.
@@ -22,7 +24,7 @@ Ampliación aditiva 0023: las proyecciones autorizadas incorporan `publicationIm
 
 - `POST /reservations` recibe `{ publicationId }`, JWT y encabezado obligatorio `Idempotency-Key` (UUID nuevo por acción del comprador; ausente o inválido `400`). La primera creación devuelve `201` con `id`, `publicationId`, `status: ACTIVE`, `reservedAt`, `expiresAt` ISO 8601, `unitPrice` cadena decimal de dos posiciones y `sellerContact.phone` canónico. Un reintento del mismo comprador, clave y publicación devuelve la misma reserva y su estado actual con `200`, sin otro descuento de stock; reutilizar la clave para otra publicación responde `409`.
 - `GET /reservations/mine` permite al comprador consultar cada reserva propia; `GET /publications/:id/reservations` permite al vendedor propietario ver las de su publicación; `GET /reservations/:id` da detalle a comprador o vendedor relacionados. Otro actor recibe `403`. Los contactos se exponen solo conforme a RF-13.
-- Cada proyección autorizada de reserva incluye `publicationTitle` para identificar el producto y construir el mensaje de contacto aun cuando la última unidad o el fin de horario oculten el detalle público. La lista `mine` sigue disponible con publicaciones invisibles; el feed y el detalle público no reciben teléfonos nuevos.
+- Cada proyección autorizada de reserva incluye `publicationTitle` para identificar el producto y construir el mensaje de contacto aun cuando la última unidad o el fin de horario oculten el detalle público. La lista `mine` sigue disponible con publicaciones invisibles; feed sin teléfonos y detalle conforme al contrato objetivo 0039.
 - Un comprador puede mantener varias reservas activas independientes de la misma publicación, una unidad cada una, si queda stock. Una nueva acción emplea otra clave; no existe unicidad por comprador/publicación. El precio de cada reserva se fija al confirmarla y cambios posteriores del precio visible no la alteran.
 - Solo se reserva una publicación `LIVE` en estado `ACTIVE`, dentro de su ventana de venta y con `current_stock > 0`. La operación crea la reserva y resta una pieza de stock disponible de forma atómica.
 - `POST /reservations/:id/complete` permite únicamente al vendedor pasar `ACTIVE → COMPLETED` antes del vencimiento; el stock disponible no cambia otra vez.

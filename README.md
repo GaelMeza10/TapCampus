@@ -53,7 +53,7 @@ Permanece activa hasta que el vendedor la marque como vendida. No tiene temporiz
 - **Confirmación:** el vendedor confirma la entrega con un toque; el stock pasa a "vendido definitivo".
 - **Cancelación por el comprador:** libera el stock de inmediato, sin esperar los 20 minutos.
 - **Contacto bidireccional por WhatsApp:**
-  - En ventas en vivo, el comprador puede contactar al vendedor después de que el servidor confirma la reserva.
+  - Contacto 0039 implementado técnicamente: en ventas en vivo visibles puede consultar al vendedor antes de reservar y coordinar desde la reserva confirmada después. La consulta previa no crea un apartado; apertura y retorno nativos pendientes de aceptación.
   - En cuanto existe una reserva, el vendedor puede contactar a ese comprador específico.
 
 ### Mecanismo Técnico de Concurrencia
@@ -91,7 +91,7 @@ El vendedor puede editar precio, descripción, stock, horario y configuración d
 | Teléfono mexicano | Se aceptan diez dígitos nacionales con o sin `+52`, de cualquier región de México; se guarda como `+52XXXXXXXXXX` |
 | Hash de contraseñas | Buenas prácticas de NestJS (bcrypt o similar) |
 | JWT con expiración | Tokens de sesión con tiempo de vida limitado |
-| Filtro de palabras clave | Idea pendiente de requisito y criterios de aceptación; no está implementada ni comprometida en el MVP |
+| Filtro de palabras clave | RF-15 MUST, 0038 implementado técnicamente en creación/edición LIVE/STATIC; política v1, error por campo y borrador conservado. Aceptación nativa pendiente |
 | Reportes de la comunidad | Varias denuncias acumuladas ocultan la publicación automáticamente para revisión |
 | Rol de moderador | Campo booleano en `Usuario`; sin panel dedicado en el MVP (puede ser una vista simple o consulta directa a BD) |
 
@@ -137,9 +137,9 @@ El contrato detallado y los nombres físicos vigentes están en [arquitectura](d
 
 ## Priorización del MVP
 
-La prioridad vinculante está en las etiquetas `MUST` y `SHOULD` de `docs/02_REQUIREMENTS.md`. El núcleo `MUST` comprende autenticación UABC, publicaciones en vivo y estáticas, venta física, filtros de zona y categoría, reserva y expiración de 20 minutos, confirmación de entrega, bloqueo pesimista, precio ganga manual/programado, WhatsApp tras reserva y eventos Socket.io.
+La prioridad vinculante está en `docs/02_REQUIREMENTS.md`, reconciliado con el plan integral el 2026-11-21. El núcleo MUST comprende autenticación UABC, publicaciones LIVE/STATIC editables, venta física, filtros de zona/categoría, reserva/expiración de 20 minutos, cancelación/entrega, cierre anticipado, bloqueo pesimista, oferta manual/programada privada, filtro RF-15, contacto WhatsApp previo y desde reserva y Socket.io. Los cierres 0037–0040 están planificados; esa lista no acredita implementación completa.
 
-El cierre manual, la cancelación por el comprador y la moderación por reportes están etiquetados `SHOULD`. El filtro de palabras clave, perfil/reputación y notificaciones push son ideas que necesitan un requisito y criterios de aceptación antes de planificarse.
+Moderación/reportes permanecen SHOULD en 0009. Reputación y notificaciones push requieren requisitos separados. El filtro RF-15 y los errores del formulario están implementados y verificados técnicamente en 0038/0034; edición propia de nombre/teléfono está incorporada en 0033. No se declara completo el MVP sin aceptación móvil y evidencia de entrega/UAT.
 
 ### Fuera de alcance
 - Geolocalización real por GPS (el filtrado de zona es manual, por catálogo)

@@ -1,11 +1,13 @@
 # 0006 — Verificación
 
+Revisión 2026-11-21: las EV siguientes conservan resultados históricos. La ampliación de AC-02 para rechazar igualdad y las reglas de configuración privada/cambio/retirada todavía no están aprobadas; comprobar [0037](../0037-control-y-privacidad-ofertas/verification.md). Esta nota no convierte una prueba anterior en evidencia del nuevo contrato.
+
 Estado: **Backend fase 3 verificado; UI pendiente** | Fecha: 2026-10-05
 
 | AC | Tarea(s) | Evidencia | Resultado |
 | --- | --- | --- | --- |
 | AC-01 | T-02, T-06, T-07 | EV-01: configuración sin descuento | Aprobado backend |
-| AC-02 | T-02, T-06, T-07 | EV-02: 400 sin filas/jobs | Aprobado backend |
+| AC-02 | T-02, T-06, T-07 | EV-02: 400 sin filas/jobs en contrato histórico | Aprobado histórico; igualdad añadida en 0037 pendiente |
 | AC-03 | T-03, T-05, T-06, T-07 | EV-03: manual/permisos/feed/evento | Aprobado backend; UI pendiente |
 | AC-04 | T-04, T-05, T-06, T-07 | EV-04: delay/reinicio/evento único | Aprobado backend |
 | AC-05 | T-04, T-06, T-07 | EV-05: horario/job antiguo/finalización | Aprobado backend |

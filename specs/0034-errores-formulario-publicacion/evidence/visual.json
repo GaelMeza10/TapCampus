@@ -1,0 +1,253 @@
+{
+  "shots": [
+    {
+      "name": "form-errors-all-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "form-errors-bottom-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "form-errors-focus-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-content-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nSe detectó una palabra ofensiva o no permitida, modifícala si deseas guardar la publicación\nIr al primer campo\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\n\nRevisa el título: contiene una palabra no permitida.\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-errors-all-375",
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "form-errors-bottom-375",
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "form-errors-focus-375",
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-content-375",
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nSe detectó una palabra ofensiva o no permitida, modifícala si deseas guardar la publicación\nIr al primer campo\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\n\nRevisa el título: contiene una palabra no permitida.\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-errors-all-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "form-errors-bottom-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "form-errors-focus-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-content-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nSe detectó una palabra ofensiva o no permitida, modifícala si deseas guardar la publicación\nIr al primer campo\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\n\nRevisa el título: contiene una palabra no permitida.\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-errors-all-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "form-errors-bottom-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "form-errors-focus-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-content-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nSe detectó una palabra ofensiva o no permitida, modifícala si deseas guardar la publicación\nIr al primer campo\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\n\nRevisa el título: contiene una palabra no permitida.\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-network-preserved",
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nNo se pudo guardar. Revisa tu conexión y vuelve a intentarlo.\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 02:20 p.m.\n\n\nFin\n21 nov, 03:32 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios"
+    },
+    {
+      "name": "form-zone-error",
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCategoría\nSeleccionar categoría\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nSeleccionar zona\n\n\nNo se pudieron cargar las zonas.\nReintentar zonas\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar\nZona\n×\n!\nNo pudimos cargar las opciones\nNo se pudieron cargar las zonas.\nReintentar"
+    },
+    {
+      "name": "form-errors-large-text",
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nNueva publicación\nRevisa los campos señalados\nIr al primer campo\nDisponibles ahora\nCatálogo\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\n\nAñade una foto del producto.\nProducto\nTítulo\n\nEscribe un título para identificar el producto.\nDescripción\n\nDescribe el producto y agrega una referencia para la entrega.\n\nCategoría\nSeleccionar categoría\n\n\nSelecciona una categoría.\nPrecio y disponibilidad\nPrecio normal\n\nEl precio debe ser positivo y tener hasta dos decimales.\nStock disponible\n\nEl stock debe ser un entero no negativo; al crear debe ser mayor que cero.\nEntrega\n\nZona\nSeleccionar zona\n\n\nSelecciona una zona.\nHorario de venta\n\nInicio\n21 nov, 03:20 p.m.\n\n\nFin\n21 nov, 04:20 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    }
+  ],
+  "exceptions": [],
+  "missingAssets": []
+}

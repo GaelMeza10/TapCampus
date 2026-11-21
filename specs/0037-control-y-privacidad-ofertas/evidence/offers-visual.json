@@ -1,0 +1,123 @@
+{
+  "shots": [
+    {
+      "name": "offers-scheduled-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nProgramada · $65.00 · 5 min antes del fin\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPrecio mínimo\nPrecio normal: $85.00. El mínimo debe ser menor.\nMinutos antes del fin\nActivación: 21 nov, 02:51 p.m.\nLa venta termina 21 nov, 02:56 p.m..\nGuardar configuración"
+    },
+    {
+      "name": "offers-withdrawn-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPuedes publicar con el precio normal. Configurar una oferta es opcional.\nGuardar configuración"
+    },
+    {
+      "name": "offers-equal-error-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPrecio mínimo\n\nEl precio mínimo debe ser positivo y menor que el precio normal.\nPrecio normal: $85.00. El mínimo debe ser menor.\nTú decides cuándo activar\nActiva la oferta desde Mis ventas mientras la publicación siga en horario.\nGuardar configuración"
+    },
+    {
+      "name": "offers-scheduled-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nProgramada · $65.00 · 5 min antes del fin\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPrecio mínimo\nPrecio normal: $85.00. El mínimo debe ser menor.\nMinutos antes del fin\nActivación: 21 nov, 02:51 p.m.\nLa venta termina 21 nov, 02:56 p.m..\nGuardar configuración"
+    },
+    {
+      "name": "offers-withdrawn-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPuedes publicar con el precio normal. Configurar una oferta es opcional.\nGuardar configuración"
+    },
+    {
+      "name": "offers-equal-error-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPrecio mínimo\n\nEl precio mínimo debe ser positivo y menor que el precio normal.\nPrecio normal: $85.00. El mínimo debe ser menor.\nTú decides cuándo activar\nActiva la oferta desde Mis ventas mientras la publicación siga en horario.\nGuardar configuración"
+    },
+    {
+      "name": "offers-scheduled-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nProgramada · $65.00 · 5 min antes del fin\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPrecio mínimo\nPrecio normal: $85.00. El mínimo debe ser menor.\nMinutos antes del fin\nActivación: 21 nov, 02:51 p.m.\nLa venta termina 21 nov, 02:56 p.m..\nGuardar configuración"
+    },
+    {
+      "name": "offers-withdrawn-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPuedes publicar con el precio normal. Configurar una oferta es opcional.\nGuardar configuración"
+    },
+    {
+      "name": "offers-equal-error-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nMis ventas\nEditar publicación\nDisponibles ahora\nCatálogo\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n21 nov, 01:44 p.m.\n\n\nFin\n21 nov, 02:56 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n×\nSin oferta\nManual\nProgramada\nPrecio mínimo\n\nEl precio mínimo debe ser positivo y menor que el precio normal.\nPrecio normal: $85.00. El mínimo debe ser menor.\nTú decides cuándo activar\nActiva la oferta desde Mis ventas mientras la publicación siga en horario.\nGuardar configuración"
+    }
+  ],
+  "exceptions": [],
+  "missingAssets": []
+}

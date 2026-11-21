@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-21T22:46:42.585Z",
+  "node": "v24.13.0",
+  "platform": "win32",
+  "frontend": {
+    "tests": 112,
+    "suites": 15,
+    "types": "PASS",
+    "nativeExports": [
+      "android",
+      "ios"
+    ],
+    "exportMetadataSha256": "7deb666c85c8e13ae78c0cedb0bd94b8ee35ae92b157d0d8cf3fdfaf349b17cc"
+  },
+  "backend": {
+    "tests": 39,
+    "suites": 9,
+    "fullTypes": "PASS",
+    "build": "PASS",
+    "lint": "PASS",
+    "phase5Contracts": "PASS"
+  },
+  "integration": {
+    "phase2Requests": 257,
+    "phase2Checks": 10,
+    "phase2": "PASS",
+    "phase3Requests": 374,
+    "phase3Checks": 19,
+    "phase3": "PASS"
+  },
+  "visual": {
+    "captures": 9,
+    "widths": [
+      320,
+      390,
+      430
+    ],
+    "exceptions": 0,
+    "missingAssets": 0,
+    "nativeAcceptance": "PENDING"
+  },
+  "nativeEnvironment": {
+    "adbDevices": [],
+    "configuredAvds": [],
+    "result": "No device connected or AVD configured; native acceptance remains pending."
+  }
+}

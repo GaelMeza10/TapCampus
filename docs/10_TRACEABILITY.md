@@ -1,5 +1,26 @@
 # Matriz de trazabilidad de TapCampus
 
+## Cierre MVP en ejecución — 2026-11-21
+
+| Feature | Requisito → historia → tarea global | Criterios → tareas → evidencia prevista | Estado |
+| --- | --- | --- | --- |
+| [0037](../specs/0037-control-y-privacidad-ofertas/spec.md) | RF-02/07/11/12, RNF-01/02 → US-02/05/06 → 5.28 | AC-01..06 → T-01..05 → EV-01..06; AC-07 → T-06 → EV-07 | En verificación: 39 backend/112 frontend, 631 HTTP, tipos/build/lint, nueve capturas y exports PASS. AC-07 técnico aprobado y nativo pendiente. |
+| [0038](../specs/0038-filtro-palabras-publicaciones/spec.md) | RF-03/06/15 → US-03/04/12 → 5.4/5.29 | AC-01..05 → T-01..05 → EV-01..05 | En verificación: política v1 POST/PATCH; 102 backend/124 frontend y 657 HTTP PASS. T-01..04 completas; T-05 nativa pendiente. |
+| [0039](../specs/0039-contacto-live-sin-reserva/spec.md) | RF-06/07/13 → US-09/11 → 5.6/5.30 | AC-01..04 → T-01..03 → EV-01..04; AC-05 → T-04 → EV-05 | En verificación: 102 backend/134 frontend, 674 HTTP, 16 capturas y exports PASS. Apertura/retorno nativos pendientes. |
+| [0040](../specs/0040-validacion-y-entrega-mvp/spec.md) | RF MUST/RNF vigentes → historias de ambos roles → 6.2/6.3/6.5/6.6 | AC-01..07 → T-01..07 → EV-01..07 | Planificado; técnico/móvil/distribución/UAT separados, con dependencias operativas. |
+
+Las filas históricas siguientes conservan resultados de su fecha. RF-05/RF-10 son MUST desde esta revisión; los criterios ampliados no heredan PASS anteriores. Regla vigente de ofertas en 0037 y contacto en 0039.
+
+RF-03/06/11 y RNF-03 → US-03/04/05/11 → TASKS 5.27 → [0036](../specs/0036-diseno-nueva-publicacion/spec.md) AC-01..03 → T-01..03 → [EV-01..03](../specs/0036-diseno-nueva-publicacion/verification.md): foto protagonista y formulario agrupado; tipos/105 pruebas/38 capturas finales/exports PASS, revisión independiente ship auxiliar y cotejo del sistema. Contratos y alcance 0034 conservados; hardware separado.
+
+RF-02/13 → US-02/09 → TASKS 5.26 → [0035](../specs/0035-diseno-mi-cuenta/spec.md) AC-01..04 → T-01..04 → [EV-01..03](../specs/0035-diseno-mi-cuenta/verification.md): composición de Mi cuenta rediseñada, funciones 0033 conservadas, tipos/105 pruebas/29 capturas/exports PASS. Revisión independiente ship auxiliar; hardware separado.
+
+RF-02/13 → US-02/09 → TASKS 5.25 → [0033](../specs/0033-edicion-mi-cuenta/spec.md) AC-01..04 → T-01..04 → [EV-01..03](../specs/0033-edicion-mi-cuenta/verification.md): edición propia de nombre/teléfono y correo fijo; 103 pruebas frontend/26 backend, tipos/build/lint, 15 capturas y exports PASS. Revisión independiente ship auxiliar y cotejo documental completados; aceptación física/API persistente separada.
+
+Implementación 2026-11-21: RF-03/06/11 → US-03/04/05 → TASKS 5.4 → [0034](../specs/0034-errores-formulario-publicacion/spec.md) AC-01..05 → T-01..05 → [EV-01..05](../specs/0034-errores-formulario-publicacion/verification.md): avisos persistentes, errores por campo, corrección guiada y recuperación sin perder borrador/foto. 124 pruebas, 19 capturas auxiliares, tipos/exports PASS. T-01..03 completas; T-04/T-05 conservan teclado/lector/foco nativos pendientes.
+
+RF-07/09/10/13 y RNF-02/03 → US-06/07b/08/09 → TASKS 5.24 → [0032](../specs/0032-diseno-mis-reservas/spec.md) AC-01..04 → T-01..04 → [EV-01..03](../specs/0032-diseno-mis-reservas/verification.md): refinamiento de Mis reservas, 100 pruebas, tipos, 22 capturas auxiliares y exports Android/iOS PASS. Revisión independiente ship solo auxiliar; no sustituye aceptación física de 5.3/0001/0008.
+
 Búsqueda 2026-11-06: [0025](../specs/0025-busqueda-publicaciones/verification.md), RF-05c/RNF-03 → US-05c → AC-01..05 → T-01..05 → EV-01..05 (TASKS 5.18). Texto servidor y filtros AND, 66 pruebas frontend/12 backend, 51 capturas, GET real y exports aprobados. Aceptación física de 5.2 separada.
 
 Ampliación de calidad 0024: AC-03 → T-04 → EV-04, revisión Impeccable/ui-ux-pro-max con foco, anuncios, objetivos Android y movimiento reducido; 62 pruebas/47 capturas/exports aprobados. La comprobación web de foco no sustituye la nativa.
@@ -21,10 +42,10 @@ Fecha: 2026-10-19. Esta matriz cubre **todos los requisitos identificados** en `
 | Requisito | Historia | Tarea global | Feature / criterio | Evidencia y estado |
 | --- | --- | --- | --- | --- |
 | RF-01 Registro UABC | US-01 | 1.1–1.3, 2.1, 4.1–4.3, 5.1 | [0002](../specs/0002-autenticacion/spec.md) AC-01/02/03/05/06; [0010](../specs/0010-infraestructura-y-base-de-datos/spec.md) AC-01/02/04; [0011](../specs/0011-arquitectura-visual-movil/spec.md) AC-01/02/03 | 0010 EV-01/02/04 y 0002 EV-08 backend; 0002 EV-09 interceptor/JWT/401 y 0011 EV-01..04 arquitectura móvil aprobados. Formularios completos con backend/BD de 5.1 pendientes. |
-| RF-02 Perfil obligatorio | US-01 | 1.3, 2.1, 4.2, 5.1 | 0002 AC-02/03, [0011](../specs/0011-arquitectura-visual-movil/spec.md) AC-02/03, [0008](../specs/0008-contacto-whatsapp/spec.md) AC-05 y 0010 AC-04; teléfono mexicano con o sin +52 | 0010 EV-04 y 0002 EV-08 backend; 0011 EV-02/03 componentes/formulario base aprobados. Registro completo de 5.1 y 0008 Linking pendientes. |
+| RF-02 Perfil obligatorio | US-01, US-02 | 1.3, 2.1, 4.2, 5.1, 5.25 | 0002 AC-02/03, [0011](../specs/0011-arquitectura-visual-movil/spec.md) AC-02/03, [0008](../specs/0008-contacto-whatsapp/spec.md) AC-05, 0010 AC-04 y [0033](../specs/0033-edicion-mi-cuenta/spec.md) AC-01..04; teléfono mexicano y edición propia de nombre/teléfono | 0010 EV-04 y 0002 EV-08 backend; 0011 EV-02/03 base. 0033 EV-01..03 edición técnica/auxiliar PASS. Registro completo de 5.1 y Linking/aceptación física pendientes. |
 | RF-03 Publicación en vivo | US-03 | 1.3, 2.3, 2.4, 5.4 | [0003](../specs/0003-publicaciones-en-vivo/spec.md) AC-01/02/03/06; 0010 AC-03/04 | 0010 EV-03/04 y 0003 EV-08/09/10 backend aprobadas, T-02/T-03/T-08 completas; UI/temporizador pendientes. |
 | RF-04 Expirar por tiempo/stock | US-03, US-08 | 2.4, 3.5, 5.2 | 0003 AC-03/04; [0001](../specs/0001-reservas/spec.md) AC-08 | 0003 T-04/T-09 → EV-04 y 0001 T-05/T-08 → EV-08 aprobadas: fin persistente/evento/reposición vigente; móvil pendiente. |
-| RF-05 Cierre anticipado [SHOULD] | US-05d | 5.5 | 0003 AC-07; 0001 AC-07 | 0003 T-09 → EV-07 y 0001 T-04/T-08 → EV-07 aprobadas: cierre conserva reservas; UI pendiente. |
+| RF-05 Cierre anticipado [MUST] | US-05d | 5.5, 6.5 | 0003 AC-07; 0001 AC-07; 0040 AC-02 | Backend histórico aprobado: cierre conserva reservas; aceptación móvil pendiente. Prioridad elevada sin cambiar comportamiento. |
 | RF-05b Venta física | US-05b | 2.6, 5.5 | 0003 AC-05/06 | 0003 T-05/T-09 → EV-05/10 aprobadas: carrera HTTP reserva/venta y eventos; UI pendiente. |
 | RF-05c Filtros | US-05c | 1.4, 2.5, 2.7, 5.2 | [0005](../specs/0005-catalogos-y-filtros/spec.md) AC-01/02/03/04; 0010 AC-05 | 0005 T-02/T-03/T-06 → EV-06 aprobada HTTP catálogos exactos/filtros AND/errores. 0010 EV-05 seed aprobado; UI AC-04 pendiente. |
 | RF-06 Catálogo estático | US-04, US-11 | 2.4, 2.6, 5.2, 5.4, 5.6 | [0004](../specs/0004-catalogo-estatico/spec.md) AC-01/02/03/04/05 | 0004 T-01/T-02/T-03/T-06 → EV-06 aprobada HTTP sin horario/stock, contacto directo y sold concurrente 200/409. Móvil pendiente. |
@@ -32,11 +53,12 @@ Fecha: 2026-10-19. Esta matriz cubre **todos los requisitos identificados** en `
 | RF-07 Reserva temporal | US-06 | 1.3, 3.1, 5.3, 6.1 | 0001 AC-01/02/03/09/11/13; 0008 AC-01; 0010 AC-03/04 (precio, clave y migración) | 0001 T-03/T-08 → EV-01/02/03/09 aprobadas: plazo/precio/JWT/50 claves/varias reservas/retry. 0008 EV-01 privacidad API; 0001 T-12/13 → EV-12/13 presentación probada en Jest; T-14/EV-14 móvil pendiente. |
 | RF-08 Confirmar entrega | US-07 | 3.2, 5.5 | 0001 AC-04/12/13; también después de `end_time` dentro de sus 20 minutos | 0001 T-04/T-08 → EV-04 aprobada: vendedor, tras end_time dentro del plazo, terminales/carrera; T-12/13 → EV-12/13 presentación probada en Jest; T-14/EV-14 móvil pendiente. |
 | RF-09 Expiración de reserva | US-08 | 1.3, 3.3, 3.4 | 0001 AC-06/08; 0010 AC-03/04 (datos de reserva) | 0001 T-05/T-08 → EV-06/08 aprobadas: Redis/BullMQ, reinicio real, jobs perdidos/duplicados, conciliación/devolución única. |
-| RF-10 Cancelación [SHOULD] | US-07b | 3.2, 5.3 | 0001 AC-05/08/11/13 | 0001 T-04/T-08 → EV-05/08 aprobadas: comprador/stock único/feed/carreras; T-12/13 → EV-12/13 presentación probada en Jest; T-14/EV-14 móvil pendiente. |
-| RF-11 Configurar ganga | US-05 | 2.4, 3.6, 5.4 | [0006](../specs/0006-precio-ganga/spec.md) AC-01/02/05 | 0006 T-02/T-04/T-07 → EV-01/02/05 aprobadas: configuración/encolado/reprogramación; formulario móvil pendiente. |
+| RF-10 Cancelación [MUST] | US-07b | 3.2, 5.3, 6.5 | 0001 AC-05/08/11/13; 0040 AC-02/03 | Backend/Jest históricos aprobados; aceptación móvil pendiente. Prioridad elevada sin cambiar comportamiento. |
+| RF-11 Configurar ganga | US-05 | 2.4, 3.6, 5.4, 5.28 | [0006](../specs/0006-precio-ganga/spec.md) AC-01/02/05; 0037 AC-02..06 | 0037 T-02..05 → EV-02..06 nuevas aprobadas: mínimo estricto, configuración privada, ambos modos/retirada, jobs obsoletos y legado con SQL/Redis reales. EV-07 nativa pendiente. |
 | RF-12 Activar ganga | US-05 | 3.5, 3.6, 5.2, 5.5 | 0006 AC-03/04/06; [0007](../specs/0007-tiempo-real/spec.md) AC-03; precio previo inmutable | 0006 T-03/T-04/T-07 → EV-03/04/06 y 0007 T-02/T-05 → EV-03 aprobadas: activación/evento/precio previo fijo; UI pendiente. |
-| RF-13 WhatsApp | US-09, US-11 | 5.3, 5.6 | 0008 AC-01/02/03/04/05 | 0008 T-01/T-02/T-05 → EV-01/02/03/05 aprobadas API: LIVE protegido/STATIC directo/comprador activo/normalización; EV-04 URL/Linking pendiente. |
+| RF-13 WhatsApp | US-09, US-11 | 5.3, 5.6, 5.25, 5.30 | 0008 AC-01..05, 0033 AC-02 y 0039 AC-01..05 | 0039 T-01..03 → EV-01..04 técnicos aprobados: consulta previa LIVE/STATIC, teléfono vigente, reserva con detalle 404 y privacidad por actor/estado/plazo. T-04/EV-05 apertura nativa pendiente; 0008/0033 conservan evidencia histórica. |
 | RF-14 Ocultamiento [SHOULD] | US-10 | 6.4 | [0009](../specs/0009-reportes-y-moderacion/spec.md) AC-01/02/03 | 0009 EV-01/02/03 planificadas; DEC-01/02 abiertas, opcional y sin ejecutar. |
+| RF-15 Filtro de contenido [MUST] | US-12, US-03, US-04 | 5.4, 5.29 | [0038](../specs/0038-filtro-palabras-publicaciones/spec.md) AC-01..05 | T-01..04 → EV-01..05 técnicas aprobadas: política exacta, 62 casos y rechazo HTTP/SQL sin escrituras; recuperación integrada con 0034. T-05 nativa pendiente. |
 | RNF-01 Concurrencia | US-06, US-05b | 1.2, 1.3, 3.1, 6.1 | 0001 AC-02; 0003 AC-05; 0010 AC-02/03 | 0001 T-03/T-08 → EV-02: 50 claves 1×201/49×409; EV-09 misma clave 1×201/49×200/un ID. 0003 EV-05 carrera HTTP aprobada. |
 | RNF-02 Tiempo real | US-03, US-05, US-06 | 3.5, 5.2 | 0007 AC-01/02/03/04/05 | 0007 T-01/T-02/T-05 → EV-01..05 aprobadas gateway: dos clientes/stock/fin/ganga/postcommit/reconexión+REST; móvil pendiente. |
 | RNF-03 Sin GPS ni pagos | US-03, US-04, US-05c | Restricción en 2.4, 2.5, 5.2 | 0005 AC-04; alcance de 0001–0008 | 0005 EV-04 planificada; revisión transversal sin ejecutar. |
@@ -62,6 +84,10 @@ RF-01/02 → 0002 AC-01..06/T-04/05/EV-10: formularios y sesión compilados; reg
 Al verificar un feature, enlazar sus `EV` reales y resultado. Si un requisito comparte features, conservar exactamente qué parte cubre cada uno. Una evidencia planificada jamás se registra como aprobada. El estado del producto solo puede declararse completo cuando todas las filas `MUST` tienen evidencia aprobada y los `SHOULD` incluidos en el alcance acordado también la tienen.
 
 ## Revisiones 2026-11-09
+
+RF-05c/06/07/11/12 y RNF-03 → US-04/05/05c/06 → TASKS 5.23 → [0031](../specs/0031-estilo-marketplace/spec.md) AC-01..03 → T-01..04 → [EV-01..03](../specs/0031-estilo-marketplace/verification.md): sistema claro compartido, tarjetas fotográficas adaptables y destacado real, sin carrito ni nuevos contratos. Alcance técnico y visual auxiliar; hardware separado.
+
+Refinamiento 2026-11-10: RNF-03 → US-04/05 → TASKS 5.23 → 0031 AC-06 → T-07 → EV-06: publicaciones sin oferta sobre blanco, incluido el destacado. Tipos, siete pruebas de feed y nueve capturas auxiliares PASS; hardware separado.
 
 RF-11/12 → US-05 → TASKS 5.22 → [0030](../specs/0030-textos-oferta/spec.md) AC-01..03 → T-01..04 → [EV-01..03](../specs/0030-textos-oferta/verification.md): término Oferta en experiencia visible y tres títulos Demo, contratos y paleta conservados.
 

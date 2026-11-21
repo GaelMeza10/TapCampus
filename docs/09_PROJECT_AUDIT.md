@@ -1,5 +1,134 @@
 # Auditoría del proyecto y decisiones de producto
 
+## Ejecución técnica de 0039 y sincronización de diseño — 2026-11-21
+
+[0039](../specs/0039-contacto-live-sin-reserva/verification.md) amplía solo el detalle visible LIVE con sellerContact actual y añade contacto secundario sin reserva/UUID ni cambio de stock. STATIC conserva su flujo; feed/mine/eventos no incorporan teléfonos. Reservas autorizadas conservan teléfono/título cuando el detalle se agota/finaliza. Se mantienen permisos y buyerContact solo al vendedor relacionado mientras ACTIVE no vencida; terminal/vencida no lo exponen.
+
+Nueva evidencia: 102 pruebas backend/134 frontend, tipos/build/lint, contratos fase5, 288 HTTP fase2 y 386 fase3 (674), hashes/recuentos originales idénticos, dos clientes Socket.io, 16 capturas auxiliares y exports Android/iOS PASS. Fallo de WhatsApp separado del error de carga; el botón Contactar permite reintento real. El verificador auxiliar intercepta el adaptador web de Expo, que utiliza location. Chrome requirió ejecución autorizada fuera del aislamiento. Sin migración, dependencias ni despliegue del proceso del usuario.
+
+Por petición expresa se sincronizó .impeccable/design.json conservando DESIGN.md byte a byte; huella registrada en 0039/evidence/summary.json. T-01..03 completas y AC-01..04 técnicos aprobados. T-04/AC-05, TASKS 5.6/5.30 permanecen abiertos: ADB sin dispositivos; sin apertura/retorno nativos observados. Siguiente bloque 0040: aceptación integrada/entrega/UAT. Los diagnósticos siguientes conservan su fecha y alcance histórico.
+
+## Ejecución técnica de 0034 y 0038 — 2026-11-21
+
+[0034](../specs/0034-errores-formulario-publicacion/verification.md) implementa validación conjunta, errores junto a su origen, aviso persistente bajo el título y foco tras actualizar layout. Los reintentos conservan borrador/foto y solo recargan el catálogo fallido. Se corrigió además un colapso del aviso al enfocar, detectado en la revisión auxiliar; el verificador comprueba ahora altura y desplazamiento real.
+
+[0038](../specs/0038-filtro-palabras-publicaciones/verification.md) aplica política v1 local a título/descripción al crear o enviar texto en PATCH de LIVE/STATIC. Coincide por palabras/frases completas sin cruzar campos, preserva ñ y no transforma el texto persistido. Respeta permisos/estado y permite editar stock/precio sin revisar texto histórico no enviado. Error 400 con code/fields; formulario conserva la foto ya subida y no repite upload al corregir.
+
+Evidencia nueva: 102 pruebas backend (62 de política), 124 frontend, tipos completos/build/lint, 283 HTTP fase2 y 374 fase3 (657), hashes/recuentos originales idénticos, 19 capturas auxiliares en cuatro tamaños/texto ampliado y exports Android/iOS PASS. Sin migración ni dependencias nuevas. 0034 T-01..03 y 0038 T-01..04 completas técnicamente; teclado/lector/foco/cámara reales pendientes. TASKS 5.4/5.29 permanecen abiertas. Siguiente implementación: 0039; 0040 conserva aceptación integrada/entrega/UAT.
+
+Los apartados siguientes conservan el diagnóstico y la evidencia de cada fecha; las afirmaciones de implementación pendiente en las entregas de planificación son históricas y quedan sustituidas por esta ejecución.
+
+## Ejecución técnica de 0037 — 2026-11-21
+
+[0037](../specs/0037-control-y-privacidad-ofertas/verification.md) implementa privacidad de configuración futura en feed/detalle, tipos públicos/propios, precio mínimo estricto, modos/retirada con nulls explícitos y compatibilidad de activa/legado. El worker valida también que exista reducción real; bloqueo y relectura impiden ejecutar configuración retirada/obsoleta. El test de perfil conserva su aserción y ya pasa el tipado completo. El formulario conserva foto/borrador y segundos/milisegundos del horario si no fue editado.
+
+Nueva evidencia: 39 pruebas backend/112 frontend, tipos, build/lint backend, contratos fase5, 257 HTTP fase2/374 fase3 (631 total), dos clientes Socket.io, ambos órdenes y seis carreras retirada/activación/reserva, reinicio y conciliación con oferta retirada. Hashes y recuentos originales idénticos; sin migración/seed sobre datos reales. Exportaciones Android/iOS PASS y nueve capturas auxiliares a 320/390/430 revisadas. Artefactos en el expediente; no se reescriben logs históricos.
+
+Incidencias de verificadores corregidas: recuento de migraciones hardcodeado en fase2 y origen PUBLIC_BASE_URL heredado de dotenv del hijo. Cada proceso de prueba fija ahora su origen loopback; las pruebas conservan el caso explícito de origen personalizado. Revisión Chrome restringida agotó DevTools; reejecución autorizada sin ventana PASS.
+
+T-01..05 completas; AC-01..06 aprobados técnicamente. AC-07/T-06 y TASKS 5.28 permanecen abiertos para recorrido nativo, ya que adb no mostró dispositivo y no hay AVD configurado. No se declara APK, despliegue final ni MVP completo; 0034/0038/0039 mantienen su alcance separado.
+
+## Planes del cierre MVP preparados — 2026-11-21
+
+El usuario autoriza comenzar la corrección y pide preparar primero los planes. Se crean cuatro expedientes completos, sin modificar código funcional ni ejecutar migraciones/seed/despliegues:
+
+| Expediente | Alcance | Estado |
+| --- | --- | --- |
+| [0037](../specs/0037-control-y-privacidad-ofertas/plan.md) | Corregir tipado del test de perfil como paso inicial; configuración privada, mínimo estricto, modos/retirada, jobs obsoletos y compatibilidad de oferta activa/precios reservados. | Planificado; T/EV funcionales pendientes. |
+| [0038](../specs/0038-filtro-palabras-publicaciones/plan.md) | RF-15, política v1, creación/texto editado LIVE/STATIC y recuperación del formulario. | Planificado; lista exacta en policy.md, implementación pendiente. |
+| [0039](../specs/0039-contacto-live-sin-reserva/plan.md) | Consulta al vendedor desde detalle LIVE visible, sin reserva ni exposición del comprador. | Planificado; nueva aceptación no hereda EV de ausencia de contacto. |
+| [0040](../specs/0040-validacion-y-entrega-mvp/plan.md) | Regresión actual, recorridos nativos, concurrencia/reinicio, infraestructura persistente, instalable y UAT. | Planificado; recursos/dispositivos/participantes son dependencias de ejecución. |
+
+Decisiones incorporadas al alcance vigente:
+
+- RF-05 y RF-10 pasan de SHOULD a MUST según el núcleo indispensable del plan integral; no cambia su comportamiento implementado. RF-14/moderación permanece SHOULD separado.
+- GAP-11 histórico queda sustituido como decisión de alcance: filtro RF-15 obligatorio, todavía sin implementación. El usuario indica «groserías, términos despectivos, etc., analízalo» y delega la selección. Política v1 pequeña con entradas exactas y casos negativos; no se presenta como lista oficial del campus.
+- Contacto LIVE previo sustituye la restricción anterior del teléfono del vendedor. Conserva feed/eventos sin contactos y privacidad del comprador hasta reserva activa no vencida.
+- La retirada de configuración es anterior al disparo; no se revierte una oferta ya aplicada, conservando 0006 DEC-02. No hay reparación masiva de configuraciones/precios históricos.
+- Se reutiliza el plan 0034 para avisos/campos/borrador; su redacción ya no obliga a conservar restricciones de oferta que 0037 corrige. No se duplica el refactor del formulario.
+
+Se sincronizan requisitos, arquitectura objetivo, flujos, historias, validación, índice, trazabilidad, TASKS y resúmenes. Los expedientes base explican qué contratos nuevos sustituyen los anteriores; los logs/EV históricos conservan fecha y alcance. Ninguna casilla funcional se cierra por redactar el plan.
+
+Orden de ejecución: base técnica y 0037 → patrón 0034 + filtro 0038 → contacto 0039 → aceptación/entrega 0040. La revisión actual es documental: no se repiten las 26/105 pruebas ni se afirma corregido el TS2339.
+
+Comprobaciones documentales 2026-11-21:
+
+- Desde raíz, `node scripts/check-sdd.mjs`: PASS de estructura, identificadores y cobertura AC→T→EV prevista.
+- `git diff --check -- README.md PRODUCT.md TASKS.md docs specs`: PASS; solo avisos de normalización LF/CRLF de Git, sin errores de whitespace.
+- Inspección automatizada de los cuatro directorios nuevos: 21 archivos Markdown, sin espacios finales ni enlaces locales rotos en esos archivos; cada expediente contiene los cinco artefactos requeridos y 0038 añade policy.md.
+- Revisión semántica: RF-15/US-12 y prioridades enlazados; contratos actuales distinguidos de históricos; 0034 coordinado; todas las tareas funcionales/EV nuevas permanecen pendientes. No es evidencia de aplicación funcionando.
+
+## Contraste con el plan integral proporcionado por el usuario — 2026-11-16
+
+**Dictamen: el núcleo está implementado, pero no se acredita cumplimiento completo del MVP del plan integral.** Esta revisión usa como referencia el texto entregado por el usuario en esta sesión, además de los RF/RNF internos. No cambia decisiones de producto ni convierte diferencias de alcance en decisiones aprobadas. Se inspeccionó el árbol de trabajo, incluidos cambios previos sin commit, y se ejecutaron las comprobaciones siguientes sin modificar código funcional ni datos.
+
+### Comprobaciones ejecutadas en esta revisión
+
+| ID | Comando / entorno | Resultado observado |
+| --- | --- | --- |
+| REV-MVP-01 | Raíz: `node scripts/check-sdd.mjs` | PASS de estructura e identificadores; no prueba cumplimiento semántico del plan. |
+| REV-MVP-02 | Backend: `npm.cmd test -- --runInBand` | PASS: 8 suites, 26 pruebas. |
+| REV-MVP-03 | Frontend: `npm.cmd test -- --watch=false` | PASS: 15 suites, 105 pruebas. |
+| REV-MVP-04 | Frontend: `node node_modules/typescript/bin/tsc --noEmit` | PASS. |
+| REV-MVP-05 | Backend: `node node_modules/typescript/bin/tsc --noEmit --incremental false` | FAIL TS2339 en `src/auth/update-profile.spec.ts:62`: acceso a `sellerContact` sin estrechar la unión de respuestas comprador/vendedor. Las pruebas Jest aprobadas no cierran esta comprobación. |
+| REV-MVP-06 | Backend: `node node_modules/typescript/bin/tsc -p tsconfig.build.json --noEmit --incremental false` | PASS del tipado de producción, que excluye pruebas; no se ejecutó un nuevo build empaquetado. |
+| REV-MVP-07 | Backend: `npm.cmd run lint` | PASS. |
+
+Las pruebas reales de concurrencia, PostgreSQL, Redis, reinicio y dos clientes Socket.io se contrastaron con el código y con `specs/0001-reservas/evidence/phase3.json` (2026-10-05: 311 solicitudes, 16 grupos PASS; última pieza 1×201/49×409; reintentos 1×201/49×200). **Son evidencia histórica: no se repitió esa integración en esta revisión.** No hubo nuevo recorrido físico, piloto UAT ni comprobación de despliegue externo.
+
+### Cobertura y diferencias frente al texto entregado
+
+| Área del plan | Estado y evidencia inspeccionada | Pendiente / diferencia |
+| --- | --- | --- |
+| Autenticación institucional y cuatro campos | Implementada: RegisterDto, validador de dominio, UsuariosService, bcrypt y JWT con expiración. | Completar aceptación móvil de sesión y validaciones; la validación del dominio no comprueba propiedad del buzón, conforme al alcance sin verificación por email del propio plan. |
+| LIVE/STATIC editables, imágenes, horario, venta estática y venta física | Implementadas en PublicationsService, DTO, uploads y pantallas de publicación/Mis ventas. | Cámara/galería/permisos y recorridos de creación/edición/venta con servicios reales pendientes de aceptación integrada. 0034 sigue como plan de mejora de errores visibles. |
+| Reservas de 20 minutos, cancelación, entrega y cierre anticipado | Implementados: transacciones con FOR UPDATE, precio fijado, idempotencia, workers y conciliación; evidencia histórica real de fase 3. | Recorrido completo comprador/vendedor en dispositivo; no confundir casillas 5.1–5.6 abiertas con módulos ausentes. El plan del usuario incluye cancelación y cierre como indispensables aunque RF-05/RF-10 internos los clasifican SHOULD. |
+| Zonas, categorías y tiempo real | Implementados: catálogos/filtros, gateway y useMarketplaceSync con reconsulta al conectar, recibir eventos y volver al primer plano. | Dos dispositivos reales y reconexión pendientes de aceptación. Categorías ya están implementadas aunque la tabla del plan las considera deseables. |
+| Filtro de palabras prohibidas al crear | No se encontró validación de contenido ni catálogo de términos en los DTO/servicio de publicaciones o frontend. GAP-11 histórico lo había excluido del MUST interno. | **Faltante del MVP del plan integral**, que sí lo enumera como indispensable. Definir requisito, términos y criterios antes de implementarlo; conservar el borrador al rechazar. |
+| Oferta manual/programada y prioridad visual | Activación instantánea, workers, distintivo y orden del feed implementados. | Cumplimiento parcial de las reglas detalladas: ver hallazgos siguientes. |
+| WhatsApp | STATIC directo y LIVE tras reserva; comprador/vendedor relacionados reciben contacto autorizado. | El plan permite contacto al vendedor LIVE antes de reservar; `PublicationsService.detail` solo añade sellerContact para STATIC y la pantalla LIVE no ofrece ese contacto previo. Es una diferencia de producto, no un fallo respecto al contrato interno actual. |
+| Reportes y moderación | Modelo/flag presentes; no se encontraron rutas, servicio de reportes ni revisión operativa. | Opcional según la tabla de prioridades del plan y RF-14 SHOULD. El texto también dice que el rol simple cubre el MVP: aclarar esta ambigüedad antes de presentar toda la sección 4 como completada. |
+| Entrega y validación final | TASKS 6.2/6.3 abiertas; sin eas.json ni APK/AAB/IPA en los archivos del proyecto inspeccionados. | No hay evidencia de entrega instalable, despliegue final o UAT completo. Un export JS no equivale a un instalador. No se descarta un artefacto o despliegue fuera del repositorio. |
+
+### Hallazgos concretos en precio de oferta
+
+1. **Configuración futura expuesta al comprador.** `Backend/src/publications/publication.select.ts:22` incluye `ganga_min_price`, `ganga_activation_mode` y `ganga_minutes_before`; `PublicationsService.list/detail` usan esa misma proyección y `publicationResponse` la devuelve. Aunque la UI no los muestre, la respuesta permite conocer si hay oferta programada, su precio y su umbral antes de activarse. Contradice la incertidumbre que fundamenta la innovación en el plan. Separar datos públicos de configuración del propietario.
+2. **Cambio de modo y retirada restringidos.** `Frontend/src/app/publication/edit.tsx:130` y `saveConfig` bloquean quitar una oferta configurada y pasar de SCHEDULED a MANUAL. El plan permite cambiar entre modos mientras la publicación está activa y describe control sobre desactivar la configuración. La retirada backend tampoco está definida en el DTO actual. Resolver la regla compartida y probar reprogramación/invalidación de trabajos.
+3. **Precio mínimo igual al normal permitido.** `PublicationsService.validate` rechaza solo `.gt(...)`, y el formulario también compara con `>`; por tanto admiten igualdad. El plan exige precio mínimo menor al normal. Requiere validación estricta en ambas capas.
+
+### Orden recomendado para el cierre
+
+1. Reconciliar el alcance interno con el plan entregado: filtro obligatorio, contacto LIVE previo, control y confidencialidad de configuración de ofertas; registrar la prioridad definitiva de moderación.
+2. Implementar los faltantes acordados con AC→T→EV y corregir el error de tipado de la prueba de perfil. Mantener abierta la aceptación pendiente.
+3. Verificar ambos roles en dispositivos contra API/PostgreSQL/Redis/Socket.io: foto, reserva, cancelación, entrega, cierre con reservas previas, oferta manual/programada, WhatsApp y reconexión. Registrar evidencia por criterio.
+4. Completar la distribución requerida para la entrega y la validación de usuarios definida en docs07; distinguir una demostración local del piloto publicado.
+
+No se marcaron nuevas tareas como completadas ni se reescribió evidencia histórica.
+
+## Nueva publicación con foto protagonista — 2026-11-10
+
+[0036](../specs/0036-diseno-nueva-publicacion/verification.md) refina la ruta compartida crear/editar con foto amplia, secciones abiertas y selectores reconocibles. Elección visual confirmada por el usuario; mantiene reglas, payloads y validación existente. 105 pruebas, tipos, 38 capturas finales con fotografías visibles y exports Android/iOS PASS; revisión independiente ship auxiliar y cotejo del sistema. No implementa ni cierra el plan 0034; aceptación física separada.
+
+## Rediseño de Mi cuenta — 2026-11-10
+
+[0035](../specs/0035-diseno-mi-cuenta/verification.md) reemplaza la tarjeta envolvente y el gran botón rojo de 0033 por identidad abierta con iniciales/nombre reales, contacto agrupado y cierre discreto. Editor, correo fijo, sesión y API conservados; campos/editor bloqueados también durante logout. Estados propios de carga/error y encabezado desplazable. Tipos, 105 pruebas, 29 capturas y exports Android/iOS PASS; revisión independiente ship auxiliar, aceptación física separada.
+
+## Edición de nombre y teléfono aprobada — 2026-11-10
+
+[0033](../specs/0033-edicion-mi-cuenta/verification.md) amplía explícitamente RF-02 y la cuenta en lectura de 0026: editor propio, correo institucional fijo, validación/guardado seguro y contacto vigente tras nuevas consultas. Sustituye las exclusiones históricas de edición de nombre/teléfono; correo/contraseña, reputación y push conservan su alcance separado. 103 pruebas frontend/26 backend, tipos/build/lint, 15 capturas auxiliares y bundles Android/iOS PASS; revisión independiente ship auxiliar y cotejo documental completados. Sin migración, escritura en cuentas reales ni reinicio del proceso API; aceptación física separada.
+
+## Plan de errores visibles en Nueva publicación — 2026-11-10
+
+[0034](../specs/0034-errores-formulario-publicacion/plan.md) documenta el aviso global al final del ScrollView y la cobertura parcial de mensajes/foco por campo en `publication/edit.tsx`. Propone aviso visible bajo el encabezado, mensajes específicos y navegación al primer error, con recuperación por origen y borrador conservado. Estado Planificado por petición del usuario; sin modificar implementación ni cerrar TASKS 5.4.
+
+## Mis reservas con prioridad de recogida — 2026-11-10
+
+[0032](../specs/0032-diseno-mis-reservas/verification.md) refina el módulo del comprador con Por recoger/Anteriores, foto y precio reservado destacados, plazo sereno y estados distintos. Sustituye en esa pantalla la composición de 0023; vendedor y detalle la conservan. 100 pruebas frontend, tipos, 22 capturas auxiliares y bundles Android/iOS PASS; revisión independiente ship solo para composición auxiliar. Sin cambios a API, datos ni reglas; aceptación física y TASKS 5.3 siguen separados.
+
+## Estilo fotográfico aprobado — 2026-11-09
+
+[0031](../specs/0031-estilo-marketplace/verification.md) reemplaza el fondo beige y las filas anteriores por superficies casi blancas y tarjetas fotográficas adaptables, según referencia Oakory y autorización explícita del usuario. Mantiene verde UABC, Inter, ofertas naranjas y navegación/contratos. Esta decisión resuelve la discrepancia con la composición histórica 0019/0020; docs04 y PRODUCT.md reflejan la nueva autoridad. Capturas Chrome son evidencia auxiliar; aceptación física sigue separada.
+
 ## Oferta como término visible — 2026-11-09
 
 [0030](../specs/0030-textos-oferta/verification.md) sustituye Ganga por Oferta en comprador y vendedor, incluye validación y confirmaciones; adapta mensajes heredados del servidor y renombra solo los tres títulos Demo exactos de 0027. Mantiene naranja, ahorro y contratos internos. La evidencia histórica usa el vocabulario de su fecha; no se reescribe para aparentar nuevas pruebas.

@@ -4,6 +4,8 @@ Estado: **En implementación; backend fase 2 verificado, móvil pendiente** | Fe
 
 ## Contexto y fuentes
 
+Ampliación 2026-11-21: el texto de creación/edición STATIC aplica RF-15 según [0038](../0038-filtro-palabras-publicaciones/spec.md). Las proyecciones se separan conforme a 0037; contacto estático directo y ausencia de reservas se conservan. Evidencia del filtro pendiente y separada de la línea base.
+
 RF-06, RNF-03; US-04 y US-11. `README.md` define STATIC sin temporizador ni reservas y con contacto directo; arquitectura exige categoría/zona y flujos definen «Vendida». API STATIC/FINISHED implementada y verificada en EV-06; integración móvil pendiente.
 
 ## Alcance y contrato observable

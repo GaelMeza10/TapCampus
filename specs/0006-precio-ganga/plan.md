@@ -4,9 +4,11 @@ Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Diseño
 
+Actualización 2026-11-21: ejecutar el complemento [0037](../0037-control-y-privacidad-ofertas/plan.md) para mínimo estricto, nulls explícitos, modos/retirada y proyecciones; sus pruebas son nuevas, no una repetición nominal de la evidencia histórica de fase 3.
+
 Fase 3: QueueService produce jobs cuyo ID incluye publicación y timestamp de activación; no requiere eliminar jobs bloqueados. PublicationsService.activateGanga bloquea la misma fila que reservas, valida modo/plazo/fecha esperada y confirma una transición única. JobsModule reconcilia trabajos futuros y gangas vencidas cada 30 s/al arrancar. Una ejecución obsoleta no cambia estado. T-05/T-06 se separan de móvil usando T-07 para evidencia backend.
 
-- Usar campos `ganga_min_price`, `ganga_activation_mode`, `ganga_minutes_before`, `is_ganga_active` y `end_time` de `Publication`. DTO exige mínimo positivo y `<= price`, modo coherente y disparo futuro dentro de la ventana. No almacenar dinero como `float` en cálculos de negocio; Prisma `Decimal(10,2)` y evento de precio serializado como cadena decimal.
+- Usar campos `ganga_min_price`, `ganga_activation_mode`, `ganga_minutes_before`, `is_ganga_active` y `end_time` de `Publication`. Configuración nueva exige mínimo positivo y `< price`, modo coherente y disparo futuro dentro de ventana; 0037 define legado activo/edición ajena, para no validar contra un precio ya rebajado. No almacenar dinero como `float`; Prisma `Decimal(10,2)` y evento serializado como cadena decimal.
 - `PATCH /publications/:id` configura/reprograma antes de activación. `PATCH /publications/:id/ganga` activa manualmente solo si la fila es `LIVE`, `ACTIVE`, dentro del horario, propiedad del JWT y ganga no activa. Actualización condicional/transacción evita duplicados.
 - BullMQ/Redis programa `ganga_queue` con ID estable por publicación. Al ejecutar, relee configuración y tiempo en BD, confirma estado y activación una sola vez; conciliación tras reinicio recupera trabajos perdidos. No tomar la existencia de un job como fuente de verdad. Reprogramar al cambiar fin/minutos y descartar trabajos obsoletos.
 - Emitir `ganga_activated` después del commit. `GET /publications` ordena gangas activas antes que publicaciones ordinarias y la UI usa distintivo según guía visual. El precio que devuelve la API es el precio actual visible.

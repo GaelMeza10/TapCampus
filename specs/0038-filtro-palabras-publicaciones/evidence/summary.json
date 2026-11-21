@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-21",
+  "features": ["0034", "0038"],
+  "status": "technical-pass-native-pending",
+  "backend": { "suites": 11, "tests": 102, "policyTests": 62, "types": "PASS", "build": "PASS", "lint": "PASS" },
+  "frontend": { "suites": 16, "tests": 124, "types": "PASS" },
+  "http": { "phase2": 283, "phase3": 374, "total": 657, "originalDataUnchanged": true },
+  "visual": { "captures": 19, "surface": "auxiliary-web", "exceptions": 0, "missingAssets": 0 },
+  "export": {
+    "platforms": ["android", "ios"],
+    "result": "PASS",
+    "localPath": "Frontend/.local/export-0038",
+    "metadataSha256": "7c24d19b58973dc0279596e26aed7cedab80db42ddd37c6b675b94d0efe2d920"
+  },
+  "pending": ["native-keyboard-focus-screen-reader", "native-image-picker-and-recovery", "integrated-acceptance-and-delivery-0040"],
+  "notes": "No APK, production deployment or physical device acceptance is claimed. Evidence phase2.json/phase3.json and 0034/evidence/visual.json are retained."
+}

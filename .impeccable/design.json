@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-21T23:53:41.136Z",
+  "title": "Design System: TapCampus",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Verde UABC"
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Blanco suave"
+      },
+      "ganga": {
+        "role": "secondary",
+        "displayName": "Naranja Oferta"
+      },
+      "error": {
+        "role": "secondary",
+        "displayName": "Rojo de error"
+      }
+    },
+    "shadows": [],
+    "motion": [],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Button primary",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "PrimaryButton; mínimo 52 puntos, pulsación y bloqueo compartidos.",
+      "html": "<button class=\"ds-button-primary\">Apartar</button>",
+      "css": ".ds-button-primary{font-family:Inter,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;min-height:52px;padding:12px 16px;border:0;border-radius:999px;background:#17613B;color:#FFFFFF;text-align:center;cursor:pointer}.ds-button-primary:hover{cursor:pointer}.ds-button-primary:focus-visible{outline:auto}.ds-button-primary:active{opacity:.75}.ds-button-primary:disabled{background:#B9C2B9;cursor:default}"
+    },
+    {
+      "name": "Button secondary",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "PrimaryButton; mínimo 52 puntos, pulsación y bloqueo compartidos.",
+      "html": "<button class=\"ds-button-secondary\">Volver</button>",
+      "css": ".ds-button-secondary{font-family:Inter,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;min-height:52px;padding:12px 16px;border:0;border-radius:999px;background:#EAF1EA;color:#17613B;text-align:center;cursor:pointer}.ds-button-secondary:hover{cursor:pointer}.ds-button-secondary:focus-visible{outline:auto}.ds-button-secondary:active{opacity:.75}.ds-button-secondary:disabled{background:#B9C2B9;cursor:default}"
+    },
+    {
+      "name": "Button destructive",
+      "kind": "button",
+      "refersTo": "button-destructive",
+      "description": "PrimaryButton; mínimo 52 puntos, pulsación y bloqueo compartidos.",
+      "html": "<button class=\"ds-button-destructive\">Finalizar</button>",
+      "css": ".ds-button-destructive{font-family:Inter,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;min-height:52px;padding:12px 16px;border:0;border-radius:999px;background:#B42318;color:#FFFFFF;text-align:center;cursor:pointer}.ds-button-destructive:hover{cursor:pointer}.ds-button-destructive:focus-visible{outline:auto}.ds-button-destructive:active{opacity:.75}.ds-button-destructive:disabled{background:#B9C2B9;cursor:default}"
+    },
+    {
+      "name": "Button ghost",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "PrimaryButton; mínimo 52 puntos, pulsación y bloqueo compartidos.",
+      "html": "<button class=\"ds-button-ghost\">Cancelar</button>",
+      "css": ".ds-button-ghost{font-family:Inter,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;min-height:52px;padding:12px 16px;border:0;border-radius:999px;background:transparent;color:#17613B;text-align:center;cursor:pointer}.ds-button-ghost:hover{cursor:pointer}.ds-button-ghost:focus-visible{outline:auto}.ds-button-ghost:active{opacity:.75}.ds-button-ghost:disabled{background:#B9C2B9;cursor:default}"
+    },
+    {
+      "name": "Button danger-ghost",
+      "kind": "button",
+      "refersTo": "button-danger-ghost",
+      "description": "PrimaryButton; mínimo 52 puntos, pulsación y bloqueo compartidos.",
+      "html": "<button class=\"ds-button-danger-ghost\">Cancelar reserva</button>",
+      "css": ".ds-button-danger-ghost{font-family:Inter,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;min-height:52px;padding:12px 16px;border:0;border-radius:999px;background:transparent;color:#B42318;text-align:center;cursor:pointer}.ds-button-danger-ghost:hover{cursor:pointer}.ds-button-danger-ghost:focus-visible{outline:auto}.ds-button-danger-ghost:active{opacity:.75}.ds-button-danger-ghost:disabled{background:#B9C2B9;cursor:default}"
+    },
+    {
+      "name": "Button warning",
+      "kind": "button",
+      "refersTo": "button-warning",
+      "description": "PrimaryButton; mínimo 52 puntos, pulsación y bloqueo compartidos.",
+      "html": "<button class=\"ds-button-warning\">Activar oferta</button>",
+      "css": ".ds-button-warning{font-family:Inter,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;min-height:52px;padding:12px 16px;border:0;border-radius:999px;background:#A44B16;color:#FFFFFF;text-align:center;cursor:pointer}.ds-button-warning:hover{cursor:pointer}.ds-button-warning:focus-visible{outline:auto}.ds-button-warning:active{opacity:.75}.ds-button-warning:disabled{background:#B9C2B9;cursor:default}"
+    },
+    {
+      "name": "Button field",
+      "kind": "button",
+      "refersTo": "button-field",
+      "description": "PrimaryButton; mínimo 52 puntos, pulsación y bloqueo compartidos.",
+      "html": "<button class=\"ds-button-field\">Seleccionar zona</button>",
+      "css": ".ds-button-field{font-family:Inter,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:400;min-height:52px;padding:12px 16px;border:0;border-radius:16px;background:#FFFFFF;color:#202923;text-align:left;cursor:pointer}.ds-button-field:hover{cursor:pointer}.ds-button-field:focus-visible{outline:auto}.ds-button-field:active{opacity:.75}.ds-button-field:disabled{background:#B9C2B9;cursor:default}"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "CustomInput con etiqueta, superficie suave y error accesible.",
+      "html": "<label class=\"ds-field\">Título<input class=\"ds-input\" placeholder=\"Nombre del producto\" /></label>",
+      "css": ".ds-field{display:grid;gap:8px;font:600 14px/20px Inter,Arial,sans-serif;color:#58645D}.ds-input{min-width:0;min-height:52px;padding:12px 16px;border:1px solid #E2E7E1;border-radius:16px;background:#F1F3F0;color:#202923;font:400 14px/20px Inter,Arial,sans-serif}.ds-input::placeholder{color:#58645D}.ds-input:hover{cursor:text}.ds-input:focus-visible{outline:auto}.ds-input[aria-invalid=true]{border-color:#B42318}.ds-input:disabled{opacity:.55}"
+    },
+    {
+      "name": "Type selector",
+      "kind": "chip",
+      "refersTo": "type-selected",
+      "description": "Tipo activo sólido; segundo tipo visible.",
+      "html": "<div class=\"ds-types\" role=\"tablist\"><button class=\"ds-type\" role=\"tab\" aria-selected=\"true\">Disponibles ahora</button><button class=\"ds-type\" role=\"tab\" aria-selected=\"false\">Catálogo</button></div>",
+      "css": ".ds-types{display:flex;gap:8px}.ds-type{flex:1;min-width:0;min-height:48px;padding:8px;border:1px solid #E2E7E1;border-radius:999px;background:#FFFFFF;color:#58645D;font:600 13px/19px Inter,Arial,sans-serif;cursor:pointer}.ds-type[aria-selected=true]{background:#17613B;border-color:#17613B;color:#FFFFFF}.ds-type:hover{cursor:pointer}.ds-type:focus-visible{outline:auto}.ds-type:active{opacity:.7}"
+    },
+    {
+      "name": "Bottom navigation",
+      "kind": "nav",
+      "refersTo": "navigation-selected",
+      "description": "Cuatro destinos; selección translúcida sin desvanecer contenido.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navegación principal\"><button class=\"ds-tab\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"m15 9-2 4-4 2 2-4z\"/></svg>Explorar</button><button class=\"ds-tab\">Reservas</button><button class=\"ds-tab\">Mis ventas</button><button class=\"ds-tab\">Cuenta</button></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;min-height:76px;padding:8px;background:#FFFFFF;border-top:1px solid #E2E7E1}.ds-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:56px;padding:8px 4px;border:0;border-radius:16px;background:transparent;color:#58645D;font:600 12px/17px Inter,Arial,sans-serif;cursor:pointer}.ds-tab[aria-current=page]{background:rgba(23,97,59,.12);color:#17613B;font-weight:700}.ds-tab:hover{cursor:pointer}.ds-tab:focus-visible{outline:auto}.ds-tab:active{opacity:.7}"
+    },
+    {
+      "name": "Publication card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Publisher_Card; alternativa estable sin foto, imagen cuadrada y precio compacto.",
+      "html": "<button class=\"ds-card\" aria-label=\"Ver publicación\"><span class=\"ds-photo\">Sin foto</span><span class=\"ds-card-body\"><span class=\"ds-badge\">Disponible ahora</span><span class=\"ds-title\">Título de publicación</span><span class=\"ds-price\">$50.00</span><span class=\"ds-caption\">Zona del campus</span><span class=\"ds-caption\">3 disponibles</span></span></button>",
+      "css": ".ds-card{display:block;max-width:240px;width:100%;padding:0;overflow:hidden;border:1px solid #E2E7E1;border-radius:16px;background:#FFFFFF;color:#202923;text-align:left;cursor:pointer;font-family:Inter,Arial,sans-serif}.ds-photo{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1;background:#F1F3F0;color:#58645D;font-size:13px}.ds-card-body{display:flex;flex-direction:column;gap:4px;padding:12px}.ds-badge{font-size:12px;line-height:17px;font-weight:600;color:#17613B}.ds-title{font-size:14px;line-height:20px;font-weight:600}.ds-price{font-size:18px;line-height:25px;font-weight:700}.ds-caption{font-size:13px;line-height:19px;color:#58645D}.ds-card:hover{cursor:pointer}.ds-card:focus-visible{outline:auto}.ds-card:active{opacity:.75}"
+    },
+    {
+      "name": "Publication form errors",
+      "kind": "custom",
+      "description": "0034/0038: aviso persistente y desplazable, un solo anuncio, mensajes por campo y borrador conservado. Vista previa auxiliar; no acredita teclado o lector nativos.",
+      "html": "<section class=\"ds-form-errors\" role=\"alert\"><p>Revisa los campos señalados</p><button type=\"button\">Ir al primer campo</button></section>",
+      "css": ".ds-form-errors{font-family:Inter,Arial,sans-serif;font-size:14px;line-height:20px;color:#B42318;background:#FEF2F2;margin:8px 20px;padding:12px;border-radius:16px;max-height:30vh;overflow:auto;flex:0 0 auto;display:flex;flex-direction:column;gap:4px}.ds-form-errors p{margin:0}.ds-form-errors button{font:inherit;font-weight:600;min-height:48px;padding:8px 12px;color:#17613B;background:transparent;border:0;border-radius:999px;cursor:pointer}.ds-form-errors button:hover{cursor:pointer}.ds-form-errors button:focus-visible{outline:auto}.ds-form-errors button:active{opacity:.75}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Marketplace fotográfico del campus",
+    "overview": "La referencia Oakory aprobada se adapta a React Native/Expo: fondo casi blanco, verde UABC, Inter local y fotografías reales. La información de disponibilidad y precio acompaña al producto con encabezados compactos y controles familiares.\n\nEste documento describe el tema claro implementado. Las vistas web auxiliares permiten revisar composición; la aceptación de teclado, lector de pantalla y texto ampliado en hardware sigue pendiente.",
+    "keyCharacteristics": [
+      "Fotografía superior y contenido flexible.",
+      "Superficies claras con contornos discretos.",
+      "Verde para acciones y selección; naranja para Oferta."
+    ],
+    "rules": [
+      {
+        "name": "The Semantic Color Rule",
+        "body": "Mantener Oferta en naranja y errores o acciones destructivas en rojo.",
+        "section": "colors"
+      },
+      {
+        "name": "The Compact Header Rule",
+        "body": "Usar encabezados breves sin subtítulos redundantes; conservar instrucciones y mensajes necesarios.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do reutilizar theme.js y componentes compartidos.",
+      "Do usar fotos reales de la API y una alternativa estable si faltan.",
+      "Do permitir wrap y crecimiento de texto antes de recortar.",
+      "Do conservar cuatro destinos y diferenciar precio vigente de precio fijado."
+    ],
+    "donts": [
+      "Don't añadir carrito, favoritos ni calificaciones.",
+      "Don't usar promociones inventadas para rellenar el destacado.",
+      "Don't añadir sombras a Card como regla del sistema.",
+      "Don't declarar hardware o tema oscuro verificados mediante capturas web."
+    ]
+  }
+}

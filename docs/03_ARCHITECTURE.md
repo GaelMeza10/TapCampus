@@ -1,5 +1,16 @@
 # Arquitectura y Stack Tecnológico (TapCampus)
 
+## Contratos del cierre MVP — 2026-11-21
+
+Estas reglas sustituyen las diferencias de la línea base descrita en los apartados históricos de fases 2/3. 0037, 0034/0038 y 0039 implementados y verificados técnicamente el 2026-11-21; aceptación nativa pendiente. 0040 sigue planificado.
+
+- **0037 / ofertas:** separar proyecciones públicas y propias. GET feed/detalle omite `ganga_min_price`, `ganga_activation_mode`, `ganga_minutes_before`; mantiene precio/distintivo aplicados. `mine` y mutaciones autorizadas del propietario conservan configuración. Workers reciben el estado persistido completo, no una proyección pública recortada.
+- En creación/configuración nueva exigir Decimal `0 < mínimo < precio normal`. PATCH omite para conservar; permite retirar con los tres campos de configuración `null`, y cambiar SCHEDULED→MANUAL con `ganga_minutes_before:null`. Null incoherente →400. Creación rechaza null explícito. Estado combinado y permisos se validan bajo bloqueo común; la oferta activa no se reconfigura ni se revierte. Edición ajena a precio/configuración de legado no se bloquea ni inventa precio previo.
+- Worker/conciliación releen modo/estado/horario/configuración/fecha y mínimo válido bajo bloqueo. Trabajo retirado/obsoleto no activa; carreras edición/activación tienen un ganador y evento solo tras commit. Sin migración prevista ni reparación masiva.
+- **0038 / contenido:** POST publicaciones y texto enviado en PATCH aplican política local versionada tras comprobar permisos de edición y antes de escribir/encolar. Error 400 mantiene `statusCode/message/error` y añade `code: PUBLICATION_CONTENT_BLOCKED`, `fields: [title y/o description]`; no devuelve lista ni términos detectados. El filtro global actual conserva campos de respuestas objeto. Sin migración ni servicio externo.
+- **0039 / contacto:** GET detalle visible LIVE/STATIC añade solo `sellerContact.phone` actual, sin requerir reserva; feed/eventos siguen sin teléfonos. Detalle no visible →404; reservas propias conservan su contacto autorizado. `buyerContact` solo al vendedor de reserva ACTIVE no vencida. Lectura previa no crea reserva ni plazo. Sin nuevo endpoint ni guarda para ese detalle actualmente público.
+- **0040 / entrega:** comprobar HTTP/Socket.io e imágenes con origen HTTPS persistente, Redis/datos/uploads durables y artefacto nativo instalado; exportar JS y abrir un túnel no acreditan distribución final.
+
 Navegación 0028: Stack raíz nativo con Stack.Protected para `(tabs)` y rutas publication/[id] y publication/edit. `(tabs)/_layout.tsx` usa Tabs de Expo Router, backBehavior initialRoute y homePage inicial. Las cuatro pantallas conservan sus URLs y MarketplaceShell mantiene la barra aprobada; se oculta la barra automática para evitar duplicación. navigate cambia de pestaña; dismissTo retorna de detalle/edición a un destino principal existente. Se preservan AuthContext, guardas e interceptor 401.
 
 ## 1. Stack Seleccionado
@@ -74,6 +85,7 @@ Para garantizar consistencia, el Backend deberá exponer las siguientes rutas ba
 
 *   **Autenticación**
     *   `GET /auth/me` (JWT, CurrentUser): `{id,name,email,phone}` del propio usuario; 401 sin sesión válida. Proyección explícita, sin hash/token/flags internos, sin parámetro de propietario. Ampliación 0026, sin cambio de login/register.
+    *   `PATCH /auth/me` (0033, JWT): `{name?,phone?}`, al menos un campo; nombre normaliza espacios, teléfono diez dígitos con/sin +52 se guarda canónico. 200 con la misma proyección segura; 400 vacío/null/inválido/campos extra (incluidos email/password/id), 401 sin sesión/cuenta válida. ID exclusivamente del JWT; update atómico sin migración ni nuevo token. Contactos autorizados consultan el perfil vigente; pantallas de mercado reconsultan al reenfocar.
     *   `POST /auth/register` (Body: email, password, name, phone; diez dígitos mexicanos con o sin `+52`, persistidos como `+52XXXXXXXXXX`)
     *   `POST /auth/login` -> Retorna JWT Token.
 *   **Publicaciones**
@@ -132,7 +144,7 @@ Toda la API debe retornar errores siguiendo el formato estándar de NestJS (Http
     *   Una reserva solo puede ser cancelada por su creador (`buyer_id === jwt.user.id`).
     *   El vendedor puede confirmar una reserva activa previa hasta que venza su plazo de 20 minutos aunque la publicación haya llegado a `end_time`.
     *   Cualquier intento de modificar entidades ajenas debe retornar **403 Forbidden**.
-*   **Contacto:** El teléfono de una venta en vivo no aparece en el feed ni en el detalle público; se entrega al comprador solo tras confirmar su reserva. El contacto de una venta estática activa es directo, de acuerdo con RF-06. El teléfono del comprador se entrega únicamente al vendedor relacionado con una reserva activa.
+*   **Contacto (0039, implementado técnicamente):** El teléfono vigente del vendedor se entrega desde el detalle visible LIVE/STATIC, y también mediante reservas autorizadas; nunca desde feed/mine/eventos. El teléfono del comprador solo se entrega al vendedor relacionado con reserva activa no vencida. HTTP/SQL/Socket.io y URL/error móvil probados; apertura nativa pendiente.
 
 ## 6. Diccionario de Eventos en Tiempo Real (Socket.io)
 Para evitar asimetrías entre Backend y Frontend, se usarán estrictamente estos nombres de eventos:

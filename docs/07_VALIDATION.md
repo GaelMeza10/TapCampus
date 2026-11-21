@@ -2,6 +2,8 @@
 
 Este documento define cómo sabremos que el proyecto fue un éxito, dividiendo la validación en el ámbito técnico (código) y el ámbito humano (usuario final).
 
+Plan de cierre 2026-11-21: [0040](../specs/0040-validacion-y-entrega-mvp/plan.md) organiza regresión actual, aceptación nativa de ambos roles, despliegue persistente, instalable y UAT como puertas separadas. Depende de 0037/0038/0039 y del patrón de errores 0034; ninguna se considera aprobada por existir el plan.
+
 ## 1. Validación Técnica (QA - Quality Assurance)
 
 ### 1.1 Pruebas de Estrés y Concurrencia (Crítico)
@@ -25,9 +27,10 @@ Cada expediente `specs/0001`–`0008` tiene una matriz `AC → T → EV` en `ver
 | Venta en vivo (0003) | Creación/imagen, horario y stock, propiedad, expiración y carrera entre reserva y venta física. |
 | Estáticas (0004) | Crear/listar sin reserva, marcar «Vendida», excluir del catálogo y rechazar usuario ajeno. |
 | Catálogos/filtros (0005) | Seed repetible, cinco zonas, categorías por tipo y filtros `AND` con respuesta vacía e inválida. |
-| Ganga (0006) | Activación manual y programada, reprogramación, reinicio, precio decimal, evento, orden del feed y reserva anterior con precio inmutable. |
+| Ganga (0006/0037) | Activación manual/programada, configuración privada, mínimo estricto, retirada/cambio de modo, trabajos obsoletos, carreras/reinicio, precio decimal, evento, prioridad y reserva anterior inmutable. |
 | Tiempo real (0007) | Dos clientes, stock/precio/fin actualizados y resincronización tras desconexión. |
-| WhatsApp (0008) | Privacidad en `LIVE`, contacto directo en `STATIC`, URL codificada y error al abrir enlace. |
+| WhatsApp (0008/0039) | Consulta previa en detalle LIVE/STATIC visible; feed/eventos sin teléfonos; privacidad de comprador, contacto desde reserva aunque desaparezca detalle, URL codificada y apertura/error nativos. |
+| Contenido (0038) | Cada entrada de política, falsos positivos, acentos/palabras completas, rechazo HTTP sin publicación/jobs y recuperación del borrador/foto; creación y texto editado de ambos tipos. |
 | Reservas (0001) | 50 compradores por última pieza con claves distintas; dos reservas del mismo comprador con claves distintas; reintento concurrente con la misma clave sin doble descuento; precio fijado; confirmación tras `end_time` dentro de los 20 minutos; permisos y expiración. |
 | Reportes SHOULD (0009) | Solo si se incluye RF-14: tres reportantes distintos, duplicados, concurrencia, visibilidad y resultado de revisión tras cerrar sus decisiones. |
 

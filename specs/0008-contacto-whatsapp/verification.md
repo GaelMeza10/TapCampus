@@ -1,10 +1,12 @@
 # 0008 — Verificación
 
+Revisión 2026-11-21: AC-01 se amplía con consulta previa en detalle LIVE. [0039](../0039-contacto-live-sin-reserva/verification.md) aporta nueva aprobación técnica: 674 HTTP, 102 backend/134 frontend, 16 capturas auxiliares y exports PASS; apertura nativa pendiente. EV-01/EV-06 siguientes son históricas y **no** aprueban por sí solas ese criterio actualizado. Privacidad del comprador y normalización previas conservan su alcance.
+
 Estado: **Privacidad/contacto backend verificados; Linking pendiente** | Fecha: 2026-10-05
 
 | AC | Tarea(s) | Evidencia | Resultado |
 | --- | --- | --- | --- |
-| AC-01 | T-02, T-03, T-04, T-05 | EV-01: LIVE público no, reserva autorizada sí | Aprobado API; enlace móvil pendiente |
+| AC-01 | T-02, T-03, T-04, T-05 | EV-01 histórica: LIVE público no, reserva autorizada sí | Contrato anterior aprobado API; consulta previa 0039 y móvil pendientes |
 | AC-02 | T-02, T-03, T-04, T-05 | EV-02: STATIC directo | Aprobado API fase 2; chat móvil pendiente |
 | AC-03 | T-02, T-03, T-04, T-05 | EV-03: vendedor propio/vigencia/ajeno | Aprobado API |
 | AC-04 | T-03, T-04 | EV-04: URL/fallo de apertura | Pendiente móvil, fuera de fase 3 |

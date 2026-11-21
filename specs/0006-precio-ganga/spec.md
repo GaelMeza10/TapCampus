@@ -4,11 +4,13 @@ Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
 ## Contexto y fuentes
 
+Ampliación normativa 2026-11-21 en [0037](../0037-control-y-privacidad-ofertas/spec.md): mínimo estrictamente menor, configuración privada y cambio/retirada antes de activar. La evidencia anterior sigue describiendo el contrato de su fecha; no acredita igualdad rechazada, retirada ni privacidad nuevas. DEC-02 de no revertir una ganga activada permanece vigente.
+
 RF-11 y RF-12; US-05. `docs/02_REQUIREMENTS.md` exige precio mínimo y activación instantánea; `README.md` permite modo manual/programado y reconfiguración del horario; `docs/03_ARCHITECTURE.md` define campos Prisma, cola BullMQ y evento `ganga_activated`. Ganga/worker/eventos backend verificados en fase 3; UI pendiente.
 
 ## Alcance y contrato observable
 
-- Solo una publicación `LIVE` del vendedor puede configurar `ganga_min_price` y `ganga_activation_mode` `MANUAL` o `SCHEDULED` en creación o edición. El mínimo debe ser positivo y no superar el precio normal. Si se programa, `ganga_minutes_before` define el disparo relativo a `end_time`.
+- Solo una publicación `LIVE` del vendedor puede configurar `ganga_min_price` y `ganga_activation_mode` `MANUAL` o `SCHEDULED` en creación o edición. El mínimo debe ser positivo y estrictamente menor al normal (0037; revalidación pendiente). Si se programa, `ganga_minutes_before` define el disparo relativo a `end_time`. Cambio/retirada previos y proyecciones privadas se definen en 0037.
 - `PATCH /publications/:id/ganga` activa manualmente una ganga configurada; solo el vendedor puede hacerlo. No hay desactivación de una ganga ya activada en los requisitos MVP.
 - Activación manual o programada cambia el precio visible al mínimo **de una vez**, marca `is_ganga_active`, emite `ganga_activated` y eleva la publicación en el feed. Solo ocurre una vez por publicación; reservas creadas antes conservan su `unitPrice` fijado.
 - Al cambiar `end_time` o la programación antes de activar, el trabajo se reprograma; si la publicación termina antes, el job no activa la ganga. El tiempo y resultado son autoridad del servidor.
@@ -20,7 +22,7 @@ RF-11 y RF-12; US-05. `docs/02_REQUIREMENTS.md` exige precio mínimo y activaci�
 **Dado** vendedor con `LIVE` activa, **cuando** configura mínimo válido y modo manual o programado, **entonces** se guarda la configuración sin cambiar aún el precio visible.
 
 ### AC-02 — Rechazo de configuración inválida
-**Dado** mínimo cero/mayor al normal, programación imposible o publicación `STATIC`, **cuando** intenta configurar ganga, **entonces** recibe `400` y no cambia precio ni crea job.
+**Dado** mínimo cero/igual/mayor al normal, programación imposible o publicación `STATIC`, **cuando** intenta configurar ganga, **entonces** recibe `400` y no cambia precio ni crea job. La igualdad se añade en 0037 y no queda cubierta por EV-02 histórica.
 
 ### AC-03 — Activación manual
 **Dado** ganga manual configurada y publicación activa, **cuando** su vendedor la activa, **entonces** el precio pasa instantáneamente al mínimo, el feed muestra distintivo y prioridad, y otro usuario recibe `403`.

@@ -24,16 +24,19 @@ App React Native/Expo para iOS y Android, con controles de fecha y comportamient
 
 ## Capabilities and Constraints
 
+- Mi cuenta permite editar nombre completo y teléfono mexicano propios (0033); correo institucional de solo lectura. El contacto actualizado se usa en siguientes lecturas autorizadas de publicaciones/reservas existentes.
+
 - Registro con nombre, correo institucional @uabc.edu.mx, teléfono mexicano y contraseña. Sesión persistente y rutas protegidas.
 - Explorar disponibles ahora y catálogo; búsqueda por título/descripción combinada con filtros de tipo, zona y categoría (0025). Sin GPS ni pagos digitales.
-- LIVE: contacto después de reserva confirmada; STATIC: contacto directo. Varias reservas por comprador permitidas, cada una con precio/plazo propio e idempotencia en reintentos.
+- Contacto 0039 implementado técnicamente: detalle visible LIVE/STATIC permite consulta previa; reserva confirmada conserva contacto aunque desaparezca el detalle. Feed/mine/eventos sin teléfonos y comprador protegido. Varias reservas por comprador, cada una con precio/plazo propio e idempotencia en reintentos. Apertura/retorno en dispositivo pendientes de aceptación.
 - Vendedor: crear/editar, descontar venta física, configurar/activar ganga, finalizar y confirmar entregas. Finalizar no elimina apartados vigentes.
+- Creación/edición LIVE/STATIC aplica filtro de contenido v1 del servidor (0038); errores visibles por campo y reintentos conservan borrador y foto (0034). Verificado técnicamente, aceptación nativa pendiente.
 - Moderación opcional conserva decisiones abiertas en su expediente; no ampliarla como parte de un refinamiento visual.
 - Español de México, importes en pesos y etiquetas comprensibles sin identificadores técnicos.
 
 ## Brand Commitments
 
-Conservar TapCampus y la identidad aprobada en las copias Figma revisadas. Respetar colores y tipografía existentes, encabezados compactos y componentes compartidos. eBay y Facebook Marketplace son referencias de organización, sin ampliar funciones. La autoridad visual está en docs/04_UI_UX_GUIDELINES.md y specs/0019/0020, no en una estética nueva propuesta por una herramienta.
+Conservar TapCampus, verde UABC e Inter local. El usuario autoriza en 0031 adaptar el estilo de su referencia Oakory: fondo casi blanco, tarjetas fotográficas, buscador/filtros redondeados y navegación sencilla. Sustituye fondo beige y filas horizontales de 0020; conserva encabezados compactos y componentes compartidos. Sin carrito, favoritos ni calificaciones. La autoridad visual vigente está en docs/04_UI_UX_GUIDELINES.md, DESIGN.md y specs/0031-estilo-marketplace; los prototipos anteriores son evidencia histórica de flujos.
 
 ## Evidence on Hand
 

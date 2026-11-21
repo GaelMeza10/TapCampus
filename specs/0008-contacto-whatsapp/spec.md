@@ -2,22 +2,24 @@
 
 Estado: **En implementación; backend fases 2/3 verificado, móvil pendiente**
 
+Ejecución 2026-11-21: [0039](../0039-contacto-live-sin-reserva/verification.md) aprueba técnicamente consulta previa LIVE/STATIC, URL/error y continuidad/privacidad con nueva evidencia. Apertura nativa sigue pendiente; los resultados de fases anteriores conservan su alcance histórico.
+
 ## Contexto y fuentes
 
-RF-13, RF-07 y RF-06; US-09 y US-11. `docs/02_REQUIREMENTS.md` exige enlace `wa.me` y retrasa contacto de venta en vivo hasta confirmar reserva; README permite contacto directo para venta estática. `docs/05_USER_FLOWS.md` describe ambas rutas. `User.phone` es obligatorio y su formato se define con 0002.
+RF-13, RF-07 y RF-06; US-09 y US-11. Revisión 2026-11-21: el plan integral permite consulta previa desde detalle LIVE visible, especificada en [0039](../0039-contacto-live-sin-reserva/spec.md). Se mantiene contacto STATIC directo y desde reservas autorizadas; privacidad del comprador intacta. Las EV anteriores de ausencia de teléfono en detalle LIVE pertenecen al contrato histórico y no acreditan la ampliación. `User.phone` es obligatorio y su formato se define con 0002.
 
 ## Alcance y contrato observable
 
 - Una publicación `STATIC` activa ofrece «Contactar por WhatsApp» desde el detalle sin reserva. El mensaje dice que el comprador está interesado en el artículo, sin afirmar que lo apartó.
-- En `LIVE`, el comprador ve el contacto del vendedor **solo después** de recibir confirmación de `POST /reservations`; el vendedor de esa reserva puede contactar al comprador identificado en la reserva. Listado y detalle públicos no incluyen esos teléfonos.
+- En `LIVE`, el comprador puede consultar al vendedor desde el detalle visible antes de reservar (0039); tras reserva mantiene su contacto autorizado aunque desaparezca el detalle. El vendedor solo obtiene el teléfono del comprador mediante una reserva activa no vencida relacionada. Listado/eventos no incluyen teléfonos.
 - El móvil usa `Linking.openURL` con `https://wa.me/52XXXXXXXXXX?text=<mensaje-codificado>`; elimina solo el `+` del teléfono canónico `+52XXXXXXXXXX`, sin duplicar `52`. Se aceptan en registro diez dígitos nacionales con o sin `+52` de cualquier región mexicana. Si no puede abrir el enlace, muestra error útil sin perder el estado de la pantalla.
-- Para `LIVE`, el mensaje usa `publicationTitle` de la reserva autorizada; sigue disponible aunque el detalle público desaparezca por stock cero o fin de horario. Para `STATIC`, usa el título del detalle activo.
+- Desde una reserva `LIVE`, el mensaje usa `publicationTitle` autorizado y sigue disponible aunque desaparezca el detalle. Para consulta previa LIVE o STATIC usa título del detalle visible y texto de interés sin afirmar reserva.
 - Fuera de alcance: chat interno, envío automático de mensajes y llamadas.
 
 ## Criterios de aceptación
 
-### AC-01 — Venta en vivo protegida
-**Dado** una `LIVE` sin reserva confirmada, **cuando** el comprador abre feed/detalle, **entonces** no recibe teléfono ni botón de contacto; tras reserva exitosa aparece el enlace del vendedor correcto.
+### AC-01 — Contacto LIVE con privacidad del comprador
+**Dado** una `LIVE` visible sin reserva, **cuando** el comprador abre detalle, **entonces** puede consultar al vendedor sin reservar y sin exponer su propio teléfono; feed/eventos siguen sin contactos y una reserva confirmada conserva su enlace. Criterio actualizado y aprobado técnicamente en 0039, con apertura nativa pendiente.
 
 ### AC-02 — Contacto estático directo
 **Dado** un artículo `STATIC` activo, **cuando** el comprador abre detalle, **entonces** puede abrir el chat del vendedor sin crear reserva ni temporizador.
@@ -33,6 +35,6 @@ RF-13, RF-07 y RF-06; US-09 y US-11. `docs/02_REQUIREMENTS.md` exige enlace `wa.
 
 ## Decisiones
 
-Precisión backend fase 3: comprador relacionado recibe sellerContact.phone en POST/mine/detalle de sus reservas; vendedor recibe buyer {id,name} y buyerContact.phone únicamente si ACTIVE y antes de expiresAt. Ajeno →403. Feed/LIVE públicos y eventos no contienen teléfono. Enlaces y apertura móvil siguen fuera de fase 3.
+Precisión histórica backend fase 3: comprador relacionado recibe sellerContact.phone en POST/mine/detalle de sus reservas; vendedor recibe buyer {id,name} y buyerContact.phone únicamente si ACTIVE y antes de expiresAt. Ajeno →403. En esa fase feed/LIVE públicos/eventos no contenían teléfono. 0039 sustituye solo la ausencia en detalle LIVE visible; enlaces/apertura móvil conservan evidencia separada.
 
 DEC-01 está resuelta junto con 0002 DEC-03. Privacidad/contacto backend verificados; Linking pendiente.

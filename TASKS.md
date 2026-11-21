@@ -4,6 +4,8 @@
 
 El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPMENT_WORKFLOW.md` y `specs/`. En FASE 0, `[x]` indica documento completado; en las demás fases, comportamiento implementado y verificado. La presencia de un archivo o una pantalla no basta. La auditoría está en `docs/09_PROJECT_AUDIT.md`.
 
+**Ruta vigente de cierre MVP (2026-11-21):** [0037 ofertas](specs/0037-control-y-privacidad-ofertas/plan.md) → patrón de errores [0034](specs/0034-errores-formulario-publicacion/plan.md) y [0038 filtro](specs/0038-filtro-palabras-publicaciones/plan.md) → [0039 contacto LIVE](specs/0039-contacto-live-sin-reserva/plan.md) → [0040 validación/entrega](specs/0040-validacion-y-entrega-mvp/plan.md). 0037, 0034/0038 y 0039 implementados y aprobados técnicamente; aceptación nativa pendiente. Siguiente bloque: 0040. El orden histórico de fases se conserva como contexto.
+
 ## FASE 0: Análisis y documentación
 - [x] **0.1 Constitución y proceso:** Definir principios, artefactos, puertas de calidad, cambios y convergencia.
 - [x] **0.2 Plantillas y trazabilidad:** Crear plantillas `spec/plan/tasks/decisions/verification`, índice y comprobador de referencias.
@@ -56,8 +58,10 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 - [ ] **5.2 Feed Principal (Home):** Pantalla con Tabs (En Vivo / Estático). Renderizar lista de publicaciones usando WebSockets para escuchar cambios de stock sin recargar. Integrar menús de Filtro por Zona.
 - [ ] **5.3 Detalle y Reserva (Comprador):** Mostrar reservas independientes con precio y plazo propios, estado en español y sin UUID visible; conservar la clave en reintentos, generar otra al apartar otra unidad y mostrar WhatsApp tras confirmación de cada reserva.
 - [ ] **5.4 Formulario de Publicación:** Pantalla para el Vendedor. Implementar ImagePicker para la cámara/galería. Formularios con validación (no dejar poner stock negativo).
+
+  [0034](specs/0034-errores-formulario-publicacion/verification.md) implementado técnicamente: aviso persistente, mensajes por campo, foco tras layout y recuperación por origen; 124 pruebas frontend, 19 capturas auxiliares y exports PASS. Teclado/lector/foco y cámara reales pendientes; casilla abierta hasta aceptación integrada.
 - [ ] **5.5 Dashboard de Vendedor (Mis Ventas):** Mostrar reservas activas por separado, incluso varias del mismo comprador, con etiquetas en español y sin IDs visibles; permitir confirmar cada entrega dentro de sus 20 minutos. Añadir controles de "Activar Ganga Manual", "-1 Venta Física" y "Finalizar Publicación".
-- [ ] **5.6 Contacto WhatsApp:** Integrar enlace directo en `STATIC` y enlace tras reserva confirmada en `LIVE`; proteger teléfonos en respuestas públicas y probar URL/errores conforme a 0008.
+- [ ] **5.6 Contacto WhatsApp:** 0039 implementa consulta directa LIVE/STATIC visible y contacto desde reservas autorizadas; feed/eventos sin teléfonos y comprador protegido. HTTP/SQL/Socket.io, URL/error y composición auxiliar PASS; apertura/retorno nativos pendientes. Evidencia previa de 0008 histórica.
 - [x] **5.7 Mejoras del prototipo Figma:** Ocho mejoras UX aplicadas y revisadas en 0015 EV-01..09: formularios, estados de venta, catálogos, tiempos, reservas, ganga, gestión estática y navegación. Cubre diseño; implementación y aceptación móvil siguen en 5.1–5.6.
 - [x] **5.8 Implementación del rediseño Figma (técnica):** 0016 EV-01..10: pantallas reales, tema/Inter, filtros, navegación, formularios, reservas y ventas; precio previo aditivo migrado; 40 pruebas frontend, 9 backend, 311 solicitudes de integración y 18 capturas revisadas; bundles iOS/Android aprobados. No cierra 5.1–5.6 ni UAT sin recorrido físico.
 - [x] **5.9 Iconos del prototipo:** 0017 EV-01..03: brújula/comprobante/bolsa en las 17 barras; 51 vectores, tres capturas y navegación inspeccionados. Alcance Figma.
@@ -87,12 +91,33 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 
 - [x] **5.22 Oferta en lenguaje visible:** 0030 EV-01..03: textos de comprador/vendedor y tres títulos Demo actualizados; naranja y contratos conservados. 96 pruebas, tipos, 66 capturas, feed real y bundle iOS 200 con nuevo texto. Aceptación física separada.
 
+- [x] **5.23 Estilo de marketplace fotográfico (técnico y composición auxiliar):** 0031 EV-01..03: referencia aprobada aplicada a tokens compartidos, feed en cuadrícula y destacado real. 96 pruebas, tipos, 66 capturas, bundles Android/iOS, revisión auxiliar y check-sdd PASS. Gate nativo y hardware separados.
+
+**Ajuste 2026-11-10:** 0031 AC-04/T-05/EV-04 retira la etiqueta repetida «Catálogo» de las tarjetas STATIC de Explorar. Tipos y siete pruebas de feed aprobados; revisión visual física pendiente.
+
+**Ajuste adicional 2026-11-10:** 0031 AC-05/T-06/EV-05 retira también «Contacto directo» de esas tarjetas; tipos y siete pruebas de feed aprobados. Revisión visual física pendiente.
+
+**Fondos de Explorar 2026-11-10:** 0031 AC-06/T-07/EV-06 deja blanco el destacado sin oferta, como las tarjetas de Catálogo; oferta usa naranja suave. Tipos, siete pruebas de feed y nueve capturas auxiliares PASS; hardware separado.
+
+- [x] **5.24 Diseño de Mis reservas (técnico y composición auxiliar):** 0032 EV-01..03: Por recoger, foto/precio/plazo y registros Anteriores; 100 pruebas, tipos, 22 capturas, bundles Android/iOS, revisión Impeccable ship auxiliar y cotejo documental PASS. Aceptación nativa y 5.3 separadas.
+
+- [x] **5.25 Editar Mi cuenta (técnico y composición auxiliar):** 0033 EV-01..03: nombre/teléfono propios, correo fijo y borrador/sesión conservados. 103 pruebas frontend/26 backend, tipos/build/lint, 15 capturas, exports y revisión ship auxiliar PASS. Contrato probado con repositorio aislado; aceptación física separada.
+
+- [x] **5.26 Rediseño de Mi cuenta (técnico y composición auxiliar):** 0035 EV-01..03: identidad real, contacto agrupado, editor y cierre discreto. 105 pruebas, tipos, 29 capturas, exports Android/iOS, revisión ship auxiliar y cotejo documental PASS. Aceptación física separada.
+
+- [x] **5.27 Diseño de Nueva publicación (técnico y composición auxiliar):** 0036 EV-01..03: foto protagonista, producto/precio/entrega y acciones conservadas; 105 pruebas, tipos, 38 capturas finales y exports Android/iOS PASS. Revisión independiente ship auxiliar y cotejo del sistema; aceptación física separada.
+
+Pendientes funcionales planificados del cierre (sin casillas cerradas por documentación):
+
+- [ ] **5.28 Control y privacidad de ofertas:** 0037 AC-01..06 aprobados técnicamente: tipado corregido, proyecciones, mínimo estricto, modos/retirada y jobs/carreras/reinicio reales. 112 pruebas frontend/39 backend, 631 solicitudes, nueve capturas auxiliares y exports Android/iOS PASS. T-01..05 completas; AC-07/T-06 pendientes del recorrido nativo, sin cerrar esta casilla.
+- [ ] **5.29 Filtro de contenido:** RF-15 → US-12 → 0038 AC-01..05 aprobados técnicamente: POST/PATCH LIVE/STATIC, política v1 de palabras completas y borrador/foto conservados con 0034. 102 pruebas backend/124 frontend, 657 solicitudes HTTP, tipos/build/lint y exports PASS. T-01..04 completas; T-05 y aceptación nativa pendientes.
+- [ ] **5.30 Consulta LIVE previa:** 0039 AC-01..04 aprobados técnicamente: contacto visible sin reserva, teléfono vigente, privacidad y continuidad; 102 pruebas backend/134 frontend, 674 HTTP, 16 capturas y exports PASS. T-01..03 completas; T-04/AC-05 apertura nativa pendiente. Complementa, no sustituye, 5.6.
+
 ## FASE 6: Validación, QA y Despliegue
-
-
-
 
 - [x] **6.1 Pruebas de Estrés:** Ejecutar 50 reservas concurrentes con claves distintas para la última pieza y comprobar 1×201/49×409; probar aparte reintentos concurrentes con la misma clave, sin doble descuento. Registrar resultados en 0001 `verification.md`.
 - [ ] **6.2 Despliegue Backend:** Subir PostgreSQL y Redis a la nube. Configurar variables de entorno y desplegar la API NestJS en producción.
 - [ ] **6.3 Empaquetado Móvil:** Generar APK de prueba usando Expo EAS Build y distribuir localmente.
 - [ ] **6.4 Moderación SHOULD:** Si se incluye RF-14, cerrar 0009 DEC-01/02 antes de implementar; después añadir unicidad de denunciante/publicación, reporte, ocultamiento al tercer denunciante distinto y revisión del moderador. Registrar EV-01..03 de 0009.
+- [ ] **6.5 Aceptación integrada MVP:** 0040 AC-01..03; regresión actual y ambos roles en dispositivos con API/BD/Redis/Socket.io reales, foto/teclado/WhatsApp, concurrencia y recuperación. No cerrar 5.1–5.6 con exports o mocks.
+- [ ] **6.6 UAT y cierre:** 0040 AC-04..07; después de despliegue/instalable de 6.2/6.3, usabilidad con cinco estudiantes y piloto de una semana con tres vendedores/quince compradores según docs07. Registrar resultados reales e incidentes.
