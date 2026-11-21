@@ -3,6 +3,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import Detail from '../src/app/publication/[id]';
 import { cancelReservation, myReservations, publicationDetail, reserve } from '../src/services/marketplace';
 import { randomUUID } from 'expo-crypto';
+import * as Linking from 'expo-linking';
 
 let mockSync: () => Promise<void>;
 let mockRouteId = 'p1';
@@ -10,6 +11,7 @@ jest.mock('../src/hooks/use-marketplace-sync', () => ({ useMarketplaceSync: (ref
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn() }), useLocalSearchParams: () => ({ id: mockRouteId }), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
 jest.mock('expo-crypto', () => ({ randomUUID: jest.fn() }));
+jest.mock('expo-linking', () => ({ openURL: jest.fn() }));
 jest.mock('../src/services/marketplace', () => ({
   zones: jest.fn(async () => []),
   publicationDetail: jest.fn(async () => ({ id: 'p1', type: 'LIVE', status: 'ACTIVE', title: 'Burrito', description: 'Caliente', price: '30.00', image_url: 'https://example.com/a.jpg', seller: { id: 's1', name: 'Ana' }, current_stock: 2, end_time: '2099-01-01T12:00:00.000Z', is_ganga_active: false })),
@@ -25,6 +27,87 @@ beforeEach(() => {
   (myReservations as jest.Mock).mockReset().mockResolvedValue([]);
   (reserve as jest.Mock).mockReset();
   (randomUUID as jest.Mock).mockReset().mockReturnValue('uuid-one');
+  (Linking.openURL as jest.Mock).mockReset().mockResolvedValue(true);
+});
+
+test.each(['LIVE', 'STATIC'])('consulta previa %s abre interés sin reservar ni crear clave', async type => {
+  const title = 'Torta & café / ñ + 50%';
+  (publicationDetail as jest.Mock).mockResolvedValue({ ...product, type, title, sellerContact: { phone: '+525512345678' } });
+  const view = await render(<Detail />);
+  await fireEvent.press(await view.findByRole('button', { name: 'Contactar por WhatsApp' }));
+  await waitFor(() => expect(Linking.openURL).toHaveBeenCalledTimes(1));
+  const url = new URL((Linking.openURL as jest.Mock).mock.calls[0][0]);
+  expect(url.origin + url.pathname).toBe('https://wa.me/525512345678');
+  expect(url.searchParams.get('text')).toBe(`Hola, me interesa ${title} en TapCampus. ¿Sigue disponible?`);
+  expect(reserve).not.toHaveBeenCalled();
+  expect(randomUUID).not.toHaveBeenCalled();
+  expect(view.queryByText('¿Quieres apartar una unidad?')).toBeNull();
+  expect(view.getByText(title)).toBeTruthy();
+});
+
+test('fallo de consulta conserva pantalla y permite reintento sin reservar', async () => {
+  (publicationDetail as jest.Mock).mockResolvedValue({ ...product, sellerContact: reservation.sellerContact });
+  (Linking.openURL as jest.Mock).mockRejectedValueOnce(new Error('Sin navegador'));
+  const view = await render(<Detail />);
+  await fireEvent.press(await view.findByRole('button', { name: 'Contactar por WhatsApp' }));
+  expect(await view.findByText(/No se pudo abrir WhatsApp/)).toBeTruthy();
+  expect(view.getByText('Burrito')).toBeTruthy();
+  expect(view.queryByText('Reintentar')).toBeNull();
+  expect(publicationDetail).toHaveBeenCalledTimes(1);
+  await fireEvent.press(view.getByRole('button', { name: 'Contactar por WhatsApp' }));
+  await waitFor(() => expect(view.queryByText(/No se pudo abrir WhatsApp/)).toBeNull());
+  expect(Linking.openURL).toHaveBeenCalledTimes(2);
+  expect(reserve).not.toHaveBeenCalled();
+});
+
+test('consulta bloqueada en confirmación y envío de reserva', async () => {
+  (publicationDetail as jest.Mock).mockResolvedValue({ ...product, sellerContact: reservation.sellerContact });
+  let finish!: (value: typeof reservation) => void;
+  (reserve as jest.Mock).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+  const view = await render(<Detail />);
+  const contact = await view.findByRole('button', { name: 'Contactar por WhatsApp' });
+  await fireEvent.press(view.getByText('Apartar una unidad'));
+  expect(contact.props.accessibilityState.disabled).toBe(true);
+  await fireEvent.press(contact);
+  await fireEvent.press(view.getByText('Sí, apartar'));
+  await fireEvent.press(contact);
+  expect(Linking.openURL).not.toHaveBeenCalled();
+  expect(reserve).toHaveBeenCalledTimes(1);
+  await act(async () => finish(reservation));
+  await fireEvent.press(await view.findByRole('button', { name: 'Contactar por WhatsApp' }));
+  const message = new URL((Linking.openURL as jest.Mock).mock.calls[0][0]).searchParams.get('text');
+  expect(message).toBe('Hola, reservé Burrito en TapCampus. ¿Podemos coordinar la entrega?');
+});
+
+test('detalle 404 retira consulta pero reserva autorizada conserva teléfono y título propios', async () => {
+  (publicationDetail as jest.Mock).mockResolvedValue({ ...product, sellerContact: reservation.sellerContact });
+  (myReservations as jest.Mock).mockResolvedValue([{ ...reservation, publicationTitle: 'Título reservado & café' }]);
+  const view = await render(<Detail />);
+  await view.findByRole('button', { name: 'Contactar por WhatsApp' });
+  (publicationDetail as jest.Mock).mockRejectedValue({ response: { status: 404 } });
+  await act(async () => mockSync());
+  expect(view.queryByRole('button', { name: 'Contactar por WhatsApp' })).toBeNull();
+  await fireEvent.press(view.getByLabelText(/Contactar por WhatsApp sobre Título reservado/));
+  expect(new URL((Linking.openURL as jest.Mock).mock.calls[0][0]).searchParams.get('text'))
+    .toBe('Hola, reservé Título reservado & café en TapCampus. ¿Podemos coordinar la entrega?');
+  expect(reserve).not.toHaveBeenCalled();
+});
+
+test.each([{ current_stock: 0 }, { status: 'FINISHED' }, { start_time: '2099-01-01T12:00:00.000Z' }, { end_time: '2000-01-01T00:00:00.000Z' }])('disponibilidad invalidada %j oculta consulta previa', async change => {
+  (publicationDetail as jest.Mock).mockResolvedValue({ ...product, sellerContact: reservation.sellerContact });
+  const view = await render(<Detail />);
+  await view.findByRole('button', { name: 'Contactar por WhatsApp' });
+  (publicationDetail as jest.Mock).mockResolvedValue({ ...product, sellerContact: reservation.sellerContact, ...change });
+  await act(async () => mockSync());
+  expect(view.queryByRole('button', { name: 'Contactar por WhatsApp' })).toBeNull();
+  expect(Linking.openURL).not.toHaveBeenCalled();
+});
+
+test('LIVE de API anterior sin contacto permite apartar sin inventar teléfono', async () => {
+  const view = await render(<Detail />);
+  await view.findByText('Apartar una unidad');
+  expect(view.queryByRole('button', { name: 'Contactar por WhatsApp' })).toBeNull();
+  expect(Linking.openURL).not.toHaveBeenCalled();
 });
 
 test('foto fallida en detalle conserva información y permite apartar', async () => {

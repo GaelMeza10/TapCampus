@@ -2,19 +2,19 @@ export const COLORS = {
   primary: '#17613B',
   primaryDark: '#124D2F',
   accent: '#4CAF6F',
-  background: '#EDEAE3',
+  background: '#F8F9F7',
   white: '#FFFFFF',
-  textDark: '#1A1A1A',
-  textMedium: '#56615B',
-  textLight: '#A0AEC0',
-  inputBg: '#F3F4F6',
-  border: '#D7DED8',
+  textDark: '#202923',
+  textMedium: '#58645D',
+  textLight: '#68756D',
+  inputBg: '#F1F3F0',
+  border: '#E2E7E1',
   error: '#B42318',
   errorBg: '#FEF2F2',
   disabled: '#B9C2B9',
-  primarySoft: '#E8F5EE',
+  primarySoft: '#EAF1EA',
   navigationSelected: 'rgba(23, 97, 59, 0.12)',
-  staticSoft: '#F0EDE8',
+  staticSoft: '#F1F0EC',
   staticAccent: '#8B7355',
   gangaSoft: '#FFF1E4',
   ganga: '#A44B16',
@@ -31,7 +31,7 @@ export const FONTS = {
 export const RADIUS = {
   sm: 10,
   md: 16,
-  lg: 24,
+  lg: 16,
   full: 999,
 };
 
@@ -54,4 +54,4 @@ export const TYPE = {
   price: { fontFamily: FONTS.bold, fontSize: 24, lineHeight: 32, color: COLORS.primary },
   countdown: { fontFamily: FONTS.bold, fontSize: 20, lineHeight: 28, color: COLORS.primary },
 };
-export const METRICS = { control: 52, compactControl: 44, fab: 56, tabBar: 76, photoWidth: 100, photoHeight: 100 };
+export const METRICS = { control: 52, compactControl: 48, fab: 56, tabBar: 76, photoWidth: 100, photoHeight: 100, gridMinWidth: 160, gridMaxColumns: 3 };

@@ -19,6 +19,10 @@ interface AuthResponse {
 }
 
 export type UserProfile = { id: string; name: string; email: string; phone: string };
+export async function updateProfile(payload: { name?: string; phone?: string }): Promise<UserProfile> {
+    const { data } = await api.patch<UserProfile>('/auth/me', payload);
+    return data;
+}
 export async function myProfile(): Promise<UserProfile> {
     const { data } = await api.get<UserProfile>('/auth/me');
     return data;

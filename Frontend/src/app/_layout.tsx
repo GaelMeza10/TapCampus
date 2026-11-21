@@ -12,6 +12,7 @@ import { AuthProvider, useAuth } from '../context/AuthContext';
 function RootNavigator() {
   const { estaAutenticado, estaCargando } = useAuth();
   if (estaCargando) return null;
+
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
@@ -29,8 +30,35 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded, fontError] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
-  if (!fontsLoaded && !fontError) return <View style={styles.loading}><ActivityIndicator color={COLORS.primary} accessibilityLabel="Abriendo TapCampus" /></View>;
-  return <AuthProvider><StatusBar style="dark" /><RootNavigator /></AuthProvider>;
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+  });
+  if (!fontsLoaded && !fontError)
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator
+          color={COLORS.primary}
+          accessibilityLabel="Abriendo TapCampus"
+        />
+      </View>
+    );
+
+  return (
+    <AuthProvider>
+      <StatusBar style="dark" />
+      <RootNavigator />
+    </AuthProvider>
+  );
 }
-const styles = StyleSheet.create({ loading: { flex: 1, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center' } });
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

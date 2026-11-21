@@ -1,7 +1,7 @@
 import api from '../src/services/api';
 import * as Linking from 'expo-linking';
 import { myProfile } from '../src/services/auth.service';
-import { apiMessage, cancelReservation, completeReservation, listPublications, myPublications, myReservations, reserve, savePublication, sellerReservations, uploadImage } from '../src/services/marketplace';
+import { apiMessage, cancelReservation, completeReservation, listPublications, myPublications, myReservations, publicationContentError, reserve, savePublication, sellerReservations, uploadImage } from '../src/services/marketplace';
 import { openWhatsApp, whatsappUrl } from '../src/services/whatsapp';
 
 jest.mock('../src/services/api', () => ({ __esModule: true, default: { get: jest.fn(), post: jest.fn(), patch: jest.fn() } }));
@@ -13,6 +13,14 @@ const get = api.get as jest.Mock;
 const open = Linking.openURL as jest.Mock;
 
 beforeEach(() => { jest.clearAllMocks(); });
+
+test('contenido bloqueado interpreta solo campos conocidos y conserva mensaje estándar', () => {
+  expect(publicationContentError({ response: { data: { code: 'PUBLICATION_CONTENT_BLOCKED', fields: ['title', 'description', 'price', 'title'], message: ['Corrige el texto.'] } } }))
+    .toEqual({ message: 'Corrige el texto.', fields: ['title', 'description'] });
+  expect(publicationContentError(null)).toBeUndefined();
+  expect(publicationContentError({ response: { data: { code: 'OTHER', fields: ['title'] } } })).toBeUndefined();
+  expect(publicationContentError({ response: { data: { code: 'PUBLICATION_CONTENT_BLOCKED', fields: ['unknown'] } } })).toBeUndefined();
+});
 
 test('Mi cuenta consulta solo auth/me sin pedir un usuario por parámetros', async () => {
   const profile = { id: 'u1', name: 'Ana', email: 'ana@uabc.edu.mx', phone: '+526641234567' };

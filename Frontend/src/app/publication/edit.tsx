@@ -1,221 +1,1154 @@
-import { useEffect, useRef, useState, type ComponentRef } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { useEffect, useLayoutEffect, useRef, useState, type ComponentRef, type Ref } from 'react';
+import {
+  KeyboardAvoidingView,
+  AccessibilityInfo,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
-import { COLORS, RADIUS, SPACE, TYPE } from '@/theme';
+import { COLORS, METRICS, RADIUS, SPACE, TYPE } from '@/theme';
 import { Image as ExpoImage } from 'expo-image';
 import { DateTimePicker } from '@expo/ui/community/datetime-picker';
 import AppText from '@/components/app-text';
 import OptionGrid from '@/components/option-grid';
 import { TypeSelector } from '@/components/marketplace-shell';
 import { DataState, InlineMessage, Sheet } from '@/components/feedback';
-import { apiMessage, categories, myPublications, savePublication, uploadImage, zones, type Category, type Publication, type PublicationPayload, type PublicationType, type Zone } from '@/services/marketplace';
+import {
+  apiMessage,
+  categories,
+  myPublications,
+  savePublication,
+  uploadImage,
+  zones,
+  type Category,
+  publicationContentError,
+  type OwnedPublication,
+  type PublicationPatch,
+  type PublicationPayload,
+  type PublicationType,
+  type Zone,
+} from '@/services/marketplace';
+import { formFieldOrder, localDate, localInput, validPrice, validatePublicationDraft, type PublicationDraft, type PublicationFormErrors, type PublicationFormField } from '@/lib/publication-form-validation';
 
-type Draft = { title: string; description: string; price: string; stock: string; start: string; end: string; gangaPrice: string; gangaMinutes: string };
-const empty: Draft = { title: '', description: '', price: '', stock: '', start: '', end: '', gangaPrice: '', gangaMinutes: '' };
-const validPrice = (value: string) => /^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/.test(value) && Number(value) > 0 && Number(value) <= 99999999.99;
-function localDate(value: string) {
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return null;
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) || localInput(date) !== value ? null : date;
+type Draft = PublicationDraft;
+const empty: Draft = {
+  title: '',
+  description: '',
+  price: '',
+  stock: '',
+  start: '',
+  end: '',
+  gangaPrice: '',
+  gangaMinutes: '',
+};
+function FieldMessage({ message, onRetry, retryLabel = 'Reintentar' }: { message?: string; onRetry?: () => void; retryLabel?: string }) {
+  return message ? <View style={styles.fieldMessage}><View style={styles.errorRow}><Ionicons name="alert-circle-outline" size={16} color={COLORS.error} accessible={false} /><AppText style={styles.errorText}>{message}</AppText></View>{onRetry ? <PrimaryButton compact variant="ghost" title={retryLabel} onPress={onRetry} /> : null}</View> : null;
 }
-function localInput(date: Date) {
-  const part = (value: number) => String(value).padStart(2, '0');
-  return `${date.getFullYear()}-${part(date.getMonth() + 1)}-${part(date.getDate())}T${part(date.getHours())}:${part(date.getMinutes())}`;
+function FormPicker({
+  label,
+  value,
+  placeholder,
+  icon,
+  disabled,
+  onPress,
+  accessibilityLabel,
+  error,
+  controlRef,
+  onLayout,
+}: {
+  label: string;
+  value?: string;
+  placeholder: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  disabled: boolean;
+  onPress: () => void;
+  accessibilityLabel?: string;
+  error?: string;
+  controlRef?: Ref<ComponentRef<typeof Pressable>>;
+  onLayout?: (event: { nativeEvent: { layout: { y: number } } }) => void;
+}) {
+  return (
+    <View onLayout={onLayout} style={styles.fieldGroup}><Pressable
+      ref={controlRef}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? value ?? placeholder}
+      accessibilityState={{ disabled }}
+      accessibilityHint={error}
+      disabled={disabled}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.picker,
+        error && styles.controlError,
+        disabled && styles.disabled,
+        pressed && styles.pressed,
+      ]}
+    >
+      <Ionicons
+        name={icon}
+        size={20}
+        color={COLORS.primary}
+        accessible={false}
+      />
+      <View style={styles.pickerBody}>
+        <AppText variant="caption">{label}</AppText>
+        <AppText
+          variant="label"
+          style={!value ? styles.muted : undefined}
+        >
+          {value ?? placeholder}
+        </AppText>
+      </View>
+      <Ionicons
+        name="chevron-forward"
+        size={18}
+        color={COLORS.textMedium}
+        accessible={false}
+      />
+    </Pressable><FieldMessage message={error} /></View>
+  );
 }
 export default function EditPublication() {
+  const { width, fontScale } = useWindowDimensions();
+  const stacked = width < 360 || fontScale > 1.2;
   const { id, type: initialType } = useLocalSearchParams<{ id?: string; type?: string }>();
   const router = useRouter();
   const [type, setType] = useState<PublicationType>(initialType === 'STATIC' ? 'STATIC' : 'LIVE');
-  const [draft, setDraft] = useState<Draft>(() => ({ ...empty, start: localInput(new Date()), end: localInput(new Date(Date.now() + 3600000)) }));
+  const [draft, setDraft] = useState<Draft>(() => ({
+    ...empty,
+    start: localInput(new Date()),
+    end: localInput(new Date(Date.now() + 3600000)),
+  }));
   const [zoneId, setZoneId] = useState<number>();
   const [categoryId, setCategoryId] = useState<number>();
   const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
   const [asset, setAsset] = useState<ImagePicker.ImagePickerAsset>();
   const [existingImage, setExistingImage] = useState('');
-  const [original, setOriginal] = useState<Publication>();
+  const [original, setOriginal] = useState<OwnedPublication>();
   const [gangaMode, setGangaMode] = useState<'MANUAL' | 'SCHEDULED'>('MANUAL');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
+  const [photoError, setPhotoError] = useState('');
+  const [zoneError, setZoneError] = useState('');
+  const [categoryError, setCategoryError] = useState('');
+  const [loadError, setLoadError] = useState('');
+  const [attempted, setAttempted] = useState(false);
+  const [serverErrors, setServerErrors] = useState<PublicationFormErrors>({});
+  const [contentMessage, setContentMessage] = useState('');
   const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
   const titleRef = useRef<ComponentRef<typeof TextInput>>(null);
   const descriptionRef = useRef<ComponentRef<typeof TextInput>>(null);
   const priceRef = useRef<ComponentRef<typeof TextInput>>(null);
   const stockRef = useRef<ComponentRef<typeof TextInput>>(null);
-  const fieldPositions = useRef<Partial<Record<keyof Draft, number>>>({});
+  const photoRef = useRef<ComponentRef<typeof Pressable>>(null);
+  const zoneRef = useRef<ComponentRef<typeof Pressable>>(null);
+  const categoryRef = useRef<ComponentRef<typeof Pressable>>(null);
+  const startRef = useRef<ComponentRef<typeof Pressable>>(null);
+  const endRef = useRef<ComponentRef<typeof Pressable>>(null);
+  const offerRef = useRef<ComponentRef<typeof Pressable>>(null);
+  const fieldPositions = useRef<Partial<Record<PublicationFormField, number>>>({});
+  const stockOffset = useRef(0);
+  const endOffset = useRef(0);
+  const submitting = useRef(false);
+  const pendingField = useRef<PublicationFormField | undefined>(undefined);
+  const [navigationRequest, setNavigationRequest] = useState(0);
   const [panel, setPanel] = useState<'photo' | 'zone' | 'category' | 'ganga' | 'start' | 'end'>();
-  const [config, setConfig] = useState({ mode: 'NONE' as 'NONE' | 'MANUAL' | 'SCHEDULED', price: '', minutes: '' });
+  const [config, setConfig] = useState({
+    mode: 'NONE' as 'NONE' | 'MANUAL' | 'SCHEDULED',
+    price: '',
+    minutes: '',
+  });
   const [configError, setConfigError] = useState('');
   const [pickedTime, setPickedTime] = useState(new Date());
   const [androidStep, setAndroidStep] = useState<'date' | 'time'>();
   const [editingReady, setEditingReady] = useState(!id);
   const [attempt, setAttempt] = useState(0);
-  const [catalogAttempt, setCatalogAttempt] = useState(0);
+  const [zoneAttempt, setZoneAttempt] = useState(0);
+  const [categoryAttempt, setCategoryAttempt] = useState(0);
   const [zoneLoading, setZoneLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(true);
-  const change = (field: keyof Draft, value: string) => { setDraft(previous => ({ ...previous, [field]: value })); setFieldErrors(previous => ({ ...previous, [field]: undefined })); setError(''); };
-  function invalid(field: 'title' | 'description' | 'price' | 'stock', message: string) {
-    setFieldErrors({ [field]: message }); setError('');
-    const inputs = { title: titleRef, description: descriptionRef, price: priceRef, stock: stockRef };
-    inputs[field].current?.focus();
-    scrollRef.current?.scrollTo({ y: Math.max(0, (fieldPositions.current[field] ?? 0) - SPACE.lg), animated: false });
+  const change = (field: keyof Draft, value: string) => {
+    setDraft(previous => ({ ...previous, [field]: value }));
+    if (field === 'title' || field === 'description') {
+      setServerErrors(previous => ({ ...previous, [field]: undefined }));
+    }
+  };
+
+  const validation = () => validatePublicationDraft({ draft, type, original, editing: !!id,
+    hasPhoto: !!(asset || existingImage), zoneId, categoryId, gangaMode, now: Date.now() });
+  const fieldErrors: PublicationFormErrors = { ...(attempted ? validation() : {}), ...Object.fromEntries(Object.entries(serverErrors).filter(([, value]) => value)) };
+  const problems: PublicationFormErrors = { ...fieldErrors, ...(photoError ? { photo: photoError } : {}),
+    ...(zoneError ? { zone: zoneError } : {}), ...(categoryError ? { category: categoryError } : {}) };
+  const firstError = formFieldOrder.find(field => problems[field]);
+  const contentBlocked = !!(serverErrors.title || serverErrors.description);
+  const notice = contentBlocked ? contentMessage : firstError ? 'Revisa los campos señalados' : error || loadError;
+
+  function requestField(field?: PublicationFormField) {
+    pendingField.current = field;
+    if (field) setNavigationRequest(value => value + 1);
   }
-  useEffect(() => { let current = true; setZoneLoading(true); void zones().then(rows => { if (current) setZoneOptions(rows); }).catch(cause => { if (current) setError(apiMessage(cause)); }).finally(() => { if (current) setZoneLoading(false); }); return () => { current = false; }; }, [catalogAttempt]);
-  useEffect(() => { let current = true; setCategoryLoading(true); setCategoryOptions([]); void categories(type).then(rows => { if (current) setCategoryOptions(rows); }).catch(cause => { if (current) setError(apiMessage(cause)); }).finally(() => { if (current) setCategoryLoading(false); }); return () => { current = false; }; }, [type, catalogAttempt]);
+  function focusPending() {
+    const field = pendingField.current;
+    if (!field || panel || fieldPositions.current[field] === undefined) return;
+    const target = { photo: photoRef, title: titleRef, description: descriptionRef, category: categoryRef,
+      price: priceRef, stock: stockRef, zone: zoneRef, start: startRef, end: endRef, offer: offerRef }[field].current;
+    target?.focus();
+    if (target && Platform.OS !== 'web') AccessibilityInfo.sendAccessibilityEvent(target, 'focus');
+    scrollRef.current?.scrollTo({
+      y: Math.max(0, (fieldPositions.current[field] ?? 0) - SPACE.lg),
+      animated: false,
+    });
+    pendingField.current = undefined;
+  }
+  useLayoutEffect(() => {
+    const frame = requestAnimationFrame(focusPending);
+    return () => cancelAnimationFrame(frame);
+  }, [navigationRequest]);
+
+  useEffect(() => {
+    let current = true;
+    setZoneLoading(true);
+    setZoneError('');
+    void zones()
+      .then(rows => {
+        if (current) setZoneOptions(rows);
+      })
+      .catch(cause => {
+        if (current) setZoneError(apiMessage(cause));
+      })
+      .finally(() => {
+        if (current) setZoneLoading(false);
+      });
+    return () => {
+      current = false;
+    };
+  }, [zoneAttempt]);
+
+  useEffect(() => {
+    let current = true;
+    setCategoryLoading(true);
+    setCategoryError('');
+    setCategoryOptions([]);
+    void categories(type)
+      .then(rows => {
+        if (current) setCategoryOptions(rows);
+      })
+      .catch(cause => {
+        if (current) setCategoryError(apiMessage(cause));
+      })
+      .finally(() => {
+        if (current) setCategoryLoading(false);
+      });
+    return () => {
+      current = false;
+    };
+  }, [type, categoryAttempt]);
+
   useEffect(() => {
     if (!id) return;
     let current = true;
     setEditingReady(false);
-    void myPublications().then(rows => {
-      if (!current) return;
-      const p = rows.find(row => row.id === id);
-      if (!p || p.status !== 'ACTIVE') { setError('No puedes editar esta publicación.'); return; }
-      setOriginal(p);
-      setType(p.type); setZoneId(p.zone_id); setCategoryId(p.category_id); setExistingImage(p.image_url);
-      setGangaMode(p.ganga_activation_mode ?? 'MANUAL');
-      setDraft({ title: p.title, description: p.description, price: p.price, stock: String(p.current_stock ?? ''),
-        start: p.start_time ? localInput(new Date(p.start_time)) : '', end: p.end_time ? localInput(new Date(p.end_time)) : '',
-        gangaPrice: p.ganga_min_price ?? '', gangaMinutes: String(p.ganga_minutes_before ?? '') });
-    }).catch(cause => { if (current) setError(apiMessage(cause)); }).finally(() => { if (current) setEditingReady(true); });
-    return () => { current = false; };
+    setLoadError('');
+    void myPublications()
+      .then(rows => {
+        if (!current) return;
+        const p = rows.find(row => row.id === id);
+        if (!p || p.status !== 'ACTIVE') {
+          setLoadError('No puedes editar esta publicación.');
+          return;
+        }
+        setOriginal(p);
+        setType(p.type);
+        setZoneId(p.zone_id);
+        setCategoryId(p.category_id);
+        setExistingImage(p.image_url);
+        setGangaMode(p.ganga_activation_mode ?? 'MANUAL');
+        setDraft({
+          title: p.title,
+          description: p.description,
+          price: p.price,
+          stock: String(p.current_stock ?? ''),
+          start: p.start_time ? localInput(new Date(p.start_time)) : '',
+          end: p.end_time ? localInput(new Date(p.end_time)) : '',
+          gangaPrice: p.ganga_min_price ?? '',
+          gangaMinutes: String(p.ganga_minutes_before ?? ''),
+        });
+      })
+      .catch(cause => {
+        if (current) setLoadError(apiMessage(cause));
+      })
+      .finally(() => {
+        if (current) setEditingReady(true);
+      });
+    return () => {
+      current = false;
+    };
   }, [id, attempt]);
+
   async function pick(source: 'camera' | 'gallery') {
-    setError('');
+    setPhotoError('');
     try {
-      const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permission.granted) { setError(source === 'camera' ? 'Permite usar la cámara para tomar la foto.' : 'Permite acceder a tus fotos para elegir una imagen.'); return; }
-      const result = source === 'camera'
-        ? await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], allowsEditing: true, quality: 0.8 })
-        : await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, quality: 0.8 });
+      const permission =
+        source === 'camera'
+          ? await ImagePicker.requestCameraPermissionsAsync()
+          : await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        setPhotoError(
+          source === 'camera'
+            ? 'Permite usar la cámara para tomar la foto.'
+            : 'Permite acceder a tus fotos para elegir una imagen.',
+        );
+        return;
+      }
+      const result =
+        source === 'camera'
+          ? await ImagePicker.launchCameraAsync({
+              mediaTypes: ['images'],
+              allowsEditing: true,
+              quality: 0.8,
+            })
+          : await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ['images'],
+              allowsEditing: true,
+              quality: 0.8,
+            });
       if (!result.canceled && result.assets[0]) {
         const selected = result.assets[0];
-        if (selected.fileSize && selected.fileSize > 5 * 1024 * 1024) { setError('La imagen debe pesar 5 MiB o menos.'); return; }
-        if (selected.mimeType && !['image/jpeg', 'image/png', 'image/webp'].includes(selected.mimeType)) { setError('Usa una imagen JPEG, PNG o WebP.'); return; }
+        if (selected.fileSize && selected.fileSize > 5 * 1024 * 1024) {
+          setPhotoError('La imagen debe pesar 5 MiB o menos.');
+          return;
+        }
+        if (
+          selected.mimeType &&
+          !['image/jpeg', 'image/png', 'image/webp'].includes(selected.mimeType)
+        ) {
+          setPhotoError('Usa una imagen JPEG, PNG o WebP.');
+          return;
+        }
         setAsset(selected);
+        setExistingImage('');
       }
-    } catch (cause) { setError((cause as Error).message || 'No se pudo seleccionar la imagen.'); }
+    } catch (cause) {
+      setPhotoError((cause as Error).message || 'No se pudo seleccionar la imagen.');
+    }
   }
+
   async function submit() {
-    if (loading) return;
-    setFieldErrors({});
-    if (type === 'LIVE' && draft.stock && (!/^\d+$/.test(draft.stock) || Number(draft.stock) < (id ? 0 : 1))) { invalid('stock', 'El stock debe ser un entero no negativo; al crear debe ser mayor que cero.'); return; }
-    if (!draft.title.trim()) { invalid('title', 'Escribe un título para identificar el producto.'); return; }
-    if (!draft.description.trim()) { invalid('description', 'Describe el producto y agrega una referencia para la entrega.'); return; }
-    if (!zoneId || !categoryId || (!asset && !existingImage)) { setError('Completa foto, zona y categoría.'); return; }
-    if (id && !original) { setError('Espera a que cargue la publicación antes de editarla.'); return; }
-    if (!validPrice(draft.price)) { invalid('price', 'El precio debe ser positivo y tener hasta dos decimales.'); return; }
-    const start = localDate(draft.start); const end = localDate(draft.end);
-    if (type === 'LIVE' && (!/^\d+$/.test(draft.stock) || Number(draft.stock) < (id ? 0 : 1))) { invalid('stock', 'El stock debe ser un entero no negativo; al crear debe ser mayor que cero.'); return; }
-    if (type === 'LIVE' && (!start || !end || start >= end || end.getTime() <= Date.now())) { setError('Ingresa inicio y fin locales válidos; el fin debe ser futuro y posterior al inicio.'); return; }
-    if (type === 'LIVE' && draft.gangaPrice && (!validPrice(draft.gangaPrice) || Number(draft.gangaPrice) > Number(draft.price))) { setError('El precio de oferta debe ser positivo y no superar el precio normal.'); return; }
-    if (original?.ganga_min_price && !draft.gangaPrice) { setError('La oferta configurada no se puede quitar; conserva el precio o ajusta sus valores.'); return; }
-    if (original?.ganga_activation_mode === 'SCHEDULED' && gangaMode === 'MANUAL') { setError('La oferta programada no se puede cambiar a manual en esta edición.'); return; }
-    const changedSchedule = !original || draft.end !== (original.end_time ? localInput(new Date(original.end_time)) : '') ||
-      draft.gangaMinutes !== String(original.ganga_minutes_before ?? '') || gangaMode !== original.ganga_activation_mode ||
-      draft.gangaPrice !== (original.ganga_min_price ?? '');
-    if (type === 'LIVE' && draft.gangaPrice && gangaMode === 'SCHEDULED' && changedSchedule && (!/^\d+$/.test(draft.gangaMinutes) || Number(draft.gangaMinutes) < 1 || !start || !end || end.getTime() - Number(draft.gangaMinutes) * 60000 <= Math.max(start.getTime(), Date.now()))) { setError('Programa la oferta dentro del horario y en el futuro.'); return; }
-    setLoading(true); setError('');
+    if (submitting.current || loading) return;
+    setAttempted(true);
+    const errors = { ...validation(), ...Object.fromEntries(Object.entries(serverErrors).filter(([, value]) => value)) };
+    const first = formFieldOrder.find(field => errors[field]);
+    if (first) { requestField(first); return; }
+    if (id && !original) { setLoadError('Espera a que cargue la publicación antes de editarla.'); return; }
+    if (zoneError || categoryError) { requestField(zoneError ? 'zone' : 'category'); return; }
+    const start = localDate(draft.start), end = localDate(draft.end);
+    submitting.current = true;
+    let stage: 'upload' | 'save' = 'upload';
+    setLoading(true);
+    setError('');
     try {
+      setPhotoError('');
       const imageUrl = asset ? await uploadImage(asset) : existingImage;
-      const payload = { type, title: draft.title.trim(), description: draft.description.trim(), price: Number(draft.price), image_url: imageUrl,
-        zone_id: zoneId, category_id: categoryId,
-        ...(type === 'LIVE' ? { ...(id ? { current_stock: Number(draft.stock) } : { initial_stock: Number(draft.stock) }),
-          start_time: start!.toISOString(), end_time: end!.toISOString(),
-          ...(draft.gangaPrice ? { ganga_min_price: Number(draft.gangaPrice), ganga_activation_mode: gangaMode,
-            ...(gangaMode === 'SCHEDULED' ? { ganga_minutes_before: Number(draft.gangaMinutes) } : {}) } : {}) } : {}) };
+      if (asset) { setExistingImage(imageUrl); setAsset(undefined); }
+      stage = 'save';
+      const payload: PublicationPayload = {
+        type,
+        title: draft.title.trim(),
+        description: draft.description.trim(),
+        price: Number(draft.price),
+        image_url: imageUrl,
+        zone_id: zoneId!,
+        category_id: categoryId!,
+        ...(type === 'LIVE'
+          ? {
+              ...(id
+                ? { current_stock: Number(draft.stock) }
+                : { initial_stock: Number(draft.stock) }),
+              start_time: original?.start_time && draft.start === localInput(new Date(original.start_time))
+                ? original.start_time : start!.toISOString(),
+              end_time: original?.end_time && draft.end === localInput(new Date(original.end_time))
+                ? original.end_time : end!.toISOString(),
+              ...(draft.gangaPrice
+                ? {
+                    ganga_min_price: Number(draft.gangaPrice),
+                    ganga_activation_mode: gangaMode,
+                    ...(gangaMode === 'SCHEDULED'
+                      ? { ganga_minutes_before: Number(draft.gangaMinutes) }
+                      : {}),
+                  }
+                : {}),
+            }
+          : {}),
+      };
       if (id && original) {
-        const patch: Partial<PublicationPayload> = {};
+        const patch: PublicationPatch = {};
         for (const [key, value] of Object.entries(payload)) {
           if (key === 'type' || key === 'initial_stock') continue;
-          const before = original[key as keyof Publication];
-          const equal = key === 'price' || key === 'ganga_min_price' ? Number(before) === value : before === value;
+          const before = original[key as keyof OwnedPublication];
+          const equal =
+            key === 'price' || key === 'ganga_min_price'
+              ? (before == null || value == null ? before === value : Number(before) === value)
+              : before === value;
           if (!equal) Object.assign(patch, { [key]: value });
         }
-        if (!Object.keys(patch).length) { setError('No hay cambios para guardar.'); return; }
+        if (type === 'LIVE' && !draft.gangaPrice && original.ganga_min_price != null) {
+          Object.assign(patch, { ganga_min_price: null, ganga_activation_mode: null, ganga_minutes_before: null });
+        } else if (type === 'LIVE' && draft.gangaPrice && gangaMode === 'MANUAL' && original.ganga_minutes_before != null) {
+          patch.ganga_minutes_before = null;
+        }
+        if (!Object.keys(patch).length) {
+          setError('No hay cambios para guardar.');
+          return;
+        }
         await savePublication(patch, id);
       } else await savePublication(payload);
       router.dismissTo({ pathname: '/sales', params: { type } });
-    } catch (cause) { setError(apiMessage(cause)); }
-    finally { setLoading(false); }
+    } catch (cause) {
+      const blocked = publicationContentError(cause);
+      if (blocked) {
+        setContentMessage(blocked.message);
+        setServerErrors(Object.fromEntries(blocked.fields.map(field => [field, field === 'title'
+          ? 'Revisa el título: contiene una palabra no permitida.' : 'Revisa la descripción: contiene una palabra no permitida.'])));
+        requestField(blocked.fields[0]);
+      } else if (stage === 'upload') {
+        setPhotoError(apiMessage(cause));
+        requestField('photo');
+      } else setError(apiMessage(cause));
+    } finally {
+      submitting.current = false;
+      setLoading(false);
+    }
   }
 
   function openConfig() {
-    setConfig({ mode: draft.gangaPrice ? gangaMode : 'NONE', price: draft.gangaPrice, minutes: draft.gangaMinutes });
-    setConfigError(''); setPanel('ganga');
+    setConfig({
+      mode: draft.gangaPrice ? gangaMode : 'NONE',
+      price: draft.gangaPrice,
+      minutes: draft.gangaMinutes,
+    });
+    setConfigError('');
+    setPanel('ganga');
   }
+
   function saveConfig() {
-    if (original?.is_ganga_active) { setPanel(undefined); return; }
-    if (config.mode === 'NONE') {
-      if (original?.ganga_min_price) { setConfigError('La oferta configurada no se puede quitar.'); return; }
-      change('gangaPrice', ''); change('gangaMinutes', ''); setPanel(undefined); return;
+    if (original?.is_ganga_active) {
+      setPanel(undefined);
+      return;
     }
-    if (!validPrice(config.price) || !validPrice(draft.price) || Number(config.price) > Number(draft.price)) { setConfigError('El precio mínimo debe ser positivo y no superar el precio normal.'); return; }
-    if (original?.ganga_activation_mode === 'SCHEDULED' && config.mode === 'MANUAL') { setConfigError('La oferta programada no se puede cambiar a manual.'); return; }
-    const end = localDate(draft.end), start = localDate(draft.start);
-    if (config.mode === 'SCHEDULED' && (!/^\d+$/.test(config.minutes) || Number(config.minutes) < 1 || !end || !start || end.getTime() - Number(config.minutes) * 60000 <= Math.max(Date.now(), start.getTime()))) { setConfigError('Programa la oferta dentro del horario y en el futuro.'); return; }
-    setGangaMode(config.mode); change('gangaPrice', config.price); change('gangaMinutes', config.mode === 'SCHEDULED' ? config.minutes : ''); setPanel(undefined);
+    if (config.mode === 'NONE') {
+      change('gangaPrice', '');
+      change('gangaMinutes', '');
+      setPanel(undefined);
+      return;
+    }
+    if (
+      !validPrice(config.price) ||
+      !validPrice(draft.price) ||
+      Number(config.price) >= Number(draft.price)
+    ) {
+      setConfigError('El precio mínimo debe ser positivo y menor que el precio normal.');
+      return;
+    }
+    const end = localDate(draft.end),
+      start = localDate(draft.start);
+    if (
+      config.mode === 'SCHEDULED' &&
+      (!/^\d+$/.test(config.minutes) ||
+        Number(config.minutes) < 1 ||
+        !end ||
+        !start ||
+        end.getTime() - Number(config.minutes) * 60000 <= Math.max(Date.now(), start.getTime()))
+    ) {
+      setConfigError('Programa la oferta dentro del horario y en el futuro.');
+      return;
+    }
+    setGangaMode(config.mode);
+    change('gangaPrice', config.price);
+    change('gangaMinutes', config.mode === 'SCHEDULED' ? config.minutes : '');
+    setPanel(undefined);
   }
+
   function openTime(field: 'start' | 'end') {
-    setPickedTime(localDate(draft[field]) ?? new Date()); setAndroidStep('date'); setPanel(field);
+    setPickedTime(localDate(draft[field]) ?? new Date());
+    setAndroidStep('date');
+    setPanel(field);
   }
-  const localLabel = (value: string) => localDate(value)?.toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) ?? 'Seleccionar horario';
+  const localLabel = (value: string) =>
+    localDate(value)?.toLocaleString('es-MX', {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    }) ?? 'Seleccionar horario';
   const timedPanel = panel === 'start' || panel === 'end';
-  const scheduledAt = localDate(draft.end) && /^\d+$/.test(config.minutes) ? new Date(localDate(draft.end)!.getTime() - Number(config.minutes) * 60000) : null;
-  return <SafeAreaView style={styles.screen}>
-    <KeyboardAvoidingView style={styles.fill} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={styles.header}>
-        <Pressable accessibilityRole="button" disabled={loading} style={styles.back} onPress={() => router.back()}><AppText style={styles.link}>‹ Mis ventas</AppText></Pressable>
-        <AppText variant="title">{id ? 'Editar publicación' : 'Nueva publicación'}</AppText>
-        <TypeSelector value={type} disabled={!!id || loading} onChange={next => { if (next !== type) { setType(next); setCategoryId(undefined); } }} />
-      </View>
-      <ScrollView ref={scrollRef} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scroll}>
-        {id && !editingReady ? <DataState kind="loading" title="Cargando publicación…" /> : <>
-          <Pressable accessibilityRole="button" disabled={loading} accessibilityLabel={asset || existingImage ? 'Cambiar foto del producto' : 'Añadir foto del producto'} style={({ pressed }) => [styles.photo, pressed && styles.pressed]} onPress={() => setPanel('photo')}>
-            {asset || existingImage ? <ExpoImage testID="selected-publication-image" source={{ uri: asset?.uri ?? existingImage }} style={styles.image} contentFit="cover" /> : <><AppText style={styles.photoPlus}>+</AppText><View style={styles.photoBody}><AppText variant="label">Añadir foto del {type === 'LIVE' ? 'producto' : 'artículo'}</AppText><AppText variant="caption">Cámara o galería · máx. 5 MiB</AppText></View></>}
+  const scheduledAt =
+    localDate(draft.end) && /^\d+$/.test(config.minutes)
+      ? new Date(localDate(draft.end)!.getTime() - Number(config.minutes) * 60000)
+      : null;
+  const configPriceError = configError.startsWith('El precio mínimo') ? configError : undefined;
+  const configScheduleError = configError.startsWith('Programa la oferta') ? configError : undefined;
+
+  return (
+    <SafeAreaView style={styles.screen}>
+      <KeyboardAvoidingView
+        style={styles.fill}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View style={styles.header}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Volver a Mis ventas"
+            accessibilityState={{ disabled: loading }}
+            disabled={loading}
+            style={({ pressed }) => [styles.back, pressed && styles.pressed]}
+            onPress={() => router.back()}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={20}
+              color={COLORS.primary}
+              accessible={false}
+            />
+            <AppText style={styles.link}>Mis ventas</AppText>
           </Pressable>
-          <View onLayout={event => { fieldPositions.current.title = event.nativeEvent.layout.y; }}><CustomInput ref={titleRef} label="Título" editable={!loading} error={fieldErrors.title} placeholder="¿Qué vendes?" value={draft.title} onChangeText={value => change('title', value)} /></View>
-          <View onLayout={event => { fieldPositions.current.description = event.nativeEvent.layout.y; }}><CustomInput ref={descriptionRef} label="Descripción" editable={!loading} error={fieldErrors.description} surface="white" placeholder="Describe el producto y agrega una referencia para la entrega." value={draft.description} onChangeText={value => change('description', value)} multiline /></View>
-          <View style={styles.row} onLayout={event => { fieldPositions.current.price = event.nativeEvent.layout.y; fieldPositions.current.stock = event.nativeEvent.layout.y; }}><View style={styles.flex}><CustomInput ref={priceRef} label={type === 'LIVE' ? 'Precio normal' : 'Precio'} accessibilityLabel="Precio" error={fieldErrors.price} placeholder="$0.00" value={draft.price} onChangeText={value => change('price', value)} keyboardType="decimal-pad" editable={!loading && !original?.is_ganga_active} /></View>{type === 'LIVE' ? <View style={styles.flex}><CustomInput ref={stockRef} label="Stock disponible" editable={!loading} error={fieldErrors.stock} placeholder="Unidades" value={draft.stock} onChangeText={value => change('stock', value)} keyboardType="number-pad" /></View> : null}</View>
-          <View style={styles.field}><AppText variant="label" style={styles.muted}>Zona</AppText><PrimaryButton disabled={loading} title={zoneOptions.find(z => z.id === zoneId)?.name ?? 'Seleccionar zona'} variant="field" onPress={() => setPanel('zone')} /></View>
-          <View style={styles.field}><AppText variant="label" style={styles.muted}>Categoría</AppText><PrimaryButton disabled={loading} title={categoryOptions.find(c => c.id === categoryId)?.name ?? 'Seleccionar categoría'} variant="field" onPress={() => setPanel('category')} /></View>
-          {type === 'LIVE' ? <>
-            <AppText variant="label">Horario de venta</AppText>
-            <View style={styles.row}><View style={styles.flex}><AppText variant="caption">Inicio</AppText><PrimaryButton disabled={loading} title={localLabel(draft.start)} accessibilityLabel="Elegir inicio de venta" variant="field" onPress={() => openTime('start')} /></View><View style={styles.flex}><AppText variant="caption">Fin</AppText><PrimaryButton disabled={loading} title={localLabel(draft.end)} accessibilityLabel="Elegir fin de venta" variant="field" onPress={() => openTime('end')} /></View></View>
-            <Pressable accessibilityRole="button" disabled={loading} style={styles.ganga} onPress={openConfig}><AppText variant="label" style={styles.gangaText}>Precio de oferta · {original?.is_ganga_active ? 'Activa' : 'Configurar →'}</AppText><AppText variant="caption">{draft.gangaPrice ? `${gangaMode === 'MANUAL' ? 'Manual' : 'Programada'} · $${draft.gangaPrice}${gangaMode === 'SCHEDULED' ? ` · ${draft.gangaMinutes} min antes del fin` : ''}` : 'Sin configurar · opcional'}</AppText></Pressable>
-          </> : <View style={styles.info}><AppText variant="label" style={styles.link}>Sin stock ni temporizador</AppText><AppText variant="caption">Los compradores contactan por WhatsApp directamente.</AppText></View>}
-        </>}
-        {error ? <InlineMessage onRetry={id ? () => setAttempt(n => n + 1) : undefined}>{error}</InlineMessage> : null}
-      </ScrollView>
-      <View style={styles.submit}><PrimaryButton title={id ? 'Guardar cambios' : type === 'STATIC' ? 'Publicar artículo' : 'Publicar'} loadingTitle={id ? 'Guardando…' : 'Publicando…'} disabled={!!id && (!editingReady || !original)} loading={loading} onPress={() => void submit()} /></View>
-    </KeyboardAvoidingView>
-    <Sheet visible={panel === 'photo'} title="Foto del producto" onClose={() => setPanel(undefined)}><PrimaryButton title="Tomar foto" onPress={() => { setPanel(undefined); void pick('camera'); }} /><PrimaryButton title="Elegir de galería" variant="secondary" onPress={() => { setPanel(undefined); void pick('gallery'); }} /></Sheet>
-    <Sheet visible={panel === 'zone' || panel === 'category'} title={panel === 'zone' ? 'Zona' : 'Categoría'} onClose={() => setPanel(undefined)}>
-      {(panel === 'zone' ? zoneLoading : categoryLoading) ? <DataState kind="loading" title="Cargando opciones…" /> : (panel === 'zone' ? zoneOptions : categoryOptions).length === 0 ? <DataState kind="error" title="No pudimos cargar las opciones" action="Reintentar" onAction={() => setCatalogAttempt(n => n + 1)} /> : <OptionGrid options={panel === 'zone' ? zoneOptions : categoryOptions} value={panel === 'zone' ? zoneId : categoryId} onChange={value => { if (panel === 'zone') setZoneId(value); else setCategoryId(value); setPanel(undefined); }} />}
-    </Sheet>
-    <Sheet visible={panel === 'ganga'} title="Precio de oferta" subtitle="El descuento se aplica únicamente a reservas nuevas." onClose={() => setPanel(undefined)} footer={<PrimaryButton title={original?.is_ganga_active ? 'Cerrar' : 'Guardar configuración'} onPress={saveConfig} />}>
-      <View style={styles.row}>{(['NONE', 'MANUAL', 'SCHEDULED'] as const).map(mode => <PrimaryButton key={mode} title={mode === 'NONE' ? 'Sin oferta' : mode === 'MANUAL' ? 'Manual' : 'Programada'} compact style={styles.flex} variant={config.mode === mode ? 'primary' : 'secondary'} disabled={!!original?.is_ganga_active || (mode === 'NONE' && !!original?.ganga_min_price) || (mode === 'MANUAL' && original?.ganga_activation_mode === 'SCHEDULED')} onPress={() => { setConfig(previous => ({ ...previous, mode })); setConfigError(''); }} />)}</View>
-      {config.mode !== 'NONE' ? <><CustomInput label="Precio mínimo" accessibilityLabel="Precio de oferta opcional" surface="white" placeholder="$65" value={config.price} editable={!original?.is_ganga_active} keyboardType="decimal-pad" onChangeText={price => { setConfig(previous => ({ ...previous, price })); setConfigError(''); }} /><AppText variant="caption">Precio normal: ${draft.price || '—'}. El mínimo no puede ser mayor.</AppText>{config.mode === 'SCHEDULED' ? <><CustomInput label="Minutos antes del fin" surface="white" value={config.minutes} keyboardType="number-pad" editable={!original?.is_ganga_active} onChangeText={minutes => { setConfig(previous => ({ ...previous, minutes })); setConfigError(''); }} /><View style={styles.info}><AppText variant="label" style={styles.link}>Activación: {scheduledAt ? scheduledAt.toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Elige los minutos'}</AppText><AppText variant="caption">La venta termina {localLabel(draft.end)}.</AppText></View></> : <View style={styles.info}><AppText variant="label" style={styles.link}>Tú decides cuándo activar</AppText><AppText variant="caption">Activa la oferta desde Mis ventas mientras la publicación siga en horario.</AppText></View>}</> : <AppText variant="caption">Puedes publicar con el precio normal. Configurar una oferta es opcional.</AppText>}
-      {configError ? <InlineMessage>{configError}</InlineMessage> : null}
-    </Sheet>
-    <Sheet visible={timedPanel} title={panel === 'start' ? 'Inicio de venta' : 'Fin de venta'} onClose={() => setPanel(undefined)} footer={<PrimaryButton title="Guardar horario" onPress={() => { if (panel === 'start' || panel === 'end') change(panel, localInput(pickedTime)); setPanel(undefined); }} />}>
-      <AppText variant="label">{pickedTime.toLocaleString('es-MX')}</AppText>
-      {timedPanel && (Platform.OS !== 'android' || androidStep) ? <DateTimePicker value={pickedTime} mode={Platform.OS === 'android' ? androidStep ?? 'date' : 'datetime'} display={Platform.OS === 'ios' ? 'spinner' : 'default'} locale="es_MX" accentColor={COLORS.primary} onDismiss={() => setAndroidStep(undefined)} onValueChange={(_event, value) => { if (Platform.OS === 'android' && androidStep === 'date') { const next = new Date(pickedTime); next.setFullYear(value.getFullYear(), value.getMonth(), value.getDate()); setPickedTime(next); setAndroidStep('time'); } else { setPickedTime(value); setAndroidStep(undefined); } }} /> : null}
-      {Platform.OS === 'android' && !androidStep ? <PrimaryButton title="Cambiar fecha y hora" variant="secondary" onPress={() => setAndroidStep('date')} /> : null}
-    </Sheet>
-  </SafeAreaView>;
+          <AppText variant="title" accessibilityRole="header">{id ? 'Editar publicación' : 'Nueva publicación'}</AppText>
+        </View>
+        {notice ? <ScrollView testID="publication-form-notice" style={styles.notice} contentContainerStyle={styles.noticeContent} keyboardShouldPersistTaps="handled">
+          <AppText accessibilityRole="alert" style={styles.errorText}>{notice}</AppText>
+          {firstError ? <PrimaryButton compact variant="ghost" title="Ir al primer campo" disabled={loading} onPress={() => requestField(firstError)} /> :
+            loadError ? <PrimaryButton compact variant="ghost" title="Reintentar carga" onPress={() => setAttempt(n => n + 1)} /> : null}
+        </ScrollView> : null}
+        <ScrollView
+          ref={scrollRef}
+          testID="publication-form-scroll"
+          style={styles.fill}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scroll}
+          onContentSizeChange={focusPending}
+        >
+          <TypeSelector
+            value={type}
+            disabled={!!id || loading}
+            onChange={next => {
+              if (next !== type) {
+                setType(next);
+                setCategoryId(undefined);
+              }
+            }}
+          />
+          {id && !editingReady ? (
+            <DataState
+              kind="loading"
+              title="Cargando publicación…"
+            />
+          ) : (
+            <>
+              <View style={styles.fieldGroup} onLayout={event => { fieldPositions.current.photo = event.nativeEvent.layout.y; }}>
+              <Pressable
+                ref={photoRef}
+                accessibilityRole="button"
+                disabled={loading}
+                accessibilityState={{ disabled: loading }}
+                accessibilityHint={problems.photo}
+                accessibilityLabel={
+                  asset || existingImage ? 'Cambiar foto del producto' : 'Añadir foto del producto'
+                }
+                style={({ pressed }) => [
+                  styles.photo,
+                  problems.photo && styles.controlError,
+                  !asset && !existingImage && styles.photoEmpty,
+                  loading && styles.disabled,
+                  pressed && styles.pressed,
+                ]}
+                onPress={() => setPanel('photo')}
+              >
+                {asset || existingImage ? (
+                  <>
+                    <ExpoImage
+                      testID="selected-publication-image"
+                      source={{ uri: asset?.uri ?? existingImage }}
+                      style={styles.image}
+                      contentFit="cover"
+                    />
+                    <View style={styles.photoCaption}>
+                      <AppText
+                        variant="caption"
+                        style={styles.flex}
+                      >
+                        Foto del {type === 'LIVE' ? 'producto' : 'artículo'}
+                      </AppText>
+                      <View style={styles.photoAction}>
+                        <Ionicons
+                          name="camera-outline"
+                          size={18}
+                          color={COLORS.primary}
+                          accessible={false}
+                        />
+                        <AppText
+                          variant="label"
+                          style={styles.link}
+                        >
+                          Cambiar foto
+                        </AppText>
+                      </View>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons
+                      name="camera-outline"
+                      size={32}
+                      color={COLORS.primary}
+                      accessible={false}
+                    />
+                    <AppText variant="heading">
+                      Añadir foto del {type === 'LIVE' ? 'producto' : 'artículo'}
+                    </AppText>
+                    <AppText variant="caption">Cámara o galería · máx. 5 MiB</AppText>
+                  </>
+                )}
+              </Pressable>
+              <FieldMessage message={problems.photo} />
+              </View>
+              <AppText
+                variant="heading"
+                accessibilityRole="header"
+                style={styles.section}
+              >
+                Producto
+              </AppText>
+              <View
+                onLayout={event => {
+                  fieldPositions.current.title = event.nativeEvent.layout.y;
+                }}
+              >
+                <CustomInput
+                  ref={titleRef}
+                  label="Título"
+                  surface="white"
+                  editable={!loading}
+                  error={fieldErrors.title}
+                  announceError={false}
+                  placeholder="¿Qué vendes?"
+                  value={draft.title}
+                  onChangeText={value => change('title', value)}
+                />
+              </View>
+              <View
+                onLayout={event => {
+                  fieldPositions.current.description = event.nativeEvent.layout.y;
+                }}
+              >
+                <CustomInput
+                  ref={descriptionRef}
+                  label="Descripción"
+                  editable={!loading}
+                  error={fieldErrors.description}
+                  announceError={false}
+                  surface="white"
+                  placeholder="Describe el producto y agrega una referencia para la entrega."
+                  value={draft.description}
+                  onChangeText={value => change('description', value)}
+                  multiline
+                />
+              </View>
+              <FormPicker
+                label="Categoría"
+                controlRef={categoryRef}
+                onLayout={event => { fieldPositions.current.category = event.nativeEvent.layout.y; }}
+                error={problems.category}
+                value={categoryOptions.find(c => c.id === categoryId)?.name}
+                placeholder="Seleccionar categoría"
+                icon="grid-outline"
+                disabled={loading}
+                onPress={() => setPanel('category')}
+              />
+              {categoryError ? <PrimaryButton compact variant="ghost" title="Reintentar categorías" disabled={loading} onPress={() => setCategoryAttempt(n => n + 1)} /> : null}
+              <AppText
+                variant="heading"
+                accessibilityRole="header"
+                style={styles.section}
+              >
+                {type === 'LIVE' ? 'Precio y disponibilidad' : 'Precio'}
+              </AppText>
+              <View
+                style={[styles.row, stacked && styles.stacked]}
+                onLayout={event => {
+                  fieldPositions.current.price = event.nativeEvent.layout.y;
+                  fieldPositions.current.stock = event.nativeEvent.layout.y + stockOffset.current;
+                }}
+              >
+                <View style={styles.flex}>
+                  <CustomInput
+                    ref={priceRef}
+                    label={type === 'LIVE' ? 'Precio normal' : 'Precio'}
+                    accessibilityLabel="Precio"
+                    surface="white"
+                    style={styles.priceInput}
+                    error={fieldErrors.price}
+                    announceError={false}
+                    placeholder="$0.00"
+                    value={draft.price}
+                    onChangeText={value => change('price', value)}
+                    keyboardType="decimal-pad"
+                    editable={!loading && !original?.is_ganga_active}
+                  />
+                </View>
+                {type === 'LIVE' ? (
+                  <View
+                    style={styles.flex}
+                    onLayout={event => {
+                      stockOffset.current = event.nativeEvent.layout.y;
+                      fieldPositions.current.stock =
+                        (fieldPositions.current.price ?? 0) + event.nativeEvent.layout.y;
+                    }}
+                  >
+                    <CustomInput
+                      ref={stockRef}
+                      label="Stock disponible"
+                      surface="white"
+                      editable={!loading}
+                      error={fieldErrors.stock}
+                      announceError={false}
+                      placeholder="Unidades"
+                      value={draft.stock}
+                      onChangeText={value => change('stock', value)}
+                      keyboardType="number-pad"
+                    />
+                  </View>
+                ) : null}
+              </View>
+              <AppText
+                variant="heading"
+                accessibilityRole="header"
+                style={styles.section}
+              >
+                Entrega
+              </AppText>
+              <FormPicker
+                label="Zona"
+                controlRef={zoneRef}
+                onLayout={event => { fieldPositions.current.zone = event.nativeEvent.layout.y; }}
+                error={problems.zone}
+                value={zoneOptions.find(z => z.id === zoneId)?.name}
+                placeholder="Seleccionar zona"
+                icon="location-outline"
+                disabled={loading}
+                onPress={() => setPanel('zone')}
+              />
+              {zoneError ? <PrimaryButton compact variant="ghost" title="Reintentar zonas" disabled={loading} onPress={() => setZoneAttempt(n => n + 1)} /> : null}
+              {type === 'LIVE' ? (
+                <>
+                  <AppText variant="label">Horario de venta</AppText>
+                  <View style={[styles.row, stacked && styles.stacked]} onLayout={event => {
+                    fieldPositions.current.start = event.nativeEvent.layout.y;
+                    fieldPositions.current.end = event.nativeEvent.layout.y + endOffset.current;
+                  }}>
+                    <View style={styles.flex}>
+                      <FormPicker
+                        label="Inicio"
+                        controlRef={startRef}
+                        error={fieldErrors.start}
+                        value={localLabel(draft.start)}
+                        placeholder="Seleccionar horario"
+                        icon="time-outline"
+                        disabled={loading}
+                        accessibilityLabel="Elegir inicio de venta"
+                        onPress={() => openTime('start')}
+                      />
+                    </View>
+                    <View style={styles.flex} onLayout={event => { endOffset.current = event.nativeEvent.layout.y; fieldPositions.current.end = (fieldPositions.current.start ?? 0) + endOffset.current; }}>
+                      <FormPicker
+                        label="Fin"
+                        controlRef={endRef}
+                        error={fieldErrors.end}
+                        value={localLabel(draft.end)}
+                        placeholder="Seleccionar horario"
+                        icon="time-outline"
+                        disabled={loading}
+                        accessibilityLabel="Elegir fin de venta"
+                        onPress={() => openTime('end')}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.fieldGroup} onLayout={event => { fieldPositions.current.offer = event.nativeEvent.layout.y; }}><Pressable
+                    ref={offerRef}
+                    accessibilityRole="button"
+                    accessibilityLabel="Precio de oferta"
+                    accessibilityState={{ disabled: loading }}
+                    accessibilityHint={fieldErrors.offer}
+                    disabled={loading}
+                    style={({ pressed }) => [
+                      styles.ganga,
+                      fieldErrors.offer && styles.controlError,
+                      loading && styles.disabled,
+                      pressed && styles.pressed,
+                    ]}
+                    onPress={openConfig}
+                  >
+                    <Ionicons
+                      name="pricetag-outline"
+                      size={22}
+                      color={COLORS.ganga}
+                      accessible={false}
+                    />
+                    <View style={styles.pickerBody}>
+                      <AppText
+                        variant="label"
+                        style={styles.gangaText}
+                      >
+                        Precio de oferta · {original?.is_ganga_active ? 'Activa' : 'Configurar'}
+                      </AppText>
+                      <AppText variant="caption">
+                        {draft.gangaPrice
+                          ? `${gangaMode === 'MANUAL' ? 'Manual' : 'Programada'} · $${draft.gangaPrice}${gangaMode === 'SCHEDULED' ? ` · ${draft.gangaMinutes} min antes del fin` : ''}`
+                          : 'Sin configurar · opcional'}
+                      </AppText>
+                    </View>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={18}
+                      color={COLORS.ganga}
+                      accessible={false}
+                    />
+                  </Pressable>
+                  <FieldMessage message={fieldErrors.offer} /></View>
+                </>
+              ) : (
+                <View style={styles.info}>
+                  <AppText
+                    variant="label"
+                    style={styles.link}
+                  >
+                    Sin stock ni temporizador
+                  </AppText>
+                  <AppText variant="caption">
+                    Los compradores contactan por WhatsApp directamente.
+                  </AppText>
+                </View>
+              )}
+            </>
+          )}
+        </ScrollView>
+        <View style={styles.submit}>
+          <PrimaryButton
+            title={id ? 'Guardar cambios' : type === 'STATIC' ? 'Publicar artículo' : 'Publicar'}
+            loadingTitle={id ? 'Guardando…' : 'Publicando…'}
+            disabled={!!id && (!editingReady || !original)}
+            loading={loading}
+            onPress={() => void submit()}
+          />
+        </View>
+      </KeyboardAvoidingView>
+      <Sheet
+        visible={panel === 'photo'}
+        title="Foto del producto"
+        onClose={() => setPanel(undefined)}
+      >
+        <PrimaryButton
+          title="Tomar foto"
+          onPress={() => {
+            setPanel(undefined);
+            void pick('camera');
+          }}
+        />
+        <PrimaryButton
+          title="Elegir de galería"
+          variant="secondary"
+          onPress={() => {
+            setPanel(undefined);
+            void pick('gallery');
+          }}
+        />
+      </Sheet>
+      <Sheet
+        visible={panel === 'zone' || panel === 'category'}
+        title={panel === 'zone' ? 'Zona' : 'Categoría'}
+        onClose={() => setPanel(undefined)}
+      >
+        {(panel === 'zone' ? zoneLoading : categoryLoading) ? (
+          <DataState
+            kind="loading"
+            title="Cargando opciones…"
+          />
+        ) : (panel === 'zone' ? zoneOptions : categoryOptions).length === 0 ? (
+          <DataState
+            kind="error"
+            title="No pudimos cargar las opciones"
+            action="Reintentar"
+            description={panel === 'zone' ? zoneError : categoryError}
+            onAction={() => panel === 'zone' ? setZoneAttempt(n => n + 1) : setCategoryAttempt(n => n + 1)}
+          />
+        ) : (
+          <OptionGrid
+            options={panel === 'zone' ? zoneOptions : categoryOptions}
+            value={panel === 'zone' ? zoneId : categoryId}
+            onChange={value => {
+              if (panel === 'zone') setZoneId(value);
+              else setCategoryId(value);
+              setPanel(undefined);
+            }}
+          />
+        )}
+      </Sheet>
+      <Sheet
+        visible={panel === 'ganga'}
+        title="Precio de oferta"
+        subtitle="El descuento se aplica únicamente a reservas nuevas."
+        onClose={() => setPanel(undefined)}
+        footer={
+          <PrimaryButton
+            title={original?.is_ganga_active ? 'Cerrar' : 'Guardar configuración'}
+            onPress={saveConfig}
+          />
+        }
+      >
+        <View style={[styles.row, stacked && styles.stacked]}>
+          {(['NONE', 'MANUAL', 'SCHEDULED'] as const).map(mode => (
+            <PrimaryButton
+              key={mode}
+              title={mode === 'NONE' ? 'Sin oferta' : mode === 'MANUAL' ? 'Manual' : 'Programada'}
+              compact
+              style={styles.flex}
+              variant={config.mode === mode ? 'primary' : 'secondary'}
+              disabled={loading || !!original?.is_ganga_active}
+              onPress={() => {
+                setConfig(previous => ({ ...previous, mode }));
+                setConfigError('');
+              }}
+            />
+          ))}
+        </View>
+        {config.mode !== 'NONE' ? (
+          <>
+            <CustomInput
+              label="Precio mínimo"
+              accessibilityLabel="Precio de oferta opcional"
+              surface="white"
+              placeholder="$65"
+              error={configPriceError}
+              value={config.price}
+              editable={!loading && !original?.is_ganga_active}
+              keyboardType="decimal-pad"
+              onChangeText={price => {
+                setConfig(previous => ({ ...previous, price }));
+                setConfigError('');
+              }}
+            />
+            <AppText variant="caption">
+              Precio normal: ${draft.price || '—'}. El mínimo debe ser menor.
+            </AppText>
+            {config.mode === 'SCHEDULED' ? (
+              <>
+                <CustomInput
+                  label="Minutos antes del fin"
+                  surface="white"
+                  value={config.minutes}
+                  error={configScheduleError}
+                  keyboardType="number-pad"
+                  editable={!loading && !original?.is_ganga_active}
+                  onChangeText={minutes => {
+                    setConfig(previous => ({ ...previous, minutes }));
+                    setConfigError('');
+                  }}
+                />
+                <View style={styles.info}>
+                  <AppText
+                    variant="label"
+                    style={styles.link}
+                  >
+                    Activación:{' '}
+                    {scheduledAt
+                      ? scheduledAt.toLocaleString('es-MX', {
+                          day: 'numeric',
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : 'Elige los minutos'}
+                  </AppText>
+                  <AppText variant="caption">La venta termina {localLabel(draft.end)}.</AppText>
+                </View>
+              </>
+            ) : (
+              <View style={styles.info}>
+                <AppText
+                  variant="label"
+                  style={styles.link}
+                >
+                  Tú decides cuándo activar
+                </AppText>
+                <AppText variant="caption">
+                  Activa la oferta desde Mis ventas mientras la publicación siga en horario.
+                </AppText>
+              </View>
+            )}
+          </>
+        ) : (
+          <AppText variant="caption">
+            Puedes publicar con el precio normal. Configurar una oferta es opcional.
+          </AppText>
+        )}
+        {configError && !configPriceError && !configScheduleError ? <InlineMessage>{configError}</InlineMessage> : null}
+      </Sheet>
+      <Sheet
+        visible={timedPanel}
+        title={panel === 'start' ? 'Inicio de venta' : 'Fin de venta'}
+        onClose={() => setPanel(undefined)}
+        footer={
+          <PrimaryButton
+            title="Guardar horario"
+            onPress={() => {
+              if (panel === 'start' || panel === 'end') change(panel, localInput(pickedTime));
+              setPanel(undefined);
+            }}
+          />
+        }
+      >
+        <AppText variant="label">{pickedTime.toLocaleString('es-MX')}</AppText>
+        {timedPanel && (Platform.OS !== 'android' || androidStep) ? (
+          <DateTimePicker
+            value={pickedTime}
+            mode={Platform.OS === 'android' ? (androidStep ?? 'date') : 'datetime'}
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            locale="es_MX"
+            accentColor={COLORS.primary}
+            onDismiss={() => setAndroidStep(undefined)}
+            onValueChange={(_event, value) => {
+              if (Platform.OS === 'android' && androidStep === 'date') {
+                const next = new Date(pickedTime);
+                next.setFullYear(value.getFullYear(), value.getMonth(), value.getDate());
+                setPickedTime(next);
+                setAndroidStep('time');
+              } else {
+                setPickedTime(value);
+                setAndroidStep(undefined);
+              }
+            }}
+          />
+        ) : null}
+        {Platform.OS === 'android' && !androidStep ? (
+          <PrimaryButton
+            title="Cambiar fecha y hora"
+            variant="secondary"
+            onPress={() => setAndroidStep('date')}
+          />
+        ) : null}
+      </Sheet>
+    </SafeAreaView>
+  );
 }
+
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background }, fill: { flex: 1 }, flex: { flex: 1, gap: SPACE.sm },
-  header: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.md, gap: SPACE.md }, back: { minHeight: 44, justifyContent: 'center' },
-  scroll: { paddingHorizontal: SPACE.page, paddingTop: SPACE.sm, paddingBottom: SPACE.page, gap: SPACE.lg }, submit: { padding: SPACE.page },
-  row: { flexDirection: 'row', gap: SPACE.lg }, field: { gap: SPACE.sm }, link: { color: COLORS.primary }, muted: { color: COLORS.textMedium },
-  photo: { backgroundColor: COLORS.white, padding: SPACE.lg, borderRadius: RADIUS.md, flexDirection: 'row', alignItems: 'center', minHeight: 84, gap: SPACE.lg, overflow: 'hidden' },
-  photoPlus: { ...TYPE.title, color: COLORS.primary }, photoBody: { flex: 1, gap: SPACE.sm }, image: { width: '100%', height: 200, borderRadius: RADIUS.md },
-  ganga: { backgroundColor: COLORS.gangaSoft, padding: SPACE.lg, borderRadius: RADIUS.md, gap: SPACE.sm }, gangaText: { color: COLORS.ganga },
-  info: { backgroundColor: COLORS.primarySoft, padding: SPACE.lg, borderRadius: RADIUS.md, gap: SPACE.sm }, pressed: { opacity: 0.75 },
+  fieldGroup: { gap: SPACE.sm },
+  fieldMessage: { gap: SPACE.sm },
+  errorRow: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.sm },
+  errorText: { color: COLORS.error, flexShrink: 1 },
+  controlError: { borderColor: COLORS.error, borderWidth: 1 },
+  notice: { flexBasis: 'auto', flexGrow: 0, flexShrink: 0, maxHeight: '30%', marginHorizontal: SPACE.page, marginVertical: SPACE.sm, backgroundColor: COLORS.errorBg, borderRadius: RADIUS.md },
+  noticeContent: { padding: SPACE.md, gap: SPACE.xs },
+  screen: { flex: 1, backgroundColor: COLORS.background },
+  fill: { flex: 1 },
+  flex: { flex: 1, gap: SPACE.sm },
+  header: { paddingHorizontal: SPACE.page },
+  back: {
+    minHeight: METRICS.compactControl,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACE.xs,
+  },
+  scroll: {
+    width: '100%',
+    maxWidth: 640,
+    alignSelf: 'center',
+    paddingHorizontal: SPACE.page,
+    paddingTop: SPACE.sm,
+    paddingBottom: SPACE.xxl,
+    gap: SPACE.lg,
+  },
+  submit: {
+    paddingHorizontal: SPACE.page,
+    paddingVertical: SPACE.md,
+    backgroundColor: COLORS.white,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  row: { flexDirection: 'row', gap: SPACE.lg },
+  stacked: { flexDirection: 'column' },
+  link: { color: COLORS.primary },
+  muted: { color: COLORS.textMedium },
+  section: {
+    marginTop: SPACE.lg,
+    paddingTop: SPACE.xl,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  photo: {
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.md,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  photoEmpty: {
+    minHeight: 184,
+    backgroundColor: COLORS.inputBg,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACE.sm,
+    padding: SPACE.xl,
+  },
+  image: { width: '100%', aspectRatio: 1.65 },
+  photoCaption: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: SPACE.sm,
+    padding: SPACE.md,
+  },
+  photoAction: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm },
+  picker: {
+    minHeight: 72,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACE.md,
+    padding: SPACE.md,
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  pickerBody: { flex: 1, minWidth: 0, gap: SPACE.xs },
+  priceInput: { ...TYPE.heading, color: COLORS.primary },
+  ganga: {
+    minHeight: METRICS.control,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACE.md,
+    paddingVertical: SPACE.lg,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    marginTop: SPACE.sm,
+  },
+  gangaText: { color: COLORS.ganga },
+  disabled: { opacity: 0.55 },
+  info: {
+    backgroundColor: COLORS.primarySoft,
+    padding: SPACE.lg,
+    borderRadius: RADIUS.md,
+    gap: SPACE.sm,
+  },
+  pressed: { opacity: 0.75 },
 });

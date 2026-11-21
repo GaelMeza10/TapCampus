@@ -41,7 +41,9 @@ test('fallo de red termina la carga y reintentar muestra publicaciones', async (
   await view.findByText('No se pudieron cargar las publicaciones.');
   list.mockResolvedValue([product]);
   await fireEvent.press(view.getByRole('button', { name: 'Reintentar' }));
-  await view.findByText('Torta de pollo');
+  await view.findByRole('button', { name: 'Ver Torta de pollo' });
+  await fireEvent.press(view.getByRole('button', { name: 'Descubrir Torta de pollo' }));
+  expect(mockPush).toHaveBeenCalledWith({ pathname: '/publication/[id]', params: { id: 'p1' } });
   expect(view.queryByText('No se pudieron cargar las publicaciones.')).toBeNull();
 });
 
@@ -50,7 +52,7 @@ test('cambiar tipo ignora respuestas antiguas y el + conserva el tipo visible', 
   (listPublications as jest.Mock).mockImplementation((type: string) => type === 'LIVE' ? new Promise(resolve => late.push(resolve)) : Promise.resolve([{ ...product, id: 'book', title: 'Libro de cálculo', type: 'STATIC' }]));
   const view = await render(<HomePage />);
   await fireEvent.press(view.getByRole('tab', { name: 'Catálogo' }));
-  await view.findByText('Libro de cálculo');
+  await view.findByRole('button', { name: 'Ver Libro de cálculo' });
   await act(async () => { late.forEach(resolve => resolve([product])); });
   expect(view.queryByText('Torta de pollo')).toBeNull();
   await fireEvent.press(view.getByRole('button', { name: 'Crear publicación' }));
@@ -61,7 +63,7 @@ test('error al refrescar mantiene las publicaciones y la navegación', async () 
   const list = listPublications as jest.Mock;
   list.mockResolvedValue([product]);
   const view = await render(<HomePage />);
-  await view.findByText('Torta de pollo');
+  await view.findByRole('button', { name: 'Ver Torta de pollo' });
   list.mockRejectedValue(new Error('offline'));
   await act(async () => { mockListeners.connect(); });
   await view.findByText('Error de red');

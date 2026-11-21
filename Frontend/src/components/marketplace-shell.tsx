@@ -31,8 +31,8 @@ export function MarketplaceShell({ active, children, navigationDisabled }: { act
   return <SafeAreaView edges={['top', 'left', 'right']} style={styles.screen}><View style={styles.content}>{children}</View><BottomNavigation active={active} disabled={navigationDisabled} /></SafeAreaView>;
 }
 
-export function PageHeader({ title, action, brand }: { title: string; action?: ReactNode; brand?: boolean }) {
-  return <View style={styles.header}><View style={styles.headerRow}><AppText variant={brand ? 'brand' : 'title'} style={[styles.headerTitle, brand && styles.marketBrand]}>{title}</AppText>{action}</View></View>;
+export function PageHeader({ title, action, brand, contained }: { title: string; action?: ReactNode; brand?: boolean; contained?: boolean }) {
+  return <View style={[styles.header, contained && styles.containedHeader]}><View style={styles.headerRow}><AppText variant={brand ? 'brand' : 'title'} style={[styles.headerTitle, brand && styles.marketBrand]}>{title}</AppText>{action}</View></View>;
 }
 
 export function TypeSelector({ value, onChange, disabled, liveLabel = 'Disponibles ahora' }: { value: PublicationType; onChange: (value: PublicationType) => void; disabled?: boolean; liveLabel?: string }) {
@@ -41,20 +41,21 @@ export function TypeSelector({ value, onChange, disabled, liveLabel = 'Disponibl
 
 export function PublishButton({ type }: { type: PublicationType }) {
   const router = useRouter();
-  return <Pressable accessibilityRole="button" accessibilityLabel="Crear publicación" style={({ pressed }) => [styles.fab, pressed && styles.pressed]} onPress={() => router.push({ pathname: '/publication/edit', params: { type } })}><AppText style={styles.plus}>+</AppText></Pressable>;
+  return <Pressable accessibilityRole="button" accessibilityLabel="Crear publicación" style={({ pressed }) => [styles.fab, pressed && styles.pressed]} onPress={() => router.push({ pathname: '/publication/edit', params: { type } })}><Ionicons name="add" size={30} color={COLORS.white} accessible={false} /></Pressable>;
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: COLORS.background }, content: { flex: 1 },
-  nav: { flexDirection: 'row', backgroundColor: COLORS.white, minHeight: METRICS.tabBar, paddingTop: SPACE.sm, paddingHorizontal: SPACE.sm, gap: SPACE.xs },
+  nav: { flexDirection: 'row', backgroundColor: COLORS.white, borderTopWidth: 1, borderTopColor: COLORS.border, minHeight: METRICS.tabBar, paddingTop: SPACE.sm, paddingHorizontal: SPACE.sm, gap: SPACE.xs },
   navItem: { flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 56, gap: SPACE.xs, paddingHorizontal: SPACE.xs, paddingVertical: SPACE.sm, borderRadius: RADIUS.md },
   navSelected: { backgroundColor: COLORS.navigationSelected },
   navIcon: { width: 24, height: 24 }, active: { color: COLORS.primary, fontFamily: FONTS.bold }, muted: { color: COLORS.textMedium }, disabled: { opacity: 0.6 },
-  header: { paddingHorizontal: SPACE.page, paddingTop: SPACE.xs, paddingBottom: SPACE.md, gap: SPACE.xs },
-  marketBrand: { fontSize: 24, lineHeight: 32 },
+  header: { paddingHorizontal: SPACE.page, paddingTop: SPACE.md, paddingBottom: SPACE.lg, gap: SPACE.xs },
+  containedHeader: { paddingHorizontal: 0 },
+  marketBrand: { fontSize: 26, lineHeight: 34, letterSpacing: -0.7 },
   headerRow: { flexDirection: 'row', alignItems: 'center', gap: SPACE.md }, headerTitle: { flex: 1, minWidth: 0 },
-  selector: { flexDirection: 'row', gap: SPACE.sm }, option: { flex: 1, minWidth: 0, minHeight: METRICS.compactControl, paddingVertical: SPACE.sm, paddingHorizontal: SPACE.sm, alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.white, borderRadius: RADIUS.full, borderWidth: 1, borderColor: COLORS.white },
-  selected: { borderColor: COLORS.primary, backgroundColor: COLORS.primarySoft }, optionText: { fontSize: 13, textAlign: 'center' },
+  selector: { flexDirection: 'row', gap: SPACE.sm }, option: { flex: 1, minWidth: 0, minHeight: METRICS.compactControl, paddingVertical: SPACE.sm, paddingHorizontal: SPACE.sm, alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.white, borderRadius: RADIUS.full, borderWidth: 1, borderColor: COLORS.border },
+  selected: { borderColor: COLORS.primary, backgroundColor: COLORS.primary }, optionText: { fontSize: 13, textAlign: 'center', color: COLORS.white },
   fab: { position: 'absolute', right: SPACE.page, bottom: SPACE.lg, width: METRICS.fab, height: METRICS.fab, borderRadius: RADIUS.full, backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center' },
-  plus: { color: COLORS.white, fontSize: 32, lineHeight: 40 }, pressed: { opacity: 0.7 },
+  pressed: { opacity: 0.7 },
 });

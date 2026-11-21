@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AppText from './app-text';
-import { COLORS, RADIUS, SPACE } from '@/theme';
+import { COLORS, RADIUS, SPACE, TYPE } from '@/theme';
 import { money } from '@/lib/marketplace-presentation';
 import type { Publication } from '@/services/marketplace';
 
@@ -20,7 +20,7 @@ export default function PublicationPrice({ item, compact = false }: { item: Pric
   const compare = !!item.is_ganga_active && Number.isFinite(current) && current > 0 && Number.isFinite(previous) && previous > current;
   return <View style={styles.block}>
     <View style={styles.row}>
-      <AppText variant={compact ? 'label' : 'price'} accessibilityLabel={`Precio actual: ${money(item.price)}`} style={item.is_ganga_active && styles.ganga}>{money(item.price)}</AppText>
+      <AppText variant={compact ? 'label' : 'price'} accessibilityLabel={`Precio actual: ${money(item.price)}`} style={[compact && styles.compactPrice, item.is_ganga_active && styles.ganga]}>{money(item.price)}</AppText>
       {compare ? <AppText variant="caption" accessibilityLabel={`Precio anterior: ${money(previous / 100)}`} style={styles.previous}>{money(previous / 100)}</AppText> : null}
     </View>
     {compare ? <AppText variant="caption" style={styles.ganga}>Ahorras {money((previous - current) / 100)}</AppText> : null}
@@ -29,6 +29,7 @@ export default function PublicationPrice({ item, compact = false }: { item: Pric
 
 const styles = StyleSheet.create({
   block: { gap: SPACE.xs, minWidth: 0 },
+  compactPrice: { ...TYPE.heading },
   row: { flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', columnGap: SPACE.sm, rowGap: SPACE.xs },
   previous: { textDecorationLine: 'line-through' },
   ganga: { color: COLORS.ganga },

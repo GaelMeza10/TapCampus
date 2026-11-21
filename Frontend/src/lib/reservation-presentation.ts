@@ -62,3 +62,13 @@ export function presentReservations(rows: Reservation[]): PresentedReservation[]
 export function reservationDescription(row: Reservation, unitLabel = ''): string {
   return [row.publicationTitle, unitLabel, `apartada el ${formatReservationDate(row.reservedAt)}`].filter(Boolean).join(' · ');
 }
+
+export function reservationSections(rows: Reservation[]) {
+  const presented = presentReservations(rows);
+  const pending = presented.filter(({ reservation }) => reservation.status === 'ACTIVE')
+    .sort((a, b) => (validTime(a.reservation.expiresAt) ?? Infinity) - (validTime(b.reservation.expiresAt) ?? Infinity));
+  const history = presented.filter(({ reservation }) => reservation.status !== 'ACTIVE')
+    .sort((a, b) => (validTime(b.reservation.resolvedAt) ?? validTime(b.reservation.reservedAt) ?? 0) -
+      (validTime(a.reservation.resolvedAt) ?? validTime(a.reservation.reservedAt) ?? 0));
+  return [{ title: 'Por recoger', data: pending }, { title: 'Anteriores', data: history }].filter(section => section.data.length > 0);
+}

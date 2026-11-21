@@ -2,17 +2,21 @@ import api from './api';
 import { API_BASE_URL } from '../constants/api.constants';
 
 export type PublicationType = 'LIVE' | 'STATIC';
-export type Publication = {
+export type PublicPublication = {
   id: string; type: PublicationType; title: string; description: string;
   price: string; image_url: string; status: 'ACTIVE' | 'FINISHED';
   price_before_ganga?: string | null;
   seller_id: string; seller: { id: string; name: string };
   zone_id: number; category_id: number; current_stock: number | null;
   initial_stock: number | null; start_time: string | null; end_time: string | null;
-  is_ganga_active: boolean; ganga_min_price: string | null;
+  is_ganga_active: boolean;
+  sellerContact?: { phone: string };
+};
+export type Publication = PublicPublication;
+export type OwnedPublication = PublicPublication & {
+  ganga_min_price: string | null;
   ganga_activation_mode: 'MANUAL' | 'SCHEDULED' | null;
   ganga_minutes_before: number | null;
-  sellerContact?: { phone: string };
 };
 export type Reservation = {
   publicationImageUrl?: string | null;
@@ -33,7 +37,7 @@ function imageForClient(uri: string) {
   } catch { /* Las URLs ajenas al almacenamiento del backend se conservan. */ }
   return uri;
 }
-function publicationForClient(publication: Publication): Publication {
+function publicationForClient<T extends PublicPublication>(publication: T): T {
   return publication.image_url ? { ...publication, image_url: imageForClient(publication.image_url) } : publication;
 }
 function reservationForClient(reservation: Reservation): Reservation {
@@ -49,7 +53,7 @@ export async function publicationDetail(id: string) {
   return publicationForClient(data);
 }
 export async function myPublications() {
-  const { data } = await api.get<Publication[]>('/publications/mine');
+  const { data } = await api.get<OwnedPublication[]>('/publications/mine');
   return data.map(publicationForClient);
 }
 export async function zones() {
@@ -82,8 +86,8 @@ export async function completeReservation(id: string) {
 }
 export async function publicationAction(id: string, action: 'physical-sale' | 'finish' | 'sold' | 'ganga') {
   const { data } = action === 'ganga'
-    ? await api.patch<Publication>(`/publications/${id}/ganga`, {})
-    : await api.post<Publication>(`/publications/${id}/${action}`, {});
+    ? await api.patch<OwnedPublication>(`/publications/${id}/ganga`, {})
+    : await api.post<OwnedPublication>(`/publications/${id}/${action}`, {});
   return publicationForClient(data);
 }
 export type PublicationPayload = {
@@ -93,11 +97,18 @@ export type PublicationPayload = {
   ganga_min_price?: number; ganga_activation_mode?: 'MANUAL' | 'SCHEDULED';
   ganga_minutes_before?: number;
 };
-export async function savePublication(payload: PublicationPayload | Partial<PublicationPayload>, id?: string) {
+export type PublicationPatch = Omit<Partial<PublicationPayload>, 'ganga_min_price' | 'ganga_activation_mode' | 'ganga_minutes_before'> & {
+  ganga_min_price?: number | null;
+  ganga_activation_mode?: 'MANUAL' | 'SCHEDULED' | null;
+  ganga_minutes_before?: number | null;
+};
+export function savePublication(payload: PublicationPayload): Promise<OwnedPublication>;
+export function savePublication(payload: PublicationPatch, id: string): Promise<OwnedPublication>;
+export async function savePublication(payload: PublicationPayload | PublicationPatch, id?: string) {
   const body = id ? payload : (({ current_stock, ...rest }) => rest)(payload);
   const { data } = id
-    ? await api.patch<Publication>(`/publications/${id}`, body)
-    : await api.post<Publication>('/publications', body);
+    ? await api.patch<OwnedPublication>(`/publications/${id}`, body)
+    : await api.post<OwnedPublication>('/publications', body);
   return publicationForClient(data);
 }
 export async function uploadImage(asset: { uri: string; mimeType?: string | null; fileName?: string | null }) {
@@ -118,4 +129,11 @@ export function apiMessage(error: unknown): string {
   if (typeof message === 'string') return visibleMessage(message);
   if (cause.response?.status === 409) return 'La acción ya no está disponible. Actualiza los datos e inténtalo de nuevo.';
   return 'No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.';
+}
+
+export function publicationContentError(error: unknown): { message: string; fields: ('title' | 'description')[] } | undefined {
+  const data = (error as { response?: { data?: { code?: unknown; fields?: unknown } } } | null)?.response?.data;
+  if (data?.code !== 'PUBLICATION_CONTENT_BLOCKED' || !Array.isArray(data.fields)) return;
+  const fields = [...new Set(data.fields.filter((field): field is 'title' | 'description' => field === 'title' || field === 'description'))];
+  if (fields.length) return { message: apiMessage(error), fields };
 }
