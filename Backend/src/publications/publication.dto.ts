@@ -16,6 +16,7 @@ import {
 } from '../generated/prisma/client';
 
 const supplied = (_object: unknown, value: unknown) => value !== undefined;
+const nonNull = (_object: unknown, value: unknown) => value !== undefined && value !== null;
 const trim = ({ value }: { value: unknown }) =>
   typeof value === 'string' ? value.trim() : value;
 
@@ -64,6 +65,17 @@ export class EditablePublicationDto {
   @IsISO8601({ strict: true })
   @Matches(/T.*(?:Z|[+-]\d{2}:\d{2})$/)
   end_time?: string;
+}
+
+export class CreatePublicationDto extends EditablePublicationDto {
+  @IsEnum(PublicationType)
+  type: PublicationType;
+
+  @ValidateIf(supplied)
+  @IsInt()
+  @Min(1)
+  @Max(2147483647)
+  initial_stock?: number;
 
   @ValidateIf(supplied)
   @IsNumber({ maxDecimalPlaces: 2, allowNaN: false, allowInfinity: false })
@@ -82,21 +94,26 @@ export class EditablePublicationDto {
   ganga_minutes_before?: number;
 }
 
-export class CreatePublicationDto extends EditablePublicationDto {
-  @IsEnum(PublicationType)
-  type: PublicationType;
-
-  @ValidateIf(supplied)
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
-  initial_stock?: number;
-}
-
 export class UpdatePublicationDto extends EditablePublicationDto {
   @ValidateIf(supplied)
   @IsInt()
   @Min(0)
   @Max(2147483647)
   current_stock?: number;
+
+  @ValidateIf(nonNull)
+  @IsNumber({ maxDecimalPlaces: 2, allowNaN: false, allowInfinity: false })
+  @Min(0.01)
+  @Max(99999999.99)
+  ganga_min_price?: number | null;
+
+  @ValidateIf(nonNull)
+  @IsEnum(GangaActivationMode)
+  ganga_activation_mode?: GangaActivationMode | null;
+
+  @ValidateIf(nonNull)
+  @IsInt()
+  @Min(1)
+  @Max(2147483647)
+  ganga_minutes_before?: number | null;
 }

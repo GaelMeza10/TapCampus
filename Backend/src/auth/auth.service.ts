@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 // en el service se hace la logica de negocio.
 @Injectable()
@@ -42,5 +43,9 @@ export class AuthService {
 
   miCuenta(usuarioId: string) {
     return this.usuariosService.perfil(usuarioId);
+  }
+
+  actualizarCuenta(usuarioId: string, dto: UpdateProfileDto) {
+    return this.usuariosService.actualizarPerfil(usuarioId, dto);
   }
 }

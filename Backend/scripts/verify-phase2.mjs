@@ -69,8 +69,7 @@ async function start(uploads = uploadDir, publicBase) {
     BULLMQ_PREFIX: name,
     RECONCILIATION_INTERVAL_MS: '600000',
   };
-  delete env.PUBLIC_BASE_URL;
-  if (publicBase) env.PUBLIC_BASE_URL = publicBase;
+  env.PUBLIC_BASE_URL = publicBase ?? `http://127.0.0.1:${port}`;
   backend = spawn(process.execPath, ['dist/main.js'], {
     env,
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -112,6 +111,11 @@ async function http(
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const data = await response.json();
+  if (response.ok && method === 'GET' && (
+    path === '/publications' || path.startsWith('/publications?') ||
+    /^\/publications\/[0-9a-f-]+$/i.test(path)
+  )) assert(!/"(?:ganga_min_price|ganga_activation_mode|ganga_minutes_before)"/.test(JSON.stringify(data)),
+    'configuración privada en respuesta pública');
   assert.equal(
     response.status,
     expected,
@@ -181,7 +185,8 @@ try {
   evidence.originalBefore = (await inventory(admin)).tables;
   assert.equal(evidence.originalBefore.zones.count, 5);
   assert.equal(evidence.originalBefore.categories.count, 8);
-  assert.equal(evidence.originalBefore._prisma_migrations.count, 4);
+  const migrationCount = readdirSync('prisma/migrations', { withFileTypes: true }).filter(entry => entry.isDirectory()).length;
+  assert.equal(evidence.originalBefore._prisma_migrations.count, migrationCount);
   await admin.query(`CREATE DATABASE "${name}"`);
   await db.connect();
   dbConnected = true;
@@ -420,6 +425,8 @@ try {
         { ...body, end_time: 'not-date' },
         { ...body, end_time: body.end_time.slice(0, -1) },
         { ...body, ganga_min_price: 13, ganga_activation_mode: 'MANUAL' },
+        { ...body, ganga_min_price: body.price, ganga_activation_mode: 'MANUAL' },
+        ...['ganga_min_price', 'ganga_activation_mode', 'ganga_minutes_before'].map(field => ({ ...body, [field]: null })),
         { ...body, ganga_min_price: 0, ganga_activation_mode: 'MANUAL' },
         { ...body, ganga_min_price: 10 },
         { ...body, ganga_activation_mode: 'MANUAL' },
@@ -617,12 +624,26 @@ try {
     await http(`/publications/${id}`, { expected: 404 });
   await http(`/publications/${randomUUID()}`, { expected: 404 });
   await http('/publications/invalid', { expected: 400 });
-  assertPrivate(await http(`/publications/${livePub.id}`));
+  const beforeConsult = await rows('SELECT * FROM publications WHERE id=$1', [livePub.id]);
+  const reservationsBeforeConsult = await rows('SELECT * FROM reservations ORDER BY id');
+  const liveDetail = await http(`/publications/${livePub.id}`);
+  assert.deepEqual(liveDetail.sellerContact, { phone: user.phone });
+  assert.deepEqual(Object.keys(liveDetail.seller).sort(), ['id', 'name']);
+  assert(!JSON.stringify(liveDetail).match(/password|email|buyerContact/));
+  assert.deepEqual(await rows('SELECT * FROM publications WHERE id=$1', [livePub.id]), beforeConsult);
+  assert.deepEqual(await rows('SELECT * FROM reservations ORDER BY id'), reservationsBeforeConsult);
+  assertPrivate(await http('/publications/mine', { token: ownerToken }));
   const staticDetail = await http(`/publications/${staticPub.id}`);
   assert.deepEqual(staticDetail.sellerContact, { phone: user.phone });
   assert.deepEqual(Object.keys(staticDetail.seller).sort(), ['id', 'name']);
   assert(!JSON.stringify(staticDetail).match(/password|email/));
   assert.equal(staticDetail.end_time, null);
+  await http('/auth/me', { method: 'PATCH', body: { phone: '3312345678' }, token: ownerToken });
+  for (const id of [livePub.id, staticPub.id]) {
+    assert.deepEqual((await http(`/publications/${id}`)).sellerContact, { phone: '+523312345678' });
+  }
+  await http('/auth/me', { method: 'PATCH', body: { phone: user.phone }, token: ownerToken });
+  pass('0039 EV-01/02: detalle LIVE/STATIC sin reserva ni escrituras, contacto vigente, feed/mine sin teléfonos y no visibles 404');
   for (const query of [
     '',
     `?type=LIVE`,
@@ -841,6 +862,40 @@ try {
   pass(
     '0004 EV-06: sold propio, ajeno, incompatible, repetido y concurrente; no DELETE',
   );
+
+  for (const body of [live, stat]) {
+    const before = await countPublications();
+    for (const fields of [{ title: '¡PÉNDEJO!' }, { description: 'ARMA-de-FUEGO' }, { title: 'imbécil', description: 'municiones' }]) {
+      const rejection = await post('/publications', { ...body, ...fields }, ownerToken, 400);
+      assert.equal(rejection.code, 'PUBLICATION_CONTENT_BLOCKED');
+      assert.deepEqual(rejection.fields, Object.keys(fields));
+      assert.equal(rejection.message[0], 'Se detectó una palabra ofensiva o no permitida, modifícala si deseas crear la publicación');
+      assert(!JSON.stringify(rejection).includes('PÉNDEJO'));
+    }
+    assert.equal(await countPublications(), before);
+    await post('/publications', { ...body, title: 'pendejo' }, null, 401);
+    const permitted = await post('/publications', { ...body, title: 'Computadora usada', description: 'Bata negra, Coca-Cola y libro de una heroína.' }, ownerToken);
+    const beforeEdit = (await rows('SELECT * FROM publications WHERE id=$1', [permitted.id]))[0];
+    const rejected = await patch(permitted.id, { title: 'pendejo', description: 'municiones' }, ownerToken, 400);
+    assert.equal(rejected.code, 'PUBLICATION_CONTENT_BLOCKED');
+    assert.deepEqual(rejected.fields, ['title', 'description']);
+    assert.equal(rejected.message[0], 'Se detectó una palabra ofensiva o no permitida, modifícala si deseas guardar la publicación');
+    assert.deepEqual((await rows('SELECT * FROM publications WHERE id=$1', [permitted.id]))[0], beforeEdit);
+    await patch(permitted.id, { title: 'pendejo' }, otherToken, 403);
+    // El texto histórico no enviado no bloquea un ajuste legítimo.
+    await db.query('UPDATE publications SET description=$1 WHERE id=$2', ['pendejo', permitted.id]);
+    await patch(permitted.id, body.type === 'LIVE' ? { current_stock: 4 } : { price: 15 }, ownerToken);
+    await patch(permitted.id, { title: 'Título permitido' }, ownerToken);
+    assert.equal((await rows('SELECT description FROM publications WHERE id=$1', [permitted.id]))[0].description, 'pendejo');
+    await patch(permitted.id, { description: 'Texto corregido' }, ownerToken);
+    await patch(permitted.id, { title: 'arma', description: 'de fuego' }, ownerToken);
+    await patch(permitted.id, { description: 'arma de fuego' }, ownerToken, 400);
+    if (body.type === 'STATIC') {
+      await sold(permitted.id, ownerToken);
+      await patch(permitted.id, { title: 'pendejo' }, ownerToken, 409);
+    }
+  }
+  pass('0038 EV-01/03/05: POST/PATCH LIVE/STATIC, código/campos, falsos positivos, permisos y texto histórico; rechazos sin filas/cambios');
 
   await stop();
   // PUBLIC_BASE_URL sirve dispositivos/proxy, independiente del Host interno.

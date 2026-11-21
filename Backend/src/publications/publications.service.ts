@@ -13,9 +13,12 @@ import { PublicationQueryDto } from '../catalogs/catalog-query.dto';
 import { CreatePublicationDto, UpdatePublicationDto } from './publication.dto';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
 import { QueueService } from '../jobs/queue.service';
+import { blockedContentFields } from './content-policy';
 import {
   publicationResponse,
   publicationSelect,
+  ownedPublicationResponse,
+  ownedPublicationSelect,
   visiblePublications,
 } from './publication.select';
 
@@ -39,10 +42,20 @@ export class PublicationsService {
     private readonly queue: QueueService,
   ) {}
 
+  private validateContent(data: { title?: string; description?: string }, editing = false) {
+    const fields = blockedContentFields(data);
+    if (fields.length) throw new BadRequestException({
+      code: 'PUBLICATION_CONTENT_BLOCKED',
+      message: [`Se detectó una palabra ofensiva o no permitida, modifícala si deseas ${editing ? 'guardar' : 'crear'} la publicación`],
+      fields,
+    });
+  }
+
   private async validate(
     data: Prisma.PublicationUncheckedCreateInput,
     origin: string,
     requireFutureGanga = true,
+    requireLowerPrice = true,
   ) {
     for (const field of [
       'title',
@@ -94,10 +107,13 @@ export class PublicationsService {
     if (
       min == null ||
       !mode ||
-      new Prisma.Decimal(min.toString()).gt(data.price.toString())
+      (requireLowerPrice && (
+        !new Prisma.Decimal(min.toString()).gt(0) ||
+        new Prisma.Decimal(min.toString()).gte(data.price.toString())
+      ))
     ) {
       throw new BadRequestException(
-        'La ganga requiere modo y mínimo no mayor que el precio',
+        'La oferta requiere modo y un mínimo positivo menor que el precio normal',
       );
     }
     if (mode === 'MANUAL' && minutes != null)
@@ -119,6 +135,7 @@ export class PublicationsService {
   }
 
   async create(dto: CreatePublicationDto, sellerId: string, origin: string) {
+    this.validateContent(dto);
     const data = {
       ...dto,
       seller_id: sellerId,
@@ -130,10 +147,10 @@ export class PublicationsService {
     await this.validate(data, origin);
     const publication = await this.prisma.publication.create({
       data,
-      select: publicationSelect,
+      select: ownedPublicationSelect,
     });
     await this.queue.publication(publication);
-    return publicationResponse(publication);
+    return ownedPublicationResponse(publication);
   }
 
   async list(query: PublicationQueryDto) {
@@ -170,10 +187,10 @@ export class PublicationsService {
   async mine(sellerId: string) {
     const publications = await this.prisma.publication.findMany({
       where: { seller_id: sellerId },
-      select: publicationSelect,
+      select: ownedPublicationSelect,
       orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
     });
-    return publications.map(publicationResponse);
+    return publications.map(ownedPublicationResponse);
   }
 
   async detail(id: string) {
@@ -183,14 +200,11 @@ export class PublicationsService {
     });
     if (!publication) throw new NotFoundException('Publicación no disponible');
     const response = publicationResponse(publication);
-    if (publication.type === 'STATIC') {
-      const seller = await this.prisma.user.findUniqueOrThrow({
-        where: { id: publication.seller_id },
-        select: { phone: true },
-      });
-      return { ...response, sellerContact: seller };
-    }
-    return response;
+    const seller = await this.prisma.user.findUniqueOrThrow({
+      where: { id: publication.seller_id },
+      select: { phone: true },
+    });
+    return { ...response, sellerContact: seller };
   }
 
   private async owned(
@@ -231,6 +245,7 @@ export class PublicationsService {
       throw new BadRequestException('Envía al menos un campo editable');
     const result = await this.prisma.$transaction(async (tx) => {
       const publication = await this.owned(tx, id, sellerId);
+      this.validateContent(dto, true);
       if (
         publication.type === 'STATIC' &&
         liveFields.some((field) => fields.includes(field))
@@ -250,6 +265,16 @@ export class PublicationsService {
       ) {
         throw new ConflictException('La ganga activa no se puede reconfigurar');
       }
+      const configurationFields = [
+        'ganga_min_price', 'ganga_activation_mode', 'ganga_minutes_before',
+      ] as const;
+      const withdrawing = configurationFields.every((field) => dto[field] === null);
+      if (
+        !withdrawing &&
+        (dto.ganga_min_price === null || dto.ganga_activation_mode === null ||
+          (dto.ganga_minutes_before === null &&
+            (dto.ganga_activation_mode ?? publication.ganga_activation_mode) !== 'MANUAL'))
+      ) throw new BadRequestException('Retira la oferta enviando sus tres campos en null');
       const data = {
         ...dto,
         start_time:
@@ -271,11 +296,14 @@ export class PublicationsService {
           'ganga_activation_mode',
           'ganga_minutes_before',
         ].some((field) => fields.includes(field)),
+        !publication.is_ganga_active && [
+          'price', 'ganga_min_price', 'ganga_activation_mode', 'ganga_minutes_before',
+        ].some((field) => fields.includes(field)),
       );
       const updated = await tx.publication.update({
         where: { id },
         data,
-        select: publicationSelect,
+        select: ownedPublicationSelect,
       });
       return {
         updated,
@@ -285,7 +313,7 @@ export class PublicationsService {
     if (result.stockChanged && result.updated.current_stock !== null)
       this.events.stockUpdated(id, result.updated.current_stock);
     await this.queue.publication(result.updated);
-    return publicationResponse(result.updated);
+    return ownedPublicationResponse(result.updated);
   }
 
   async sold(id: string, sellerId: string) {
@@ -293,11 +321,11 @@ export class PublicationsService {
       const publication = await this.owned(tx, id, sellerId);
       if (publication.type !== 'STATIC')
         throw new ConflictException('Solo STATIC puede marcarse vendido');
-      return publicationResponse(
+      return ownedPublicationResponse(
         await tx.publication.update({
           where: { id },
           data: { status: 'FINISHED' },
-          select: publicationSelect,
+          select: ownedPublicationSelect,
         }),
       );
     });
@@ -317,11 +345,11 @@ export class PublicationsService {
       }
       if (!publication.current_stock || publication.current_stock <= 0)
         throw new ConflictException('Stock agotado');
-      return publicationResponse(
+      return ownedPublicationResponse(
         await tx.publication.update({
           where: { id },
           data: { current_stock: { decrement: 1 } },
-          select: publicationSelect,
+          select: ownedPublicationSelect,
         }),
       );
     });
@@ -337,11 +365,11 @@ export class PublicationsService {
       return tx.publication.update({
         where: { id },
         data: { status: 'FINISHED' },
-        select: publicationSelect,
+        select: ownedPublicationSelect,
       });
     });
     this.events.publicationExpired(id);
-    return publicationResponse(result);
+    return ownedPublicationResponse(result);
   }
 
   async expire(id: string, expectedAt?: number) {
@@ -392,6 +420,8 @@ export class PublicationsService {
         p.end_time &&
         p.end_time > now &&
         p.ganga_min_price &&
+        p.ganga_min_price.gt(0) &&
+        p.ganga_min_price.lt(p.price) &&
         !p.is_ganga_active &&
         (sellerId
           ? p.ganga_activation_mode === 'MANUAL'
@@ -401,15 +431,15 @@ export class PublicationsService {
             (expectedAt === undefined || expectedAt === at));
       if (!valid) {
         if (!sellerId) return null;
-        throw new ConflictException('Ganga no disponible o ya activada');
+        throw new ConflictException('Oferta no disponible: revisa el estado, modo y que el mínimo sea menor al precio normal');
       }
       return tx.publication.update({
         where: { id },
         data: { price_before_ganga: p.price, price: p.ganga_min_price!, is_ganga_active: true },
-        select: publicationSelect,
+        select: ownedPublicationSelect,
       });
     });
     if (result) this.events.gangaActivated(id, result.price.toFixed(2));
-    return result ? publicationResponse(result) : null;
+    return result ? ownedPublicationResponse(result) : null;
   }
 }

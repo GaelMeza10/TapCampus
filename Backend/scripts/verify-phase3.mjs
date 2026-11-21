@@ -95,7 +95,7 @@ async function start(interval = 600000) {
     BULLMQ_PREFIX: name,
     RECONCILIATION_INTERVAL_MS: String(interval),
   };
-  delete env.PUBLIC_BASE_URL;
+  env.PUBLIC_BASE_URL = `http://127.0.0.1:${port}`;
   backend = spawn(process.execPath, ['dist/main.js'], {
     env,
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -187,6 +187,10 @@ async function http(
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const data = await response.json();
+  if (response.ok && method === 'GET' && (
+    path === '/publications' || path.startsWith('/publications?') ||
+    /^\/publications\/[0-9a-f-]+$/i.test(path)
+  )) assertNoOfferConfiguration(data);
   if (expected !== null)
     assert.equal(
       response.status,
@@ -280,6 +284,10 @@ function assertPublic(data) {
     !/phone|password|email|Contact/i.test(JSON.stringify(data)),
     'contacto en canal público',
   );
+}
+function assertNoOfferConfiguration(data) {
+  assert(!/"(?:ganga_min_price|ganga_activation_mode|ganga_minutes_before)"/.test(JSON.stringify(data)),
+    'configuración futura de oferta expuesta');
 }
 
 try {
@@ -428,7 +436,7 @@ try {
   );
   await reserve((await live()).id, key, buyer.token, 409);
   assertPublic(await http('/publications'));
-  assertPublic(await http(`/publications/${p.id}`));
+  assert.deepEqual((await http(`/publications/${p.id}`)).sellerContact, { phone: '+526641234567' });
   pass(
     'reservas EV-01/09: JWT, DTO, 20 minutos, precio fijo, múltiples acciones, consultas y privacidad',
   );
@@ -534,6 +542,10 @@ try {
   );
   const cancelled = await action(r2.id, 'cancel', buyer.token);
   assert.equal(cancelled.status, 'CANCELLED');
+  for (const row of [r1, r2]) {
+    assert(!(await http(`/reservations/${row.id}`, { token: owner.token })).buyerContact);
+    assert.deepEqual((await http(`/reservations/${row.id}`, { token: buyer.token })).sellerContact, { phone: '+526641234567' });
+  }
   assert.equal((await pub(p.id)).current_stock, 2);
   await action(r2.id, 'cancel', buyer.token, 409);
   await action(r2.id, 'complete', owner.token, 409);
@@ -545,6 +557,8 @@ try {
 
   const visible = await live(1);
   const visibleR = await reserve(visible.id);
+  await http(`/publications/${visible.id}`, { expected: 404 });
+  assert.deepEqual((await http(`/reservations/${visibleR.id}`, { token: buyer.token })).sellerContact, { phone: '+526641234567' });
   assert(!(await http('/publications')).some((p) => p.id === visible.id));
   await action(visibleR.id, 'cancel', buyer.token);
   assert((await http('/publications')).some((p) => p.id === visible.id));
@@ -553,6 +567,8 @@ try {
   await finish(manualClose.id, other.token, 403);
   await finish(manualClose.id, null, 401);
   await finish(manualClose.id);
+  await http(`/publications/${manualClose.id}`, { expected: 404 });
+  assert.deepEqual((await http(`/reservations/${prior.id}`, { token: buyer.token })).sellerContact, { phone: '+526641234567' });
   await finish(manualClose.id, owner.token, 409);
   await reserve(manualClose.id, randomUUID(), buyer.token, 409);
   await action(prior.id, 'complete', owner.token);
@@ -609,6 +625,11 @@ try {
   await assertJob(await addJob('reservation', { reservationId: earlyR.id }));
   await assertJob(await addJob('reservation', { reservationId: earlyR.id }));
   assert.equal((await res(earlyR.id)).status, 'EXPIRED');
+  assert(!(await http(`/reservations/${earlyR.id}`, { token: owner.token })).buyerContact);
+  const phoneUpdated = await http('/auth/me', { method: 'PATCH', body: { phone: '3312345678' }, token: owner.token });
+  assert.equal(phoneUpdated.phone, '+523312345678');
+  assert.deepEqual((await http(`/reservations/${earlyR.id}`, { token: buyer.token })).sellerContact, { phone: '+523312345678' });
+  await http('/auth/me', { method: 'PATCH', body: { phone: '6641234567' }, token: owner.token });
   assert.equal((await pub(early.id)).current_stock, 1);
   await eventCount('stock_updated', early.id, 2, {
     publicationId: early.id,
@@ -620,6 +641,7 @@ try {
   pass(
     'reservas EV-06/08: job temprano no actúa, plazo vencido rechaza acciones, expiración y duplicado liberan una vez',
   );
+  pass('0039 EV-02/03/04: comprador protegido por actor/estado/plazo, vendedor actual y reserva contactable con detalle agotado/finalizado');
 
   const raceSummary = [];
   for (const expired of [false, true]) {
@@ -771,6 +793,7 @@ try {
   await ganga(manual.id, owner.token, 409);
   for (const invalid of [
     { ganga_min_price: 0, ganga_activation_mode: 'MANUAL' },
+    { ganga_min_price: 12.5, ganga_activation_mode: 'MANUAL' },
     { ganga_min_price: 15, ganga_activation_mode: 'MANUAL' },
     {
       ganga_min_price: 9,
@@ -850,6 +873,117 @@ try {
   pass(
     'ganga EV-04/05/06: job real con delay, reprogramación ignora job antiguo, duplicado y fin sin activación',
   );
+
+  // 0037: contratos nuevos, sin modificar datos del entorno original.
+  const configured = await live(4, { ganga_min_price: 8, ganga_activation_mode: 'MANUAL' });
+  for (const config of [
+    { ganga_min_price: null }, { ganga_activation_mode: null },
+    { ganga_min_price: null, ganga_activation_mode: null },
+    { ganga_min_price: 12.5 }, { price: 8 },
+  ]) {
+    const before = await pub(configured.id);
+    await patch(configured.id, config, owner.token, 400);
+    assert.deepEqual(await pub(configured.id), before);
+  }
+  const own = (await http('/publications/mine', { token: owner.token })).find(p => p.id === configured.id);
+  assert.equal(own.ganga_min_price, '8.00');
+  assert.equal(own.ganga_activation_mode, 'MANUAL');
+  assert.equal(own.ganga_minutes_before, null);
+  assert(!(await http('/publications/mine', { token: other.token })).some(p => p.id === configured.id));
+  assertNoOfferConfiguration(await http(`/publications/${configured.id}`));
+  assertNoOfferConfiguration(await http('/publications'));
+  const beforeConfigReservation = await reserve(configured.id);
+  assertNoOfferConfiguration(beforeConfigReservation);
+  const withdrawal = { ganga_min_price: null, ganga_activation_mode: null, ganga_minutes_before: null };
+  await patch(configured.id, withdrawal, other.token, 403);
+  await patch(configured.id, withdrawal, null, 401);
+  const scheduledConfig = await patch(configured.id, {
+    ganga_activation_mode: 'SCHEDULED', ganga_minutes_before: 1,
+    end_time: new Date(Date.now() + 64000).toISOString(),
+  });
+  const discardedAt = Date.parse(scheduledConfig.end_time) - 60000;
+  await patch(configured.id, { ganga_activation_mode: 'MANUAL' }, owner.token, 400);
+  const manualConfig = await patch(configured.id, {
+    ganga_activation_mode: 'MANUAL', ganga_minutes_before: null,
+  });
+  assert.equal(manualConfig.ganga_minutes_before, null);
+  await assertJob(await addJob('ganga', { publicationId: configured.id, expectedAt: discardedAt }));
+  const withdrawn = await patch(configured.id, withdrawal);
+  assert.equal(withdrawn.ganga_min_price, null);
+  assert.equal(withdrawn.ganga_activation_mode, null);
+  assert.equal(withdrawn.ganga_minutes_before, null);
+  assert.equal(withdrawn.price, '12.50');
+  assert.equal(withdrawn.current_stock, 3);
+  await patch(configured.id, withdrawal); // Retirada idempotente.
+  await patch(configured.id, { ganga_minutes_before: null }, owner.token, 400);
+  await sleep(Math.max(0, discardedAt - Date.now()) + 200);
+  assert.equal((await pub(configured.id)).is_ganga_active, false);
+  assert.equal(matching(0, 'ganga_activated', configured.id).length, 0);
+  assert.equal((await res(beforeConfigReservation.id)).unit_price, '12.50');
+  const privateActive = await live(2, { ganga_min_price: 7, ganga_activation_mode: 'MANUAL' });
+  await ganga(privateActive.id);
+  assertNoOfferConfiguration(await http(`/publications/${privateActive.id}`));
+  assertNoOfferConfiguration(await http('/publications'));
+  await patch(privateActive.id, withdrawal, owner.token, 409);
+  // Un legado activo sin precio previo no se reconstruye al editar otros campos.
+  await db.query('UPDATE publications SET price_before_ganga=NULL WHERE id=$1', [privateActive.id]);
+  const legacyActive = await patch(privateActive.id, { title: 'Oferta activa legado', current_stock: 3 });
+  assert.equal(legacyActive.price_before_ganga, null);
+  assert.equal(legacyActive.price, '7.00');
+  const equalLegacy = await live(2, { ganga_min_price: 9, ganga_activation_mode: 'MANUAL' });
+  await db.query('UPDATE publications SET ganga_min_price=price WHERE id=$1', [equalLegacy.id]);
+  await patch(equalLegacy.id, { title: 'Legado sin descuento', current_stock: 4 });
+  await ganga(equalLegacy.id, owner.token, 409);
+  assert.equal((await pub(equalLegacy.id)).is_ganga_active, false);
+  assert.equal(matching(0, 'ganga_activated', equalLegacy.id).length, 0);
+  await patch(equalLegacy.id, { ganga_min_price: 8 });
+  await ganga(equalLegacy.id);
+  pass('0037 EV-02/03/04/06: privacidad pública/propietario, igualdad, modos/nulls/retirada, permisos y legado', {
+    configured: configured.id, privateActive: privateActive.id, equalLegacy: equalLegacy.id,
+  });
+
+  // Ambos órdenes y carreras reales: edición y activación comparten bloqueo SQL.
+  const editWins = await live(2, { ganga_min_price: 8, ganga_activation_mode: 'MANUAL' });
+  await patch(editWins.id, withdrawal);
+  await ganga(editWins.id, owner.token, 409);
+  const activationWins = await live(2, { ganga_min_price: 8, ganga_activation_mode: 'MANUAL' });
+  await ganga(activationWins.id);
+  await patch(activationWins.id, withdrawal, owner.token, 409);
+  for (let index = 0; index < 6; index++) {
+    const racing = await live(3, { ganga_min_price: 8, ganga_activation_mode: 'MANUAL' });
+    const results = await Promise.all([
+      http(`/publications/${racing.id}`, { method: 'PATCH', body: withdrawal, token: owner.token, expected: null }),
+      http(`/publications/${racing.id}/ganga`, { method: 'PATCH', body: {}, token: owner.token, expected: null }),
+      reserve(racing.id),
+    ]);
+    assert.deepEqual(results.slice(0, 2).map(r => r.status).sort(), [200, 409]);
+    const final = await pub(racing.id);
+    assert.equal(final.current_stock, 2);
+    assert(['8.00', '12.50'].includes(results[2].unitPrice));
+    assert.equal((await res(results[2].id)).unit_price, results[2].unitPrice);
+    if (!final.is_ganga_active) assert.equal(final.ganga_min_price, null);
+    await sleep(50);
+    assert.equal(matching(0, 'ganga_activated', racing.id).length, final.is_ganga_active ? 1 : 0);
+  }
+  pass('0037 EV-05/06: ambos órdenes y seis carreras HTTP retirada/activación/reserva, estado y evento únicos');
+
+  const removedOnRestart = await live(2, {
+    ganga_min_price: 8, ganga_activation_mode: 'SCHEDULED', ganga_minutes_before: 1,
+    end_time: new Date(Date.now() + 65000).toISOString(),
+  });
+  const removedAt = Date.parse(removedOnRestart.end_time) - 60000;
+  await patch(removedOnRestart.id, withdrawal);
+  await stop();
+  await start(200);
+  await connectSockets();
+  await sleep(Math.max(0, removedAt - Date.now()) + 300);
+  assert.equal((await pub(removedOnRestart.id)).is_ganga_active, false);
+  assert.equal((await pub(removedOnRestart.id)).ganga_activation_mode, null);
+  assert.equal(matching(0, 'ganga_activated', removedOnRestart.id).length, 0);
+  await stop();
+  await start();
+  await connectSockets();
+  pass('0037 EV-05: retirada persistida no se activa tras reinicio real y conciliación con job Redis anterior');
 
   // Redis conserva trabajos mientras el proceso que contiene los workers está detenido.
   const recovery = await live(1);

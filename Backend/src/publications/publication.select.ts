@@ -19,10 +19,14 @@ export const publicationSelect = {
   start_time: true,
   end_time: true,
   is_ganga_active: true,
+  seller: { select: { id: true, name: true } },
+} satisfies Prisma.PublicationSelect;
+
+export const ownedPublicationSelect = {
+  ...publicationSelect,
   ganga_min_price: true,
   ganga_activation_mode: true,
   ganga_minutes_before: true,
-  seller: { select: { id: true, name: true } },
 } satisfies Prisma.PublicationSelect;
 
 type PublicPublication = Prisma.PublicationGetPayload<{
@@ -30,10 +34,35 @@ type PublicPublication = Prisma.PublicationGetPayload<{
 }>;
 export function publicationResponse(publication: PublicPublication) {
   return {
-    ...publication,
+    id: publication.id,
+    type: publication.type,
+    title: publication.title,
+    description: publication.description,
     price: publication.price.toFixed(2),
     price_before_ganga: publication.price_before_ganga?.toFixed(2) ?? null,
+    image_url: publication.image_url,
+    status: publication.status,
+    created_at: publication.created_at,
+    seller_id: publication.seller_id,
+    zone_id: publication.zone_id,
+    category_id: publication.category_id,
+    initial_stock: publication.initial_stock,
+    current_stock: publication.current_stock,
+    start_time: publication.start_time,
+    end_time: publication.end_time,
+    is_ganga_active: publication.is_ganga_active,
+    seller: { id: publication.seller.id, name: publication.seller.name },
+  };
+}
+
+export function ownedPublicationResponse(publication: Prisma.PublicationGetPayload<{
+  select: typeof ownedPublicationSelect;
+}>) {
+  return {
+    ...publicationResponse(publication),
     ganga_min_price: publication.ganga_min_price?.toFixed(2) ?? null,
+    ganga_activation_mode: publication.ganga_activation_mode,
+    ganga_minutes_before: publication.ganga_minutes_before,
   };
 }
 
