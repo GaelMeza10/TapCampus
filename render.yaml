@@ -1,18 +1,19 @@
+# Plan gratuito de Render (demostración académica).
+# Limitaciones: la API se duerme tras 15 min sin uso (~1 min en despertar),
+# las fotos subidas por usuarios se pierden al reiniciar (sin disco persistente),
+# Redis no conserva datos (la conciliación reprograma los jobs desde PostgreSQL)
+# y la base gratuita vence a los 30 días.
 services:
   - type: web
     name: tapcampus-api
     runtime: docker
-    plan: 0.5c-512mb
+    plan: free
     region: oregon
     dockerfilePath: ./Backend/Dockerfile
     dockerContext: ./Backend
     healthCheckPath: /categories
     numInstances: 1
     autoDeployTrigger: off
-    disk:
-      name: tapcampus-uploads
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
@@ -30,20 +31,18 @@ services:
       - key: SEED_DEMO_PASSWORD
         generateValue: true
       - key: UPLOADS_DIR
-        value: /var/data/uploads
+        value: /app/uploads
       - key: BULLMQ_PREFIX
         value: tapcampus-production
   - type: keyvalue
     name: tapcampus-jobs
-    plan: 256mb
+    plan: free
     region: oregon
     maxmemoryPolicy: noeviction
-    persistenceMode: journal-snapshot
     ipAllowList: []
 databases:
   - name: tapcampus-db
-    plan: 0.1c-256mb
+    plan: free
     region: oregon
     postgresMajorVersion: "16"
-    diskSizeGB: 5
     ipAllowList: []

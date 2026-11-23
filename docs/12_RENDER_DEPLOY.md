@@ -2,7 +2,7 @@
 
 Blueprint raíz render.yaml: API Docker Node 24, PostgreSQL 16 privado, Key Value privado persistente/noeviction y disco de imágenes de 1 GB. HTTPS de Render, JWT y contraseña demo generados en el panel. Jobs residen en la API, una sola instancia; no crear worker adicional. No se modifica la base local ni se importan sus cuentas personales.
 
-Antes de aplicar, revisar y aceptar el importe que muestre Render: cómputo base aproximado US$23/mes más almacenamiento, impuestos y consumo. No es una configuración gratuita. La aplicación de Blueprint crea recursos facturables; la preparación del archivo no los contrata.
+Actualización 2026-11-22: render.yaml usa ahora los planes gratuitos (web, Key Value y PostgreSQL `free`, sin disco). Antes de confirmar, comprobar que Render muestre US$0. Limitaciones aceptadas para la demostración: la API se duerme tras 15 min sin tráfico y tarda ~1 min en despertar; las fotos subidas por usuarios se pierden en cada reinicio (las fotos demo se recrean al arrancar); Redis gratuito no persiste, pero la conciliación reprograma jobs desde PostgreSQL; la base gratuita vence a los 30 días (14 de gracia) y debe recrearse. La configuración anterior de pago (~US$23/mes) queda en el historial de git.
 
 En Render: New → Blueprint → repositorio TapCampus → rama main → render.yaml → revisar recursos y costo → confirmar. Si no aparece el repositorio privado, conectar GitHub y conceder acceso a ese repositorio.
 
