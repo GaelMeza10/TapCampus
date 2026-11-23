@@ -1,6 +1,8 @@
 # TapCampus
 
-**Preparación de la entrega:** [instalación, seed, accesos y recorrido](docs/11_DELIVERY_GUIDE.md). Desde Backend, `npm run db:seed:delivery` añade seis cuentas ficticias, 48 publicaciones y doce reservas sobre doce categorías, conservando datos anteriores. Los accesos se guardan en Backend/.local/demo-access.json. [Verificación y limpieza 0046](specs/0046-seed-entrega-y-limpieza/verification.md).
+**Documentación de la entrega:** [bitácora de IA](BITACORA-IA.md) y [diario de decisiones](DIARIO-DECISIONES.md). El [índice de funcionalidades](specs/README.md) conserva el detalle de cada cambio.
+
+**Preparación de la entrega:** [instalación, seed, accesos y recorrido](docs/11_DELIVERY_GUIDE.md). Desde Backend, `npm run db:seed:delivery` prepara seis cuentas ficticias, 107 publicaciones y 24 reservas sobre 26 categorías, conservando datos anteriores. Los accesos se guardan en Backend/.local/demo-access.json. [Verificación y limpieza 0046](specs/0046-seed-entrega-y-limpieza/verification.md) y [ampliación aditiva 0047](specs/0047-usabilidad-y-recogida/verification.md).
 
 Aplicación móvil universitaria que conecta vendedores y compradores dentro del campus en tiempo real. Permite publicar productos con stock en vivo, temporizador de disponibilidad y un sistema de reservas temporales, eliminando la dependencia de grupos de WhatsApp o redes sociales para coordinar ventas entre estudiantes.
 
