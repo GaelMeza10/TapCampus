@@ -9,6 +9,11 @@ export type PublicationDraft = {
 export const formFieldOrder = ['photo', 'title', 'description', 'condition', 'category', 'price', 'stock', 'zone', 'start', 'end', 'offer'] as const;
 export type PublicationFormField = typeof formFieldOrder[number];
 export type PublicationFormErrors = Partial<Record<PublicationFormField, string>>;
+/**
+ * Limpia el precio mientras se escribe: quita «$» y espacios, y usa punto decimal
+ * (algunos teclados en español muestran coma en el teclado numérico).
+ */
+export const normalizePrice = (value: string) => value.replace(/[$\s]/g, '').replace(',', '.');
 export const validPrice = (value: string) =>
   /^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/.test(value) && Number(value) > 0 && Number(value) <= 99999999.99;
 export function localInput(date: Date) {
@@ -32,7 +37,7 @@ export function validatePublicationDraft({ draft, type, original, editing, hasPh
   if (!draft.description.trim()) errors.description = 'Describe el producto y agrega una referencia para la entrega.';
   else if (draft.description.trim().length > DESCRIPTION_MAX) errors.description = `La descripción debe tener máximo ${DESCRIPTION_MAX} caracteres.`;
   if (!categoryId) errors.category = 'Selecciona una categoría.';
-  if (!validPrice(draft.price)) errors.price = 'El precio debe ser positivo y tener hasta dos decimales.';
+  if (!validPrice(draft.price)) errors.price = 'Escribe un precio mayor a 0 con hasta dos decimales, por ejemplo 25 o 25.50.';
   if (!(type === 'STATIC' && pickupMode === 'ARRANGED') && !zoneId) errors.zone = 'Selecciona una zona.';
   if (type === 'STATIC') {
     if (draft.condition !== 'NEW' && draft.condition !== 'USED') errors.condition = 'Selecciona si el artículo es nuevo o usado.';

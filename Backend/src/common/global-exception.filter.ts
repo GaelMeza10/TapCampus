@@ -23,6 +23,18 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       typeof response === 'object' && response !== null
         ? { error, ...response, statusCode }
         : { statusCode, message: response ?? 'Internal server error', error };
+    // Errores del parser de Express/multer: llegan en inglés y técnicos.
+    if (statusCode === 413) {
+      Object.assign(body, {
+        message: 'La solicitud es demasiado grande. Usa una imagen más ligera (máx. 5 MB) o un texto más corto.',
+      });
+    } else if (
+      statusCode === 400 &&
+      typeof body.message === 'string' &&
+      /JSON|Unexpected token|Expected .* in JSON|Unexpected end/i.test(body.message)
+    ) {
+      Object.assign(body, { message: 'Los datos enviados no tienen un formato válido.' });
+    }
     if (!(exception instanceof HttpException)) {
       this.logger.error('Error interno no controlado');
     }

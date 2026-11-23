@@ -18,8 +18,10 @@ export function ExploreChips({ options, value, onChange, allLabel }: { options: 
 }
 
 export function ActiveReservationBanner({ item, now, onPress }: { item: Reservation; now: number; onPress: () => void }) {
+  // Texto además del color (Not-Color-Alone) y «Quedan» para que no se lea como hora del día.
+  const urgent = new Date(item.expiresAt).getTime() - now <= 300000;
   return <View style={styles.banner}>
-    <View style={styles.grow}><AppText variant="label">Reserva activa</AppText><View style={styles.bannerDetails}><AppText style={styles.productName}>{item.publicationTitle}</AppText><AppText variant="countdown" style={new Date(item.expiresAt).getTime() - now <= 300000 ? styles.urgentText : undefined}>{countdown(item.expiresAt, now)}</AppText></View></View>
+    <View style={styles.grow}><AppText variant="label" style={urgent ? styles.urgentText : undefined}>{urgent ? 'Por vencer' : 'Reserva activa'}</AppText><View style={styles.bannerDetails}><AppText style={styles.productName}>{item.publicationTitle}</AppText><AppText variant="countdown" style={urgent ? styles.urgentText : undefined}>{`Quedan ${countdown(item.expiresAt, now)}`}</AppText></View></View>
     <Pressable accessibilityRole="button" accessibilityLabel={`Ver reserva de ${item.publicationTitle}`} onPress={onPress} style={({ pressed }) => [styles.viewButton, pressed && styles.pressed]}><AppText variant="label" style={styles.white}>Ver</AppText></Pressable>
   </View>;
 }

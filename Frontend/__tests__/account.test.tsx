@@ -185,3 +185,13 @@ test('el esqueleto anuncia carga sin inventar identidad ni campos editables', as
   expect(view.queryByRole('button', { name: 'Editar datos' })).toBeNull();
   expect(view.getByRole('button', { name: 'Cerrar sesión' }).props.accessibilityState.disabled).toBe(false);
 });
+
+test('rechazo del servidor muestra su motivo, no un problema de conexión', async () => {
+  (updateProfile as jest.Mock).mockRejectedValueOnce({ response: { status: 400, data: { message: ['Ingresa diez dígitos mexicanos con o sin +52'] } } });
+  const view = await render(<MyAccount />);
+  await fireEvent.press(await view.findByText('Editar datos'));
+  await fireEvent.changeText(view.getByLabelText('Nombre completo'), 'Ana Nueva');
+  await fireEvent.press(view.getByText('Guardar cambios'));
+  expect(await view.findByText(/Ingresa diez dígitos mexicanos/)).toBeTruthy();
+  expect(view.queryByText(/Revisa tu conexión/)).toBeNull();
+});

@@ -12,7 +12,7 @@ export function ClosingBadge({ item, now }: { item: Availability; now: number })
   const closed = item.status !== 'ACTIVE' || remaining <= 0;
   const minutes = Math.ceil(Math.max(0, remaining) / 60000);
   return <View style={[styles.closing, (closed || minutes <= 15) && styles.urgent]}>
-    <AppText variant="badge" style={styles.white}>{closed ? 'Venta finalizada' : `Cierra en ${minutes} min`}</AppText>
+    <AppText variant="badge" style={styles.white}>{closed ? 'Venta finalizada' : minutes >= 60 ? `Cierra en ${Math.floor(minutes / 60)} h${minutes % 60 ? ` ${minutes % 60} min` : ''}` : `Cierra en ${minutes} min`}</AppText>
   </View>;
 }
 

@@ -510,3 +510,14 @@ test('título y descripción tienen longitud máxima', async () => {
   expect(view.getByLabelText('Título').props.maxLength).toBe(100);
   expect(view.getByLabelText('Descripción').props.maxLength).toBe(1000);
 });
+
+test.each([
+  ['$180', '180'],
+  [' 50 ', '50'],
+  ['1,50', '1.50'],
+  ['$ 25,5', '25.5'],
+])('precio «%s» se normaliza a «%s»', async (typed, expected) => {
+  const view = await render(<EditPublication />);
+  await fireEvent.changeText(view.getByLabelText('Precio'), typed);
+  expect(view.getByLabelText('Precio').props.value).toBe(expected);
+});

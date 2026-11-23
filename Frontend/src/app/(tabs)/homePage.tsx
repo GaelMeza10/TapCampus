@@ -63,6 +63,7 @@ export default function HomePage() {
   const searchRef = useRef<ComponentRef<typeof TextInput>>(null);
   const filterTrigger = useRef<ComponentRef<typeof Pressable>>(null);
   const [filters, setFilters] = useState<Filters>({});
+  const filtered = !!(filters.zoneId || filters.categoryId || filters.pickupMode);
   const [draft, setDraft] = useState<Filters>({});
   const [showFilters, setShowFilters] = useState(false);
   const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
@@ -371,15 +372,24 @@ export default function HomePage() {
             <View style={styles.empty}>
               <DataState
                 kind="empty"
-                title="Sin resultados"
+                title={
+                  query || filtered
+                    ? 'Sin resultados'
+                    : type === 'LIVE'
+                      ? 'Nadie vende ahora'
+                      : 'Aún no hay productos'
+                }
                 description={
                   query
                     ? `No encontramos publicaciones para «${query}». Prueba otro texto o cambia los filtros.`
-                    : type === 'LIVE' && !filters.zoneId && !filters.categoryId
-                      ? 'Nadie vende ahora. Mira los productos'
-                      : 'No hay publicaciones que coincidan con tus filtros.'
+                    : filtered
+                      ? 'No hay publicaciones que coincidan con tus filtros.'
+                      : type === 'LIVE'
+                        ? 'Nadie vende ahora. Mira los productos'
+                        : 'Todavía nadie ha publicado productos. Vuelve más tarde o publica el tuyo con Vender.'
                 }
-                action={query ? 'Limpiar búsqueda' : 'Cambiar filtros'}
+                // Sin búsqueda ni filtros no hay nada que limpiar: solo queda el botón de cambiar de pestaña.
+                action={query ? 'Limpiar búsqueda' : filtered ? 'Cambiar filtros' : undefined}
                 onAction={
                   query
                     ? clearSearch

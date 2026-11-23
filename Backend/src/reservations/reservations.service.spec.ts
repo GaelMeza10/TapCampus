@@ -38,3 +38,29 @@ describe('Fotografía de reservas autorizadas', () => {
     } finally { await module.close(); }
   });
 });
+
+describe('Apartado de la propia publicación', () => {
+  it('rechaza con 403 en español y no descuenta stock ni crea reserva', async () => {
+    const create = jest.fn();
+    const update = jest.fn();
+    const tx = {
+      $queryRaw: jest.fn()
+        .mockResolvedValueOnce([{ id: 'seller' }])
+        .mockResolvedValueOnce([{ id: 'p1', seller_id: 'seller', type: 'LIVE', status: 'ACTIVE', current_stock: 3 }]),
+      reservation: { findUnique: jest.fn().mockResolvedValue(null), create },
+      publication: { update },
+    };
+    const module = await Test.createTestingModule({ providers: [ReservationsService,
+      { provide: PrismaService, useValue: { $transaction: (fn: (t: typeof tx) => unknown) => fn(tx) } },
+      { provide: QueueService, useValue: {} }, { provide: RealtimeGateway, useValue: {} },
+    ] }).compile();
+    try {
+      const service = module.get(ReservationsService);
+      const attempt = service.create('p1', 'seller', '00000000-0000-4000-8000-000000000000');
+      await expect(attempt).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(attempt).rejects.toThrow('No puedes apartar tu propia publicación');
+      expect(create).not.toHaveBeenCalled();
+      expect(update).not.toHaveBeenCalled();
+    } finally { await module.close(); }
+  });
+});

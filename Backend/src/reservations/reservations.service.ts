@@ -86,6 +86,8 @@ export class ReservationsService {
           Publication[]
         >`SELECT * FROM publications WHERE id = ${publicationId}::uuid FOR UPDATE`;
         if (!p) throw new NotFoundException('Publicación inexistente');
+        if (p.seller_id === buyerId)
+          throw new ForbiddenException('No puedes apartar tu propia publicación');
         const now = new Date();
         if (
           p.type !== 'LIVE' ||

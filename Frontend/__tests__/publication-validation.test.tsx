@@ -36,3 +36,10 @@ test('editar solo precio normal no exige reprogramar una oferta cuyo umbral ya p
   expect(validatePublicationDraft({ ...valid, editing: true, original, now: new Date('2099-01-01T11:55').getTime(),
     draft: { ...valid.draft, price: '90', gangaPrice: '65.00', gangaMinutes: '10' } })).toEqual({});
 });
+
+test('normalizePrice limpia símbolo, espacios y coma decimal', () => {
+  const { normalizePrice, validPrice } = require('../src/lib/publication-form-validation');
+  expect(normalizePrice('$1,50')).toBe('1.50');
+  expect(validPrice(normalizePrice('$ 180 '))).toBe(true);
+  expect(validPrice(normalizePrice('abc'))).toBe(false);
+});

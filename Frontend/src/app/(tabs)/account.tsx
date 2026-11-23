@@ -22,6 +22,7 @@ import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
 import CustomInput from '@/components/CustomInput';
 import { NAME_MAX } from '@/lib/field-limits';
+import { apiMessage } from '@/services/error-messages';
 import { AccountContact, AccountIdentity, AccountState } from '@/components/account-ui';
 
 const cleanName = (value: string) => value.trim().replace(/\s+/g, ' ');
@@ -109,10 +110,15 @@ export default function MyAccount() {
         setEditing(false);
         setSaved(true);
       }
-    } catch {
+    } catch (cause) {
+      // Con respuesta del servidor (p. ej. 400 teléfono inválido) se muestra su motivo;
+      // sin respuesta es un problema de red.
+      const answered = !!(cause as { response?: unknown } | undefined)?.response;
       if (mounted.current)
         setSaveError(
-          'No se pudieron guardar tus cambios. Revisa tu conexión e inténtalo de nuevo.',
+          answered
+            ? apiMessage(cause)
+            : 'No se pudieron guardar tus cambios. Revisa tu conexión e inténtalo de nuevo.',
         );
     } finally {
       saveLock.current = false;

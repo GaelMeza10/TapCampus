@@ -42,3 +42,8 @@ test('editar contraseña no borra el error de correo inválido', async () => {
   expect(view.getByLabelText('Correo institucional').props.accessibilityHint).toContain('@uabc.edu.mx');
   expect(mockLogin).not.toHaveBeenCalled();
 });
+
+test('413 en inglés se explica en español', () => {
+  const { apiMessage } = require('../src/services/error-messages');
+  expect(apiMessage({ response: { status: 413, data: { message: 'request entity too large' } } })).toContain('demasiado grandes');
+});

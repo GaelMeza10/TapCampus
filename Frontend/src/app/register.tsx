@@ -14,6 +14,7 @@ import { COLORS, SPACE, TYPE } from '../theme';
 import AppText from '@/components/app-text';
 import { useAuth } from '@/context/AuthContext';
 import Card from '@/components/Card';
+import { useSlowHint } from '@/hooks/use-slow-hint';
 import { NAME_MAX, PASSWORD_MAX_BYTES, utf8Bytes } from '@/lib/field-limits';
 import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -28,9 +29,11 @@ export default function Register() {
   const { register } = useAuth();
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
   const [accepted, setAccepted] = useState(false);
+  const [termsError, setTermsError] = useState(false);
   const [error, setError] = useState('');
   const [errorField, setErrorField] = useState<keyof typeof form>();
   const [loading, setLoading] = useState(false);
+  const slow = useSlowHint(loading);
   const update = (key: keyof typeof form, value: string) => {
     setForm(previous => ({ ...previous, [key]: value }));
     if (errorField === key) { setError(''); setErrorField(undefined); }
@@ -40,7 +43,19 @@ export default function Register() {
   );
 
   async function submit() {
-    if (!complete || loading) return;
+    if (loading) return;
+    // El botón siempre está activo: al pulsarlo se indica qué falta en lugar de dejarlo gris sin explicación.
+    if (!complete) {
+      const missing = (['name', 'email', 'phone', 'password'] as const).find(key => !form[key].trim() && !(key === 'password' && form.password));
+      if (missing) {
+        setErrorField(missing);
+        setError({ name: 'Escribe tu nombre completo.', email: 'Escribe tu correo @uabc.edu.mx.', phone: 'Escribe tu teléfono.', password: 'Escribe una contraseña de al menos 8 caracteres.' }[missing]);
+      } else {
+        setErrorField(undefined);
+        setTermsError(true);
+      }
+      return;
+    }
     const email = uabcEmail(form.email);
     if (!email) {
       setErrorField('email');
@@ -112,7 +127,7 @@ export default function Register() {
               label="Nombre completo"
               placeholder="Nombre completo"
               value={form.name}
-              error={form.name.length > 0 && !form.name.trim() ? 'Escribe tu nombre completo.' : undefined}
+              error={errorField === 'name' ? error : form.name.length > 0 && !form.name.trim() ? 'Escribe tu nombre completo.' : undefined}
               editable={!loading}
               onChangeText={value => update('name', value)}
               maxLength={NAME_MAX}
@@ -161,7 +176,11 @@ export default function Register() {
               disabled={loading}
               accessibilityRole="checkbox"
               accessibilityState={{ checked: accepted, disabled: loading }}
-              onPress={() => setAccepted(!accepted)}
+              accessibilityHint={termsError ? 'Acepta el aviso para continuar.' : undefined}
+              onPress={() => {
+                setAccepted(!accepted);
+                setTermsError(false);
+              }}
               style={styles.terms}
             >
               <Ionicons name={accepted ? 'checkbox-outline' : 'square-outline'} size={24} color={COLORS.primary} accessible={false} />
@@ -170,11 +189,11 @@ export default function Register() {
                 TapCampus.
               </AppText>
             </Pressable>
+            {termsError ? <InlineMessage>Acepta el aviso de privacidad para continuar.</InlineMessage> : null}
             <PrimaryButton
               title="Crear cuenta"
-              loadingTitle="Creando cuenta…"
+              loadingTitle={slow ? 'Conectando con el servidor, puede tardar un momento…' : 'Creando cuenta…'}
               loading={loading}
-              disabled={!complete}
               onPress={() => void submit()}
             />
           </Card>

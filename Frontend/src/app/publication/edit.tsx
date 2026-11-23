@@ -41,7 +41,7 @@ import {
   type PublicationType,
   type Zone,
 } from '@/services/marketplace';
-import { formFieldOrder, localDate, localInput, validPrice, validatePublicationDraft, type PublicationDraft, type PublicationFormErrors, type PublicationFormField } from '@/lib/publication-form-validation';
+import { formFieldOrder, localDate, localInput, normalizePrice, validPrice, validatePublicationDraft, type PublicationDraft, type PublicationFormErrors, type PublicationFormField } from '@/lib/publication-form-validation';
 import { PUBLICATION_COPY } from '@/lib/publication-copy';
 import { DESCRIPTION_MAX, TITLE_MAX } from '@/lib/field-limits';
 
@@ -190,7 +190,8 @@ export default function EditPublication() {
   const [categoryAttempt, setCategoryAttempt] = useState(0);
   const [zoneLoading, setZoneLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(true);
-  const change = (field: keyof Draft, value: string) => {
+  const change = (field: keyof Draft, raw: string) => {
+    const value = field === 'price' || field === 'gangaPrice' ? normalizePrice(raw) : raw;
     setDraft(previous => ({ ...previous, [field]: value }));
     if (field === 'title' || field === 'description') {
       setServerErrors(previous => ({ ...previous, [field]: undefined }));
@@ -1010,7 +1011,7 @@ export default function EditPublication() {
               editable={!loading && !original?.is_ganga_active}
               keyboardType="decimal-pad"
               onChangeText={price => {
-                setConfig(previous => ({ ...previous, price }));
+                setConfig(previous => ({ ...previous, price: normalizePrice(price) }));
                 setConfigError('');
               }}
             />

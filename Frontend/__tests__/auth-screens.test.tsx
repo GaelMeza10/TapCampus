@@ -66,3 +66,38 @@ test('registro limita nombre y contraseña', async () => {
   expect(view.getByLabelText('Nombre completo').props.maxLength).toBe(80);
   expect(view.getByLabelText('Contraseña').props.maxLength).toBe(72);
 });
+
+test('Crear cuenta explica qué falta en lugar de quedar deshabilitado', async () => {
+  const view = await render(<Register />);
+  const button = view.getByRole('button', { name: 'Crear cuenta' });
+  expect(button.props.accessibilityState?.disabled).toBeFalsy();
+  await fireEvent.press(button);
+  expect(view.getByLabelText('Nombre completo').props.accessibilityHint).toContain('nombre');
+  await fireEvent.changeText(view.getByLabelText('Nombre completo'), 'Ana');
+  await fireEvent.changeText(view.getByLabelText('Correo institucional'), 'ana@uabc.edu.mx');
+  await fireEvent.changeText(view.getByLabelText('Teléfono'), '6641234567');
+  await fireEvent.changeText(view.getByLabelText('Contraseña'), 'password123');
+  await fireEvent.press(view.getByRole('button', { name: 'Crear cuenta' }));
+  expect(view.getByText('Acepta el aviso de privacidad para continuar.')).toBeTruthy();
+  expect(mockRegister).not.toHaveBeenCalled();
+  await fireEvent.press(view.getByRole('checkbox'));
+  expect(view.queryByText('Acepta el aviso de privacidad para continuar.')).toBeNull();
+  await fireEvent.press(view.getByRole('button', { name: 'Crear cuenta' }));
+  expect(mockRegister).toHaveBeenCalled();
+});
+
+test('login lento avisa que el servidor puede tardar', async () => {
+  jest.useFakeTimers();
+  try {
+    mockLogin.mockImplementationOnce(() => new Promise(() => {}));
+    const view = await render(<Login />);
+    await fireEvent.changeText(view.getByLabelText('Correo institucional'), 'ana@uabc.edu.mx');
+    await fireEvent.changeText(view.getByLabelText('Contraseña'), 'password123');
+    await fireEvent.press(view.getByRole('button', { name: 'Iniciar sesión' }));
+    expect(view.queryByText(/puede tardar un momento/)).toBeNull();
+    await act(async () => { jest.advanceTimersByTime(5000); });
+    expect(view.getByText(/Conectando con el servidor, puede tardar un momento/)).toBeTruthy();
+  } finally {
+    jest.useRealTimers();
+  }
+});

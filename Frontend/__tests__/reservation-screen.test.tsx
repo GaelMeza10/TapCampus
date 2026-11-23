@@ -9,9 +9,12 @@ let mockSync: () => Promise<void>;
 let mockRouteId = 'p1';
 jest.mock('../src/hooks/use-marketplace-sync', () => ({ useMarketplaceSync: (refresh: () => Promise<void>) => { mockSync = refresh; } }));
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn() }), useLocalSearchParams: () => ({ id: mockRouteId }), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
+jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn(), dismissTo: mockDismissTo }), useLocalSearchParams: () => ({ id: mockRouteId }), useFocusEffect: (callback: () => void) => require('react').useEffect(callback, [callback]) }));
 jest.mock('expo-crypto', () => ({ randomUUID: jest.fn() }));
 jest.mock('expo-linking', () => ({ openURL: jest.fn() }));
+const mockUserId = jest.fn(async (): Promise<string | undefined> => undefined);
+const mockDismissTo = jest.fn();
+jest.mock('../src/services/auth.service', () => ({ currentUserId: () => mockUserId() }));
 jest.mock('../src/services/marketplace', () => ({
   zones: jest.fn(async () => []),
   categories: jest.fn(async () => []),
@@ -170,7 +173,7 @@ test('409 muestra agotamiento sin crear una reserva local', async () => {
   await view.findByText('Burrito');
   await fireEvent.press(view.getByText('Apartar una unidad'));
   await fireEvent.press(view.getByText('Sí, apartar'));
-  await view.findByText(/Sin stock o publicación no disponible/);
+  await view.findByText('Ya no quedan unidades disponibles o la venta terminó.');
   expect(view.queryByText('Reserva confirmada')).toBeNull();
   expect(reserve).toHaveBeenCalledWith('p1', 'uuid-409');
 });
@@ -323,4 +326,16 @@ test('cambiar de producto descarta el diálogo y una respuesta anterior no invad
   expect(view.queryByText('¿Quieres apartar una unidad?')).toBeNull();
   expect(view.getByText('Libro')).toBeTruthy();
   expect(reserve).toHaveBeenCalledTimes(1);
+});
+
+test('el vendedor no puede apartar ni escribirse en su propia publicación', async () => {
+  mockUserId.mockResolvedValueOnce('s1');
+  (publicationDetail as jest.Mock).mockResolvedValue({ ...product, sellerContact: { phone: '+526641234567' } });
+  const view = await render(<Detail />);
+  await view.findByText('Burrito');
+  expect(await view.findByText(/Es tu publicación/)).toBeTruthy();
+  expect(view.queryByText('Apartar una unidad')).toBeNull();
+  expect(view.queryByText('Contactar por WhatsApp')).toBeNull();
+  await fireEvent.press(view.getByRole('button', { name: 'Gestionar en Mis ventas' }));
+  expect(mockDismissTo).toHaveBeenCalledWith({ pathname: '/sales', params: { type: 'LIVE' } });
 });

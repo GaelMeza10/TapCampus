@@ -16,6 +16,7 @@ import { useAuth } from '@/context/AuthContext';
 import Card from '@/components/Card';
 import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
+import { useSlowHint } from '@/hooks/use-slow-hint';
 import { uabcEmail } from '@/services/auth-validation';
 import { InlineMessage } from '@/components/feedback';
 import { CampusHeader } from '@/components/campus-header';
@@ -29,6 +30,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [errorField, setErrorField] = useState<'email' | 'password'>();
   const [loading, setLoading] = useState(false);
+  const slow = useSlowHint(loading);
 
   async function submit() {
     if (loading) return;
@@ -103,7 +105,7 @@ export default function Login() {
             {error && !errorField ? <InlineMessage>{error}</InlineMessage> : null}
             <PrimaryButton
               title="Iniciar sesión"
-              loadingTitle="Entrando…"
+              loadingTitle={slow ? 'Conectando con el servidor, puede tardar un momento…' : 'Entrando…'}
               loading={loading}
               onPress={() => void submit()}
             />

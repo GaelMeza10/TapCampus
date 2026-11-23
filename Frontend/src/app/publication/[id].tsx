@@ -29,6 +29,7 @@ import {
   type Reservation,
 } from '@/services/marketplace';
 import { openWhatsApp } from '@/services/whatsapp';
+import { currentUserId } from '@/services/auth.service';
 import {
   canActOnReservation,
   formatReservationDate,
@@ -72,6 +73,17 @@ export default function PublicationDetail() {
   const reserveTrigger = useRef<ComponentRef<typeof Pressable>>(null);
   const routeEpoch = useRef(0);
   const refreshedDeadlines = useRef(new Set<string>());
+  const [userId, setUserId] = useState<string>();
+
+  useEffect(() => {
+    let current = true;
+    void currentUserId().then(value => {
+      if (current) setUserId(value);
+    });
+    return () => {
+      current = false;
+    };
+  }, []);
 
   const refresh = useCallback(async () => {
     if (!id) return;
@@ -179,12 +191,15 @@ export default function PublicationDetail() {
     (lastConfirmed && lastConfirmed.id === confirmId
       ? { reservation: lastConfirmed, unitLabel: '' }
       : undefined);
+  // El vendedor no puede apartar ni escribirse a sí mismo; se le dirige a Mis ventas.
+  const ownPublication = !!userId && !!item && (item.seller_id ?? item.seller?.id) === userId;
   const canReserve =
+    !ownPublication &&
     item?.type === 'LIVE' &&
     saleIsOpen(item, now) &&
     saleHasStarted(item, now) &&
     (item.current_stock ?? 0) > 0;
-  const canConsultSeller = !!item?.sellerContact?.phone &&
+  const canConsultSeller = !ownPublication && !!item?.sellerContact?.phone &&
     saleIsOpen(item, now) && (item.type === 'STATIC' || canReserve);
   const unresolved = !!intent?.key && !intent.rejected;
   const priceChanged =
@@ -261,9 +276,7 @@ export default function PublicationDetail() {
       const rejected = (cause as { response?: { status?: number } }).response?.status === 409;
       if (rejected) updateIntent({ ...attempt, rejected: true });
       setReservationError(
-        rejected
-          ? `Sin stock o publicación no disponible. ${apiMessage(cause)}`
-          : apiMessage(cause),
+        rejected ? 'Ya no quedan unidades disponibles o la venta terminó.' : apiMessage(cause),
       );
       await refresh();
     } finally {
@@ -308,6 +321,7 @@ export default function PublicationDetail() {
   }
 
   const confirmed = successId && lastConfirmed?.id === successId ? lastConfirmed : undefined;
+  const confirmedUrgent = !!confirmed && canActOnReservation(confirmed, now) && (validTime(confirmed.expiresAt) ?? 0) - now <= 300000;
   const pageError = [error && (item || confirmed) ? error : '', reservationsError].filter(Boolean).join('\n');
   const zone = item ? zoneOptions.find(z => z.id === item.zone_id)?.name : undefined;
 
@@ -343,8 +357,12 @@ export default function PublicationDetail() {
               </AppText>
               <AppText variant="caption">{confirmed.publicationTitle}</AppText>
               <View style={styles.timer}>
-                <AppText variant="caption">Tu apartado vence en</AppText>
-                <AppText variant="price">{countdown(confirmed.expiresAt, now)}</AppText>
+                <AppText variant="caption" style={confirmedUrgent ? styles.urgentText : undefined}>
+                  {confirmedUrgent ? 'Por vencer · tu apartado vence en' : 'Tu apartado vence en'}
+                </AppText>
+                <AppText variant="price" style={confirmedUrgent ? styles.urgentText : undefined}>
+                  {countdown(confirmed.expiresAt, now)}
+                </AppText>
               </View>
               <View style={styles.priceRow}>
                 <AppText variant="caption">Precio fijado</AppText>
@@ -450,7 +468,18 @@ export default function PublicationDetail() {
                 </>
               ) : null}
             </ScrollView>
-            {item || unresolved ? (
+            {ownPublication && !unresolved ? (
+              <View style={styles.footer}>
+                <AppText variant="caption" style={styles.footerHelp}>
+                  Es tu publicación. Los compradores verán aquí los botones para apartar o contactarte.
+                </AppText>
+                <PrimaryButton
+                  title="Gestionar en Mis ventas"
+                  variant="secondary"
+                  onPress={() => router.dismissTo({ pathname: '/sales', params: { type: item!.type } })}
+                />
+              </View>
+            ) : item || unresolved ? (
               <View style={styles.footer}>
                 {item ? <AppText variant="caption" style={styles.footerHelp}>{item.type === 'STATIC' ? 'Este producto no se aparta: escríbele para coordinar la entrega.' : 'Apartas 1 unidad durante 20 min. El precio se fija al confirmarse la reserva.'}</AppText> : null}
                 {item?.type === 'LIVE' || unresolved ? (
@@ -536,6 +565,7 @@ const styles = StyleSheet.create({
   successScroll: { padding: SPACE.page, gap: SPACE.lg, flexGrow: 1 },
   successCard: { padding: SPACE.xl, gap: SPACE.lg },
   center: { textAlign: 'center' },
+  urgentText: { color: COLORS.error },
   timer: {
     padding: SPACE.lg,
     borderRadius: RADIUS.md,

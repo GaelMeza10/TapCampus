@@ -128,7 +128,7 @@ test('buscar combina filtros; enviar es inmediato y limpiar conserva zona/catego
 
 test('espera 300 ms sin consultar por cada letra y conserva búsqueda al cambiar tipo', async () => {
   const view = await render(<HomePage />);
-  await view.findByText('Sin resultados');
+  await view.findByText('Nadie vende ahora');
   const count = (listPublications as jest.Mock).mock.calls.length;
   jest.useFakeTimers();
   try {
@@ -209,4 +209,13 @@ test('banner escoge reserva vigente más próxima, excluye vencidas y fallo perm
   await act(async () => { mockListeners.connect(); });
   await view.findByText('No se pudieron actualizar tus reservas.');
   expect(view.getByRole('button', { name: 'Ver reserva de Mi torta' })).toBeTruthy();
+});
+
+test('vacío sin filtros no ofrece «Cambiar filtros» y explica cada pestaña', async () => {
+  const view = await render(<HomePage />);
+  expect(await view.findByText('Nadie vende ahora')).toBeTruthy();
+  expect(view.queryByRole('button', { name: 'Cambiar filtros' })).toBeNull();
+  await fireEvent.press(view.getByRole('button', { name: 'Ver Productos' }));
+  expect(await view.findByText('Aún no hay productos')).toBeTruthy();
+  expect(view.queryByRole('button', { name: 'Cambiar filtros' })).toBeNull();
 });

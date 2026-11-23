@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { GlobalExceptionFilter } from './global-exception.filter';
+import { spanishValidationErrors } from './validation-messages';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { uploadsDirectory } from '../uploads/uploads.config';
 
@@ -18,6 +19,7 @@ export function configureApp(app: INestApplication) {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: spanishValidationErrors,
     }),
   );
   app.useGlobalFilters(new GlobalExceptionFilter(app.get(HttpAdapterHost)));
