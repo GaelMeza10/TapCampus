@@ -1,6 +1,6 @@
 jest.mock('../src/components/offer-duration', () => require('../src/components/offer-duration.tsx'));
 import React from 'react';
-import { Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import { act, cleanup, fireEvent, render, waitFor, within } from '@testing-library/react-native';
 import * as ImagePicker from 'expo-image-picker';
 import EditPublication from '../src/app/publication/edit';
@@ -67,6 +67,43 @@ test('permiso de cámara denegado muestra error visible y conserva formulario', 
   await fireEvent.changeText(view.getByLabelText('Título'), 'Borrador conservado');
   expect(view.getByText('Permite usar la cámara para tomar la foto.')).toBeTruthy();
   expect(savePublication).not.toHaveBeenCalled();
+});
+
+test('permiso de cámara negado sin poder volver a preguntar ofrece abrir Configuración', async () => {
+  (ImagePicker.requestCameraPermissionsAsync as jest.Mock).mockResolvedValueOnce({ granted: false, canAskAgain: false });
+  const openSettings = jest.spyOn(Linking, 'openSettings').mockResolvedValueOnce(undefined);
+  const view = await render(<EditPublication />);
+  await fireEvent.changeText(view.getByLabelText('Título'), 'Borrador conservado');
+  await fireEvent.press(view.getByRole('button', { name: 'Añadir foto del producto' }));
+  await fireEvent.press(view.getByRole('button', { name: 'Tomar foto' }));
+  expect(await view.findByText(/permiso de cámara está desactivado\. Actívalo en Configuración/)).toBeTruthy();
+  await fireEvent.press(view.getByRole('button', { name: 'Abrir configuración' }));
+  expect(openSettings).toHaveBeenCalledTimes(1);
+  expect(view.getByLabelText('Título').props.value).toBe('Borrador conservado');
+  expect(ImagePicker.launchCameraAsync).not.toHaveBeenCalled();
+  openSettings.mockRestore();
+});
+
+test('acceso a fotos bloqueado ofrece Configuración y avisa si no se puede abrir', async () => {
+  (ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock).mockResolvedValueOnce({ granted: false, canAskAgain: false });
+  const openSettings = jest.spyOn(Linking, 'openSettings').mockRejectedValueOnce(new Error('unsupported'));
+  const view = await render(<EditPublication />);
+  await fireEvent.press(view.getByRole('button', { name: 'Añadir foto del producto' }));
+  await fireEvent.press(view.getByRole('button', { name: 'Elegir de galería' }));
+  expect(await view.findByText(/acceso a tus fotos está desactivado/)).toBeTruthy();
+  await fireEvent.press(view.getByRole('button', { name: 'Abrir configuración' }));
+  expect(await view.findByText(/No se pudo abrir Configuración/)).toBeTruthy();
+  expect(view.queryByRole('button', { name: 'Abrir configuración' })).toBeNull();
+  openSettings.mockRestore();
+});
+
+test('permiso negado que aún puede volver a pedirse no muestra el botón de Configuración', async () => {
+  (ImagePicker.requestCameraPermissionsAsync as jest.Mock).mockResolvedValueOnce({ granted: false, canAskAgain: true });
+  const view = await render(<EditPublication />);
+  await fireEvent.press(view.getByRole('button', { name: 'Añadir foto del producto' }));
+  await fireEvent.press(view.getByRole('button', { name: 'Tomar foto' }));
+  await view.findByText('Permite usar la cámara para tomar la foto.');
+  expect(view.queryByRole('button', { name: 'Abrir configuración' })).toBeNull();
 });
 
 test.each(['LIVE', 'STATIC'])('Vender abre %s sin volver a pedir el tipo', async type => {
@@ -466,4 +503,10 @@ test.each([
   await fireEvent.changeText(view.getByLabelText('Título'), 'Título corregido');
   await fireEvent.press(view.getByRole('button', { name: 'Guardar cambios' }));
   await waitFor(() => expect(savePublication).toHaveBeenCalledWith({ title: 'Título corregido' }, 'p1'));
+});
+
+test('título y descripción tienen longitud máxima', async () => {
+  const view = await render(<EditPublication />);
+  expect(view.getByLabelText('Título').props.maxLength).toBe(100);
+  expect(view.getByLabelText('Descripción').props.maxLength).toBe(1000);
 });

@@ -21,6 +21,7 @@ import AppText from '@/components/app-text';
 import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
 import CustomInput from '@/components/CustomInput';
+import { NAME_MAX } from '@/lib/field-limits';
 import { AccountContact, AccountIdentity, AccountState } from '@/components/account-ui';
 
 const cleanName = (value: string) => value.trim().replace(/\s+/g, ' ');
@@ -175,6 +176,7 @@ export default function MyAccount() {
                   onChangeText={value => {
                     setDraft(previous => ({ ...previous, name: value }));
                   }}
+                  maxLength={NAME_MAX}
                   editable={!saving && !busy}
                   autoFocus
                   autoCapitalize="words"

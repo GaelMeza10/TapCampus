@@ -14,6 +14,7 @@ import { COLORS, SPACE, TYPE } from '../theme';
 import AppText from '@/components/app-text';
 import { useAuth } from '@/context/AuthContext';
 import Card from '@/components/Card';
+import { NAME_MAX, PASSWORD_MAX_BYTES, utf8Bytes } from '@/lib/field-limits';
 import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
 import { mexicanPhone, uabcEmail } from '@/services/auth-validation';
@@ -55,6 +56,16 @@ export default function Register() {
     if (form.password.length < 8) {
       setErrorField('password');
       setError('La contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+    if (!form.password.trim()) {
+      setErrorField('password');
+      setError('La contraseña no puede estar formada solo por espacios.');
+      return;
+    }
+    if (utf8Bytes(form.password) > PASSWORD_MAX_BYTES) {
+      setErrorField('password');
+      setError('La contraseña es demasiado larga. Usa máximo 72 caracteres (los emojis cuentan como más).');
       return;
     }
     setLoading(true);
@@ -104,6 +115,7 @@ export default function Register() {
               error={form.name.length > 0 && !form.name.trim() ? 'Escribe tu nombre completo.' : undefined}
               editable={!loading}
               onChangeText={value => update('name', value)}
+              maxLength={NAME_MAX}
               autoCapitalize="words"
               textContentType="name"
               autoComplete="name"
@@ -138,6 +150,7 @@ export default function Register() {
               value={form.password}
               editable={!loading}
               onChangeText={value => update('password', value)}
+              maxLength={PASSWORD_MAX_BYTES}
               secureTextEntry
               autoComplete="new-password"
               textContentType="newPassword"

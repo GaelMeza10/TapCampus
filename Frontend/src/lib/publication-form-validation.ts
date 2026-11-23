@@ -1,4 +1,5 @@
 import type { OwnedPublication, ProductCondition, PublicationType } from '@/services/marketplace';
+import { DESCRIPTION_MAX, TITLE_MAX } from '@/lib/field-limits';
 
 export type PublicationDraft = {
   condition?: ProductCondition;
@@ -27,7 +28,9 @@ export function validatePublicationDraft({ draft, type, original, editing, hasPh
   const errors: PublicationFormErrors = {};
   if (!hasPhoto) errors.photo = 'Añade una foto del producto.';
   if (!draft.title.trim()) errors.title = 'Escribe un título para identificar el producto.';
+  else if (draft.title.trim().length > TITLE_MAX) errors.title = `El título debe tener máximo ${TITLE_MAX} caracteres.`;
   if (!draft.description.trim()) errors.description = 'Describe el producto y agrega una referencia para la entrega.';
+  else if (draft.description.trim().length > DESCRIPTION_MAX) errors.description = `La descripción debe tener máximo ${DESCRIPTION_MAX} caracteres.`;
   if (!categoryId) errors.category = 'Selecciona una categoría.';
   if (!validPrice(draft.price)) errors.price = 'El precio debe ser positivo y tener hasta dos decimales.';
   if (!(type === 'STATIC' && pickupMode === 'ARRANGED') && !zoneId) errors.zone = 'Selecciona una zona.';

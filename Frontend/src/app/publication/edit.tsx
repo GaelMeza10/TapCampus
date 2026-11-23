@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ComponentRef, type R
 import {
   KeyboardAvoidingView,
   AccessibilityInfo,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -42,6 +43,7 @@ import {
 } from '@/services/marketplace';
 import { formFieldOrder, localDate, localInput, validPrice, validatePublicationDraft, type PublicationDraft, type PublicationFormErrors, type PublicationFormField } from '@/lib/publication-form-validation';
 import { PUBLICATION_COPY } from '@/lib/publication-copy';
+import { DESCRIPTION_MAX, TITLE_MAX } from '@/lib/field-limits';
 
 type Draft = PublicationDraft;
 const empty: Draft = {
@@ -147,6 +149,8 @@ export default function EditPublication() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [photoError, setPhotoError] = useState('');
+  // Permiso bloqueado ("No volver a preguntar"): el sistema ya no muestra el diálogo.
+  const [photoSettings, setPhotoSettings] = useState(false);
   const [zoneError, setZoneError] = useState('');
   const [categoryError, setCategoryError] = useState('');
   const [loadError, setLoadError] = useState('');
@@ -312,16 +316,23 @@ export default function EditPublication() {
 
   async function pick(source: 'camera' | 'gallery') {
     setPhotoError('');
+    setPhotoSettings(false);
     try {
       const permission =
         source === 'camera'
           ? await ImagePicker.requestCameraPermissionsAsync()
           : await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permission.granted) {
+        const blocked = permission.canAskAgain === false;
+        setPhotoSettings(blocked);
         setPhotoError(
-          source === 'camera'
-            ? 'Permite usar la cámara para tomar la foto.'
-            : 'Permite acceder a tus fotos para elegir una imagen.',
+          blocked
+            ? source === 'camera'
+              ? 'El permiso de cámara está desactivado. Actívalo en Configuración para tomar la foto.'
+              : 'El acceso a tus fotos está desactivado. Actívalo en Configuración para elegir una imagen.'
+            : source === 'camera'
+              ? 'Permite usar la cámara para tomar la foto.'
+              : 'Permite acceder a tus fotos para elegir una imagen.',
         );
         return;
       }
@@ -637,6 +648,20 @@ export default function EditPublication() {
                 )}
               </Pressable>
               <FieldMessage message={problems.photo} />
+              {photoSettings && photoError ? (
+                <PrimaryButton
+                  title="Abrir configuración"
+                  variant="ghost"
+                  compact
+                  accessibilityHint="Abre los ajustes de la aplicación para conceder el permiso"
+                  onPress={() => {
+                    Linking.openSettings().catch(() => {
+                      setPhotoSettings(false);
+                      setPhotoError('No se pudo abrir Configuración. Ábrela desde tu teléfono y concede el permiso a TapCampus.');
+                    });
+                  }}
+                />
+              ) : null}
               </View>
               <AppText
                 variant="heading"
@@ -658,6 +683,7 @@ export default function EditPublication() {
                   error={fieldErrors.title}
                   announceError={false}
                   placeholder="¿Qué vendes?"
+                  maxLength={TITLE_MAX}
                   value={draft.title}
                   onChangeText={value => change('title', value)}
                 />
@@ -675,6 +701,7 @@ export default function EditPublication() {
                   announceError={false}
                   surface="white"
                   placeholder="Describe el producto y agrega una referencia para la entrega."
+                  maxLength={DESCRIPTION_MAX}
                   value={draft.description}
                   onChangeText={value => change('description', value)}
                   multiline

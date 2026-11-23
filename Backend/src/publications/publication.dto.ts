@@ -3,9 +3,9 @@ import {
   IsEnum,
   IsInt,
   IsISO8601,
-  IsNumber,
   IsString,
   Matches,
+  MaxLength,
   Max,
   Min,
   ValidateIf,
@@ -16,6 +16,7 @@ import {
   ProductCondition,
   PickupMode,
 } from '../generated/prisma/client';
+import { DESCRIPTION_MAX, IsPrice, TITLE_MAX } from '../common/field-limits';
 
 const supplied = (_object: unknown, value: unknown) => value !== undefined;
 const nonNull = (_object: unknown, value: unknown) => value !== undefined && value !== null;
@@ -33,20 +34,22 @@ export class EditablePublicationDto {
 
   @ValidateIf(supplied)
   @Transform(trim)
-  @IsString()
-  @Matches(/\S/)
+  @IsString({ message: 'El título debe ser texto' })
+  @Matches(/\S/, { message: 'Escribe un título' })
+  @MaxLength(TITLE_MAX, { message: `El título debe tener máximo ${TITLE_MAX} caracteres` })
   title?: string;
 
   @ValidateIf(supplied)
   @Transform(trim)
-  @IsString()
-  @Matches(/\S/)
+  @IsString({ message: 'La descripción debe ser texto' })
+  @Matches(/\S/, { message: 'Escribe una descripción' })
+  @MaxLength(DESCRIPTION_MAX, { message: `La descripción debe tener máximo ${DESCRIPTION_MAX} caracteres` })
   description?: string;
 
   @ValidateIf(supplied)
-  @IsNumber({ maxDecimalPlaces: 2, allowNaN: false, allowInfinity: false })
-  @Min(0.01)
-  @Max(99999999.99)
+  @IsPrice({ message: 'El precio debe ser un número con hasta dos decimales' })
+  @Min(0.01, { message: 'El precio mínimo es $0.01' })
+  @Max(99999999.99, { message: 'El precio máximo es $99,999,999.99' })
   price?: number;
 
   @ValidateIf(supplied)
@@ -88,9 +91,9 @@ export class CreatePublicationDto extends EditablePublicationDto {
   initial_stock?: number;
 
   @ValidateIf(supplied)
-  @IsNumber({ maxDecimalPlaces: 2, allowNaN: false, allowInfinity: false })
-  @Min(0.01)
-  @Max(99999999.99)
+  @IsPrice({ message: 'El precio debe ser un número con hasta dos decimales' })
+  @Min(0.01, { message: 'El precio mínimo es $0.01' })
+  @Max(99999999.99, { message: 'El precio máximo es $99,999,999.99' })
   ganga_min_price?: number;
 
   @ValidateIf(supplied)
@@ -112,9 +115,9 @@ export class UpdatePublicationDto extends EditablePublicationDto {
   current_stock?: number;
 
   @ValidateIf(nonNull)
-  @IsNumber({ maxDecimalPlaces: 2, allowNaN: false, allowInfinity: false })
-  @Min(0.01)
-  @Max(99999999.99)
+  @IsPrice({ message: 'El precio debe ser un número con hasta dos decimales' })
+  @Min(0.01, { message: 'El precio mínimo es $0.01' })
+  @Max(99999999.99, { message: 'El precio máximo es $99,999,999.99' })
   ganga_min_price?: number | null;
 
   @ValidateIf(nonNull)

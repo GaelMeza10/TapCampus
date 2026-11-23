@@ -20,7 +20,7 @@ describe('POST /auth/register: nombre obligatorio ante entradas adversas', () =>
     expect(response.body.message.join(' ')).toContain('nombre');
     expect(registrar).not.toHaveBeenCalled();
   });
-  it.each(['  Ana   María Pérez  ', '李', 'Á'.repeat(200)])('normaliza sin recortar el nombre válido', async name => {
+  it.each(['  Ana   María Pérez  ', '李', 'Á'.repeat(80)])('normaliza sin recortar el nombre válido', async name => {
     await request(app.getHttpServer()).post('/auth/register').send({ ...valid, name }).expect(201);
     expect(registrar).toHaveBeenCalledWith({ ...valid, name: name.trim().replace(/\s+/g, ' ') });
   });

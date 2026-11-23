@@ -4,6 +4,7 @@ Cada directorio numerado es un cambio trazable. El número no se reutiliza. `spe
 
 | ID | Feature | Requisitos / historias | Estado | Bloqueo principal |
 | --- | --- | --- | --- | --- |
+| 0048 | [Permiso de foto y Configuración](0048-permiso-foto-configuracion/spec.md) | RF-03/06; US-03/04 | En verificación; Jest aprobado | [Evidencia](0048-permiso-foto-configuracion/verification.md): permiso bloqueado muestra mensaje y botón Abrir configuración; aceptación en teléfono pendiente. |
 | 0047 | [Usabilidad y recogida](0047-usabilidad-y-recogida/spec.md) | RF-02/03/04/05b/05c/06/07/08/09/10/11/12/13; RNF-01..03; TASKS 5.36/6.5 | En verificación; técnico/auxiliar aprobado | [Evidencia](0047-usabilidad-y-recogida/verification.md): recogida/por acordar, sockets, H:M, Productos, 26 categorías/seed y logout. Usuario confirma resuelto el desplazamiento; métricas formales por modelo, comprensión y aceptación móvil integrada pendientes. |
 | 0046 | [Seed de entrega y limpieza](0046-seed-entrega-y-limpieza/spec.md) | RF-01/02/03/05c/06/07/08/09/11/12/13; TASKS 1.7 | Verificado (técnico y carga local) | 292 pruebas, PostgreSQL/HTTP, repetición/preservación y limpieza con manifiesto PASS; hardware/UAT separados. |
 | 0045 | [Datos adversos y errores visibles](0045-errores-y-datos-adversos/spec.md) | RF-01/02/03/05c/06/07/08/13/15; RNF-01/03; TASKS 5.35 | Verificado (técnico y auxiliar) | 178 frontend/111 backend, 61 recorridos/capturas, tipos/build/lint/exports PASS; hardware separado. |

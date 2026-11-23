@@ -45,3 +45,24 @@ test('login bloquea edición y doble envío, muestra error real y permite reinte
   await waitFor(() => expect(mockLogin).toHaveBeenCalledTimes(2));
   expect(mockLogin).toHaveBeenLastCalledWith({ email: 'ana@uabc.edu.mx', password: 'password123' });
 });
+
+test.each([
+  ['        ', 'solo por espacios'],
+  ['😀'.repeat(19), 'demasiado larga'],
+])('registro rechaza la contraseña %j sin enviarla', async (password, message) => {
+  const view = await render(<Register />);
+  await fireEvent.changeText(view.getByLabelText('Nombre completo'), 'Ana');
+  await fireEvent.changeText(view.getByLabelText('Correo institucional'), 'ana@uabc.edu.mx');
+  await fireEvent.changeText(view.getByLabelText('Teléfono'), '6641234567');
+  await fireEvent.changeText(view.getByLabelText('Contraseña'), password);
+  await fireEvent.press(view.getByRole('checkbox'));
+  await fireEvent.press(view.getByRole('button', { name: 'Crear cuenta' }));
+  expect(view.getByLabelText('Contraseña').props.accessibilityHint).toContain(message);
+  expect(mockRegister).not.toHaveBeenCalled();
+});
+
+test('registro limita nombre y contraseña', async () => {
+  const view = await render(<Register />);
+  expect(view.getByLabelText('Nombre completo').props.maxLength).toBe(80);
+  expect(view.getByLabelText('Contraseña').props.maxLength).toBe(72);
+});
