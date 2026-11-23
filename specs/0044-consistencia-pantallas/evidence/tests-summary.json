@@ -1,0 +1,113 @@
+{
+  "success": true,
+  "testsPassed": 158,
+  "testsFailed": 0,
+  "suitesPassed": 21,
+  "suites": [
+    {
+      "file": "navigation.test.tsx",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "file": "publication-form.test.tsx",
+      "status": "passed",
+      "tests": 23
+    },
+    {
+      "file": "feed.test.tsx",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "file": "reservation-screen.test.tsx",
+      "status": "passed",
+      "tests": 24
+    },
+    {
+      "file": "reservations.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "file": "sales.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "file": "account.test.tsx",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "file": "auth-screens.test.tsx",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "file": "filter-sheet.test.tsx",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "marketplace-insets.test.tsx",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "sale-time-picker.test.tsx",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "file": "publisher-card.test.tsx",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "file": "publication-price.test.tsx",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "file": "components.test.tsx",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "marketplace-contracts.test.tsx",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "file": "tab-bar-material.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "file": "api-session.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "condition-label.test.tsx",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "file": "reservation-presentation.test.tsx",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "file": "publication-validation.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "auth-validation.test.tsx",
+      "status": "passed",
+      "tests": 2
+    }
+  ]
+}

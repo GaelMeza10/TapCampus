@@ -1,0 +1,3 @@
+# Revisión con Impeccable y DESIGN.md
+
+181 capturas auxiliares: 62 de consistencia, 34 de filtros/detalles/cuenta, 61 de errores y 24 de usabilidad. Sin excepciones JS, recursos ausentes ni controles fuera del ancho. Revisión visual de recogida/confirmación, referencia histórica, entrega por acordar, categorías, duración y logout: jerarquía legible, paleta/fuentes compartidas, acciones accesibles y tabs únicas. Se conservan nueve capturas representativas. No sustituye hardware, VoiceOver ni comprensión con estudiantes. El usuario confirma resuelto el desplazamiento; no se atribuye una causa a partir de web.

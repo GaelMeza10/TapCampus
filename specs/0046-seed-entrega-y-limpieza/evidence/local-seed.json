@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-22T19:05:59.161Z",
+  "mode": "local",
+  "checks": [
+    {
+      "created": {
+        "users": 6,
+        "publications": 48,
+        "reservations": 12
+      },
+      "totals": {
+        "users": 6,
+        "publications": 48,
+        "reservations": 12,
+        "categories": 12,
+        "zones": 5
+      },
+      "accessFile": ".local/demo-access.json"
+    },
+    {
+      "created": {
+        "users": 0,
+        "publications": 0,
+        "reservations": 0
+      },
+      "totals": {
+        "users": 6,
+        "publications": 48,
+        "reservations": 12,
+        "categories": 12,
+        "zones": 5
+      },
+      "accessFile": ".local/demo-access.json"
+    }
+  ],
+  "api": {
+    "login": true,
+    "categories": 12,
+    "zones": 5,
+    "visibleDeliveryFeed": {
+      "LIVE": 18,
+      "STATIC": 20
+    },
+    "buyerReservations": 6,
+    "sellerPublications": 12,
+    "sellerReservationStates": [
+      "ACTIVE",
+      "EXPIRED",
+      "CANCELLED",
+      "COMPLETED"
+    ],
+    "png": true,
+    "publicContactsAbsent": true
+  },
+  "preservation": {
+    "users": {
+      "before": 6,
+      "after": 12,
+      "originalHash": "046e6c6ce9c1321bfe9c2b7e56d3d8d331d1c50efc833b450c7dc7fc4527a54c",
+      "preserved": true
+    },
+    "zones": {
+      "before": 5,
+      "after": 5,
+      "originalHash": "c955f50ce75b1e5142b774e0bcf4a8a03cbd4e434f6eb546520d696e937752df",
+      "preserved": true
+    },
+    "categories": {
+      "before": 8,
+      "after": 12,
+      "originalHash": "4e03be2c43b5b9366f3f3165d7f0aa8a3aa94a32d8e5a36d2cc11bc5a9b84948",
+      "preserved": true
+    },
+    "publications": {
+      "before": 30,
+      "after": 78,
+      "originalHash": "497f0a0d3d580a460081edd074c97640ded3234938778bf78f4446688a70705c",
+      "preserved": true
+    },
+    "reservations": {
+      "before": 5,
+      "after": 17,
+      "originalHash": "49d27fb97bfff66bd5f120566221e0c4472f075ebbdd9c8c5a13c8791cfa9395",
+      "preserved": true
+    },
+    "reports": {
+      "before": 0,
+      "after": 0,
+      "originalHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "preserved": true
+    }
+  },
+  "result": "PASS"
+}

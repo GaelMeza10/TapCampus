@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-23T00:37:26.341Z",
+  "result": "PASS",
+  "scope": "GET API real; no equivale a renderizado móvil",
+  "checks": [
+    {
+      "source": "runningLoopback",
+      "http": 200,
+      "categories": 26,
+      "byType": {
+        "LIVE": 16,
+        "STATIC": 10
+      },
+      "originalCategoryIdsPreserved": true,
+      "arrangedVisible": 8
+    },
+    {
+      "source": "frontendConfigured",
+      "http": 200,
+      "categories": 26,
+      "byType": {
+        "LIVE": 16,
+        "STATIC": 10
+      },
+      "originalCategoryIdsPreserved": true,
+      "arrangedVisible": 8
+    }
+  ]
+}

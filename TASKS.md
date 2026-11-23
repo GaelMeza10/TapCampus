@@ -24,6 +24,8 @@ El proceso de desarrollo y la evidencia por feature están en `docs/08_DEVELOPME
 
 - [x] **1.6 Gangas de demostración:** 0027 EV-01..03: tres LIVE Demo con precio previo/actual y fotos; seed real 3→0, hashes de datos anteriores intactos y feed/fotos HTTP 200. Solo datos locales, sin cerrar UAT.
 
+- [x] **1.7 Seed de entrega y limpieza:** 0046 EV-01..05; doce categorías, seis cuentas, 48 publicaciones y doce reservas ficticias; PostgreSQL aislado/local y API aprobados, repetición sin duplicados y filas anteriores conservadas. 292 pruebas, tipos/build/lint y referencias de assets PASS. Residuos retirados con manifiesto; accesos en Backend/.local/demo-access.json y guía en docs/11_DELIVERY_GUIDE.md.
+
 ## FASE 2: Backend - Autenticación y API Básica
 - [x] **2.1 Módulo de Autenticación (JWT):** Registro/login reutilizados y verificados: dominio UABC, hash bcrypt, teléfono canónico, duplicados y JWT. 0002 EV-08.
 - [x] **2.2 Middleware/Guards de Autenticación:** Passport JwtStrategy, JwtAuthGuard y @CurrentUser verificados en rutas protegidas; tokens inválidos/expirados →401. 0002 EV-08.
@@ -113,11 +115,27 @@ Pendientes funcionales planificados del cierre (sin casillas cerradas por docume
 - [ ] **5.29 Filtro de contenido:** RF-15 → US-12 → 0038 AC-01..05 aprobados técnicamente: POST/PATCH LIVE/STATIC, política v1 de palabras completas y borrador/foto conservados con 0034. 102 pruebas backend/124 frontend, 657 solicitudes HTTP, tipos/build/lint y exports PASS. T-01..04 completas; T-05 y aceptación nativa pendientes.
 - [ ] **5.30 Consulta LIVE previa:** 0039 AC-01..04 aprobados técnicamente: contacto visible sin reserva, teléfono vigente, privacidad y continuidad; 102 pruebas backend/134 frontend, 674 HTTP, 16 capturas y exports PASS. T-01..03 completas; T-04/AC-05 apertura nativa pendiente. Complementa, no sustituye, 5.6.
 
+- [x] **5.31 Explorar campus (técnica y composición auxiliar):** 0041 EV-01..03: DESIGN.md/refs, banner real, chips, tarjetas diferenciadas, Ganga sin duplicados y Vender con elección. 140 pruebas, tipos, 22 capturas y exports Android/iOS PASS; aceptación nativa y 5.2 separadas.
+
+- [x] **5.32 Condición del artículo (técnica y composición auxiliar):** 0042 EV-01..04: Nuevo/Usado en formulario, API/BD y lectura; migración local respaldada/ensayada sin inventar históricos. 144 pruebas frontend/102 backend, 20 HTTP específicos, fase 2, tipos/build/lint/exports y 16 capturas PASS. Hardware separado.
+
+- [x] **5.33 Filtros, detalles y Mi cuenta (técnica/auxiliar):** 0043 EV-01..04: refs/DESIGN, facetas con conteos reales, detalles diferenciados y cuenta con marca/contacto; reserva/edición/áreas seguras conservadas. 147 pruebas, tipos, exports Android/iOS, 34 capturas y revisión Impeccable PASS. Aceptación física separada.
+
+- [x] **5.34 Consistencia integral y publicación directa (técnica/auxiliar):** 0044 EV-01..05; Vender sin selección repetida, pantallas alineadas a DESIGN.md, barra única con liquid glass solo en tabs y contenido estable. Evidencia inicial: tipos, 158 pruebas/21 suites, exports Android/iOS y 61 capturas auxiliares. [Revisión posterior con Impeccable y DESIGN.md](docs/design/consistency-review.md): nombres/insignias/acciones y componentes unificados, índice auxiliar/CSS/documentación alineados; comprobador automático sobre 51 fuentes, 207 pruebas/25 suites y 157 capturas auxiliares PASS. Aceptación física iPhone pendiente en 0044 T-05 y fase 6; no se cierra con estas capturas. [Evidencia inicial](specs/0044-consistencia-pantallas/verification.md).
+
+- [x] **5.35 Pasada adversa integral (técnica/auxiliar):** 0045 EV-01..05; formularios rellenados con datos inválidos/extremos, HTTP/red/permisos, errores visibles y recuperación. Corregidos nombre vacío de registro, mensajes técnicos, errores fuera de vista y vacíos falsos. 178 frontend/111 backend, 61 recorridos/capturas, tipos/build/lint/exports PASS. Hardware/UAT separados. [Evidencia](specs/0045-errores-y-datos-adversos/verification.md).
+
+- [ ] **5.36 Usabilidad y recogida tras validación con usuarios:** [0047](specs/0047-usabilidad-y-recogida/plan.md) AC-01..10; desplazamiento en iPhone 14/13 Pro Max con Expo Go, lugar visible en reservas, STATIC por acordar, Socket.io de creación/inicio, duración H:M, nombre/categorías, confirmación de logout y agotamiento. Contratos y pantallas implementados: recogida guardada, entrega por acordar, eventos/inicio durable, H:M, Productos, logout y stock cero. Seed local 26 categorías/107 publicaciones/24 reservas, aditivo y repetible. Verificación técnica/auxiliar en 0047 EV-02..10. Usuario confirma resuelto el desplazamiento; mediciones formales por modelo, comprensión y recorridos móviles integrados pendientes. No hereda cierre de 5.34/5.35.
+
 ## FASE 6: Validación, QA y Despliegue
+
+La siguiente iteración funcional está definida en [0047 — usabilidad y recogida](specs/0047-usabilidad-y-recogida/plan.md). Prioriza el desplazamiento nativo reiterado y el punto de recogida; las validaciones técnicas anteriores no cierran esos hallazgos.
 
 - [x] **6.1 Pruebas de Estrés:** Ejecutar 50 reservas concurrentes con claves distintas para la última pieza y comprobar 1×201/49×409; probar aparte reintentos concurrentes con la misma clave, sin doble descuento. Registrar resultados en 0001 `verification.md`.
 - [ ] **6.2 Despliegue Backend:** Subir PostgreSQL y Redis a la nube. Configurar variables de entorno y desplegar la API NestJS en producción.
 - [ ] **6.3 Empaquetado Móvil:** Generar APK de prueba usando Expo EAS Build y distribuir localmente.
 - [ ] **6.4 Moderación SHOULD:** Si se incluye RF-14, cerrar 0009 DEC-01/02 antes de implementar; después añadir unicidad de denunciante/publicación, reporte, ocultamiento al tercer denunciante distinto y revisión del moderador. Registrar EV-01..03 de 0009.
-- [ ] **6.5 Aceptación integrada MVP:** 0040 AC-01..03; regresión actual y ambos roles en dispositivos con API/BD/Redis/Socket.io reales, foto/teclado/WhatsApp, concurrencia y recuperación. No cerrar 5.1–5.6 con exports o mocks.
+- [ ] **6.5 Aceptación integrada MVP:** 0040 AC-01..03; [revisión 2026-11-22](specs/0040-validacion-y-entrega-mvp/revision-mvp.md): 292 pruebas/674 HTTP nuevos, tipos/build/lint/check-sdd PASS; INC-0040-01 corregido en 0045. Pendientes versión/artefactos finales y ambos roles en dispositivos con API/BD/Redis/Socket.io reales, foto/teclado/WhatsApp, 20 min reales y recuperación. No cerrar 5.1–5.6 con exports o mocks.
+  [43 casos y recorrido corto](specs/0040-validacion-y-entrega-mvp/casos-limite.md), [plantilla](specs/0040-validacion-y-entrega-mvp/registro-casos-limite.md) y [ejecución parcial](specs/0040-validacion-y-entrega-mvp/resultados-casos-limite.md): 236 pruebas automáticas/674 HTTP base aprobados, 49 chequeos extra con un fallo de nombre en blanco y ocho variantes Android. iPhone/variantes físicas pendientes; INC-0040-01 abierto. No se cierra esta casilla.
+  INC-0040-02: selector de horario iOS acotado y pruebas de Guardar/cerrar e Inicio/Fin aprobadas técnicamente; 0040 T-08/EV-02 conserva la aceptación visual en iPhone pendiente.
 - [ ] **6.6 UAT y cierre:** 0040 AC-04..07; después de despliegue/instalable de 6.2/6.3, usabilidad con cinco estudiantes y piloto de una semana con tres vendedores/quince compradores según docs07. Registrar resultados reales e incidentes.

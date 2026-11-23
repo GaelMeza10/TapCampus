@@ -1,0 +1,868 @@
+{
+  "shots": [
+    {
+      "name": "consistent-explore-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nAhorras $10\nQuedan 5\n\nBiblioteca Central · hasta 3:11 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 3:15 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 3:28 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nAHORA EN EL CAMPUS · ACTIVA\nTorta de pollo\n$85\n\nFacultad de Ingeniería\nQuedan 3 · Hasta 3:15 p.m.\n−1 venta física\nActivar oferta · $65\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\nPublicar en el campus\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-static-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nANUNCIO · ACTIVA\nCálculo I\nUsado\n$180\n\nFacultad de Ingeniería\nLibro completo y con algunas anotaciones.\nSin apartados ni plazo de venta\nCoordina la entrega por WhatsApp y marca el artículo como vendido al terminar.\nEditar publicación\nMarcar vendido\nNuevo anuncio\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-reservations-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:11 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-account-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\nAna Pérez\n\nEditar datos\nDatos de contacto\n\nCorreo institucional\n\nSolo lectura\nana@uabc.edu.mx\n\nTeléfono\n+52 664 123 4567\nCompradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-login-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "ionicons"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nBienvenido de nuevo\nCorreo institucional\nContraseña\n\nIniciar sesión\n¿Aún no tienes cuenta?\nRegístrate"
+    },
+    {
+      "name": "consistent-register-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "ionicons",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\n\nVolver\nCrea tu cuenta\nNombre completo\nCorreo institucional\nTeléfono mexicano\nContraseña\n\n\nAcepto el aviso de privacidad y los términos de uso de TapCampus.\nCrear cuenta\n¿Ya tienes cuenta?\nInicia sesión"
+    },
+    {
+      "name": "consistent-detail-live-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_700Bold"
+      ],
+      "text": "\nExplorar\nCierra en 12 min\nAHORA EN EL CAMPUS\nComida Fuerte\nTorta de pollo\n$85\nQuedan 3\n\nDónde recogerlo\nFacultad de Ingeniería\nHasta 3:15 p.m.\nDescripción\nTorta de pollo con lechuga y aguacate. Entrego en la entrada de la Facultad de Ingeniería.\nAna Pérez\nVendedor\nMis reservas de esta publicación\nEstado: Activa\nTorta de pollo · Unidad 1 de 2\nPrecio fijado: $85\nApartado vence en 08:32\nVence: 22 de noviembre de 2026 a las 03:11 p.m.\nWhatsApp\nCancelar esta reserva\nEstado: Activa\nTorta de pollo · Unidad 2 de 2\nPrecio fijado: $85\nApartado vence en 16:08\nVence: 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar esta reserva\nApartas 1 unidad durante 20 min. El precio se fija al confirmarse la reserva.\nApartar una unidad\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "consistent-detail-static-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular"
+      ],
+      "text": "\nExplorar\nANUNCIO\nUsado\nLibros\nCálculo I\n$180\n\nDónde se encuentra\nFacultad de Ingeniería\nDescripción\nLibro completo y con algunas anotaciones.\nAna Pérez\nVendedor\nEste anuncio no se aparta: escríbele para coordinar la entrega.\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "consistent-form-live-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nAhora en el campus\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCategoría\nSeleccionar categoría\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nSeleccionar zona\n\nHorario de venta\n\nInicio\n22 nov, 03:03 p.m.\n\n\nFin\n22 nov, 04:03 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "consistent-form-static-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo anuncio\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nSeleccionar zona\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar artículo"
+    },
+    {
+      "name": "consistent-explore-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nAhorras $10\nQuedan 5\n\nBiblioteca Central · hasta 3:11 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 3:15 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 3:28 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nAHORA EN EL CAMPUS · ACTIVA\nTorta de pollo\n$85\n\nFacultad de Ingeniería\nQuedan 3 · Hasta 3:15 p.m.\n−1 venta física\nActivar oferta · $65\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\nPublicar en el campus\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-static-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nANUNCIO · ACTIVA\nCálculo I\nUsado\n$180\n\nFacultad de Ingeniería\nLibro completo y con algunas anotaciones.\nSin apartados ni plazo de venta\nCoordina la entrega por WhatsApp y marca el artículo como vendido al terminar.\nEditar publicación\nMarcar vendido\nNuevo anuncio\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-reservations-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:11 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-account-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\nAna Pérez\n\nEditar datos\nDatos de contacto\n\nCorreo institucional\n\nSolo lectura\nana@uabc.edu.mx\n\nTeléfono\n+52 664 123 4567\nCompradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-login-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "ionicons"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nBienvenido de nuevo\nCorreo institucional\nContraseña\n\nIniciar sesión\n¿Aún no tienes cuenta?\nRegístrate"
+    },
+    {
+      "name": "consistent-register-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "ionicons",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\n\nVolver\nCrea tu cuenta\nNombre completo\nCorreo institucional\nTeléfono mexicano\nContraseña\n\n\nAcepto el aviso de privacidad y los términos de uso de TapCampus.\nCrear cuenta\n¿Ya tienes cuenta?\nInicia sesión"
+    },
+    {
+      "name": "consistent-detail-live-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_700Bold"
+      ],
+      "text": "\nExplorar\nCierra en 12 min\nAHORA EN EL CAMPUS\nComida Fuerte\nTorta de pollo\n$85\nQuedan 3\n\nDónde recogerlo\nFacultad de Ingeniería\nHasta 3:15 p.m.\nDescripción\nTorta de pollo con lechuga y aguacate. Entrego en la entrada de la Facultad de Ingeniería.\nAna Pérez\nVendedor\nMis reservas de esta publicación\nEstado: Activa\nTorta de pollo · Unidad 1 de 2\nPrecio fijado: $85\nApartado vence en 08:32\nVence: 22 de noviembre de 2026 a las 03:11 p.m.\nWhatsApp\nCancelar esta reserva\nEstado: Activa\nTorta de pollo · Unidad 2 de 2\nPrecio fijado: $85\nApartado vence en 16:08\nVence: 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar esta reserva\nApartas 1 unidad durante 20 min. El precio se fija al confirmarse la reserva.\nApartar una unidad\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "consistent-detail-static-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular"
+      ],
+      "text": "\nExplorar\nANUNCIO\nUsado\nLibros\nCálculo I\n$180\n\nDónde se encuentra\nFacultad de Ingeniería\nDescripción\nLibro completo y con algunas anotaciones.\nAna Pérez\nVendedor\nEste anuncio no se aparta: escríbele para coordinar la entrega.\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "consistent-form-live-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nAhora en el campus\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCategoría\nSeleccionar categoría\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nSeleccionar zona\n\nHorario de venta\n\nInicio\n22 nov, 03:03 p.m.\n\n\nFin\n22 nov, 04:03 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "consistent-form-static-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo anuncio\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nSeleccionar zona\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar artículo"
+    },
+    {
+      "name": "consistent-explore-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nAhorras $10\nQuedan 5\n\nBiblioteca Central · hasta 3:11 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 3:15 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 3:28 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nAHORA EN EL CAMPUS · ACTIVA\nTorta de pollo\n$85\n\nFacultad de Ingeniería\nQuedan 3 · Hasta 3:15 p.m.\n−1 venta física\nActivar oferta · $65\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\nPublicar en el campus\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-static-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nANUNCIO · ACTIVA\nCálculo I\nUsado\n$180\n\nFacultad de Ingeniería\nLibro completo y con algunas anotaciones.\nSin apartados ni plazo de venta\nCoordina la entrega por WhatsApp y marca el artículo como vendido al terminar.\nEditar publicación\nMarcar vendido\nNuevo anuncio\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-reservations-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:12 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-account-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\nAna Pérez\n\nEditar datos\nDatos de contacto\n\nCorreo institucional\n\nSolo lectura\nana@uabc.edu.mx\n\nTeléfono\n+52 664 123 4567\nCompradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-login-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "ionicons"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nBienvenido de nuevo\nCorreo institucional\nContraseña\n\nIniciar sesión\n¿Aún no tienes cuenta?\nRegístrate"
+    },
+    {
+      "name": "consistent-register-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "ionicons",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\n\nVolver\nCrea tu cuenta\nNombre completo\nCorreo institucional\nTeléfono mexicano\nContraseña\n\n\nAcepto el aviso de privacidad y los términos de uso de TapCampus.\nCrear cuenta\n¿Ya tienes cuenta?\nInicia sesión"
+    },
+    {
+      "name": "consistent-detail-live-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_700Bold"
+      ],
+      "text": "\nExplorar\nCierra en 12 min\nAHORA EN EL CAMPUS\nComida Fuerte\nTorta de pollo\n$85\nQuedan 3\n\nDónde recogerlo\nFacultad de Ingeniería\nHasta 3:15 p.m.\nDescripción\nTorta de pollo con lechuga y aguacate. Entrego en la entrada de la Facultad de Ingeniería.\nAna Pérez\nVendedor\nMis reservas de esta publicación\nEstado: Activa\nTorta de pollo · Unidad 1 de 2\nPrecio fijado: $85\nApartado vence en 08:32\nVence: 22 de noviembre de 2026 a las 03:12 p.m.\nWhatsApp\nCancelar esta reserva\nEstado: Activa\nTorta de pollo · Unidad 2 de 2\nPrecio fijado: $85\nApartado vence en 16:08\nVence: 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar esta reserva\nApartas 1 unidad durante 20 min. El precio se fija al confirmarse la reserva.\nApartar una unidad\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "consistent-detail-static-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular"
+      ],
+      "text": "\nExplorar\nANUNCIO\nUsado\nLibros\nCálculo I\n$180\n\nDónde se encuentra\nFacultad de Ingeniería\nDescripción\nLibro completo y con algunas anotaciones.\nAna Pérez\nVendedor\nEste anuncio no se aparta: escríbele para coordinar la entrega.\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "consistent-form-live-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nAhora en el campus\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCategoría\nSeleccionar categoría\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nSeleccionar zona\n\nHorario de venta\n\nInicio\n22 nov, 03:03 p.m.\n\n\nFin\n22 nov, 04:03 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "consistent-form-static-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo anuncio\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nSeleccionar zona\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar artículo"
+    },
+    {
+      "name": "consistent-explore-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nAhorras $10\nQuedan 5\n\nBiblioteca Central · hasta 3:11 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 3:15 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 3:28 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nAHORA EN EL CAMPUS · ACTIVA\nTorta de pollo\n$85\n\nFacultad de Ingeniería\nQuedan 3 · Hasta 3:15 p.m.\n−1 venta física\nActivar oferta · $65\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\nPublicar en el campus\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-static-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nANUNCIO · ACTIVA\nCálculo I\nUsado\n$180\n\nFacultad de Ingeniería\nLibro completo y con algunas anotaciones.\nSin apartados ni plazo de venta\nCoordina la entrega por WhatsApp y marca el artículo como vendido al terminar.\nEditar publicación\nMarcar vendido\nNuevo anuncio\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-reservations-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:12 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-account-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\nAna Pérez\n\nEditar datos\nDatos de contacto\n\nCorreo institucional\n\nSolo lectura\nana@uabc.edu.mx\n\nTeléfono\n+52 664 123 4567\nCompradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-login-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold",
+        "ionicons"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nBienvenido de nuevo\nCorreo institucional\nContraseña\n\nIniciar sesión\n¿Aún no tienes cuenta?\nRegístrate"
+    },
+    {
+      "name": "consistent-register-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "ionicons",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\n\nVolver\nCrea tu cuenta\nNombre completo\nCorreo institucional\nTeléfono mexicano\nContraseña\n\n\nAcepto el aviso de privacidad y los términos de uso de TapCampus.\nCrear cuenta\n¿Ya tienes cuenta?\nInicia sesión"
+    },
+    {
+      "name": "consistent-detail-live-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_700Bold"
+      ],
+      "text": "\nExplorar\nCierra en 12 min\nAHORA EN EL CAMPUS\nComida Fuerte\nTorta de pollo\n$85\nQuedan 3\n\nDónde recogerlo\nFacultad de Ingeniería\nHasta 3:15 p.m.\nDescripción\nTorta de pollo con lechuga y aguacate. Entrego en la entrada de la Facultad de Ingeniería.\nAna Pérez\nVendedor\nMis reservas de esta publicación\nEstado: Activa\nTorta de pollo · Unidad 1 de 2\nPrecio fijado: $85\nApartado vence en 08:32\nVence: 22 de noviembre de 2026 a las 03:12 p.m.\nWhatsApp\nCancelar esta reserva\nEstado: Activa\nTorta de pollo · Unidad 2 de 2\nPrecio fijado: $85\nApartado vence en 16:08\nVence: 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar esta reserva\nApartas 1 unidad durante 20 min. El precio se fija al confirmarse la reserva.\nApartar una unidad\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "consistent-detail-static-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular"
+      ],
+      "text": "\nExplorar\nANUNCIO\nUsado\nLibros\nCálculo I\n$180\n\nDónde se encuentra\nFacultad de Ingeniería\nDescripción\nLibro completo y con algunas anotaciones.\nAna Pérez\nVendedor\nEste anuncio no se aparta: escríbele para coordinar la entrega.\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "consistent-form-live-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nAhora en el campus\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCategoría\nSeleccionar categoría\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nSeleccionar zona\n\nHorario de venta\n\nInicio\n22 nov, 03:03 p.m.\n\n\nFin\n22 nov, 04:03 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "consistent-form-static-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo anuncio\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nSeleccionar zona\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar artículo"
+    },
+    {
+      "name": "consistent-sell-Ahora-en-el-campus",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "\nVolver\nAhora en el campus\n\nAñadir foto del producto\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCategoría\nSeleccionar categoría\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nSeleccionar zona\n\nHorario de venta\n\nInicio\n22 nov, 03:03 p.m.\n\n\nFin\n22 nov, 04:03 p.m.\n\n\nPrecio de oferta · Configurar\nSin configurar · opcional\n\nPublicar"
+    },
+    {
+      "name": "consistent-sell-Anuncios",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "\nVolver\nNuevo anuncio\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nSeleccionar zona\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar artículo"
+    },
+    {
+      "name": "consistent-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nSin resultados\nNadie vende ahora. Mira los anuncios\nCambiar filtros\nVer Anuncios\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-loading",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n\nNo se pudieron cargar las publicaciones.\nEl servidor no está disponible en este momento. Inténtalo de nuevo en unos minutos.\nReintentar\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-history",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:12 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:19 p.m.\nWhatsApp\nCancelar\nAnteriores\n3\nEsquites\n$25\nPrecio reservado\n\nEntrega confirmada\nEntregada el 22 de noviembre de 2026 a las 02:03 p.m.\nCafé frío\n$35\nPrecio reservado\n\nCancelada\nCancelada el 22 de noviembre de 2026 a las 01:03 p.m.\nTorta de pollo\n$85\nPrecio reservado\n\nVencida\nVenció el 22 de noviembre de 2026 a las 12:03 p.m.\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nAún no tienes publicaciones\nPublica lo que tienes disponible y recibe apartados.\nPublicar en el campus\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-loading",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nCargando tus ventas…\nPublicar en el campus\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\n\nNo pudimos cargar tus ventas\nEl servidor no está disponible en este momento. Inténtalo de nuevo en unos minutos.\nReintentar\nPublicar en el campus\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-reservation-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "ionicons",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\n\nAún no tienes reservas\nCuando apartes un producto, aquí verás su precio y el tiempo para recogerlo.\nExplorar publicaciones\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-reservation-urgent",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n1\nTorta de pollo\n$85\nPrecio reservado\n\nPor vencer\n02:00\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:05 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-reservation-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\n\nNo pudimos cargar tus reservas\nEl servidor no está disponible en este momento. Inténtalo de nuevo en unos minutos.\nReintentar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-account-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\n\nNo pudimos cargar tu información\nRevisa tu conexión y vuelve a intentarlo. Puedes seguir usando la app o cerrar sesión desde aquí.\nReintentar\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-sales-large",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis ventas\nAhora en el campus\nAnuncios\nAHORA EN EL CAMPUS · ACTIVA\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n$85\n\nFacultad de Ingeniería\nQuedan 3 · Hasta 3:15 p.m.\n−1 venta física\nActivar oferta · $65\nEditar\nFinalizar\nReservas por entregar · 2\nUnidad 1 de 2 · Ana Pérez\n\nApartado vence en 08:32\nPrecio fijado: $85\nConfirmar entrega\nUnidad 2 de 2 · Ana Pérez\n\nApartado vence en 16:08\nPrecio fijado: $85\nConfirmar entrega\nPublicar en el campus\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-reservations-large",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\nUnidad 1 de 2\n$85\nPrecio reservado\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:12 p.m.\nWhatsApp\nCancelar\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\nUnidad 2 de 2\n$85\nPrecio reservado\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 03:20 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-account-large",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\nMaría Fernanda García López de la Facultad de Ingeniería\n\nEditar datos\nDatos de contacto\n\nCorreo institucional\n\nSolo lectura\nmaria.fernanda.garcia.lopez.estudiante.ingenieria@uabc.edu.mx\n\nTeléfono\n+52 664 123 4567\nCompradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "consistent-filters",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nAhorras $10\nQuedan 5\n\nBiblioteca Central · hasta 3:11 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 3:15 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 3:28 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta\nFiltros\nAhora en el campus · zona y categoría\n\nZona\nPublicaciones disponibles según los otros filtros.\n\nTodas las zonas  3\nFacultad de Ingeniería  2\nFacultad de Artes  0\nBiblioteca Central  1\nCafetería Principal  0\nGimnasio  0\nCategoría\nPublicaciones disponibles según los otros filtros.\n\nTodas  3\nComida Fuerte  1\nSnacks  1\nBebidas  0\nPostres  1\nVer 3 publicaciones\nRestablecer filtros"
+    },
+    {
+      "name": "consistent-featured-detail",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "\nExplorar\nCierra en 8 min\nAHORA EN EL CAMPUS\nPostres\n\nGANGA\nBrownie de chocolate\n$25\n$35\nAhorras $10\nQuedan 5\n\nDónde recogerlo\nBiblioteca Central\nHasta 3:11 p.m.\nDescripción\nBrownie individual de chocolate.\nAna Pérez\nVendedor\nMis reservas de esta publicación\nTodavía no tienes reservas.\nApartas 1 unidad durante 20 min. El precio se fija al confirmarse la reserva.\nApartar una unidad\n\nContactar por WhatsApp"
+    }
+  ],
+  "stableTabs": {
+    "count": 1,
+    "top": 47,
+    "bottom": 844,
+    "navTop": 749
+  },
+  "exceptions": [],
+  "missingAssets": []
+}

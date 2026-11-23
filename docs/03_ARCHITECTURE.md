@@ -1,5 +1,16 @@
 # Arquitectura y Stack Tecnológico (TapCampus)
 
+## Contrato aprobado 0047
+
+`PickupMode { SPECIFIC_ZONE, ARRANGED }`, `Publication.pickup_mode` default SPECIFIC_ZONE y `zone_id` nullable. CHECK: LIVE exige SPECIFIC_ZONE con zona; STATIC admite esa combinación o ARRANGED sin zona. POST legado con zona conserva compatibilidad; PATCH omitido conserva datos. Query pickupMode=ARRANGED exige STATIC y excluye zoneId. No se crean zonas ficticias.
+
+Reservas nuevas guardan pickup_zone_id/pickup_zone_name bajo bloqueo de publicación. Respuesta autorizada añade sellerName y pickupLocation { zoneId, name, source: SNAPSHOT | LEGACY_CURRENT }. Históricos sin instantánea muestran zona actual como referencia, sin inventar promesa histórica. Cambiar zona LIVE con reservas ACTIVE no vencidas devuelve 409 bajo el mismo bloqueo de publicación.
+
+Eventos públicos postcommit publication_created/publication_updated/publication_available contienen solo publicationId/type. Inicio programado con fecha esperada, conciliación y marcador privado evita emisiones repetidas. Se conservan los eventos de stock, fin y oferta. Cliente recupera por REST al conectar/enfocar/volver a primer plano, combina ráfagas y descarta respuestas obsoletas. No se promete replay Socket.io. Migración aditiva antes de API/cliente compatibles; rollback deshabilita nuevas escrituras ARRANGED manteniendo lectores compatibles. No revertir NOT NULL con datos ARRANGED existentes.
+
+
+Condición 0042: `ProductCondition { NEW, USED }` y `Publication.condition` nullable sin default. Migración aditiva; CHECK limita condición a STATIC. POST STATIC exige enum, PATCH omite para conservar y rechaza null/valores ajenos; LIVE rechaza condición. Select/serialización pública y propia exponen `condition`, sin nuevo contacto/evento. Históricos quedan null; app solicita elección al guardarlos. Migrar antes de desplegar API y cliente coordinados.
+
 ## Contratos del cierre MVP — 2026-11-21
 
 Estas reglas sustituyen las diferencias de la línea base descrita en los apartados históricos de fases 2/3. 0037, 0034/0038 y 0039 implementados y verificados técnicamente el 2026-11-21; aceptación nativa pendiente. 0040 sigue planificado.
@@ -45,7 +56,8 @@ Navegación 0028: Stack raíz nativo con Stack.Protected para `(tabs)` y rutas p
 *   `price_before_ganga`: Decimal(10,2) nullable; ampliación aditiva 0016. Se captura del precio real bajo el bloqueo de activación y se expone como string/null para tachar el precio previo; no se edita desde DTO ni se reconstruyen históricos.
 *   `image_url`: String
 *   `status`: Enum `PublicationStatus` (`ACTIVE`, `FINISHED`, `HIDDEN_BY_REPORTS`)
-*   `zone_id`: Int (FK -> Zone)
+*   `pickup_mode`: PickupMode, default SPECIFIC_ZONE; ARRANGED solo STATIC sin zona.
+*   `zone_id`: Int nullable (FK -> Zone, onDelete Restrict); CHECK combinado con tipo/modo.
 *   `category_id`: Int (FK -> Category)
 *   *-- Campos exclusivos para `LIVE` --*
 *   `initial_stock`: Int (Nullable)
@@ -164,8 +176,10 @@ Para evitar asimetrías entre Backend y Frontend, se usarán estrictamente estos
 ## 8. Datos Semilla (Data Seeding)
 Al inicializar la base de datos (`prisma db seed`), se deben insertar obligatoriamente los siguientes catálogos correspondientes a la UABC:
 *   **Zonas:** "Facultad de Ingeniería", "Facultad de Artes", "Biblioteca Central", "Cafetería Principal", "Gimnasio". Esta es la lista de cinco zonas del MVP; seed y remapeo seguro están verificados en 0010. Cada entorno adicional exige inventario/respaldo/ensayo propios.
-*   **Categorías (Ventas Vivas):** "Comida Fuerte", "Snacks", "Bebidas", "Postres".
-*   **Categorías (Ventas Estáticas):** "Libros", "Material Escolar", "Batas/Uniformes", "Electrónica".
+*   **Categorías (Ventas Vivas):** "Comida Fuerte", "Snacks", "Bebidas", "Postres", "Desayunos", "Panadería".
+*   **Categorías (Ventas Estáticas):** "Libros", "Material Escolar", "Batas/Uniformes", "Electrónica", "Arte y Dibujo", "Audio y Accesorios".
+
+Ampliación aditiva 0046: seis categorías por tipo, doce en total; se conservan nombres e IDs anteriores. El perfil explícito `npm run db:seed:delivery` añade cuentas/publicaciones/reservas ficticias con IDs propios, condiciones e inventario coherentes, fotografías locales y rutas relativas a uploads. No hay migración ni nuevos endpoints. La repetición conserva modificaciones y datos anteriores; [guía de entrega](11_DELIVERY_GUIDE.md).
 
 ## 9. Variables de Entorno (`.env.example`)
 

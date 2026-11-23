@@ -1,0 +1,123 @@
+{
+  "date": "2026-11-22T19:58:36.725Z",
+  "node": "v24.13.0",
+  "database": "tapcampus_phase2_1795377516725",
+  "requests": 288,
+  "checks": [
+    {
+      "name": "fase 1 reutilizada: migraciones, CHECK y seed repetible 5/8",
+      "result": "PASS"
+    },
+    {
+      "name": "0002 EV-08: registro/hash/teléfonos/duplicados/login/JWT/CurrentUser",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-08: uploads autenticado, contenido/tamaño/campos, URL estática y sin residuos rechazados",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-09 / 0004 EV-06: creación estricta LIVE/STATIC y configuración básica sin activación",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-09 / 0004 EV-06: PATCH combinado, inmutables, permisos y rollback",
+      "result": "PASS"
+    },
+    {
+      "name": "0039 EV-01/02: detalle LIVE/STATIC sin reserva ni escrituras, contacto vigente, feed/mine sin teléfonos y no visibles 404",
+      "result": "PASS"
+    },
+    {
+      "name": "0005 EV-06 / 0003 EV-09 / 0004 EV-06: catálogos exactos, filtros AND, visibilidad y contacto protegido",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-10: 25 ventas físicas por última unidad = 1x200/24x409, bloqueo compartido, CHECK y reservas intactas",
+      "result": "PASS",
+      "concurrency": {
+        "requests": 25,
+        "success": 1,
+        "conflict": 24
+      }
+    },
+    {
+      "name": "0004 EV-06: sold propio, ajeno, incompatible, repetido y concurrente; no DELETE",
+      "result": "PASS"
+    },
+    {
+      "name": "0038 EV-01/03/05: POST/PATCH LIVE/STATIC, código/campos, falsos positivos, permisos y texto histórico; rechazos sin filas/cambios",
+      "result": "PASS"
+    },
+    {
+      "name": "0003 EV-08: origen público configurable y error de almacenamiento 500 controlado",
+      "result": "PASS"
+    },
+    {
+      "name": "base original conservada: hashes/recuentos idénticos",
+      "result": "PASS"
+    }
+  ],
+  "postgres": "16.15 (Debian 16.15-1.pgdg13+2)",
+  "originalBefore": {
+    "_prisma_migrations": {
+      "count": 6,
+      "sha256": "99a7034ef1a1bf4301483592a533449fdeee9cefd4dc8ddeb62ea3ee2b1e397b"
+    },
+    "categories": {
+      "count": 12,
+      "sha256": "a8f196b7b124f7730451e60a3c4b75bc07ecb92773e1abd0176bb380596618bf"
+    },
+    "publications": {
+      "count": 78,
+      "sha256": "de33759480aeccab21e871e835474f7135ef6110ee0a27a65ada0a345fddf29e"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 17,
+      "sha256": "3e93fefe8a5445cdd0dc3038031b760eb0923b20460a1a28cd59948213574d35"
+    },
+    "users": {
+      "count": 12,
+      "sha256": "daf8bb7c445f5a7fba6cad9238143854fd0409bc9e37b9bd774cf4c7999063cc"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "originalAfter": {
+    "_prisma_migrations": {
+      "count": 6,
+      "sha256": "99a7034ef1a1bf4301483592a533449fdeee9cefd4dc8ddeb62ea3ee2b1e397b"
+    },
+    "categories": {
+      "count": 12,
+      "sha256": "a8f196b7b124f7730451e60a3c4b75bc07ecb92773e1abd0176bb380596618bf"
+    },
+    "publications": {
+      "count": 78,
+      "sha256": "de33759480aeccab21e871e835474f7135ef6110ee0a27a65ada0a345fddf29e"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 17,
+      "sha256": "3e93fefe8a5445cdd0dc3038031b760eb0923b20460a1a28cd59948213574d35"
+    },
+    "users": {
+      "count": 12,
+      "sha256": "daf8bb7c445f5a7fba6cad9238143854fd0409bc9e37b9bd774cf4c7999063cc"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "result": "PASS"
+}

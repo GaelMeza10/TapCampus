@@ -1,0 +1,380 @@
+{
+  "shots": 61,
+  "stableTabs": {
+    "count": 1,
+    "top": 47,
+    "bottom": 844,
+    "navTop": 749
+  },
+  "exceptions": [],
+  "missingAssets": [],
+  "nativeAcceptance": "pending",
+  "captures": [
+    {
+      "name": "consistent-explore-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-sales-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-sales-static-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-reservations-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-account-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-login-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-register-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-detail-live-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-detail-static-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-form-live-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-form-static-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "consistent-explore-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-sales-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-sales-static-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-reservations-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-account-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-login-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-register-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-detail-live-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-detail-static-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-form-live-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-form-static-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-explore-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-sales-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-sales-static-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-reservations-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-account-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-login-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-register-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-detail-live-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-detail-static-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-form-live-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-form-static-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430
+    },
+    {
+      "name": "consistent-explore-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-sales-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-sales-static-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-reservations-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-account-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-login-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-register-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-detail-live-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-detail-static-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-form-live-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-form-static-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844
+    },
+    {
+      "name": "consistent-sell-Venta-en-vivo",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-sell-Anuncio",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-loading",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-history",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-sales-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-sales-loading",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-sales-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-reservation-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-reservation-urgent",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-reservation-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-account-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-sales-large",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-reservations-large",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-account-large",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "consistent-filters",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    }
+  ]
+}

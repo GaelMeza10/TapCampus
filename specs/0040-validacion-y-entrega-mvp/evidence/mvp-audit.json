@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-22T20:00:37.689Z",
+  "tree": "c33c060 + working tree sin commit",
+  "scope": "Auditoria MVP; no cambios funcionales, despliegue ni aceptacion nativa",
+  "tests": {
+    "backend": {
+      "passed": 114,
+      "failed": 0,
+      "suites": 13
+    },
+    "frontend": {
+      "passed": 178,
+      "failed": 0,
+      "suites": 22
+    }
+  },
+  "checks": {
+    "backendTypes": "PASS",
+    "frontendTypes": "PASS",
+    "backendBuild": "PASS",
+    "backendLint": "PASS",
+    "sdd": "PASS"
+  },
+  "integration": [
+    {
+      "evidence": "mvp-phase2.json",
+      "date": "2026-11-22T19:58:36.725Z",
+      "result": "PASS",
+      "requests": 288,
+      "checks": 12,
+      "originalDataUnchanged": true
+    },
+    {
+      "evidence": "mvp-phase3.json",
+      "date": "2026-11-22T19:59:14.621Z",
+      "result": "PASS",
+      "requests": 386,
+      "checks": 20,
+      "originalDataUnchanged": true
+    }
+  ],
+  "requests": 674,
+  "notRepeated": [
+    "exports moviles (evidencia 0045)",
+    "61 casos UI auxiliares (evidencia 0045)",
+    "seed local (evidencia 0046)"
+  ],
+  "pending": [
+    "aceptacion nativa integral",
+    "20 minutos reales y recuperacion movil",
+    "despliegue HTTPS persistente",
+    "instalable e instalacion limpia",
+    "usabilidad y piloto"
+  ]
+}

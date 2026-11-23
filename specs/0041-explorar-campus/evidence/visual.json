@@ -1,0 +1,314 @@
+{
+  "shots": [
+    {
+      "name": "explore-live-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:49 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:53 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:06 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-grid-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:49 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:53 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:06 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-static-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nArtículos publicados. Contacta al vendedor por WhatsApp.\nTodo\nLibros\nMaterial Escolar\nBatas/Uniformes\nElectrónica\nCálculo I\n$180\n\nFacultad de Ingeniería\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-static-grid-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nArtículos publicados. Contacta al vendedor por WhatsApp.\nTodo\nLibros\nMaterial Escolar\nBatas/Uniformes\nElectrónica\nCálculo I\n$180\n\nFacultad de Ingeniería\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-live-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:49 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:53 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:06 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-grid-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:49 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:53 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:06 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-static-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nArtículos publicados. Contacta al vendedor por WhatsApp.\nTodo\nLibros\nMaterial Escolar\nBatas/Uniformes\nElectrónica\nCálculo I\n$180\n\nFacultad de Ingeniería\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-static-grid-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nArtículos publicados. Contacta al vendedor por WhatsApp.\nTodo\nLibros\nMaterial Escolar\nBatas/Uniformes\nElectrónica\nCálculo I\n$180\n\nFacultad de Ingeniería\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-live-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:50 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:54 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:07 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-grid-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:50 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:54 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:07 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-static-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nArtículos publicados. Contacta al vendedor por WhatsApp.\nTodo\nLibros\nMaterial Escolar\nBatas/Uniformes\nElectrónica\nCálculo I\n$180\n\nFacultad de Ingeniería\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-static-grid-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nArtículos publicados. Contacta al vendedor por WhatsApp.\nTodo\nLibros\nMaterial Escolar\nBatas/Uniformes\nElectrónica\nCálculo I\n$180\n\nFacultad de Ingeniería\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-live-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:50 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:54 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:07 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-grid-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:50 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:54 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:07 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-static-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nArtículos publicados. Contacta al vendedor por WhatsApp.\nTodo\nLibros\nMaterial Escolar\nBatas/Uniformes\nElectrónica\nCálculo I\n$180\n\nFacultad de Ingeniería\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-static-grid-844",
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nArtículos publicados. Contacta al vendedor por WhatsApp.\nTodo\nLibros\nMaterial Escolar\nBatas/Uniformes\nElectrónica\nCálculo I\n$180\n\nFacultad de Ingeniería\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nSin resultados\nNadie vende ahora. Mira los anuncios\nCambiar filtros\nVer Anuncios\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-loading",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\n!\nNo se pudieron cargar las publicaciones.\nNo pudimos conectar. Revisa tu conexión e inténtalo de nuevo.\nReintentar\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-missing-photo",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nSin foto\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:50 p.m.\nVende Ana Pérez\nReservar\n\nSin foto\nCierra en 12 min\nTorta de pollo\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:54 p.m. · Ana Pérez\nSin foto\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:07 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-long",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n08:31\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:50 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:54 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:07 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "explore-large-text",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nReserva activa\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n08:32\nVer\n\n\nAhora en el campus\nAnuncios\nVendedores que están en el campus, con horario y lugar.\nTodas las zonas\nFacultad de Ingeniería\nFacultad de Artes\nBiblioteca Central\nCafetería Principal\nGimnasio\nGANGA\nCierra en 8 min\nBrownie de chocolate\n$25\n$35\nQuedan 5\nAhorras $10\n\nBiblioteca Central · hasta 9:50 p.m.\nVende Ana Pérez\nReservar\n\nCierra en 12 min\nTorta de pollo con verduras y aguacate para recoger en la Facultad de Ingeniería\n$85\nQuedan 3\n\nFacultad de Ingeniería\nhasta 9:54 p.m. · Ana Pérez\nCierra en 25 min\nGalletas caseras\n$15\nQuedan 8\n\nFacultad de Ingeniería\nhasta 10:07 p.m. · Ana Pérez\n\nVender\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    }
+  ],
+  "exceptions": [],
+  "missingAssets": []
+}

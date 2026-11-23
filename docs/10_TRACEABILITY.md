@@ -1,5 +1,13 @@
 # Matriz de trazabilidad de TapCampus
 
+RF-02/03/04/05b/05c/06/07/08/09/10/11/12/13 y RNF-01..03 → US-02/03/04/05/05b/05c/06/07/07b/08/09/11 → TASKS 5.36/6.5 → [0047](../specs/0047-usabilidad-y-recogida/spec.md) AC-01..10 → T-01..13 → [EV-01..10](../specs/0047-usabilidad-y-recogida/verification.md). EV-00 conserva la línea base. EV-02..09 acreditan contratos/seed/pantallas y regresión técnica; EV-01 registra confirmación funcional del usuario sobre el desplazamiento; métricas comparativas por modelo no ejecutadas. Nombre/catálogo/punto reservado aprobados; comprensión, dos sesiones móviles y aceptación integrada pendientes. No se hereda PASS nativo de revisiones anteriores.
+
+RF-01/02/03/05c/06/07/08/09/11/12/13 → US-01/03/04/05/05c/06/07/09/11 → TASKS 1.7 → [0046](../specs/0046-seed-entrega-y-limpieza/spec.md) AC-01..05 → T-01..05 → [EV-01..05](../specs/0046-seed-entrega-y-limpieza/verification.md): seed de entrega aditivo, doce categorías, datos coherentes y limpieza acotada; 292 pruebas, PostgreSQL/HTTP y preservación PASS. No cierra UAT ni entrega física.
+
+RF-01/02/03/05c/06/07/08/13/15 y RNF-01/03 → US-01/02/03/04/05c/06/07/09/11/12 → TASKS 5.35 → [0045](../specs/0045-errores-y-datos-adversos/spec.md) AC-01..05 → T-01..05 → [EV-01..05](../specs/0045-errores-y-datos-adversos/verification.md): pasada integral con datos adversos, errores visibles y recuperación; registro con espacios rechazado. Evidencia técnica/auxiliar; hardware separado.
+
+RF-01/02/03/06/07/08/13 y RNF-03 → US-01/02/03/04/06/07/09/11 → TASKS 5.34 → [0044](../specs/0044-consistencia-pantallas/spec.md) AC-01..05 → T-01..05 → [EV-01..05](../specs/0044-consistencia-pantallas/verification.md): consistencia integral, publicación directa y barra persistente con glass exclusivo de tabs. Tipos/158 pruebas/exports/61 capturas PASS; T-01..04 completas. En verificación, T-05/hardware pendiente.
+
 ## Cierre MVP en ejecución — 2026-11-21
 
 | Feature | Requisito → historia → tarea global | Criterios → tareas → evidencia prevista | Estado |
@@ -7,7 +15,7 @@
 | [0037](../specs/0037-control-y-privacidad-ofertas/spec.md) | RF-02/07/11/12, RNF-01/02 → US-02/05/06 → 5.28 | AC-01..06 → T-01..05 → EV-01..06; AC-07 → T-06 → EV-07 | En verificación: 39 backend/112 frontend, 631 HTTP, tipos/build/lint, nueve capturas y exports PASS. AC-07 técnico aprobado y nativo pendiente. |
 | [0038](../specs/0038-filtro-palabras-publicaciones/spec.md) | RF-03/06/15 → US-03/04/12 → 5.4/5.29 | AC-01..05 → T-01..05 → EV-01..05 | En verificación: política v1 POST/PATCH; 102 backend/124 frontend y 657 HTTP PASS. T-01..04 completas; T-05 nativa pendiente. |
 | [0039](../specs/0039-contacto-live-sin-reserva/spec.md) | RF-06/07/13 → US-09/11 → 5.6/5.30 | AC-01..04 → T-01..03 → EV-01..04; AC-05 → T-04 → EV-05 | En verificación: 102 backend/134 frontend, 674 HTTP, 16 capturas y exports PASS. Apertura/retorno nativos pendientes. |
-| [0040](../specs/0040-validacion-y-entrega-mvp/spec.md) | RF MUST/RNF vigentes → historias de ambos roles → 6.2/6.3/6.5/6.6 | AC-01..07 → T-01..07 → EV-01..07 | Planificado; técnico/móvil/distribución/UAT separados, con dependencias operativas. |
+| [0040](../specs/0040-validacion-y-entrega-mvp/spec.md) | RF MUST/RNF vigentes → historias de ambos roles → 6.2/6.3/6.5/6.6 | AC-01..07 → T-01..08 → EV-01..07; [revisión actual](../specs/0040-validacion-y-entrega-mvp/revision-mvp.md) | Revisión 2026-11-22: 292 pruebas/674 HTTP nuevos PASS, datos originales intactos; CL-18 corregido en 0045. EV-01/03 técnicas aprobadas; artefactos finales, físico/entrega/UAT pendientes. |
 
 Las filas históricas siguientes conservan resultados de su fecha. RF-05/RF-10 son MUST desde esta revisión; los criterios ampliados no heredan PASS anteriores. Regla vigente de ofertas en 0037 y contacto en 0039.
 
@@ -98,3 +106,9 @@ RF-01/02 → US-01/02 → TASKS 5.19 → [0026](../specs/0026-navegacion-y-mi-cu
 RF-03/11/12 → US-03/05 → TASKS 1.6 → [0027](../specs/0027-gangas-demo/spec.md) AC-01..03 → T-01..03 → [EV-01..03](../specs/0027-gangas-demo/verification.md): tres gangas locales, repetición/conservación y feed/fotos reales PASS. Datos optativos; no sustituye UAT de 0006.
 
 RF-01/02/05c/06/07 y RNF-03 → US-01/02/04/05c/06 → TASKS 5.20 → [0028](../specs/0028-tabs-sin-pila/spec.md) AC-01..03 → T-01..04 → [EV-01/02](../specs/0028-tabs-sin-pila/verification.md): pestañas protegidas reales, estado y retornos sin duplicar, 84 pruebas frontend, tipos y bundles móviles PASS. Corrección técnica de 0026, sin sustituir aceptación física.
+
+Explorar 0041 complementa RF-04/RF-05c/RF-06/RF-07/RF-12 y US-05c/US-06/US-11: [AC y evidencia](../specs/0041-explorar-campus/verification.md), con búsqueda/filtros, reloj/stock, anuncios y navegación a confirmación preservados. Aceptación nativa separada.
+
+RF-06 → US-04/US-11 → [0042 AC-01..04/T-01..05/EV-01..04](../specs/0042-condicion-articulo/verification.md): condición Nuevo/Usado, migración conservadora, formulario/lectura y permisos verificados técnicamente; hardware separado.
+
+RF-02/04/05c/06/07/12/13 → US-02/05c/06/09/11 → TASKS 5.33 → [0043 AC-01..05/T-01..05/EV-01..04](../specs/0043-filtros-detalles-cuenta/verification.md): Filtros con conteos reales, detalles diferenciados y Mi cuenta según refs; 147 pruebas/tipos/exports/34 capturas/revisión Impeccable PASS técnico/auxiliar, hardware separado.

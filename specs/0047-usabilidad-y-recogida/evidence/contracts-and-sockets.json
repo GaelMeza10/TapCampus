@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-23T00:30:08.215Z",
+  "result": "PASS",
+  "requests": 63,
+  "checks": [
+    {
+      "name": "26 categorías y contratos de ubicación, filtros y compatibilidad"
+    },
+    {
+      "name": "creación y edición postcommit recibidas por dos clientes reales",
+      "latenciesMs": [
+        31,
+        31
+      ]
+    },
+    {
+      "name": "recogida independiente del feed, idempotencia, privacidad, stock cero y retorno válido"
+    },
+    {
+      "name": "bloqueo de cambio de zona y fallback histórico explícito"
+    },
+    {
+      "name": "ocho carreras reserva/cambio de zona conservan la promesa"
+    },
+    {
+      "name": "inicio durable, trabajo obsoleto y conciliación sin eventos duplicados",
+      "startLatenciesMs": [
+        61,
+        61
+      ]
+    },
+    {
+      "name": "base original intacta",
+      "tables": 6,
+      "sha256": "26a8c58cea879b975b14d286f05b3ae442e0a69dde38476234fc08eca8d36eb8"
+    }
+  ],
+  "environment": {
+    "node": "v24.13.0",
+    "sockets": 2,
+    "database": "isolated",
+    "mobile": false
+  }
+}

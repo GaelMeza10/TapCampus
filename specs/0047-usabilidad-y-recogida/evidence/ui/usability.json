@@ -1,0 +1,331 @@
+{
+  "scope": "auxiliary web; not native acceptance",
+  "shots": [
+    {
+      "name": "usability-pickup-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:01 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:09 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "usability-confirmed-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver al producto\n\nReserva confirmada\nTorta de pollo\nTu apartado vence en\n20:01\nPrecio fijado\n$85\n1 unidad · Recoge antes de 22 de noviembre de 2026 a las 05:13 p.m.\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\nContactar por WhatsApp\nCancelar esta reserva\nApartar otra unidad\nVer mis reservas"
+    },
+    {
+      "name": "usability-legacy-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nUbicación de referencia: Facultad de Ingeniería\nEsta reserva no guardó el punto original. Confirma dónde recogerla con el vendedor.\nVendedor: Ana Pérez\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:01 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nUbicación de referencia: Facultad de Ingeniería\nEsta reserva no guardó el punto original. Confirma dónde recogerla con el vendedor.\nVendedor: Ana Pérez\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:09 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "usability-arranged-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular"
+      ],
+      "text": "\nExplorar\nPRODUCTO\nUsado\nLibros\nCálculo I\n$180\n\nEntrega\nPunto de entrega por acordar dentro del campus\nDescripción\nLibro completo y con algunas anotaciones.\nAna Pérez\nVendedor\nEste producto no se aparta: escríbele para coordinar la entrega.\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "usability-form-arranged-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo producto\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nPunto de entrega por acordar dentro del campus\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar producto"
+    },
+    {
+      "name": "usability-categories-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo producto\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nPunto de entrega por acordar dentro del campus\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar producto\nCategoría\n\nBuscar categorías\nLibros\nMaterial Escolar\nElectrónica\nBatas/Uniformes\nArte y Dibujo\nAudio y Accesorios\nRopa y calzado\nMochilas y bolsos\nDeportes\nJuegos y videojuegos"
+    },
+    {
+      "name": "usability-duration-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nVolver\nEditar publicación\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\nTorta de pollo con lechuga y aguacate. Entrego en la entrada de la Facultad de Ingeniería.\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n22 nov, 03:53 p.m.\n\n\nFin\n22 nov, 05:05 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n\nSin oferta\nManual\nProgramada\nPrecio mínimo\nPrecio normal: $85.00. El mínimo debe ser menor.\nAnticipación antes del fin\nHoras\n\n0\n\nMinutos\n\n0\n\n0 h 0 min antes de terminar. La activación debe quedar en el futuro y dentro del horario.\nActivación: Elige la anticipación\nLa venta termina 22 nov, 05:05 p.m..\nGuardar configuración"
+    },
+    {
+      "name": "usability-logout-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\nAna Pérez\n\nEditar datos\nDatos de contacto\n\nCorreo institucional\n\nSolo lectura\nana@uabc.edu.mx\n\nTeléfono\n+52 664 123 4567\nCompradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta\n¿Cerrar sesión?\nTendrás que iniciar sesión para volver a usar tu cuenta.\nCerrar sesión\nVolver"
+    },
+    {
+      "name": "usability-pickup-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:02 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:09 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "usability-confirmed-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver al producto\n\nReserva confirmada\nTorta de pollo\nTu apartado vence en\n20:01\nPrecio fijado\n$85\n1 unidad · Recoge antes de 22 de noviembre de 2026 a las 05:13 p.m.\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\nContactar por WhatsApp\nCancelar esta reserva\nApartar otra unidad\nVer mis reservas"
+    },
+    {
+      "name": "usability-legacy-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nUbicación de referencia: Facultad de Ingeniería\nEsta reserva no guardó el punto original. Confirma dónde recogerla con el vendedor.\nVendedor: Ana Pérez\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:02 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nUbicación de referencia: Facultad de Ingeniería\nEsta reserva no guardó el punto original. Confirma dónde recogerla con el vendedor.\nVendedor: Ana Pérez\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:09 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "usability-arranged-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular"
+      ],
+      "text": "\nExplorar\nPRODUCTO\nUsado\nLibros\nCálculo I\n$180\n\nEntrega\nPunto de entrega por acordar dentro del campus\nDescripción\nLibro completo y con algunas anotaciones.\nAna Pérez\nVendedor\nEste producto no se aparta: escríbele para coordinar la entrega.\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "usability-form-arranged-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo producto\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nPunto de entrega por acordar dentro del campus\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar producto"
+    },
+    {
+      "name": "usability-categories-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo producto\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nPunto de entrega por acordar dentro del campus\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar producto\nCategoría\n\nBuscar categorías\nLibros\nMaterial Escolar\nElectrónica\nBatas/Uniformes\nArte y Dibujo\nAudio y Accesorios\nRopa y calzado\nMochilas y bolsos\nDeportes\nJuegos y videojuegos"
+    },
+    {
+      "name": "usability-duration-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nVolver\nEditar publicación\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\nTorta de pollo con lechuga y aguacate. Entrego en la entrada de la Facultad de Ingeniería.\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n22 nov, 03:53 p.m.\n\n\nFin\n22 nov, 05:05 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n\nSin oferta\nManual\nProgramada\nPrecio mínimo\nPrecio normal: $85.00. El mínimo debe ser menor.\nAnticipación antes del fin\nHoras\n\n0\n\nMinutos\n\n0\n\n0 h 0 min antes de terminar. La activación debe quedar en el futuro y dentro del horario.\nActivación: Elige la anticipación\nLa venta termina 22 nov, 05:05 p.m..\nGuardar configuración"
+    },
+    {
+      "name": "usability-logout-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\nAna Pérez\n\nEditar datos\nDatos de contacto\n\nCorreo institucional\n\nSolo lectura\nana@uabc.edu.mx\n\nTeléfono\n+52 664 123 4567\nCompradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta\n¿Cerrar sesión?\nTendrás que iniciar sesión para volver a usar tu cuenta.\nCerrar sesión\nVolver"
+    },
+    {
+      "name": "usability-pickup-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:02 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:09 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "usability-confirmed-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver al producto\n\nReserva confirmada\nTorta de pollo\nTu apartado vence en\n20:01\nPrecio fijado\n$85\n1 unidad · Recoge antes de 22 de noviembre de 2026 a las 05:13 p.m.\n\nUbicación: Facultad de Ingeniería\nVendedor: Ana Pérez\nContactar por WhatsApp\nCancelar esta reserva\nApartar otra unidad\nVer mis reservas"
+    },
+    {
+      "name": "usability-legacy-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMis reservas\nPor recoger\n2\nTorta de pollo\nUnidad 1 de 2\n$85\nPrecio reservado\n\nUbicación de referencia: Facultad de Ingeniería\nEsta reserva no guardó el punto original. Confirma dónde recogerla con el vendedor.\nVendedor: Ana Pérez\n\nActiva\n08:32\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:02 p.m.\nWhatsApp\nCancelar\nTorta de pollo\nUnidad 2 de 2\n$85\nPrecio reservado\n\nUbicación de referencia: Facultad de Ingeniería\nEsta reserva no guardó el punto original. Confirma dónde recogerla con el vendedor.\nVendedor: Ana Pérez\n\nActiva\n16:08\nTiempo para recoger · Vence 22 de noviembre de 2026 a las 05:09 p.m.\nWhatsApp\nCancelar\nExplorar\nReservas\nMis ventas\n\nCuenta"
+    },
+    {
+      "name": "usability-arranged-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_600SemiBold",
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular"
+      ],
+      "text": "\nExplorar\nPRODUCTO\nUsado\nLibros\nCálculo I\n$180\n\nEntrega\nPunto de entrega por acordar dentro del campus\nDescripción\nLibro completo y con algunas anotaciones.\nAna Pérez\nVendedor\nEste producto no se aparta: escríbele para coordinar la entrega.\n\nContactar por WhatsApp"
+    },
+    {
+      "name": "usability-form-arranged-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo producto\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nPunto de entrega por acordar dentro del campus\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar producto"
+    },
+    {
+      "name": "usability-categories-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_700Bold",
+        "Inter_600SemiBold"
+      ],
+      "text": "\nVolver\nNuevo producto\n\nAñadir foto del artículo\nCámara o galería · máx. 5 MiB\nProducto\nTítulo\nDescripción\n\nCondición\nSeleccionar condición\n\n\nCategoría\nSeleccionar categoría\n\nPrecio\nPrecio\nEntrega\n\nZona\nPunto de entrega por acordar dentro del campus\n\nSin stock ni temporizador\nLos compradores contactan por WhatsApp directamente.\nPublicar producto\nCategoría\n\nBuscar categorías\nLibros\nMaterial Escolar\nElectrónica\nBatas/Uniformes\nArte y Dibujo\nAudio y Accesorios\nRopa y calzado\nMochilas y bolsos\nDeportes\nJuegos y videojuegos"
+    },
+    {
+      "name": "usability-duration-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "ionicons",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "Inter_700Bold"
+      ],
+      "text": "\nVolver\nEditar publicación\nFoto del producto\n\nCambiar foto\nProducto\nTítulo\nDescripción\nTorta de pollo con lechuga y aguacate. Entrego en la entrada de la Facultad de Ingeniería.\n\nCategoría\nComida Fuerte\n\nPrecio y disponibilidad\nPrecio normal\nStock disponible\nEntrega\n\nZona\nFacultad de Ingeniería\n\nHorario de venta\n\nInicio\n22 nov, 03:53 p.m.\n\n\nFin\n22 nov, 05:05 p.m.\n\n\nPrecio de oferta · Configurar\nManual · $65.00\n\nGuardar cambios\nPrecio de oferta\nEl descuento se aplica únicamente a reservas nuevas.\n\nSin oferta\nManual\nProgramada\nPrecio mínimo\nPrecio normal: $85.00. El mínimo debe ser menor.\nAnticipación antes del fin\nHoras\n\n0\n\nMinutos\n\n0\n\n0 h 0 min antes de terminar. La activación debe quedar en el futuro y dentro del horario.\nActivación: Elige la anticipación\nLa venta termina 22 nov, 05:05 p.m..\nGuardar configuración"
+    },
+    {
+      "name": "usability-logout-430",
+      "width": 430,
+      "height": 932,
+      "scrollWidth": 430,
+      "font": [
+        "BricolageGrotesque_800ExtraBold",
+        "Inter_400Regular",
+        "Inter_600SemiBold",
+        "ionicons",
+        "Inter_700Bold"
+      ],
+      "text": "TapCampus\nCampus Ensenada\nMi cuenta\nAna Pérez\n\nEditar datos\nDatos de contacto\n\nCorreo institucional\n\nSolo lectura\nana@uabc.edu.mx\n\nTeléfono\n+52 664 123 4567\nCompradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.\n\nCerrar sesión\nExplorar\nReservas\nMis ventas\n\nCuenta\n¿Cerrar sesión?\nTendrás que iniciar sesión para volver a usar tu cuenta.\nCerrar sesión\nVolver"
+    }
+  ],
+  "exceptions": [],
+  "missingAssets": []
+}

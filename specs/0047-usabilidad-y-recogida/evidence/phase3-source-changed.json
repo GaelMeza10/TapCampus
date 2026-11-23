@@ -1,0 +1,270 @@
+{
+  "date": "2026-11-23T00:42:44.436Z",
+  "node": "v24.13.0",
+  "database": "tapcampus_phase3_1795394564435",
+  "redisPrefix": "tapcampus_phase3_1795394564435",
+  "requests": 386,
+  "checks": [
+    {
+      "name": "reservas EV-01/09: JWT, DTO, 20 minutos, precio fijo, múltiples acciones, consultas y privacidad",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-03: STATIC, FINISHED, fuera de horario y sin stock ->409 sin mutación",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-02: 50 compradores/claves distintas, exactamente 1x201 / 49x409",
+      "result": "PASS",
+      "counts": {
+        "201": 1,
+        "409": 49
+      }
+    },
+    {
+      "name": "reservas EV-09: 50 reintentos misma clave = 1x201/49x200, ID único; clave cruzada simultánea 201/409",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-04/05: solo vendedor completa, solo comprador cancela, terminales 409, jobs atrasados no cambian stock",
+      "result": "PASS"
+    },
+    {
+      "name": "publicaciones EV-04/07, reservas EV-07/08: cierre/fin únicos, confirma tras end_time, libera sin reactivar FINISHED",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-06/08: job temprano no actúa, plazo vencido rechaza acciones, expiración y duplicado liberan una vez",
+      "result": "PASS"
+    },
+    {
+      "name": "0039 EV-02/03/04: comprador protegido por actor/estado/plazo, vendedor actual y reserva contactable con detalle agotado/finalizado",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-04/05/06: 10 carreras confirmación/cancelación/worker, transición única e inventario conservado",
+      "result": "PASS",
+      "races": [
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": false,
+          "final": "COMPLETED",
+          "stock": 0,
+          "complete": 200,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        },
+        {
+          "expired": true,
+          "final": "EXPIRED",
+          "stock": 1,
+          "complete": 409,
+          "cancel": 409
+        }
+      ]
+    },
+    {
+      "name": "publicaciones EV-05: 10 carreras HTTP reserva/venta física por stock 1, un solo ganador",
+      "result": "PASS",
+      "races": [
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        },
+        {
+          "reservation": 409,
+          "physical": 200
+        }
+      ]
+    },
+    {
+      "name": "reservas EV-02/04/05/06, sockets EV-05: bloqueo real, sin evento antes del commit, plazo releído tras espera",
+      "result": "PASS"
+    },
+    {
+      "name": "ganga EV-01/02/03/06: configuración, validación sin jobs, manual/propiedad, prioridad, decimal y precio histórico",
+      "result": "PASS"
+    },
+    {
+      "name": "ganga EV-04/05/06: job real con delay, reprogramación ignora job antiguo, duplicado y fin sin activación",
+      "result": "PASS"
+    },
+    {
+      "name": "0037 EV-02/03/04/06: privacidad pública/propietario, igualdad, modos/nulls/retirada, permisos y legado",
+      "result": "PASS",
+      "configured": "b49bef2e-7bd7-4ca0-afd4-47cf4879c72f",
+      "privateActive": "19e43659-e005-4886-9e8c-feaa9450929e",
+      "equalLegacy": "7ae706ab-905d-4195-b644-2d927ddc3213"
+    },
+    {
+      "name": "0037 EV-05/06: ambos órdenes y seis carreras HTTP retirada/activación/reserva, estado y evento únicos",
+      "result": "PASS"
+    },
+    {
+      "name": "0037 EV-05: retirada persistida no se activa tras reinicio real y conciliación con job Redis anterior",
+      "result": "PASS"
+    },
+    {
+      "name": "reservas EV-06, ganga EV-04: proceso worker detenido/reiniciado, jobs Redis persistentes, jobs perdidos y conciliación periódica",
+      "result": "PASS"
+    },
+    {
+      "name": "publicaciones EV-04: fin natural job API + conciliación, evento único y reserva previa confirmable",
+      "result": "PASS"
+    },
+    {
+      "name": "sockets EV-01..05: dos clientes, payloads exactos/públicos, cambios postcommit, rechazos sin eventos y REST al reconectar",
+      "result": "PASS"
+    }
+  ],
+  "postgres": "16.15 (Debian 16.15-1.pgdg13+2)",
+  "originalBefore": {
+    "_prisma_migrations": {
+      "count": 7,
+      "sha256": "c67d8dbea7a4c75eaac1d94d76c85e81cd74cb31b4400a8bc18f1c63311116a4"
+    },
+    "categories": {
+      "count": 26,
+      "sha256": "b9171a4ed48fd5957514dca4e35510f38879b46accbdde52643e5cdf77e014ce"
+    },
+    "publications": {
+      "count": 142,
+      "sha256": "4f0ff28b649ee9784dd871ef37d883ad4e3f1b8afaefba5311288a52b1cac8af"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 51,
+      "sha256": "ef94b5c4b5df42dcec5f481b17459220a5468cb4b33b1d60dd0ea38673aa4d90"
+    },
+    "users": {
+      "count": 14,
+      "sha256": "2c58934882e624b01e55a019aafafdeeac5a9d9d174e06a7286003c56a2db908"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "redis": "7.4.11",
+  "originalAfter": {
+    "_prisma_migrations": {
+      "count": 7,
+      "sha256": "c67d8dbea7a4c75eaac1d94d76c85e81cd74cb31b4400a8bc18f1c63311116a4"
+    },
+    "categories": {
+      "count": 26,
+      "sha256": "b9171a4ed48fd5957514dca4e35510f38879b46accbdde52643e5cdf77e014ce"
+    },
+    "publications": {
+      "count": 142,
+      "sha256": "97818ac2c7debd12fbd71330f67760dea3cfeb47c6679217b3965cb3994d88db"
+    },
+    "reports": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "reservations": {
+      "count": 52,
+      "sha256": "818a6752d50f6b2e8170f19332a7a6df78a89e60d5d9dae3c8bccc0cc5ab8d1b"
+    },
+    "users": {
+      "count": 14,
+      "sha256": "2c58934882e624b01e55a019aafafdeeac5a9d9d174e06a7286003c56a2db908"
+    },
+    "zones": {
+      "count": 5,
+      "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+    }
+  },
+  "result": "FAIL",
+  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    _prisma_migrations: {\n      count: 7,\n      sha256: 'c67d8dbea7a4c75eaac1d94d76c85e81cd74cb31b4400a8bc18f1c63311116a4'\n    },\n...\n      count: 142,\n+     sha256: '97818ac2c7debd12fbd71330f67760dea3cfeb47c6679217b3965cb3994d88db'\n-     sha256: '4f0ff28b649ee9784dd871ef37d883ad4e3f1b8afaefba5311288a52b1cac8af'\n    },\n    reports: {\n      count: 0,\n      sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'\n    },\n    reservations: {\n+     count: 52,\n+     sha256: '818a6752d50f6b2e8170f19332a7a6df78a89e60d5d9dae3c8bccc0cc5ab8d1b'\n-     count: 51,\n-     sha256: 'ef94b5c4b5df42dcec5f481b17459220a5468cb4b33b1d60dd0ea38673aa4d90'\n    },\n    users: {\n      count: 14,\n      sha256: '2c58934882e624b01e55a019aafafdeeac5a9d9d174e06a7286003c56a2db908'\n    },\n"
+}

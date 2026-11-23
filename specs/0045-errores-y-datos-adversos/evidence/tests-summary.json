@@ -1,0 +1,46 @@
+{
+  "frontend": {
+    "success": true,
+    "passed": 178,
+    "failed": 0,
+    "suites": 22,
+    "failures": []
+  },
+  "backend": {
+    "success": true,
+    "passed": 111,
+    "failed": 0,
+    "suites": 12,
+    "failures": []
+  },
+  "frontendBefore": {
+    "success": false,
+    "passed": 2,
+    "failed": 10,
+    "suites": 1,
+    "failures": [
+      "causa incompleta null siempre produce un mensaje útil",
+      "causa incompleta undefined siempre produce un mensaje útil",
+      "causa incompleta {\"response\":{\"data\":{\"message\":[]}}} siempre produce un mensaje útil",
+      "HTTP 500 tiene mensaje comprensible sin texto técnico",
+      "HTTP 403 tiene mensaje comprensible sin texto técnico",
+      "HTTP 401 tiene mensaje comprensible sin texto técnico",
+      "HTTP 429 tiene mensaje comprensible sin texto técnico",
+      "HTTP 404 tiene mensaje comprensible sin texto técnico",
+      "login offline conserva valores y no culpa a las credenciales",
+      "editar contraseña no borra el error de correo inválido"
+    ]
+  },
+  "backendBefore": {
+    "success": false,
+    "passed": 5,
+    "failed": 4,
+    "suites": 1,
+    "failures": [
+      "rechaza \"   \" con 400 sin llamar al servicio",
+      "rechaza \"\\t\\n\" con 400 sin llamar al servicio",
+      "rechaza \" \" con 400 sin llamar al servicio",
+      "normaliza sin recortar el nombre válido"
+    ]
+  }
+}

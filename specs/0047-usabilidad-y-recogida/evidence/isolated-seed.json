@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-23T00:26:11.364Z",
+  "mode": "isolated",
+  "checks": [
+    {
+      "initial": {
+        "users": 6,
+        "publications": 107,
+        "reservations": 24
+      },
+      "repeated": {
+        "users": 0,
+        "publications": 0,
+        "reservations": 0
+      },
+      "unchangedOnRepeat": true,
+      "editsPreserved": true,
+      "passwordNotReset": true,
+      "identityConflictAtomic": true
+    }
+  ],
+  "api": {
+    "login": true,
+    "categories": 26,
+    "zones": 5,
+    "visibleDeliveryFeed": {
+      "LIVE": 53,
+      "STATIC": 34
+    },
+    "buyerReservations": 12,
+    "sellerPublications": 27,
+    "sellerReservationStates": [
+      "ACTIVE",
+      "EXPIRED",
+      "CANCELLED",
+      "COMPLETED"
+    ],
+    "png": true,
+    "publicContactsAbsent": true
+  },
+  "preservation": {
+    "users": {
+      "before": 14,
+      "after": 14,
+      "originalHash": "1a6a1187d267b32f542dc128f9cfef139dd91d21806b517ff17e73f89143987b",
+      "preserved": true
+    },
+    "zones": {
+      "before": 5,
+      "after": 5,
+      "originalHash": "c955f50ce75b1e5142b774e0bcf4a8a03cbd4e434f6eb546520d696e937752df",
+      "preserved": true
+    },
+    "categories": {
+      "before": 26,
+      "after": 26,
+      "originalHash": "1b66d0145907f34c1b8fc9926a215bcb6710bb748c88263161f0bf6998c5dae8",
+      "preserved": true
+    },
+    "publications": {
+      "before": 139,
+      "after": 139,
+      "originalHash": "e69533e80cb21790b71f8429d1c28bd0c7bcc238c8195c7770d9ce7c01da2f8e",
+      "preserved": true
+    },
+    "reservations": {
+      "before": 39,
+      "after": 39,
+      "originalHash": "1a91df2fd746a115a5aa6cc6b192a388945fc8e8a6e25cf4a5ffb9005c959658",
+      "preserved": true
+    },
+    "reports": {
+      "before": 0,
+      "after": 0,
+      "originalHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "preserved": true
+    }
+  },
+  "result": "PASS"
+}

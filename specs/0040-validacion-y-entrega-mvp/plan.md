@@ -13,6 +13,16 @@ Estado: Planificado | Especificación: spec.md
 
 ## Archivos y compatibilidad
 
+### Corrección puntual INC-0040-02
+
+T-08/T-07/AC-02: aislar la presentación iOS en un componente por plataforma con Host SwiftUI de altura explícita y rueda nativa, evitando el autoajuste vertical del adaptador dentro del ScrollView del Sheet. Mantener el adaptador existente para Android/web y el estado provisional, Guardar/cerrar y serialización en edit.tsx. Verificar montaje acotado, confirmación/cancelación e independencia Inicio/Fin con pruebas de componente/formulario, tipos y bundle iOS. EV-02 separará estas comprobaciones de la aceptación visual pendiente en el iPhone del usuario. Sin dependencia nueva, cambios de servidor ni otro entorno de pruebas.
+
+### Plan de casos límite del profesor
+
+[casos-limite.md](casos-limite.md) desarrolla AC-02/T-02/EV-02 y AC-03/T-03/EV-03 en 43 casos, con precondiciones, datos/pasos, resultados esperados, recuperación, prioridades y correspondencia con los nueve ejemplos proporcionados. [registro-casos-limite.md](registro-casos-limite.md) separa estabilidad y función, admite variantes y conserva fallos/repruebas. El recorrido corto de 12 casos prepara la exposición; no sustituye el recorrido completo.
+
+Preparar los documentos no exige cambiar código ni arrancar servicios. La ejecución nativa y las pruebas con escritura se realizan después en un entorno identificado. Portrait, ausencia de GPS y límites actuales de datos provienen del código/requisitos; no se implementan nuevas restricciones por redactar resultados esperados. Todo caso empieza Pendiente.
+
 Usar scripts existentes en Backend/scripts, Frontend/__tests__ y verificadores auxiliares. Crear checklist nativo en este expediente durante T-02; resultados en evidence/ con datos de prueba. Cambios a configuración de despliegue y docs de operación se redactan en T-04/05 después de conocer entorno real; no añadir proveedor contratado por defecto. Variables locales y secretos nunca se versionan. Sin cambio de esquema previsto por esta validación; cualquier fallo que requiera migración se especifica aparte.
 
 ## Constitución

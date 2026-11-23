@@ -1,0 +1,681 @@
+{
+  "cases": [
+    {
+      "id": "E01",
+      "name": "Acceso: correo inválido conserva error al editar otro campo",
+      "result": "PASS"
+    },
+    {
+      "id": "E02",
+      "name": "Acceso: contraseña vacía junto al campo",
+      "result": "PASS"
+    },
+    {
+      "id": "E03",
+      "name": "Acceso: Revisa tu conexión",
+      "result": "PASS"
+    },
+    {
+      "id": "E04",
+      "name": "Acceso: tardó demasiado",
+      "result": "PASS"
+    },
+    {
+      "id": "E05",
+      "name": "Acceso: El servidor no está disponible",
+      "result": "PASS"
+    },
+    {
+      "id": "E06",
+      "name": "Acceso: Correo o contraseña incorrectos.",
+      "result": "PASS"
+    },
+    {
+      "id": "E07",
+      "name": "Acceso: Hay demasiados intentos",
+      "result": "PASS"
+    },
+    {
+      "id": "E08",
+      "name": "Registro: nombre de espacios no envía y tiene ayuda",
+      "result": "PASS"
+    },
+    {
+      "id": "E09",
+      "name": "Registro: dominio, teléfono y contraseña inválidos",
+      "result": "PASS"
+    },
+    {
+      "id": "E10",
+      "name": "Registro: duplicado sin perder datos",
+      "result": "PASS"
+    },
+    {
+      "id": "E11",
+      "name": "Explorar: offline y recuperación",
+      "result": "PASS"
+    },
+    {
+      "id": "E12",
+      "name": "Explorar: búsqueda sin resultados con símbolos",
+      "result": "PASS"
+    },
+    {
+      "id": "E13",
+      "name": "Filtros: conteos fallidos no inventan ceros",
+      "result": "PASS"
+    },
+    {
+      "id": "E14",
+      "name": "Carga fallida y recuperación: /sales",
+      "result": "PASS"
+    },
+    {
+      "id": "E15",
+      "name": "Carga fallida y recuperación: /reservations",
+      "result": "PASS"
+    },
+    {
+      "id": "E16",
+      "name": "Carga fallida y recuperación: /account",
+      "result": "PASS"
+    },
+    {
+      "id": "E17",
+      "name": "Cuenta: nombre y teléfono inválidos junto al campo",
+      "result": "PASS"
+    },
+    {
+      "id": "E18",
+      "name": "Cuenta: fallo de guardado conserva borrador y error al editar",
+      "result": "PASS"
+    },
+    {
+      "id": "E19",
+      "name": "Ventas: acción fallida visible y sin éxito falso",
+      "result": "PASS"
+    },
+    {
+      "id": "E20",
+      "name": "Ventas: acción fallida visible y sin éxito falso",
+      "result": "PASS"
+    },
+    {
+      "id": "E21",
+      "name": "Ventas: acción fallida visible y sin éxito falso",
+      "result": "PASS"
+    },
+    {
+      "id": "E22",
+      "name": "Ventas: acción fallida visible y sin éxito falso",
+      "result": "PASS"
+    },
+    {
+      "id": "E23",
+      "name": "Ventas: acción fallida visible y sin éxito falso",
+      "result": "PASS"
+    },
+    {
+      "id": "E24",
+      "name": "Reservas: cancelación fallida permanece visible abajo",
+      "result": "PASS"
+    },
+    {
+      "id": "E25",
+      "name": "Detalle: offline muestra carga fallida y no publicación eliminada",
+      "result": "PASS"
+    },
+    {
+      "id": "E26",
+      "name": "Detalle: 404 confirmado conserva acceso a reservas",
+      "result": "PASS"
+    },
+    {
+      "id": "E27",
+      "name": "Apartado: conflicto 409 sin confirmar éxito",
+      "result": "PASS"
+    },
+    {
+      "id": "E28",
+      "name": "WhatsApp: fallo visible sin reservar",
+      "result": "PASS"
+    },
+    {
+      "id": "E29",
+      "name": "Crear LIVE vacío aplica errores correctos",
+      "result": "PASS"
+    },
+    {
+      "id": "E30",
+      "name": "Crear STATIC vacío aplica errores correctos",
+      "result": "PASS"
+    },
+    {
+      "id": "E31",
+      "name": "Formulario: precio/stock inválidos y corrección sin pérdida",
+      "result": "PASS"
+    },
+    {
+      "id": "E32",
+      "name": "Formulario: rechazo por contenido y borrador preservado",
+      "result": "PASS"
+    },
+    {
+      "id": "E33",
+      "name": "Formulario: fallo de guardado conserva foto y borrador",
+      "result": "PASS"
+    },
+    {
+      "id": "E34",
+      "name": "Formulario: catálogo fallido zona y reintento",
+      "result": "PASS"
+    },
+    {
+      "id": "E35",
+      "name": "Formulario: catálogo fallido categoría y reintento",
+      "result": "PASS"
+    },
+    {
+      "id": "E36",
+      "name": "Estado no feliz: reservation-pending",
+      "result": "PASS"
+    },
+    {
+      "id": "E37",
+      "name": "Estado no feliz: reservation-empty",
+      "result": "PASS"
+    },
+    {
+      "id": "E38",
+      "name": "Estado no feliz: sales-empty",
+      "result": "PASS"
+    },
+    {
+      "id": "L-feed-320",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-sales-320",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-reservations-320",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-account-320",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-detail-320",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-feed-390",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-sales-390",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-reservations-390",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-account-390",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-detail-390",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-feed-430",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-sales-430",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-reservations-430",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-account-430",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "L-detail-430",
+      "name": "Texto de 200 caracteres y precio máximo",
+      "result": "PASS"
+    },
+    {
+      "id": "E39",
+      "name": "Imagen corrupta usa alternativa sin errores JavaScript",
+      "result": "PASS"
+    },
+    {
+      "id": "E40",
+      "name": "Registro offline conserva datos y explica conexión",
+      "result": "PASS"
+    },
+    {
+      "id": "E41",
+      "name": "Precio superior al máximo muestra error local sin enviar",
+      "result": "PASS"
+    },
+    {
+      "id": "E42",
+      "name": "Oferta igual al precio normal se rechaza en su hoja",
+      "result": "PASS"
+    },
+    {
+      "id": "E43",
+      "name": "Permiso HTTP 403 se explica sin texto técnico",
+      "result": "PASS"
+    },
+    {
+      "id": "E44",
+      "name": "Mensaje largo de negocio conserva altura acotada y lectura propia",
+      "result": "PASS"
+    },
+    {
+      "id": "E45",
+      "name": "Errores con texto ampliado permanecen visibles y legibles",
+      "result": "PASS"
+    },
+    {
+      "id": "E46",
+      "name": "Carga parcial de reservas no inventa que están vacías",
+      "result": "PASS"
+    }
+  ],
+  "shots": [
+    {
+      "name": "adverse-login-invalid",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-login-password",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-login-E03",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-login-E04",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-login-E05",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-login-E06",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-login-E07",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-register-spaces",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-register-validation",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-register-duplicate",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-feed-offline",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-search-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-filter-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-load-E14",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-load-E15",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-load-E16",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-account-invalid",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-profile-save",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-sale-E19",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-sale-E20",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-sale-E21",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-sale-E22",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-sale-E23",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-cancel-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-detail-offline",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-detail-404",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-reserve-conflict",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-contact-failure",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-empty-LIVE",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-empty-STATIC",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-numeric-invalid",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-content-rejected",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-publication-save-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-catalog-E34",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-catalog-E35",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-reservation-pending",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-reservation-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-sales-empty",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-long-feed-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "adverse-long-sales-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "adverse-long-reservations-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "adverse-long-account-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "adverse-long-detail-320",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    },
+    {
+      "name": "adverse-long-feed-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-long-sales-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-long-reservations-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-long-account-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-long-detail-390",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-long-feed-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430
+    },
+    {
+      "name": "adverse-long-sales-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430
+    },
+    {
+      "name": "adverse-long-reservations-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430
+    },
+    {
+      "name": "adverse-long-account-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430
+    },
+    {
+      "name": "adverse-long-detail-430",
+      "width": 430,
+      "height": 844,
+      "scrollWidth": 430
+    },
+    {
+      "name": "adverse-broken-photo",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-register-offline",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-price-overflow",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-offer-invalid",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-forbidden",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-long-error",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-errors-large",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "name": "adverse-partial-reservations",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    }
+  ],
+  "passed": 61,
+  "failed": 0,
+  "runtimeErrors": [],
+  "missingAssets": []
+}

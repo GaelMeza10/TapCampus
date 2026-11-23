@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-23T00:23:21.514Z",
+  "result": "PASS",
+  "mode": "local-applied",
+  "backup": {
+    "file": "C:\\AM_PF\\ProyectoFinal\\Backend\\.local\\backups\\tapcampus_pickup_1795393395580.dump",
+    "sha256": "6da17a2bf471c61646fa9a21ca9d07d7c3e5c1fce953ec7ea6f896fee0369681",
+    "restored": true
+  },
+  "dataPreserved": [
+    {
+      "table": "users",
+      "rows": 14
+    },
+    {
+      "table": "zones",
+      "rows": 5
+    },
+    {
+      "table": "categories",
+      "rows": 12
+    },
+    {
+      "table": "publications",
+      "rows": 83
+    },
+    {
+      "table": "reservations",
+      "rows": 39
+    },
+    {
+      "table": "reports",
+      "rows": 0
+    }
+  ],
+  "legacySnapshotsNotInvented": true,
+  "liveArrangedRejectedByDatabase": true,
+  "rollback": "Conservar lectores compatibles; deshabilitar nuevas escrituras ARRANGED. No convertir zona a NOT NULL con datos ARRANGED."
+}

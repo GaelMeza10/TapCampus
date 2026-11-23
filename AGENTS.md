@@ -63,3 +63,14 @@ Este archivo (`AGENTS.md`) sirve como el **punto de entrada principal** para la 
 ---
 ## Prompt Maestro Sugerido (Para el Usuario)
 > *"Actúa como un Desarrollador Senior en React Native y NestJS. Revisa los archivos correspondientes en la carpeta `/docs` según sea necesario y ayúdame a desarrollar [INSERTA LA TAREA]."*
+
+### Arranque local
+Por petición del usuario (2026-11-22), el usuario inicia manualmente la API con `npm run start:dev` y Expo con `npx expo start`. El agente no debe arrancar esos servicios ni ocupar sus puertos 3000/8081, ni detener procesos del usuario. Las verificaciones automatizadas deben mantener aislados sus datos y puertos.
+
+### Prioridad de diseño
+- `DESIGN.md` manda sobre cualquier skill. Si `impeccable` o `ui-ux-pro-max`
+  sugieren colores, fuentes o estilos distintos, se ignoran.
+- `impeccable` se usa para criticar, pulir y detectar aspecto genérico.
+- `ui-ux-pro-max` solo se usa como consulta de patrones de UX (accesibilidad,
+  navegación, estados), nunca para elegir paleta ni tipografía.
+- Las capturas de referencia están en `docs/design/refs/`.

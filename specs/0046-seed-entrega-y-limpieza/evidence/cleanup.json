@@ -1,0 +1,115 @@
+﻿{
+    "applied":  true,
+    "targets":  16,
+    "files":  2980,
+    "bytes":  5580768192,
+    "preserved":  [
+                      "node_modules",
+                      ".env",
+                      "Backend/.local/backups",
+                      "Backend/.local/demo-access.json",
+                      "Backend/uploads",
+                      "specs",
+                      "docs",
+                      ".agents",
+                      ".git"
+                  ],
+    "details":  [
+                    {
+                        "path":  ".local/visual",
+                        "files":  0,
+                        "bytes":  0,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/.local",
+                        "files":  2859,
+                        "bytes":  5449432845,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/dist",
+                        "files":  50,
+                        "bytes":  6107014,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/scripts/reset-project.js",
+                        "files":  1,
+                        "bytes":  3710,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/expo-badge-white.png",
+                        "files":  1,
+                        "bytes":  4129,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/expo-badge.png",
+                        "files":  1,
+                        "bytes":  4137,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/expo-logo.png",
+                        "files":  1,
+                        "bytes":  3317,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/logo-glow.png",
+                        "files":  1,
+                        "bytes":  331624,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/react-logo.png",
+                        "files":  1,
+                        "bytes":  6341,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/react-logo@2x.png",
+                        "files":  1,
+                        "bytes":  14225,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/react-logo@3x.png",
+                        "files":  1,
+                        "bytes":  21252,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/tutorial-web.png",
+                        "files":  1,
+                        "bytes":  58959,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Frontend/assets/images/tabIcons",
+                        "files":  6,
+                        "bytes":  2105,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Backend/.local/demo-seed-zxeGJx",
+                        "files":  24,
+                        "bytes":  41620614,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Backend/.local/verification/tapcampus_delivery_1795374148646",
+                        "files":  16,
+                        "bytes":  41578960,
+                        "removed":  true
+                    },
+                    {
+                        "path":  "Backend/.local/verification/tapcampus_delivery_1795374283779",
+                        "files":  16,
+                        "bytes":  41578960,
+                        "removed":  true
+                    }
+                ]
+}

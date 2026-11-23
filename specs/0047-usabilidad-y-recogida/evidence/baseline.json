@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-22",
+  "scope": "Descubrimiento y planificación; SQL de solo lectura y GET de catálogos",
+  "databaseReadOnly": true,
+  "databaseCategories": [
+    { "id": 1, "name": "Comida Fuerte", "type": "LIVE" },
+    { "id": 2, "name": "Snacks", "type": "LIVE" },
+    { "id": 3, "name": "Bebidas", "type": "LIVE" },
+    { "id": 4, "name": "Postres", "type": "LIVE" },
+    { "id": 10, "name": "Desayunos", "type": "LIVE" },
+    { "id": 11, "name": "Panadería", "type": "LIVE" },
+    { "id": 5, "name": "Libros", "type": "STATIC" },
+    { "id": 6, "name": "Material Escolar", "type": "STATIC" },
+    { "id": 8, "name": "Electrónica", "type": "STATIC" },
+    { "id": 9, "name": "Batas/Uniformes", "type": "STATIC" },
+    { "id": 12, "name": "Arte y Dibujo", "type": "STATIC" },
+    { "id": 13, "name": "Audio y Accesorios", "type": "STATIC" }
+  ],
+  "zones": 5,
+  "publicationCountsAtObservation": { "LIVE": 43, "STATIC": 40 },
+  "apiChecks": [
+    { "source": "runningLoopback", "http": 200, "categories": 12, "byType": { "LIVE": 6, "STATIC": 6 } },
+    { "source": "frontendConfigured", "http": 200, "categories": 12, "byType": { "LIVE": 6, "STATIC": 6 } }
+  ],
+  "userConfirmed": {
+    "generalStaticLocation": "Punto de entrega por acordar dentro del campus",
+    "devices": ["iPhone 14 Pro Max", "iPhone 13 Pro Max"],
+    "runtime": "Expo Go",
+    "trigger": "Cambio entre pestañas",
+    "osAndRuntimeVersions": "Por capturar durante reproducción"
+  },
+  "sourceFindings": {
+    "categoryUniqueKey": ["name", "type"],
+    "publicationZoneRequired": true,
+    "reservationResponseHasPickupZone": false,
+    "existingPublicEvents": ["stock_updated", "publication_expired", "ganga_activated"],
+    "creationEvent": false,
+    "futureStartJob": false,
+    "offerDurationInput": "CustomInput numérico",
+    "logoutConfirmation": false,
+    "installedNativeControls": ["@expo/ui/swift-ui/Picker", "@expo/ui/swift-ui/Stepper"]
+  },
+  "acceptanceTestsFor0047Executed": false,
+  "dataMutated": false,
+  "note": "Los conteos son una observación, no un total a imponer. No se almacenan URL de BD, contraseñas, tokens ni teléfonos."
+}

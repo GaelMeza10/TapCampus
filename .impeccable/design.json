@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-21T23:53:41.136Z",
+  "generatedAt": "2026-11-22T22:48:21.272Z",
   "title": "Design System: TapCampus",
   "extensions": {
     "colorMeta": {
@@ -88,31 +88,31 @@
       "refersTo": "input",
       "description": "CustomInput con etiqueta, superficie suave y error accesible.",
       "html": "<label class=\"ds-field\">Título<input class=\"ds-input\" placeholder=\"Nombre del producto\" /></label>",
-      "css": ".ds-field{display:grid;gap:8px;font:600 14px/20px Inter,Arial,sans-serif;color:#58645D}.ds-input{min-width:0;min-height:52px;padding:12px 16px;border:1px solid #E2E7E1;border-radius:16px;background:#F1F3F0;color:#202923;font:400 14px/20px Inter,Arial,sans-serif}.ds-input::placeholder{color:#58645D}.ds-input:hover{cursor:text}.ds-input:focus-visible{outline:auto}.ds-input[aria-invalid=true]{border-color:#B42318}.ds-input:disabled{opacity:.55}"
+      "css": ".ds-field{display:grid;gap:8px;font:600 14px/20px Inter,Arial,sans-serif;color:#58645D}.ds-input{min-width:0;min-height:52px;padding:12px 16px;border:1px solid #DDD6C4;border-radius:16px;background:#F1ECDF;color:#202923;font:400 14px/20px Inter,Arial,sans-serif}.ds-input::placeholder{color:#58645D}.ds-input:hover{cursor:text}.ds-input:focus-visible{outline:auto}.ds-input[aria-invalid=true]{border-color:#B42318}.ds-input:disabled{opacity:.55}"
     },
     {
       "name": "Type selector",
       "kind": "chip",
       "refersTo": "type-selected",
-      "description": "Tipo activo sólido; segundo tipo visible.",
-      "html": "<div class=\"ds-types\" role=\"tablist\"><button class=\"ds-type\" role=\"tab\" aria-selected=\"true\">Disponibles ahora</button><button class=\"ds-type\" role=\"tab\" aria-selected=\"false\">Catálogo</button></div>",
-      "css": ".ds-types{display:flex;gap:8px}.ds-type{flex:1;min-width:0;min-height:48px;padding:8px;border:1px solid #E2E7E1;border-radius:999px;background:#FFFFFF;color:#58645D;font:600 13px/19px Inter,Arial,sans-serif;cursor:pointer}.ds-type[aria-selected=true]{background:#17613B;border-color:#17613B;color:#FFFFFF}.ds-type:hover{cursor:pointer}.ds-type:focus-visible{outline:auto}.ds-type:active{opacity:.7}"
+      "description": "Vocabulario de publication-copy.ts compartido por Explorar, filtros, Vender y Mis ventas. Vender decide una sola vez.",
+      "html": "<div class=\"ds-types\" role=\"tablist\"><button class=\"ds-type\" role=\"tab\" aria-selected=\"true\">Ahora en el campus</button><button class=\"ds-type\" role=\"tab\" aria-selected=\"false\">Productos</button></div>",
+      "css": ".ds-types{display:flex;gap:8px}.ds-type{flex:1;min-width:0;min-height:48px;padding:8px;border:1px solid #DDD6C4;border-radius:999px;background:#FFFFFF;color:#58645D;font:600 13px/19px Inter,Arial,sans-serif;cursor:pointer}.ds-type[aria-selected=true]{background:#17613B;border-color:#17613B;color:#FFFFFF}.ds-type:hover{cursor:pointer}.ds-type:focus-visible{outline:auto}.ds-type:active{opacity:.7}"
     },
     {
       "name": "Bottom navigation",
       "kind": "nav",
       "refersTo": "navigation-selected",
-      "description": "Cuatro destinos; selección translúcida sin desvanecer contenido.",
+      "description": "Cuatro destinos y barra persistente. Previsualización de la alternativa sólida; liquid glass solo en tabs nativas compatibles y con transparencia permitida.",
       "html": "<nav class=\"ds-nav\" aria-label=\"Navegación principal\"><button class=\"ds-tab\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"m15 9-2 4-4 2 2-4z\"/></svg>Explorar</button><button class=\"ds-tab\">Reservas</button><button class=\"ds-tab\">Mis ventas</button><button class=\"ds-tab\">Cuenta</button></nav>",
-      "css": ".ds-nav{display:flex;gap:4px;min-height:76px;padding:8px;background:#FFFFFF;border-top:1px solid #E2E7E1}.ds-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:56px;padding:8px 4px;border:0;border-radius:16px;background:transparent;color:#58645D;font:600 12px/17px Inter,Arial,sans-serif;cursor:pointer}.ds-tab[aria-current=page]{background:rgba(23,97,59,.12);color:#17613B;font-weight:700}.ds-tab:hover{cursor:pointer}.ds-tab:focus-visible{outline:auto}.ds-tab:active{opacity:.7}"
+      "css": ".ds-nav{display:flex;gap:4px;min-height:76px;padding:8px;background:#124D2F;border:0;border-radius:18px}.ds-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:56px;padding:8px 4px;border:0;border-radius:16px;background:transparent;color:#D9E8DD;font:600 12px/17px Inter,sans-serif;cursor:pointer}.ds-tab[aria-current=page]{background:rgba(255, 255, 255, 0.16);color:#FFFFFF;font-weight:700}.ds-tab:focus-visible{outline:auto}.ds-tab:active{opacity:.7}"
     },
     {
       "name": "Publication card",
       "kind": "card",
       "refersTo": "card",
-      "description": "Publisher_Card; alternativa estable sin foto, imagen cuadrada y precio compacto.",
-      "html": "<button class=\"ds-card\" aria-label=\"Ver publicación\"><span class=\"ds-photo\">Sin foto</span><span class=\"ds-card-body\"><span class=\"ds-badge\">Disponible ahora</span><span class=\"ds-title\">Título de publicación</span><span class=\"ds-price\">$50.00</span><span class=\"ds-caption\">Zona del campus</span><span class=\"ds-caption\">3 disponibles</span></span></button>",
-      "css": ".ds-card{display:block;max-width:240px;width:100%;padding:0;overflow:hidden;border:1px solid #E2E7E1;border-radius:16px;background:#FFFFFF;color:#202923;text-align:left;cursor:pointer;font-family:Inter,Arial,sans-serif}.ds-photo{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1;background:#F1F3F0;color:#58645D;font-size:13px}.ds-card-body{display:flex;flex-direction:column;gap:4px;padding:12px}.ds-badge{font-size:12px;line-height:17px;font-weight:600;color:#17613B}.ds-title{font-size:14px;line-height:20px;font-weight:600}.ds-price{font-size:18px;line-height:25px;font-weight:700}.ds-caption{font-size:13px;line-height:19px;color:#58645D}.ds-card:hover{cursor:pointer}.ds-card:focus-visible{outline:auto}.ds-card:active{opacity:.75}"
+      "description": "ExploreCard compartida con Publisher_Card; foto LIVE 16:10, precio/stock/cierre comunes con detalle. La fotografía de producto conserva su formato cuadrado.",
+      "html": "<button class=\"ds-card\" aria-label=\"Ver publicación\"><span class=\"ds-photo\">Sin foto</span><span class=\"ds-card-body\"><span class=\"ds-badge\">Cierra en 20 min</span><span class=\"ds-title\">Título de publicación</span><span class=\"ds-price\">$50</span><span class=\"ds-stock\">Quedan 3</span><span class=\"ds-place\">Zona del campus</span></span></button>",
+      "css": ".ds-card{display:block;max-width:240px;width:100%;padding:0;overflow:hidden;border:1px solid #DDD6C4;border-radius:16px;background:#FFFFFF;color:#202923;text-align:left;font-family:Inter,sans-serif}.ds-photo{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1.6;background:#F1ECDF;color:#58645D}.ds-card-body{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px}.ds-badge{font:600 12px/17px Inter,sans-serif;color:#FFFFFF;background:#202923;padding:4px 8px;border-radius:10px}.ds-title{font:700 16px/22px Inter,sans-serif}.ds-price{font:800 24px/30px 'Bricolage Grotesque',Inter,sans-serif;color:#17613B}.ds-stock{font:600 12px/17px Inter,sans-serif;background:#EAF1EA;color:#17613B;padding:4px 8px;border-radius:10px}.ds-place{font:700 13px/19px Inter,sans-serif}.ds-card:focus-visible{outline:auto}.ds-card:active{opacity:.75}"
     },
     {
       "name": "Publication form errors",
@@ -123,23 +123,28 @@
     }
   ],
   "narrative": {
-    "northStar": "Marketplace fotográfico del campus",
-    "overview": "La referencia Oakory aprobada se adapta a React Native/Expo: fondo casi blanco, verde UABC, Inter local y fotografías reales. La información de disponibilidad y precio acompaña al producto con encabezados compactos y controles familiares.\n\nEste documento describe el tema claro implementado. Las vistas web auxiliares permiten revisar composición; la aceptación de teclado, lector de pantalla y texto ampliado en hardware sigue pendiente.",
+    "northStar": "Mercado del campus, en vivo",
+    "overview": "DESIGN.md es la autoridad: fondo crema, verde UABC, Inter y Bricolage para marca/precios/reloj. Ahora en el campus y Productos comparten sus nombres en las pantallas. GANGA identifica un precio reducido; Precio de oferta describe su configuración. Los previews HTML son auxiliares y no certifican hardware.",
     "keyCharacteristics": [
-      "Fotografía superior y contenido flexible.",
-      "Superficies claras con contornos discretos.",
-      "Verde para acciones y selección; naranja para Oferta."
+      "Fotografías reales, superficies crema/blancas planas y contornos discretos.",
+      "Ahora en el campus: horario, stock y apartados; Productos: contacto directo sin temporizador.",
+      "Verde para acciones/selección y naranja para GANGA; glass exclusivamente en tabs nativas compatibles."
     ],
     "rules": [
       {
         "name": "The Semantic Color Rule",
-        "body": "Mantener Oferta en naranja y errores o acciones destructivas en rojo.",
+        "body": "Mantener GANGA en naranja, acciones/selección en verde y errores o acciones destructivas en rojo.",
         "section": "colors"
       },
       {
         "name": "The Compact Header Rule",
         "body": "Usar encabezados breves sin subtítulos redundantes; conservar instrucciones y mensajes necesarios.",
         "section": "typography"
+      },
+      {
+        "name": "Shared terminology and components",
+        "body": "PUBLICATION_COPY y los componentes compartidos son la fuente de la interfaz. npm run check:design y npm test detectan deriva respecto de DESIGN.md.",
+        "section": "components"
       }
     ],
     "dos": [
@@ -152,7 +157,9 @@
       "Don't añadir carrito, favoritos ni calificaciones.",
       "Don't usar promociones inventadas para rellenar el destacado.",
       "Don't añadir sombras a Card como regla del sistema.",
-      "Don't declarar hardware o tema oscuro verificados mediante capturas web."
+      "Don't declarar hardware o tema oscuro verificados mediante capturas web.",
+      "No usar Disponibles ahora/Catálogo ni Venta en vivo como nombres de sección; conservar solo la terminología vigente.",
+      "No usar glass fuera de tabs ni sustituir Ionicons por glifos de texto."
     ]
   }
 }

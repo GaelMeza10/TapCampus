@@ -1,5 +1,7 @@
 # Plan de Validación (QA y UAT) - TapCampus
 
+Pasada adversa 0045 (2026-11-22): [matriz y evidencia](../specs/0045-errores-y-datos-adversos/verification.md) para entradas inválidas, espacios, valores numéricos fuera de rango, texto largo/Unicode, imágenes y errores de carga/acciones en todas las rutas. Las interacciones con fixture web, Jest y HTTP aislado se distinguen de permisos/red real/teclado/lector en teléfono. No cierran los recorridos nativos de 0040 ni UAT.
+
 Este documento define cómo sabremos que el proyecto fue un éxito, dividiendo la validación en el ámbito técnico (código) y el ámbito humano (usuario final).
 
 Plan de cierre 2026-11-21: [0040](../specs/0040-validacion-y-entrega-mvp/plan.md) organiza regresión actual, aceptación nativa de ambos roles, despliegue persistente, instalable y UAT como puertas separadas. Depende de 0037/0038/0039 y del patrón de errores 0034; ninguna se considera aprobada por existir el plan.
@@ -41,6 +43,12 @@ La prueba de concurrencia requiere PostgreSQL real; mocks de Prisma no demuestra
 Por cada `AC`, anotar comando o recorrido reproducible, datos iniciales, resultado observado, fecha y enlace a prueba/log/captura en `verification.md`. Un resultado fallido crea una tarea o un cambio de especificación. Solo se marca `[x]` en `TASKS.md` cuando el alcance global de esa casilla tenga evidencia aprobada. Antes del cierre ejecutar `node scripts/check-sdd.mjs` y revisar semánticamente la convergencia entre requisitos, contratos, pruebas y código.
 
 ## 2. Validación de Usuario (UAT - User Acceptance Testing)
+
+### 2.0 Casos límite para la evaluación del profesor
+
+El [plan de casos límite de 0040](../specs/0040-validacion-y-entrega-mvp/casos-limite.md) concreta las instrucciones recibidas: modo avión, vacíos, números inválidos, texto largo, pulsaciones repetidas, giro, salida/regreso, permisos y listas vacías. Incluye 43 casos con datos/pasos, resultado esperado y recuperación, más un recorrido corto de 12 casos para preparar la exposición. [Registro por sesión](../specs/0040-validacion-y-entrega-mvp/registro-casos-limite.md).
+
+Evaluar estabilidad/recuperación y función/integridad por separado. Un rechazo controlado previsto puede aprobar; un defecto funcional no se oculta porque no hubo cierre. Portrait, ausencia de GPS y falta de persistencia prometida para borradores nunca guardados tras terminar el proceso se respetan como límites actuales. La preparación del documento no ejecuta los casos ni cierra AC-02/03 de 0040; tampoco sustituye usabilidad o piloto.
 
 ### 2.1 Prueba de Usabilidad (Pasillo)
 *   **Objetivo:** Validar que las Heurísticas de Diseño funcionan.

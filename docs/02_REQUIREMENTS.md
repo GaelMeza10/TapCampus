@@ -1,5 +1,11 @@
 # Especificación de Requerimientos de Software (TapCampus)
 
+0047 aprobado (2026-11-22): STATIC se presenta como **Productos**, con ayuda de compra y entrega por acuerdo; códigos LIVE/STATIC conservados. Puede elegirse **Punto de entrega por acordar dentro del campus** o una zona concreta; LIVE siempre requiere una zona. Las reservas nuevas guardan el punto de recogida y lo muestran con producto, unidad, precio fijado, plazo y vendedor; los históricos sin instantánea muestran la ubicación actual como referencia. Se rechaza cambiar la zona LIVE mientras existan reservas vigentes. Stock cero sale inmediatamente de disponibles con aviso y datos conservados; no significa que todas las unidades estén vendidas definitivamente. Logout requiere confirmación, sin bloquear la expiración automática de sesión. Catálogo canónico: seis categorías de alimentos LIVE y diez de productos por cada modalidad (26 filas), conservando identidades y datos originales.
+
+Histórico 0046 (ampliado por 0047): RF-05c usaba doce categorías (seis por tipo) y las cinco zonas vigentes. Se agregan Desayunos/Panadería a LIVE y Arte y Dibujo/Audio y Accesorios a STATIC, conservando categorías e IDs anteriores. Las denominaciones son taxonomía del marketplace, no un catálogo oficial universitario. Perfil de demostración separado, ficticio y aditivo; [guía](11_DELIVERY_GUIDE.md).
+
+Precisiones de validación 0045 (2026-11-22): RF-02 exige nombre con contenido útil; registro normaliza espacios igual que edición y rechaza espacios/tabulaciones/NBSP con 400 antes de crear usuario. No se añaden límites nuevos de longitud. Los errores de interfaz distinguen credenciales, conexión, permiso y fallos técnicos; una carga fallida no confirma un vacío. [Evidencia](../specs/0045-errores-y-datos-adversos/verification.md).
+
 Este documento detalla los requerimientos funcionales (RF) y no funcionales (RNF) del sistema TapCampus. Se utiliza una priorización basada en el modelo **MoSCoW** (Must have, Should have, Could have, Won't have).
 
 Reconciliación 2026-11-21 con el plan integral del usuario: cierre anticipado y cancelación son MUST; se incorpora RF-15 y contacto LIVE previo a reservar. Ofertas, filtro, contacto y validación se planifican en 0037–0040. Esta revisión define el comportamiento objetivo; no acredita implementación ni reemplaza evidencia histórica.
@@ -46,6 +52,7 @@ Reconciliación 2026-11-21 con el plan integral del usuario: cierre anticipado y
 
 ### Módulo de Publicaciones (Ventas Estáticas)
 *   **RF-06: Catálogo Estático [MUST]**
+    *   **Condición del artículo (0042):** Al crear un anuncio se exige indicar Nuevo o Usado. Puede editarla solo su propietario. Históricos sin dato conservan condición sin especificar hasta que el vendedor la elija; no inferirla ni inventarla. Omisión en PATCH conserva valor; null explícito y condición en LIVE se rechazan.
     *   **Descripción:** El sistema deberá permitir la publicación de artículos sin temporizador (libros, materiales).
     *   **Criterios de Aceptación:**
         *   La publicación permanecerá activa indefinidamente hasta que el vendedor cambie su estado a "Vendido".

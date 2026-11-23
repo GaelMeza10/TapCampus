@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-22T06:03:30.139Z",
+  "database": "tapcampus_condition_1795327410139",
+  "backup": "/tmp/tapcampus_condition_1795327410139.dump",
+  "checks": [
+    "respaldo restaurado: filas y hashes idénticos",
+    "migración ensayada sin alterar datos históricos",
+    "condición histórica NULL sin backfill inventado",
+    "POST STATIC exige condición y persiste NEW/USED",
+    "PATCH conserva omisión, valida, protege propiedad y expone condición pública sin contactos",
+    "históricos editables y LIVE protegido también por CHECK SQL",
+    "migración local aplicada con datos originales intactos"
+  ],
+  "requests": 20,
+  "appliedLocal": true
+}

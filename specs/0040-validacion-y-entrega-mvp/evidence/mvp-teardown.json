@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-22T20:02:50.054Z",
+  "databasesDropped": [
+    "tapcampus_phase2_1795377516725",
+    "tapcampus_phase3_1795377554620"
+  ],
+  "redisPrefix": "tapcampus_phase3_1795377554620",
+  "redisKeysRemoved": 145,
+  "scope": "Solo recursos temporales creados por esta auditoria; datos originales conservados por ambas verificaciones"
+}

@@ -1,5 +1,49 @@
 # Auditoría del proyecto y decisiones de producto
 
+## Usabilidad 0047 — implementación y límites — 2026-11-22
+
+[0047](../specs/0047-usabilidad-y-recogida/plan.md) registra problemas nuevos y reabre expresamente el desplazamiento nativo: el usuario lo reproduce al cambiar tabs en iPhone 14 Pro Max y 13 Pro Max/Expo Go. La evidencia auxiliar previa no demuestra su cierre. Se prioriza medir insets/frames/scroll y reproducir antes de otra corrección global.
+
+0047 implementa recogida guardada y ubicación visible en reservas/confirmación, STATIC por acordar, creación/edición/inicio por Socket.io, selector H:M, Productos, 26 categorías con seed local aditivo, logout confirmado y aviso de stock cero. Migración respaldada/restaurada/ensayada antes de aplicarse; datos anteriores conservados. [Evidencia y límites](../specs/0047-usabilidad-y-recogida/verification.md).
+
+El usuario aprueba nombre/categorías/punto reservado. Reporta iOS 27.2.1 y Expo SDK 58. El usuario confirma después «ya esta solucionado». Instrumentación y colector quedan disponibles, sin métricas comparativas por modelo ni atribución de causa. También siguen pendientes comprensión con estudiantes y recorridos móviles integrados. El usuario inicia manualmente sus servidores; no se ocupan sus puertos para estas comprobaciones.
+
+## Consistencia revisada con Impeccable y DESIGN.md — 2026-11-22
+
+La [revisión de consistencia](design/consistency-review.md) corrige etiquetas locales de tipo, GANGA, confirmación de vendido, componentes duplicados, glifos, tipografía compacta, CSS de plantilla e índice auxiliar/documentos anteriores. `npm run check:design` contrasta 51 fuentes con DESIGN.md y se ejecuta antes de npm test; contraejemplos prueban el rechazo de regresiones. Pruebas de recorridos reales en el router verifican elección única, edición con tipo del servidor y regreso a Mis ventas.
+
+Evidencia nueva: 207 pruebas/25 suites, tipos, comprobador documental y diff PASS; 157 capturas auxiliares (62 consistencia, 34 superficies, 61 adversas), sin excepciones JS ni recursos ausentes. Se reforzó el propio verificador para esperar documento/contenido activos e imágenes y comprobar la pestaña de cada ruta. Se conservaron 19 capturas seleccionadas y huellas de las fuentes. No se presenta como aceptación en teléfono ni se cierran 0040/0044 nativos o UAT; no hubo cambios a BD real.
+
+## Revisión del cierre MVP — 2026-11-22
+
+**Núcleo funcional implementado; cierre de aceptación y entrega pendiente.** La [revisión actual de 0040](../specs/0040-validacion-y-entrega-mvp/revision-mvp.md) contrasta los RF/RNF obligatorios con código y evidencia. Nueva ejecución: 292 pruebas, tipos completos, build/lint backend, check-sdd y 674 HTTP fase2/3 PASS. PostgreSQL/Redis reales, última pieza entre 50 compradores, idempotencia, carreras, reinicio y dos clientes Socket.io comprobados; hashes/recuentos de la base original conservados. No se detectaron fallos en esta ejecución.
+
+INC-0040-01 ya está corregido técnicamente en 0045; se actualizan sus referencias activas sin alterar el resultado histórico. Continúan abiertos: aceptación integrada en teléfono (incluido INC-0040-02 y desplazamiento vertical de 0044), espera real de 20 minutos, despliegue HTTPS persistente, instalable probado y UAT de docs07. RF-14 es SHOULD y no bloquea los MUST. No se marcan las casillas globales de aceptación ni se declara MVP entregado.
+
+## Seed de entrega y limpieza 0046 — 2026-11-22
+
+Doce categorías tipadas, seis cuentas ficticias, 48 publicaciones con condición/foto/inventario/ofertas y doce reservas coherentes. Ensayo PostgreSQL aislado y carga local real: segundo seed 0/0/0 y conservación comprobada por hashes de filas originales. Login/feed/fotos/lecturas de comprador/vendedor aprobados. Rutas relativas de imágenes evitan fijar una IP de desarrollo. Se retiran exports y caches locales, 14 imágenes de plantilla sin referencias y reset-project; no se retiran backups, uploads, dependencias, migraciones ni evidencia. [Manifiesto/resultados](../specs/0046-seed-entrega-y-limpieza/verification.md), [guía de entrega](11_DELIVERY_GUIDE.md).
+
+## Pasada adversa 0045 — 2026-11-22
+
+Reproduce diez fallos frontend y cuatro HTTP antes de corregir. apiMessage tolera causas incompletas y oculta errores técnicos; login distingue red/401 y edición ajena no borra validaciones. Registro normaliza nombre antes de IsNotEmpty, cerrando técnicamente INC-0040-01 mediante HTTP con servicio aislado y rechazo antes de persistencia. Errores de acciones/contacto se mantienen visibles fuera de listas; detalle distingue 404/fallo de carga y fallo parcial de reservas. Cuenta/foto conservan mensajes útiles y borradores. Sin cambios a BD real, stock, plazos ni privacidad. [Resultados 0045](../specs/0045-errores-y-datos-adversos/verification.md); los resultados históricos de 0040 conservan su fecha y no se reescriben como PASS.
+
+## Consistencia integral 0044 — 2026-11-22
+
+Petición del usuario resuelve la contradicción con la prohibición de glass: excepción únicamente para tabs, sin modificar las superficies restantes. Nueva publicación deja de repetir selección cuando recibe type; edición conserva tipo del servidor. Se centraliza la barra fuera de las pantallas y se sustituye SafeAreaView aditivo del grupo por padding explícito con scrolls sin ajustes automáticos. Ventas/Reservas adoptan el lenguaje vigente; acceso/registro comparten marca y controles. La aceptación física del contenido desplazado y glass en iPhone permanece separada. [Evidencia 0044](../specs/0044-consistencia-pantallas/verification.md).
+
+## Ejecución parcial de casos límite — 2026-11-21
+
+[Resultados 0040](../specs/0040-validacion-y-entrega-mvp/resultados-casos-limite.md): 134 pruebas frontend/102 backend, tipos/build/lint/exports, 674 HTTP fase2/3, 19 capturas auxiliares y ocho variantes Android actuales. Chequeos HTTP adicionales: 49, con un fallo funcional CL-18: registro acepta nombre de tres espacios (201, esperado 400); INC-0040-01 abierto para RF-02/0002 y T-07. Datos originales intactos durante las ejecuciones aisladas; sin cambios de código funcional.
+
+iPhone no abrió el entorno LAN/Expo Go; no hay aceptación física. Se detuvieron fixture, emulador y Metro auxiliares para volver al arranque habitual y se corrigió únicamente la IP de API en Frontend/.env ignorado. Los 43 casos no están completos: variantes, iOS, espera real de 20 min y entrega/UAT pendientes. El informe distingue prueba automatizada, web y Android; no eleva un PASS parcial a cierre de MVP.
+
+## Plan de casos límite del profesor — 2026-11-21
+
+Se incorpora a 0040 el [plan de pruebas](../specs/0040-validacion-y-entrega-mvp/casos-limite.md) solicitado: 43 casos con prioridad, precondiciones/datos/pasos, resultado esperado y recuperación; correspondencia con los nueve ejemplos del profesor y recorrido corto de 12 casos. El [registro](../specs/0040-validacion-y-entrega-mvp/registro-casos-limite.md) mantiene todas las ejecuciones pendientes, separa estabilidad de función y conserva variantes, incidencias y repruebas.
+
+Inspección de alcance/configuración: orientation portrait; GPS no incluido; timeout de cliente 15 s; DTO de nombre sin máximo de 200 letras. Se distinguen segundo plano y fin del proceso, datos confirmados y borradores no persistidos, idempotencia de reserva y creación sin esa garantía. No se cambió código, no se ejecutaron pruebas móviles ni se afirmó nueva EV de aceptación. 0040 T-02/T-03 y TASKS 6.5 continúan abiertos; despliegue, distribución y UAT mantienen su alcance.
+
 ## Ejecución técnica de 0039 y sincronización de diseño — 2026-11-21
 
 [0039](../specs/0039-contacto-live-sin-reserva/verification.md) amplía solo el detalle visible LIVE con sellerContact actual y añade contacto secundario sin reserva/UUID ni cambio de stock. STATIC conserva su flujo; feed/mine/eventos no incorporan teléfonos. Reservas autorizadas conservan teléfono/título cuando el detalle se agota/finaliza. Se mantienen permisos y buyerContact solo al vendedor relacionado mientras ACTIVE no vencida; terminal/vencida no lo exponen.
@@ -310,3 +354,14 @@ Reservas JWT/consultas/precio fijo/20 min/idempotencia, transacciones SELECT FOR
 Build/tsc/lint, 9 unitarias/1 E2E, fase 2, fase 3 y check-sdd aprobados. [0001 verification](../specs/0001-reservas/verification.md) y [phase3.json](../specs/0001-reservas/evidence/phase3.json): 311 HTTP/16 PASS; 50 claves distintas 1×201/49×409, misma clave 1×201/49×200/un ID; carreras de resolución/venta, worker detenido/reiniciado con Redis persistente, jobs perdidos/duplicados, fin/ganga/dos clientes/reconexión+REST. Aceleración solo de timestamps de fixtures, plazo de producción fijo.
 
 3.1–3.6 y 6.1 completos con AC→T→EV. Móvil/Linking/UAT siguen pendientes; sin bloqueo backend local, MVP completo no declarado. Incidencias de verificador (Queue.client ausente, pg UTC e imagen tras nuevo puerto) corregidas antes del ensayo final. Advertencias engines CLI Node 24.13 sin fallar. Se retomó convergencia tras interrupción del turno; phase3.json confirmó PASS.
+
+## Explorar 0041 (2026-11-21)
+DESIGN.md y refs sustituyen la composición de Explorar 0031: crema, fuentes Inter/Bricolage, GANGA, tipos y navegación sólida. docs/04 y 05 registran precedencia. Condición Nuevo/Usado ausente del contrato: etiqueta omitida, sin inventar dato. Categorías actuales por tipo conservadas. Evidencia técnica/visual auxiliar en 0041; no cierra hardware/UAT.
+
+## Condición y salto entre pestañas (2026-11-21)
+0042 sustituye la exclusión de condición de 0041: NEW/USED persiste en STATIC; históricos null hasta elección explícita. Migración local ensayada en copia restaurada y aplicada sin cambios a datos anteriores; [evidencia](../specs/0042-condicion-articulo/verification.md).
+
+Corrección directa, sin plan nuevo por instrucción del usuario: el área segura superior pasa del MarketplaceShell de cada pantalla a MarketplaceViewport persistente alrededor de Tabs. Navegación inferior consume insets del mismo contenedor, sin recalcular el desplazamiento desde cada screen nativo. Test con insets locales 0/47 y cambios de pantalla mantiene padding superior sin duplicar y pie 34; siete cambios web mantienen coordenada superior. [0041 EV-04](../specs/0041-explorar-campus/verification.md). Confirmación física iPhone separada.
+
+## Filtros, detalles y cuenta 0043
+DESIGN.md/refs sustituyen composiciones anteriores de estas superficies; 147 pruebas, tipos, exports y 34 capturas auxiliares PASS. Sin migración/backend nuevo. Conteos de publicaciones por facetas, nunca vendedores inventados; LIVE deriva de reglas visuales sin captura separada. Reportar excluido hasta implementar 0009; ubicación y condición solo con dato real. Conserva reserva/idempotencia, contacto y edición. [Evidencia](../specs/0043-filtros-detalles-cuenta/verification.md), aceptación física aparte.

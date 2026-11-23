@@ -1,0 +1,220 @@
+{
+  "date": "2026-11-23T00:59:42.658Z",
+  "node": "v24.13.0",
+  "databases": [
+    "tapcampus_verify_1795395582658_empty",
+    "tapcampus_verify_1795395582658_legacy",
+    "tapcampus_verify_1795395582658_restore",
+    "tapcampus_verify_1795395582658_recovered",
+    "tapcampus_verify_1795395582658_modern"
+  ],
+  "checks": [
+    {
+      "name": "AC-02: ruta vacía, validate/status/diff sin divergencia",
+      "result": "PASS"
+    },
+    {
+      "name": "restauración legacy: filas y hashes idénticos",
+      "result": "PASS"
+    },
+    {
+      "name": "AC-04: precio sin evidencia bloquea ambas rutas sin escritura",
+      "result": "PASS"
+    },
+    {
+      "name": "restauración recovery: filas y hashes idénticos",
+      "result": "PASS"
+    },
+    {
+      "name": "AC-04: 2 usuarios, 2 publicaciones, 2 reservas y 1 reporte preservados; archivo y mapa de claves íntegros",
+      "result": "PASS"
+    },
+    {
+      "name": "AC-05: seed doble vacío/poblado, gate sin remapeo y referencias válidas",
+      "result": "PASS"
+    },
+    {
+      "name": "AC-03: CHECK, NOT NULL, Decimal(10,2), UUID y unicidad por comprador/clave",
+      "result": "PASS",
+      "columns": [
+        {
+          "column_name": "idempotency_key",
+          "data_type": "uuid",
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "is_nullable": "NO"
+        },
+        {
+          "column_name": "unit_price",
+          "data_type": "numeric",
+          "numeric_precision": 10,
+          "numeric_scale": 2,
+          "is_nullable": "NO"
+        }
+      ]
+    },
+    {
+      "name": "AC-04: gate y backfill moderno con procedencia, precio actual 99 descartado",
+      "result": "PASS"
+    },
+    {
+      "name": "AC-01 / 0002 backend: PORT, arranque Prisma, validación, CORS, registro, hash, UUID, login y duplicados",
+      "result": "PASS"
+    },
+    {
+      "name": "base original sin cambios durante todas las pruebas aisladas",
+      "result": "PASS"
+    }
+  ],
+  "original": {
+    "server": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "tables": {
+      "_prisma_migrations": {
+        "count": 7,
+        "sha256": "c67d8dbea7a4c75eaac1d94d76c85e81cd74cb31b4400a8bc18f1c63311116a4"
+      },
+      "categories": {
+        "count": 26,
+        "sha256": "b9171a4ed48fd5957514dca4e35510f38879b46accbdde52643e5cdf77e014ce"
+      },
+      "publications": {
+        "count": 142,
+        "sha256": "a4ec64e6046f50e81197bb9dee6d1f975bb6bea2ea953cc9da531101f093c7e0"
+      },
+      "reports": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "reservations": {
+        "count": 52,
+        "sha256": "36482d3d55f30c5d947f72f8e5111409a7759589ac17f0753fe2db1d3bbf522c"
+      },
+      "users": {
+        "count": 14,
+        "sha256": "2c58934882e624b01e55a019aafafdeeac5a9d9d174e06a7286003c56a2db908"
+      },
+      "zones": {
+        "count": 5,
+        "sha256": "0e1bf4a003ab0d84646a5a7890957834abfb0f4b191de9107f23533f0c77db0b"
+      }
+    },
+    "migrations": [
+      {
+        "migration_name": "20260910011413_init",
+        "checksum": "16ee3b69d4308e94c3674e1f2ea92cc192fcffde9a987c359187051e1f206600",
+        "finished_at": "2026-09-29T23:23:12.287Z",
+        "rolled_back_at": null
+      },
+      {
+        "migration_name": "20260910012517_fix_estado_reserva",
+        "checksum": "620fcdf7a1f135bbe6ff7506d9b64d5f016fc601a3e0a20623505fdb6843483b",
+        "finished_at": "2026-09-29T23:23:12.319Z",
+        "rolled_back_at": null
+      },
+      {
+        "migration_name": "20260929232323_sdd_architecture",
+        "checksum": "2977e6881bf2e3195ec331af016432c7a4579b402920520ccca270c6a9398824",
+        "finished_at": "2026-09-29T23:23:23.267Z",
+        "rolled_back_at": null
+      },
+      {
+        "migration_name": "20261005000100_reservation_integrity",
+        "checksum": "8019324d7ffa64af48cf5f20a9cf5f00650a86239a815cd9c534a49c352fcf1a",
+        "finished_at": "2026-10-05T00:19:20.583Z",
+        "rolled_back_at": null
+      },
+      {
+        "migration_name": "20261104010000_add_price_before_ganga",
+        "checksum": "4e4e91ba59901e7a52aec7c3680d999bf5d74c866909d0af5a74784219262c18",
+        "finished_at": "2026-11-05T01:56:06.410Z",
+        "rolled_back_at": null
+      },
+      {
+        "migration_name": "20261122010000_product_condition",
+        "checksum": "a9bed0a8d3504aee2ef9f1b4dd1cc0c8bc570cfc38062c82da3d08bd4bf6a9ea",
+        "finished_at": "2026-11-22T06:03:43.455Z",
+        "rolled_back_at": null
+      },
+      {
+        "migration_name": "20261122010000_pickup_and_availability",
+        "checksum": "2463da7b64b9f96c9df0a9c12b831e592016e646331c1d9266912ec553ebfc99",
+        "finished_at": "2026-11-23T00:23:21.450Z",
+        "rolled_back_at": null
+      }
+    ],
+    "constraints": [
+      {
+        "conname": "_prisma_migrations_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "conname": "categories_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "conname": "publications_category_id_fkey",
+        "definition": "FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+      },
+      {
+        "conname": "publications_condition_static_only",
+        "definition": "CHECK (((type = 'STATIC'::\"PublicationType\") OR (condition IS NULL)))"
+      },
+      {
+        "conname": "publications_current_stock_nonnegative",
+        "definition": "CHECK (((current_stock IS NULL) OR (current_stock >= 0)))"
+      },
+      {
+        "conname": "publications_pickup_location_check",
+        "definition": "CHECK ((((pickup_mode = 'SPECIFIC_ZONE'::\"PickupMode\") AND (zone_id IS NOT NULL)) OR ((type = 'STATIC'::\"PublicationType\") AND (pickup_mode = 'ARRANGED'::\"PickupMode\") AND (zone_id IS NULL))))"
+      },
+      {
+        "conname": "publications_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "conname": "publications_seller_id_fkey",
+        "definition": "FOREIGN KEY (seller_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+      },
+      {
+        "conname": "publications_zone_id_fkey",
+        "definition": "FOREIGN KEY (zone_id) REFERENCES zones(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+      },
+      {
+        "conname": "reports_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "conname": "reports_publication_id_fkey",
+        "definition": "FOREIGN KEY (publication_id) REFERENCES publications(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+      },
+      {
+        "conname": "reports_reporter_id_fkey",
+        "definition": "FOREIGN KEY (reporter_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+      },
+      {
+        "conname": "reservations_buyer_id_fkey",
+        "definition": "FOREIGN KEY (buyer_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+      },
+      {
+        "conname": "reservations_pickup_snapshot_check",
+        "definition": "CHECK ((((pickup_zone_id IS NULL) AND (pickup_zone_name IS NULL)) OR ((pickup_zone_id IS NOT NULL) AND (pickup_zone_name IS NOT NULL))))"
+      },
+      {
+        "conname": "reservations_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "conname": "reservations_publication_id_fkey",
+        "definition": "FOREIGN KEY (publication_id) REFERENCES publications(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+      },
+      {
+        "conname": "users_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "conname": "zones_pkey",
+        "definition": "PRIMARY KEY (id)"
+      }
+    ]
+  }
+}

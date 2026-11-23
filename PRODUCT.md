@@ -27,7 +27,7 @@ App React Native/Expo para iOS y Android, con controles de fecha y comportamient
 - Mi cuenta permite editar nombre completo y teléfono mexicano propios (0033); correo institucional de solo lectura. El contacto actualizado se usa en siguientes lecturas autorizadas de publicaciones/reservas existentes.
 
 - Registro con nombre, correo institucional @uabc.edu.mx, teléfono mexicano y contraseña. Sesión persistente y rutas protegidas.
-- Explorar disponibles ahora y catálogo; búsqueda por título/descripción combinada con filtros de tipo, zona y categoría (0025). Sin GPS ni pagos digitales.
+- Explorar «Ahora en el campus» y «Anuncios»; Vender, filtros, detalle y Mis ventas usan el vocabulario de DESIGN.md y publication-copy.ts. Búsqueda por título/descripción combinada con filtros de tipo, zona y categoría. Sin GPS ni pagos digitales.
 - Contacto 0039 implementado técnicamente: detalle visible LIVE/STATIC permite consulta previa; reserva confirmada conserva contacto aunque desaparezca el detalle. Feed/mine/eventos sin teléfonos y comprador protegido. Varias reservas por comprador, cada una con precio/plazo propio e idempotencia en reintentos. Apertura/retorno en dispositivo pendientes de aceptación.
 - Vendedor: crear/editar, descontar venta física, configurar/activar ganga, finalizar y confirmar entregas. Finalizar no elimina apartados vigentes.
 - Creación/edición LIVE/STATIC aplica filtro de contenido v1 del servidor (0038); errores visibles por campo y reintentos conservan borrador y foto (0034). Verificado técnicamente, aceptación nativa pendiente.
@@ -36,7 +36,7 @@ App React Native/Expo para iOS y Android, con controles de fecha y comportamient
 
 ## Brand Commitments
 
-Conservar TapCampus, verde UABC e Inter local. El usuario autoriza en 0031 adaptar el estilo de su referencia Oakory: fondo casi blanco, tarjetas fotográficas, buscador/filtros redondeados y navegación sencilla. Sustituye fondo beige y filas horizontales de 0020; conserva encabezados compactos y componentes compartidos. Sin carrito, favoritos ni calificaciones. La autoridad visual vigente está en docs/04_UI_UX_GUIDELINES.md, DESIGN.md y specs/0031-estilo-marketplace; los prototipos anteriores son evidencia histórica de flujos.
+Conservar TapCampus, verde UABC, fondo crema e Inter local; Bricolage se reserva a marca, precios y reloj. DESIGN.md es la autoridad visual vigente y prevalece sobre skills y versiones históricas. Fotografías reales, superficies planas y navegación persistente; liquid glass exclusivamente en tabs compatibles. Sin carrito, favoritos ni calificaciones. Las referencias de 0031 y los prototipos anteriores conservan su fecha y no sustituyen el diseño vigente. npm run check:design y las pruebas de recorridos contrastan las fuentes con este sistema.
 
 ## Evidence on Hand
 

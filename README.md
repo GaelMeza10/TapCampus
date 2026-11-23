@@ -1,5 +1,7 @@
 # TapCampus
 
+**Preparación de la entrega:** [instalación, seed, accesos y recorrido](docs/11_DELIVERY_GUIDE.md). Desde Backend, `npm run db:seed:delivery` añade seis cuentas ficticias, 48 publicaciones y doce reservas sobre doce categorías, conservando datos anteriores. Los accesos se guardan en Backend/.local/demo-access.json. [Verificación y limpieza 0046](specs/0046-seed-entrega-y-limpieza/verification.md).
+
 Aplicación móvil universitaria que conecta vendedores y compradores dentro del campus en tiempo real. Permite publicar productos con stock en vivo, temporizador de disponibilidad y un sistema de reservas temporales, eliminando la dependencia de grupos de WhatsApp o redes sociales para coordinar ventas entre estudiantes.
 
 ---
@@ -116,7 +118,7 @@ El contrato detallado y los nombres físicos vigentes están en [arquitectura](d
 
 - `User`: UUID, `email` institucional, `password_hash`, `name`, `phone` e `is_moderator`. Una persona puede comprar y vender.
 - `Publication`: `LIVE` o `STATIC`; pertenece a un vendedor, zona y categoría. `LIVE` añade horario, stock disponible y configuración de ganga. `ACTIVE` y `FINISHED` controlan su visibilidad; «Vendido» de una `STATIC` se guarda como `FINISHED`.
-- `Reservation`: vincula comprador con publicación `LIVE` y pasa de `ACTIVE` a `COMPLETED`, `CANCELLED` o `EXPIRED`. Las unidades reservadas se representan mediante reservas activas y el stock disponible; el esquema actual no tiene `stock_reservado` ni los campos de precio fijado y clave de idempotencia planificados para la implementación.
+- `Reservation`: vincula comprador con publicación `LIVE` y pasa de `ACTIVE` a `COMPLETED`, `CANCELLED` o `EXPIRED`. Conserva `unit_price` y `idempotency_key`; las unidades reservadas se representan mediante reservas activas y stock disponible, sin columna `stock_reservado`.
 - `Zone` y `Category`: catálogos de zonas y categorías separadas por tipo de publicación.
 - `Report`: vincula denunciante y publicación para moderación SHOULD; antes de usarla se requiere unicidad por par de IDs.
 

@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-23T01:08:45.287Z",
+  "result": "PASS technical / native user confirmation; formal UAT pending",
+  "unitTests": {
+    "date": "2026-11-23T01:04:46.632Z",
+    "frontend": {
+      "success": true,
+      "tests": 221,
+      "suites": 27
+    },
+    "backend": {
+      "success": true,
+      "tests": 114,
+      "suites": 13
+    }
+  },
+  "visual": {
+    "reports": {
+      "consistency": {
+        "captures": 62,
+        "result": "PASS"
+      },
+      "surfaces": {
+        "captures": 34,
+        "result": "PASS"
+      },
+      "adverse-result": {
+        "captures": 61,
+        "result": "PASS"
+      },
+      "usability": {
+        "captures": 24,
+        "result": "PASS"
+      }
+    },
+    "total": 181,
+    "scope": "Auxiliary web; no simulator or physical metrics"
+  },
+  "http": {
+    "phase2": 288,
+    "phase3": 386,
+    "usability": 63
+  },
+  "checks": {
+    "types": "PASS",
+    "build": "PASS",
+    "lint": "PASS",
+    "design": "PASS",
+    "sdd": "PASS",
+    "diff": "PASS",
+    "iosAndroidExports": "PASS"
+  },
+  "bundleSha256": "46108e5e86d303c2dcc2d3e1ce1aaf4563f9854ac089ab233bad7d124082c2f5",
+  "native": {
+    "userConfirmedResolved": true,
+    "exactWords": "ya esta solucionado, ahora centrate en lo importante porque me quedan pocos tokens",
+    "measuredFrames": false,
+    "modelsSeparatelyVerified": false
+  },
+  "servers": {
+    "startup": "Manual by user; agent development processes stopped"
+  },
+  "files": {
+    "DESIGN.md": "655fb51679d9a330ef859dc5ee2e6bdac25f120d31bc6e2b095ea36e3b10dae0",
+    "Backend/prisma/schema.prisma": "402a972f596086801e23d768e53b09bbc5177b820820534dcd094e5636b5f14c",
+    "Frontend/src/components/pickup-location.tsx": "0a81f12602d4ec5b2022dc26efc227376650e23158af5fd727bae4b29861d6eb",
+    "Frontend/src/components/offer-duration.ios.tsx": "b76a24cce680a26ac2d5758a7cef19f54bd75aca40e6168ad4d6ae402f253294",
+    "Frontend/src/components/marketplace-shell.tsx": "21d7e51d5d145390c91ad1a3bef81aad5ff7cd22bcda31803410442fae84c4c5",
+    "Frontend/src/hooks/use-marketplace-sync.ts": "0b180f0bb279376a0fa044db0afb213fa72219925224af8276f7ce4f4b46d0a0",
+    "Backend/src/publications/publications.service.ts": "8021d1a1cf426f64078e43455244a4413907f420d8678adbe6b9c0e79a071499",
+    "Backend/src/reservations/reservations.service.ts": "cf435e85ec0457fd89b64a8114ac8b478251359fd64ad3f0227e1cc534b950a9"
+  }
+}

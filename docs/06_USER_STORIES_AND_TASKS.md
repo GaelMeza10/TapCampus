@@ -16,6 +16,7 @@ Ampliación aprobada 0033 de US-02 y US-09: editar nombre completo/teléfono pro
     *   *Tarea Backend:* Crear endpoint `POST /publications`, validar fechas de inicio/fin y stock.
     *   *Tarea Frontend:* Crear modal/pantalla de creación de publicación.
 *   **US-04 (Catálogo Estático):** *Como vendedor, quiero publicar artículos escolares sin límite de tiempo para que permanezcan en un catálogo hasta que los venda.*
+    *   *Condición (0042):* Indicar Nuevo/Usado al publicar y poder corregirlo al editar. US-11 muestra ese dato al comprador sin inferirlo para anuncios históricos.
     *   *Tarea Backend:* Crear publicación `STATIC` y transición a `FINISHED` cuando su vendedor la marque «Vendida».
     *   *Tarea Frontend:* Mostrar detalle sin temporizador ni reserva y acción «Marcar como vendida» al propietario.
 *   **US-05 (Precio de oferta):** *Como vendedor, quiero activar un "precio de oferta" al final de mi turno para rematar el inventario sobrante rápidamente.*

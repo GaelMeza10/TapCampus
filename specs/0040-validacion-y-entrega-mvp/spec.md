@@ -1,6 +1,6 @@
 # 0040 — Validación integrada y entrega del MVP
 
-Estado: Planificado | Fecha: 2026-11-21
+Estado: Regresión técnica aprobada; aceptación física, distribución y UAT pendientes | Revisión: 2026-11-22
 
 ## Contexto y fuentes
 
@@ -8,7 +8,11 @@ RF-01, RF-02, RF-03, RF-04, RF-05, RF-05b, RF-05c, RF-06, RF-07, RF-08, RF-09, R
 
 ## Alcance
 
+Incidente INC-0040-02 (AC-02, formulario LIVE): en iPhone con Expo Go, Inicio/Fin abre un rectángulo gris y el selector aparece mal al tocarlo. Se requiere mostrar las ruedas de fecha/hora completas al abrir, conservar el resumen y guardar solo al pulsar «Guardar horario»; cerrar descarta la selección provisional. La corrección comprende también edición y no cambia las reglas de horarios ni los diálogos Android.
+
 Incluye regresión integrada, recorridos nativos de ambos roles, resiliencia real, preparación de infraestructura/instalador y UAT definido por docs07. No introduce nuevas funcionalidades, moderación SHOULD, reputación, push, pagos, GPS o panel. Distingue cuatro resultados: técnico, móvil, distribución y UAT; aprobar uno no aprueba los restantes.
+
+Complemento 2026-11-21 solicitado por el alumno según instrucciones del profesor: [plan de casos límite](casos-limite.md) con 43 casos, recorrido corto y [registro de resultados](registro-casos-limite.md). Se evalúan estabilidad/recuperación y función/integridad por separado; esta incorporación es planificación y no acredita ejecuciones ni cambia límites de producto.
 
 ## Puertas y reglas
 
@@ -28,6 +32,8 @@ Incluye regresión integrada, recorridos nativos de ambos roles, resiliencia rea
 
 ### AC-02 — Recorridos móviles de ambos roles
 **Dado** cuentas y servicios reales de prueba, **cuando** se registran/acceden, publican/editan LIVE/STATIC con foto, filtran, consultan/reservan/cancelan/entregan y cierran, **entonces** permisos, formularios, avisos y reservas previas funcionan en los dispositivos identificados.
+
+El recorrido incluye los casos aplicables de casos-limite.md: red interrumpida, entradas vacías/inválidas/largas, pulsaciones repetidas, permisos, giro, segundo plano/reinicio, vacíos y recuperación. Registrar cierre inesperado, congelamiento o pantalla roja como fallo de estabilidad aunque otras comprobaciones aprueben. Se conserva por separado cualquier defecto funcional con fallo controlado.
 
 ### AC-03 — Concurrencia, ofertas y resiliencia
 **Dado** última pieza, cambios de oferta y desconexión/reinicio del worker aislado, **cuando** compiten solicitudes y se recuperan servicios, **entonces** no hay doble descuento/liberación, el plazo es de servidor, no se activa programación retirada y ambos clientes se resincronizan.

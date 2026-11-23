@@ -1,0 +1,12 @@
+{
+  "Backend": {
+    "passed": 114,
+    "suites": 13,
+    "failed": 0
+  },
+  "Frontend": {
+    "passed": 178,
+    "suites": 22,
+    "failed": 0
+  }
+}
