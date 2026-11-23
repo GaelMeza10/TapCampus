@@ -17,6 +17,42 @@ const base = { publicationId: 'p1', publicationTitle: 'Burrito', unitPrice: '30.
 
 beforeEach(() => { jest.clearAllMocks(); });
 
+test('0047 ubicación guardada y vendedor se leen sin consultar el detalle público', async () => {
+  (myReservations as jest.Mock).mockResolvedValue([{ ...base, id: 'pickup', status: 'ACTIVE', sellerName: 'Ana López', pickupLocation: { zoneId: 1, name: 'Cafetería Central', source: 'SNAPSHOT' } }]);
+  const view = await render(<MyReservations />);
+  expect(await view.findByText('Ubicación: Cafetería Central')).toBeTruthy();
+  expect(view.getByText('Vendedor: Ana López')).toBeTruthy();
+});
+test('0047 histórico diferencia ubicación de referencia sin inventar el punto original', async () => {
+  (myReservations as jest.Mock).mockResolvedValue([{ ...base, id: 'legacy', status: 'ACTIVE', pickupLocation: { zoneId: 1, name: 'Biblioteca Central', source: 'LEGACY_CURRENT' } }]);
+  const view = await render(<MyReservations />);
+  expect(await view.findByText('Ubicación de referencia: Biblioteca Central')).toBeTruthy();
+  expect(view.getByText(/Esta reserva no guardó el punto original/)).toBeTruthy();
+});
+
+test('cancelación fallida conserva el apartado y error persistente sin repetir la acción', async () => {
+  (myReservations as jest.Mock).mockResolvedValue([{ ...base, id: 'r1', status: 'ACTIVE' }]);
+  (cancelReservation as jest.Mock).mockRejectedValueOnce(new Error('offline'));
+  const view = await render(<MyReservations />);
+  await view.findByText('Burrito');
+  await fireEvent.press(view.getByRole('button', { name: /Cancelar Burrito/ }));
+  await fireEvent.press(view.getByText('Sí, cancelar reserva'));
+  expect(await view.findByTestId('persistent-error')).toBeTruthy();
+  expect(view.getByText('Error de red')).toBeTruthy();
+  expect(view.getByText('Activa')).toBeTruthy();
+  expect(cancelReservation).toHaveBeenCalledTimes(1);
+});
+
+test('una reserva a menos de cinco minutos muestra urgencia sin cambiar precio ni acciones', async () => {
+  (myReservations as jest.Mock).mockResolvedValue([{ ...base, id: 'urgent', status: 'ACTIVE', expiresAt: new Date(Date.now() + 120000).toISOString(), sellerContact: { phone: '+526641234567' } }]);
+  const view = await render(<MyReservations />);
+  expect(await view.findByText('Por vencer')).toBeTruthy();
+  expect(view.getByLabelText('Precio reservado: $30')).toBeTruthy();
+  expect(view.getByRole('button', { name: /Cancelar Burrito/ })).toBeTruthy();
+  expect(view.getByRole('button', { name: /Contactar por WhatsApp sobre Burrito/ })).toBeTruthy();
+  expect(cancelReservation).not.toHaveBeenCalled();
+});
+
 test('comprador distingue dos reservas del mismo segundo y cancela solo la elegida', async () => {
   const first = { ...base, id: 'r1', status: 'ACTIVE' };
   const second = { ...base, id: 'r2', status: 'ACTIVE' };

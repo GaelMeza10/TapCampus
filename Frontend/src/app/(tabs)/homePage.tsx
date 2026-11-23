@@ -12,25 +12,25 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { COLORS, METRICS, RADIUS, SPACE } from '@/theme';
-import PublisherCard from '@/components/Publisher_Card';
-import PublicationPhoto from '@/components/publication-photo';
-import PublicationPrice from '@/components/publication-price';
+import { CampusHeader, ExploreChips, ExploreCard, ExploreSkeleton, ActiveReservationBanner } from '@/components/explore-ui';
 import AppText from '@/components/app-text';
 import PrimaryButton from '@/components/PrimaryButton';
 import CustomInput from '@/components/CustomInput';
-import OptionGrid from '@/components/option-grid';
+import FilterSheet from '@/components/filter-sheet';
 import { DataState, InlineMessage, Sheet } from '@/components/feedback';
 import {
   MarketplaceShell,
-  PageHeader,
-  PublishButton,
+  MARKETPLACE_SCROLL_PROPS,
   TypeSelector,
 } from '@/components/marketplace-shell';
 import { useMarketplaceSync } from '@/hooks/use-marketplace-sync';
 import { useClock } from '@/hooks/use-clock';
+import { PUBLICATION_COPY } from '@/lib/publication-copy';
 import {
   apiMessage,
   categories,
+  myReservations,
+  type Reservation,
   listPublications,
   zones,
   type Category,
@@ -39,7 +39,7 @@ import {
   type Zone,
 } from '@/services/marketplace';
 
-type Filters = { zoneId?: number; categoryId?: number };
+type Filters = { zoneId?: number; categoryId?: number; pickupMode?: 'ARRANGED' };
 export default function HomePage() {
   const router = useRouter();
   const { width, fontScale } = useWindowDimensions();
@@ -53,10 +53,15 @@ export default function HomePage() {
             Math.floor((width - SPACE.page * 2 + SPACE.md) / (METRICS.gridMinWidth + SPACE.md)),
           ),
         );
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [reservationError, setReservationError] = useState('');
+  const reservationGeneration = useRef(0);
+  const [showPublish, setShowPublish] = useState(false);
   const [type, setType] = useState<PublicationType>('LIVE');
   const [searchText, setSearchText] = useState('');
   const [query, setQuery] = useState('');
   const searchRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const filterTrigger = useRef<ComponentRef<typeof Pressable>>(null);
   const [filters, setFilters] = useState<Filters>({});
   const [draft, setDraft] = useState<Filters>({});
   const [showFilters, setShowFilters] = useState(false);
@@ -65,10 +70,18 @@ export default function HomePage() {
   const [catalogError, setCatalogError] = useState('');
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [catalogAttempt, setCatalogAttempt] = useState(0);
+  const catalogFocused = useRef(false);
+  const catalogType = useRef(type);
   const [items, setItems] = useState<Publication[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [depletedNotice, setDepletedNotice] = useState('');
+  useEffect(() => {
+    if (!depletedNotice) return;
+    const timer = setTimeout(() => setDepletedNotice(''), 6000);
+    return () => clearTimeout(timer);
+  }, [depletedNotice]);
   const generation = useRef(0);
   const observedEnds = useRef(new Set<string>());
   const now = useClock();
@@ -80,12 +93,8 @@ export default function HomePage() {
       if (initial) setLoading(true);
       else setRefreshing(true);
       try {
-        const rows = await listPublications(
-          type,
-          filters.zoneId,
-          filters.categoryId,
-          query || undefined,
-        );
+        const args = [type, filters.zoneId, filters.categoryId, query || undefined] as const;
+        const rows = filters.pickupMode ? await listPublications(...args, filters.pickupMode) : await listPublications(...args);
         if (request === generation.current) {
           setItems(rows);
           setError('');
@@ -99,7 +108,7 @@ export default function HomePage() {
         }
       }
     },
-    [type, filters.zoneId, filters.categoryId, query],
+    [type, filters.zoneId, filters.categoryId, filters.pickupMode, query],
   );
 
   const applySearch = useCallback(
@@ -135,7 +144,27 @@ export default function HomePage() {
 
   // Stock, cierre y oferta disparan una consulta del feed con los filtros actuales.
   // false deja la carga inicial al efecto anterior; connect también vuelve a consultar.
-  useMarketplaceSync(refresh, false);
+  const refreshReservations = useCallback(async () => {
+    const request = ++reservationGeneration.current;
+    try {
+      const rows = await myReservations();
+      if (request === reservationGeneration.current) { setReservations(rows); setReservationError(''); }
+    } catch {
+      if (request === reservationGeneration.current) setReservationError('No se pudieron actualizar tus reservas.');
+    }
+  }, []);
+  useEffect(() => { void refreshReservations(); return () => { reservationGeneration.current++; }; }, [refreshReservations]);
+  const syncAll = useCallback(async () => { await Promise.all([refresh(), refreshReservations()]); }, [refresh, refreshReservations]);
+  useMarketplaceSync(syncAll, false, id => {
+    const product = items.find(item => item.id === id);
+    if (product) {
+      setItems(previous => previous.filter(item => item.id !== id));
+      setDepletedNotice(`${product.title}: sin unidades disponibles. Tus reservas conservan su plazo.`);
+    }
+  }, () => {
+    if (catalogFocused.current) setCatalogAttempt(value => value + 1);
+    catalogFocused.current = true;
+  });
 
   // El reloj detecta horarios vencidos y reconsulta sin esperar el evento del socket.
   useEffect(() => {
@@ -153,7 +182,7 @@ export default function HomePage() {
   useEffect(() => {
     let current = true;
     setCatalogLoading(true);
-    setCategoryOptions([]);
+    if (catalogType.current !== type) { setCategoryOptions([]); catalogType.current = type; }
     setCatalogError('');
     void Promise.all([zones(), categories(type)])
       .then(([z, c]) => {
@@ -184,7 +213,7 @@ export default function HomePage() {
   }
 
   function apply(next: Filters) {
-    if (next.zoneId !== filters.zoneId || next.categoryId !== filters.categoryId) {
+    if (next.zoneId !== filters.zoneId || next.categoryId !== filters.categoryId || next.pickupMode !== filters.pickupMode) {
       generation.current++;
       setItems([]);
       setLoading(true);
@@ -193,10 +222,10 @@ export default function HomePage() {
     setShowFilters(false);
   }
 
-  const zoneName = zoneOptions.find(z => z.id === filters.zoneId)?.name ?? 'Todas las zonas';
+  const zoneName = filters.pickupMode === 'ARRANGED' ? 'Entrega por acordar' : zoneOptions.find(z => z.id === filters.zoneId)?.name ?? 'Todas las zonas';
   const categoryName =
     categoryOptions.find(c => c.id === filters.categoryId)?.name ?? 'Todas las categorías';
-  const title = type === 'LIVE' ? 'Disponibles ahora' : 'Catálogo';
+  const title = PUBLICATION_COPY[type].label;
   const searchChanging = searchText.trim().replace(/\s+/g, ' ') !== query;
   const visibleItems = searchChanging
     ? []
@@ -205,10 +234,11 @@ export default function HomePage() {
           p.type !== 'LIVE' ||
           ((!p.end_time || new Date(p.end_time).getTime() > now) && (p.current_stock ?? 0) > 0),
       );
-  const featured =
-    !query && !searchChanging && !filters.zoneId && !filters.categoryId && !loading && !error
-      ? visibleItems.find(item => !!item.image_url)
-      : undefined;
+  const featured = type === 'LIVE' && !searchChanging && !loading && !error
+    ? visibleItems.find(item => item.is_ganga_active)
+    : undefined;
+  const activeReservation = reservations.filter(r => r.status === 'ACTIVE' && new Date(r.expiresAt).getTime() > now)
+    .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime())[0];
 
   function openPublication(item: Publication) {
     router.push({ pathname: '/publication/[id]', params: { id: item.id } });
@@ -217,17 +247,19 @@ export default function HomePage() {
   return (
     <MarketplaceShell active="explore">
       <FlatList
+        {...MARKETPLACE_SCROLL_PROPS}
+        maintainVisibleContentPosition={{ minIndexForVisible: 1, autoscrollToTopThreshold: SPACE.page }}
         key={columns}
         numColumns={columns}
         columnWrapperStyle={columns > 1 ? styles.columns : undefined}
-        data={visibleItems}
+        data={visibleItems.filter(item => item.id !== featured?.id)}
         keyExtractor={item => item.id}
         extraData={now}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         renderItem={({ item }) => (
-          <View style={[styles.cell, { width: `${100 / columns}%` }]}>
-            <PublisherCard
+          <View style={[styles.cell, columns === 1 ? styles.singleCell : { maxWidth: `${100 / columns}%` }]}>
+            <ExploreCard
               item={item}
               zoneName={zoneOptions.find(z => z.id === item.zone_id)?.name}
               now={now}
@@ -237,14 +269,13 @@ export default function HomePage() {
         )}
         contentContainerStyle={styles.list}
         refreshing={refreshing && !loading}
-        onRefresh={() => void refresh()}
+        onRefresh={() => void syncAll()}
         ListHeaderComponent={
           <View style={styles.listHeader}>
-            <PageHeader
-              title="TapCampus"
-              brand
-              contained
-            />
+            <CampusHeader />
+            <View style={styles.headerContent}>
+            {activeReservation ? <ActiveReservationBanner item={activeReservation} now={now} onPress={() => router.navigate('/reservations')} /> : null}
+            {reservationError ? <InlineMessage onRetry={() => void refreshReservations()}>{reservationError}</InlineMessage> : null}
             <View style={styles.controls}>
               <View style={styles.searchRow}>
                 <View style={styles.searchField}>
@@ -287,6 +318,7 @@ export default function HomePage() {
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel={`Filtros. ${zoneName}. ${categoryName}`}
+                  ref={filterTrigger}
                   accessibilityState={{ expanded: showFilters }}
                   onPress={() => {
                     setDraft(filters);
@@ -294,7 +326,7 @@ export default function HomePage() {
                   }}
                   style={({ pressed }) => [
                     styles.filter,
-                    (!!filters.zoneId || !!filters.categoryId) && styles.filterActive,
+                    (!!filters.zoneId || !!filters.categoryId || !!filters.pickupMode) && styles.filterActive,
                     pressed && styles.pressed,
                   ]}
                 >
@@ -310,85 +342,32 @@ export default function HomePage() {
                 value={type}
                 onChange={changeType}
               />
-              {filters.zoneId || filters.categoryId ? (
-                <View style={styles.summary}>
-                  <AppText
-                    variant="caption"
-                    style={styles.summaryText}
-                  >
-                    {zoneName}
-                  </AppText>
-                  <AppText
-                    variant="caption"
-                    style={styles.summaryText}
-                  >
-                    {categoryName}
-                  </AppText>
-                </View>
-              ) : null}
+              <AppText variant="caption">{type === 'LIVE' ? 'Vendedores que están en el campus, con horario y lugar.' : 'Artículos publicados. Contacta al vendedor por WhatsApp.'}</AppText>
+              {catalogError ? <InlineMessage onRetry={() => setCatalogAttempt(n => n + 1)}>{catalogError}</InlineMessage> : null}
+              <ExploreChips options={type === 'LIVE' ? zoneOptions : categoryOptions} value={type === 'LIVE' ? filters.zoneId : filters.categoryId} allLabel={type === 'LIVE' ? 'Todas las zonas' : 'Todo'} onChange={id => apply({ ...filters, ...(type === 'LIVE' ? { zoneId: id } : { categoryId: id }) })} />
             </View>
-            {featured ? (
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={`Descubrir ${featured.title}`}
-                onPress={() => openPublication(featured)}
-                style={({ pressed }) => [
-                  styles.featured,
-                  featured.is_ganga_active && styles.featuredOffer,
-                  pressed && styles.pressed,
-                ]}
-              >
-                <View style={styles.featuredBody}>
-                  <AppText variant="heading">{featured.title}</AppText>
-                  <PublicationPrice
-                    item={featured}
-                    compact
-                  />
-                  <View style={styles.featuredAction}>
-                    <AppText
-                      variant="label"
-                      style={styles.featuredLink}
-                    >
-                      Ver publicación
-                    </AppText>
-                    <Ionicons
-                      name="arrow-forward"
-                      size={18}
-                      color={COLORS.primary}
-                      accessible={false}
-                    />
-                  </View>
-                </View>
-                <PublicationPhoto
-                  uri={featured.image_url}
-                  title={featured.title}
-                  style={styles.featuredPhoto}
-                />
-              </Pressable>
-            ) : null}
+            {featured ? <ExploreCard item={featured} zoneName={zoneOptions.find(z => z.id === featured.zone_id)?.name} now={now} featured onPress={() => openPublication(featured)} /> : null}
             <View style={styles.listHeading}>
-              <AppText variant="heading">{query ? 'Resultados' : title}</AppText>
+              {query ? <AppText variant="heading">Resultados</AppText> : null}
               {error && visibleItems.length > 0 ? (
                 <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage>
               ) : null}
+            </View>
             </View>
           </View>
         }
         ListEmptyComponent={
           loading || searchChanging ? (
-            <DataState
-              kind="loading"
-              title={query || searchChanging ? 'Buscando productos…' : 'Cargando publicaciones…'}
-            />
+            <View style={styles.empty}><ExploreSkeleton /></View>
           ) : error ? (
-            <DataState
+            <View style={styles.empty}><DataState
               kind="error"
               title="No se pudieron cargar las publicaciones."
               description={error}
               action="Reintentar"
               onAction={() => void refresh()}
-            />
-          ) : (
+            /></View>
+          ) : visibleItems.length === 0 ? (
             <View style={styles.empty}>
               <DataState
                 kind="empty"
@@ -396,7 +375,9 @@ export default function HomePage() {
                 description={
                   query
                     ? `No encontramos publicaciones para «${query}». Prueba otro texto o cambia los filtros.`
-                    : 'No hay publicaciones que coincidan con tus filtros.'
+                    : type === 'LIVE' && !filters.zoneId && !filters.categoryId
+                      ? 'Nadie vende ahora. Mira los productos'
+                      : 'No hay publicaciones que coincidan con tus filtros.'
                 }
                 action={query ? 'Limpiar búsqueda' : 'Cambiar filtros'}
                 onAction={
@@ -410,75 +391,31 @@ export default function HomePage() {
               />
               <PrimaryButton
                 variant="secondary"
-                title={type === 'LIVE' ? 'Ver Catálogo' : 'Ver Disponibles ahora'}
+                title={`Ver ${PUBLICATION_COPY[type === 'LIVE' ? 'STATIC' : 'LIVE'].label}`}
                 onPress={() => changeType(type === 'LIVE' ? 'STATIC' : 'LIVE')}
               />
             </View>
-          )
+          ) : undefined
         }
       />
-      <PublishButton type={type} />
-      <Sheet
-        visible={showFilters}
-        title="Filtros"
-        subtitle={`${title} · Zona y categoría`}
-        onClose={() => setShowFilters(false)}
-        footer={
-          <>
-            <PrimaryButton
-              title="Ver publicaciones"
-              onPress={() => apply(draft)}
-            />
-            <PrimaryButton
-              title="Restablecer filtros"
-              variant="secondary"
-              onPress={() => setDraft({})}
-            />
-          </>
-        }
-      >
-        {catalogLoading ? (
-          <DataState
-            kind="loading"
-            title="Cargando filtros…"
-          />
-        ) : catalogError ? (
-          <InlineMessage onRetry={() => setCatalogAttempt(n => n + 1)}>
-            {catalogError}
-          </InlineMessage>
-        ) : (
-          <>
-            <AppText variant="heading">Zona</AppText>
-            <OptionGrid
-              options={zoneOptions}
-              value={draft.zoneId}
-              allLabel="Todas"
-              onChange={zoneId => setDraft(previous => ({ ...previous, zoneId }))}
-            />
-            <AppText variant="heading">Categoría</AppText>
-            <OptionGrid
-              options={categoryOptions}
-              value={draft.categoryId}
-              allLabel="Todas"
-              onChange={categoryId => setDraft(previous => ({ ...previous, categoryId }))}
-            />
-            <View style={styles.filterSummary}>
-              <AppText variant="caption">
-                {zoneOptions.find(z => z.id === draft.zoneId)?.name ?? 'Todas las zonas'}
-              </AppText>
-              <AppText variant="caption">
-                {categoryOptions.find(c => c.id === draft.categoryId)?.name ??
-                  'Todas las categorías'}
-              </AppText>
-            </View>
-          </>
-        )}
+      <Pressable accessibilityRole="button" accessibilityLabel="Vender" onPress={() => setShowPublish(true)} style={({ pressed }) => [styles.sell, pressed && styles.pressed]}><Ionicons name="add" size={24} color={COLORS.white} accessible={false} /><AppText variant="label" style={styles.sellText}>Vender</AppText></Pressable>
+      <Sheet visible={showPublish} title="¿Qué quieres publicar?" onClose={() => setShowPublish(false)}>
+        {(['LIVE', 'STATIC'] as const).map(publicationType => <View key={publicationType} style={styles.publishOption}>
+          <PrimaryButton title={PUBLICATION_COPY[publicationType].label} variant={publicationType === 'LIVE' ? 'primary' : 'secondary'} onPress={() => { setShowPublish(false); router.push({ pathname: '/publication/edit', params: { type: publicationType } }); }} />
+          <AppText variant="caption">{PUBLICATION_COPY[publicationType].hint}</AppText>
+        </View>)}
       </Sheet>
+      {depletedNotice ? <View style={styles.availabilityNotice} accessibilityLiveRegion="polite"><AppText variant="caption">{depletedNotice}</AppText></View> : null}
+      <FilterSheet visible={showFilters} type={type} query={query} zoneOptions={zoneOptions} categoryOptions={categoryOptions} returnFocusRef={filterTrigger}
+        catalogLoading={catalogLoading} catalogError={catalogError} onRetryCatalog={() => setCatalogAttempt(n => n + 1)}
+        draft={draft} onDraftChange={setDraft} onApply={() => apply(draft)} onClose={() => setShowFilters(false)} refreshToken={items} now={now} />
     </MarketplaceShell>
   );
 }
 
 const styles = StyleSheet.create({
+  availabilityNotice: { position: 'absolute', bottom: 84, left: SPACE.page, right: SPACE.page, backgroundColor: COLORS.primarySoft, borderRadius: RADIUS.md, padding: SPACE.md },
+  publishOption: { gap: SPACE.xs },
   clearSearch: {
     minWidth: Platform.OS === 'android' ? 48 : 44,
     minHeight: Platform.OS === 'android' ? 48 : 44,
@@ -499,49 +436,15 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   filterActive: { backgroundColor: COLORS.primarySoft, borderColor: COLORS.primary },
-  summary: { flexDirection: 'row', flexWrap: 'wrap', columnGap: SPACE.md },
-  summaryText: { flexShrink: 1 },
-  list: { paddingHorizontal: SPACE.lg, paddingBottom: 88, flexGrow: 1 },
-  listHeader: { paddingHorizontal: SPACE.xs },
-  listHeading: { gap: SPACE.sm, paddingTop: SPACE.xl, paddingBottom: SPACE.lg },
-  columns: { alignItems: 'stretch' },
-  cell: { paddingHorizontal: SPACE.xs, paddingBottom: SPACE.md },
-  featured: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.lg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    overflow: 'hidden',
-  },
-  featuredOffer: { backgroundColor: COLORS.gangaSoft },
-  featuredBody: {
-    flex: 1,
-    minWidth: 0,
-    padding: SPACE.lg,
-    gap: SPACE.sm,
-    justifyContent: 'center',
-  },
-  featuredPhoto: {
-    width: '42%',
-    minHeight: 168,
-    alignSelf: 'stretch',
-    backgroundColor: COLORS.inputBg,
-  },
-  featuredAction: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACE.sm,
-    flexWrap: 'wrap',
-    paddingTop: SPACE.sm,
-  },
-  featuredLink: { color: COLORS.primary },
-  empty: { gap: SPACE.md },
-  filterSummary: {
-    padding: SPACE.md,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.primarySoft,
-    gap: SPACE.xs,
-  },
+  list: { paddingBottom: 100, flexGrow: 1 },
+  listHeader: {},
+  headerContent: { paddingHorizontal: SPACE.page },
+  sell: { position: 'absolute', bottom: SPACE.lg, right: SPACE.page, minHeight: 52, paddingHorizontal: SPACE.lg, flexDirection: 'row', gap: SPACE.sm, alignItems: 'center', backgroundColor: COLORS.primaryDark, borderRadius: RADIUS.md },
+  sellText: { color: COLORS.white },
+  listHeading: { gap: SPACE.sm, paddingBottom: SPACE.md },
+  columns: { alignItems: 'stretch', paddingHorizontal: SPACE.page - SPACE.md / 2 },
+  cell: { paddingHorizontal: SPACE.md / 2, paddingBottom: SPACE.md, flex: 1 },
+  singleCell: { marginHorizontal: SPACE.page - SPACE.md / 2 },
+  empty: { gap: SPACE.md, paddingHorizontal: SPACE.page },
   pressed: { opacity: 0.75 },
 });

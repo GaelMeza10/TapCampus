@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ComponentRef } from 'react';
 import {
   AccessibilityInfo,
   ActivityIndicator,
@@ -13,9 +13,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useAuth } from '@/context/AuthContext';
 import { myProfile, updateProfile, type UserProfile } from '@/services/auth.service';
 import { mexicanPhone } from '@/services/auth-validation';
-import { COLORS, METRICS, SPACE } from '@/theme';
-import { MarketplaceShell, PageHeader } from '@/components/marketplace-shell';
-import { InlineMessage } from '@/components/feedback';
+import { COLORS, METRICS, RADIUS, SPACE } from '@/theme';
+import { CampusHeader } from '@/components/campus-header';
+import { MARKETPLACE_SCROLL_PROPS, MarketplaceShell, PageHeader } from '@/components/marketplace-shell';
+import { ConfirmationDialog, InlineMessage } from '@/components/feedback';
 import AppText from '@/components/app-text';
 import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -40,6 +41,8 @@ export default function MyAccount() {
   const mounted = useRef(true);
   const sequence = useRef(0);
   const submitting = useRef(false);
+  const logoutTrigger = useRef<ComponentRef<typeof Pressable>>(null);
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const load = useCallback(async () => {
     const request = ++sequence.current;
     setLoading(true);
@@ -141,9 +144,12 @@ export default function MyAccount() {
         style={styles.fill}
       >
         <ScrollView
+          {...MARKETPLACE_SCROLL_PROPS}
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
+          <CampusHeader />
+          <View style={styles.body}>
           <PageHeader
             title="Mi cuenta"
             contained
@@ -168,7 +174,6 @@ export default function MyAccount() {
                   value={draft.name}
                   onChangeText={value => {
                     setDraft(previous => ({ ...previous, name: value }));
-                    setSaveError('');
                   }}
                   editable={!saving && !busy}
                   autoFocus
@@ -182,7 +187,6 @@ export default function MyAccount() {
                   value={draft.phone}
                   onChangeText={value => {
                     setDraft(previous => ({ ...previous, phone: value }));
-                    setSaveError('');
                   }}
                   editable={!saving && !busy}
                   keyboardType="phone-pad"
@@ -227,7 +231,7 @@ export default function MyAccount() {
                 />
                 <View style={styles.contactSection}>
                   <AppText
-                    variant="heading"
+                    variant="section"
                     accessibilityRole="header"
                   >
                     Datos de contacto
@@ -244,6 +248,7 @@ export default function MyAccount() {
                       value={profile.phone}
                     />
                   </Card>
+                  <AppText variant="caption">Compradores y vendedores te escriben a este número por WhatsApp. Mantenlo actualizado.</AppText>
                 </View>
               </>
             )
@@ -263,13 +268,14 @@ export default function MyAccount() {
             </View>
           ) : null}
           <View style={styles.session}>
-            {logoutError ? <InlineMessage>{logoutError}</InlineMessage> : null}
+            {logoutError && !confirmLogout ? <InlineMessage>{logoutError}</InlineMessage> : null}
             <Pressable
+              ref={logoutTrigger}
               accessibilityRole="button"
               accessibilityLabel="Cerrar sesión"
               accessibilityState={{ disabled: busy || saving, busy }}
               disabled={busy || saving}
-              onPress={() => void signOut()}
+              onPress={() => { setLogoutError(''); setConfirmLogout(true); }}
               style={({ pressed }) => [
                 styles.logout,
                 (busy || saving) && styles.disabled,
@@ -294,15 +300,22 @@ export default function MyAccount() {
               </AppText>
             </Pressable>
           </View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <ConfirmationDialog visible={confirmLogout} title="¿Cerrar sesión?"
+        returnFocusRef={logoutTrigger}
+        description={editing && changed ? 'Los cambios de tu perfil sin guardar se perderán. Tendrás que iniciar sesión para volver a usar tu cuenta.' : 'Tendrás que iniciar sesión para volver a usar tu cuenta.'}
+        confirmTitle="Cerrar sesión" loadingTitle="Cerrando sesión…" variant="destructive"
+        busy={busy} error={logoutError} onClose={() => { setConfirmLogout(false); setLogoutError(''); }} onConfirm={() => void signOut()} />
     </MarketplaceShell>
   );
 }
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  content: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.xl, flexGrow: 1 },
+  content: { paddingBottom: SPACE.xl, flexGrow: 1 },
+  body: { paddingHorizontal: SPACE.page, width: '100%', maxWidth: 680, alignSelf: 'center' },
   editor: { gap: SPACE.lg, paddingTop: SPACE.sm },
   saveActions: { gap: SPACE.sm, marginTop: SPACE.sm },
   contactSection: { gap: SPACE.md, marginTop: SPACE.lg },
@@ -310,7 +323,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
     marginTop: SPACE.xxl,
-    paddingTop: SPACE.sm,
+    paddingTop: SPACE.lg,
     gap: SPACE.sm,
   },
   logout: {
@@ -319,6 +332,11 @@ const styles = StyleSheet.create({
     gap: SPACE.md,
     alignItems: 'center',
     paddingVertical: SPACE.md,
+    justifyContent: 'center',
+    paddingHorizontal: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLORS.error,
+    borderRadius: RADIUS.sm,
   },
   logoutText: { color: COLORS.error, flexShrink: 1 },
   disabled: { opacity: 0.55 },

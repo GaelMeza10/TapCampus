@@ -20,7 +20,7 @@ export default function ReservationListState({ loading, error, onRetry, onExplor
 }
 
 const styles = StyleSheet.create({
-  loading: { gap: SPACE.lg },
+  loading: { gap: SPACE.lg, paddingHorizontal: SPACE.page },
   skeleton: { backgroundColor: COLORS.white, borderRadius: RADIUS.lg, padding: SPACE.lg, gap: SPACE.lg },
   product: { flexDirection: 'row', gap: SPACE.lg },
   photo: { width: 104, height: 112, borderRadius: RADIUS.sm, backgroundColor: COLORS.inputBg },
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   price: { height: 28, width: '50%', borderRadius: SPACE.xs, backgroundColor: COLORS.inputBg },
   deadline: { height: 72, borderRadius: RADIUS.sm, backgroundColor: COLORS.inputBg },
   button: { height: 48, borderRadius: RADIUS.full, backgroundColor: COLORS.inputBg },
-  state: { paddingVertical: SPACE.xxl, gap: SPACE.lg },
+  state: { paddingVertical: SPACE.xxl, paddingHorizontal: SPACE.page, gap: SPACE.lg },
   symbol: { width: 64, height: 64, borderRadius: RADIUS.md, backgroundColor: COLORS.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: SPACE.sm },
   description: { color: COLORS.textMedium, maxWidth: 440, marginBottom: SPACE.sm },
 });

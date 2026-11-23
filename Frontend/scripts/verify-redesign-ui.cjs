@@ -1,5 +1,6 @@
 // Capturas de las pantallas reales con datos aislados, sin iniciar ni modificar la API del usuario.
 const assert = require('node:assert/strict');
+assert.deepEqual(require('./check-design-consistency.cjs').checkDesign(), [], 'Las fuentes contradicen DESIGN.md');
 const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
@@ -20,6 +21,7 @@ const server = http.createServer((request, response) => {
   let file = path.resolve(output, '.' + pathname);
   if (!file.startsWith(output + path.sep)) file = '';
   if (/^\/uploads\/[\da-f-]+\.png$/.test(pathname)) file = path.resolve(root, '../Backend', '.' + pathname);
+  if (/^\/demo-images\/[\w-]+\.png$/.test(pathname)) file = path.resolve(root, '../Backend/prisma/demo-images', path.basename(pathname));
   if ((!file || !fs.existsSync(file)) && pathname.startsWith('/assets/')) {
     const base = path.basename(pathname);
     const files = fs.readdirSync(path.join(output, 'assets'), { recursive: true });
@@ -35,6 +37,7 @@ let serial = 0;
 const pending = new Map();
 const exceptions = [];
 let viewportWidth = 390;
+const activeText = `([...document.querySelectorAll('*')].filter(e=>e.childElementCount===0&&!e.closest('[aria-hidden="true"],[inert]')&&e.getBoundingClientRect().width>0&&e.getBoundingClientRect().height>0&&getComputedStyle(e).visibility!=='hidden').map(e=>e.textContent.trim()).filter(Boolean).join('\\n'))`;
 async function cdp(method, params = {}) {
   const id = ++serial;
   const result = new Promise((resolve, reject) => { const timer = setTimeout(() => { pending.delete(id); reject(new Error('DevTools sin respuesta: ' + method)); }, 15000); pending.set(id, { resolve: value => { clearTimeout(timer); resolve(value); }, reject: error => { clearTimeout(timer); reject(error); } }); });
@@ -60,17 +63,20 @@ async function type(label, value) {
   await pause(100);
 }
 async function capture(name) {
+  await evaluate(`Promise.all([...document.images].map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.addEventListener('load',resolve,{once:true});img.addEventListener('error',resolve,{once:true});setTimeout(resolve,3000)}))).then(()=>true)`);
   await pause(250);
   const result = await cdp('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
   fs.writeFileSync(path.join(output, name + '.png'), Buffer.from(result.data, 'base64'));
-  const geometry = await evaluate(`({width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,font:[...new Set([...document.querySelectorAll('div,a,p,span,input,textarea')].filter(e=>e.childElementCount===0&&(e.textContent.trim()||e.tagName==='INPUT'||e.tagName==='TEXTAREA')).map(e=>getComputedStyle(e).fontFamily))],text:document.body.innerText})`);
+  const geometry = await evaluate(`({width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,font:[...new Set([...document.querySelectorAll('div,a,p,span,input,textarea')].filter(e=>e.childElementCount===0&&(e.textContent.trim()||e.tagName==='INPUT'||e.tagName==='TEXTAREA')).map(e=>getComputedStyle(e).fontFamily))],text:${activeText}})`);
   assert.equal(geometry.scrollWidth, viewportWidth, 'Desbordamiento horizontal');
-  const clipped = await evaluate(`([...document.querySelectorAll('[role="button"],[role="tab"],input,textarea')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(e).visibility!=='hidden'&&(r.left< -1||r.right>innerWidth+1)}).map(e=>e.getAttribute('aria-label')||e.textContent))`);
+  const clipped = await evaluate(`([...document.querySelectorAll('[role="button"],[role="tab"],input,textarea')].filter(e=>{const r=e.getBoundingClientRect();let parent=e.parentElement;while(parent){if(['auto','scroll'].includes(getComputedStyle(parent).overflowX)&&parent.scrollWidth>parent.clientWidth)return false;parent=parent.parentElement;}return r.width>0&&r.height>0&&getComputedStyle(e).visibility!=='hidden'&&(r.left< -1||r.right>innerWidth+1)}).map(e=>e.getAttribute('aria-label')||e.textContent))`);
   assert.deepEqual(clipped, [], 'Controles fuera del ancho disponible: ' + JSON.stringify(clipped));
   assert(!/Encuentra algo cerca de ti|Tu campus, más cerca|Controla stock y entregas en tiempo real|Cada apartado conserva su precio y plazo|Artículos publicados · contacto directo/.test(geometry.text), 'Subtítulo redundante');
-  assert(geometry.font.every(name => /Inter_|ionicons/i.test(name)), 'Fuente distinta del sistema aprobado: ' + geometry.font.join(', '));
-  const nav = await evaluate(`(()=>{const roots=[...document.querySelectorAll('[role="tablist"]')].filter(e=>e.querySelector('[aria-label="Explorar"]')&&e.getBoundingClientRect().height>0&&!e.closest('[aria-hidden="true"]'));const root=roots.at(-1);if(!root)return null;const tabs=[...root.querySelectorAll('[role="tab"]')];const selected=tabs.filter(e=>e.getAttribute('aria-selected')==='true');return {count:tabs.length,selected:selected.length,background:selected[0]?getComputedStyle(selected[0]).backgroundColor:null};})()`);
-  if(nav) { assert.equal(nav.count,4,'Deben existir cuatro módulos'); assert.equal(nav.selected,1,'Selección de módulo ambigua'); assert.equal(nav.background,'rgba(23, 97, 59, 0.12)','La pestaña activa no tiene fondo translúcido'); }
+  assert(geometry.font.every(name => /Inter_|Bricolage|ionicons/i.test(name)), 'Fuente distinta del sistema aprobado: ' + geometry.font.join(', '));
+  const nav = await evaluate(`(()=>{const roots=[...document.querySelectorAll('[role="tablist"]')].filter(e=>e.querySelector('[aria-label="Explorar"]')&&e.getBoundingClientRect().height>0&&!e.closest('[aria-hidden="true"]'));const root=roots.at(-1);if(!root)return null;const tabs=[...root.querySelectorAll('[role="tab"]')];const selected=tabs.filter(e=>e.getAttribute('aria-selected')==='true');return {count:tabs.length,selected:selected.length,label:selected[0]?.getAttribute('aria-label'),path:location.pathname,background:selected[0]?getComputedStyle(selected[0]).backgroundColor:null};})()`);
+  if(nav) { assert.equal(nav.count,4,'Deben existir cuatro módulos'); assert.equal(nav.selected,1,'Selección de módulo ambigua'); assert.equal(nav.background,'rgba(255, 255, 255, 0.16)','La pestaña activa no tiene fondo translúcido'); }
+  const expectedTab = nav && ({ '/homePage': 'Explorar', '/reservations': 'Reservas', '/sales': 'Mis ventas', '/account': 'Cuenta' })[nav.path];
+  if (expectedTab) assert.equal(nav.label, expectedTab, 'La pestaña seleccionada no corresponde a la ruta');
   return { name, ...geometry };
 }
 (async () => {
@@ -99,7 +105,241 @@ async function capture(name) {
   await cdp('Runtime.enable'); await cdp('Page.enable');
   await cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   const shots = [];
-  async function open(route, text) { console.log('Revisando ' + route); await cdp('Page.navigate', { url: origin + route }); await until(`document.body.innerText.includes(${JSON.stringify(text)})`); await evaluate('document.fonts.ready.then(()=>true)'); }
+  async function open(route, text) {
+    console.log('Revisando ' + route);
+    const previousDocument = await evaluate('performance.timeOrigin');
+    await cdp('Page.navigate', { url: origin + route });
+    await until(`performance.timeOrigin !== ${previousDocument} && document.readyState === 'complete'`);
+    await until(`${activeText}.includes(${JSON.stringify(text)})`);
+    await evaluate('document.fonts.ready.then(()=>true)');
+  }
+  if (process.argv.includes('--adverse-only')) {
+    await require('./verify-adverse-ui.cjs')({ open, click, type, capture, evaluate, until, cdp, output, exceptions, requests, setWidth: value => { viewportWidth = value; } }); return;
+  }
+  if (process.argv.includes('--publish-only')) {
+    for (const width of [320, 390, 430]) {
+      viewportWidth = width;
+      await cdp('Emulation.setDeviceMetricsOverride', { width, height: 844, deviceScaleFactor: 1, mobile: true });
+      await open('/homePage', 'Ahora en el campus');
+      await click('Vender');
+      await until(`document.body.innerText.includes('¿Qué quieres publicar?')`);
+      shots.push(await capture('publish-choice-' + width));
+      for (const [label, title, publicationType] of [['Ahora en el campus', 'Ahora en el campus', 'LIVE'], ['Productos', 'Nuevo producto', 'STATIC']]) {
+        await click(label);
+        await until(`location.pathname==='/publication/edit' && new URLSearchParams(location.search).get('type')==='${publicationType}' && [...document.querySelectorAll('[data-testid="publication-editor"]')].some(e=>e.getBoundingClientRect().height>0&&!e.closest('[aria-hidden="true"],[inert]')&&e.innerText.includes('${title}'))`);
+        const form = await evaluate(`(()=>{const el=[...document.querySelectorAll('[data-testid="publication-editor"]')].filter(e=>e.getBoundingClientRect().height>0&&!e.closest('[aria-hidden="true"],[inert]')).at(-1);return {selectors:el.querySelectorAll('[role="tablist"]').length,stock:!!el.querySelector('input[aria-label="Stock disponible"]'),text:el.innerText};})()`);
+        assert.equal(form.selectors, 0, 'La creación repite el selector de tipo');
+        assert.equal(form.stock, publicationType === 'LIVE');
+        assert(!/Disponibles ahora|Catálogo|Venta en vivo/.test(form.text), 'Terminología antigua en el formulario');
+        shots.push(await capture('publish-' + publicationType.toLowerCase() + '-' + width));
+        await click('Volver');
+        await until(`location.pathname==='/homePage'`);
+        if (publicationType === 'LIVE') await click('Vender');
+      }
+    }
+    assert.equal(exceptions.length, 0, JSON.stringify(exceptions));
+    assert.equal(requests.length, 0, JSON.stringify(requests));
+    fs.writeFileSync(path.join(output, 'publish-result.json'), JSON.stringify({ shots, exceptions, missingAssets: requests }, null, 2));
+    console.log(`PASS: Vender → LIVE/STATIC, ${shots.length} capturas, sin selector repetido ni términos antiguos.`);
+    return;
+  }
+  if (process.argv.includes('--usability-only')) {
+    for (const [width,height] of [[320,844],[390,844],[430,932]]) {
+      viewportWidth=width;
+      await cdp('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:true});
+      await open('/reservations','Ubicación: Facultad de Ingeniería'); shots.push(await capture('usability-pickup-'+width));
+      await open('/publication/p1?scenario=contact-empty','Apartar una unidad'); await click('Apartar una unidad'); await click('Sí, apartar');
+      await until(`document.body.innerText.includes('Reserva confirmada') && document.body.innerText.includes('Ubicación: Facultad de Ingeniería')`);
+      shots.push(await capture('usability-confirmed-'+width));
+      await open('/reservations?scenario=reservation-legacy','Ubicación de referencia'); shots.push(await capture('usability-legacy-'+width));
+      await open('/publication/book?scenario=arranged','Punto de entrega por acordar'); shots.push(await capture('usability-arranged-'+width));
+      await open('/publication/edit?type=STATIC','Nuevo producto'); await click('Seleccionar zona'); await click('Punto de entrega por acordar dentro del campus');
+      await evaluate(`document.querySelector('[aria-label="Punto de entrega por acordar dentro del campus"]')?.scrollIntoView({block:'center'})`);
+      shots.push(await capture('usability-form-arranged-'+width));
+      await click('Seleccionar categoría'); await until(`!!document.querySelector('[aria-label="Buscar categorías"]')`); shots.push(await capture('usability-categories-'+width));
+      await open('/publication/edit?id=p1','Editar publicación'); await click('Precio de oferta'); await click('Programada'); await until(`document.body.innerText.includes('Anticipación antes del fin')`); shots.push(await capture('usability-duration-'+width));
+      await open('/account','ana@uabc.edu.mx'); await click('Cerrar sesión'); await until(`document.body.innerText.includes('¿Cerrar sesión?')`); shots.push(await capture('usability-logout-'+width));
+      await click('Volver');
+    }
+    assert.equal(exceptions.length,0,JSON.stringify(exceptions)); assert.equal(requests.length,0,JSON.stringify(requests));
+    fs.writeFileSync(path.join(output,'usability.json'),JSON.stringify({scope:'auxiliary web; not native acceptance',shots,exceptions,missingAssets:requests},null,2));
+    console.log('PASS: '+shots.length+' capturas de usabilidad 0047'); return;
+  }
+  if (process.argv.includes('--consistency-only')) {
+    const tabGeometry = () => evaluate(`(()=>{const nav=document.querySelector('[data-testid="marketplace-navigation"]');const screen=[...document.querySelectorAll('[data-testid="marketplace-screen"]')].find(e=>e.getBoundingClientRect().height>0&&!e.closest('[aria-hidden="true"],[inert]'));return {count:document.querySelectorAll('[data-testid="marketplace-navigation"]').length,top:screen?.getBoundingClientRect().top,bottom:nav?.getBoundingClientRect().bottom,navTop:nav?.getBoundingClientRect().top};})()`);
+    for (const [width,height] of [[320,844],[390,844],[430,932],[844,390]]) {
+      viewportWidth=width;
+      await cdp('Emulation.setDeviceMetricsOverride', {width,height,deviceScaleFactor:1,mobile:true});
+      for (const [route,text,name] of [
+        ['/homePage','Campus Ensenada','explore'], ['/sales','Reservas por entregar','sales'],
+        ['/sales?type=STATIC','Marcar vendido','sales-static'], ['/reservations','Mis reservas','reservations'],
+        ['/account','ana@uabc.edu.mx','account'], ['/login','Bienvenido de nuevo','login'],
+        ['/register','Crea tu cuenta','register'], ['/publication/p1','Apartar una unidad','detail-live'],
+        ['/publication/book','Contactar por WhatsApp','detail-static'],
+        ['/publication/edit?type=LIVE','Ahora en el campus','form-live'], ['/publication/edit?type=STATIC','Nuevo producto','form-static']
+      ]) {
+        await open(route,text);
+        if(route.startsWith('/publication/edit')) assert.equal(await evaluate(`document.querySelectorAll('[role="tablist"]').length`),0,'Tipo repetido en formulario');
+        if (route.startsWith('/sales')||route.startsWith('/reservations')||route.startsWith('/account')||route.startsWith('/homePage')) {
+          const geometry=await tabGeometry(); assert.equal(geometry.count,1,'Barra duplicada'); assert(geometry.bottom<=height+1,'Tabs bajo pantalla');
+        }
+        shots.push(await capture('consistent-'+name+'-'+width));
+        const endAction = name==='sales' ? 'Publicar en el campus' : name==='sales-static' ? 'Publicar producto' : name==='account' ? 'Cerrar sesión' : name==='reservations' ? 'Cancelar Torta de pollo · Unidad 2 de 2' : undefined;
+        if(endAction) {
+          const reachable=await evaluate(`(()=>{const button=[...document.querySelectorAll('[role="button"]')].find(e=>e.getAttribute('aria-label')?.startsWith(${JSON.stringify(endAction)}));if(!button)return false;button.scrollIntoView({block:'center'});const rect=button.getBoundingClientRect();const nav=document.querySelector('[data-testid="marketplace-navigation"]').getBoundingClientRect();return rect.top>=0&&rect.bottom<=nav.top+1;})()`);
+          assert(reachable,'Acción final tapada o inalcanzable: '+name+' '+width);
+        }
+      }
+    }
+    viewportWidth=390;
+    await cdp('Emulation.setDeviceMetricsOverride', {width:390,height:844,deviceScaleFactor:1,mobile:true});
+    await open('/homePage','Campus Ensenada');
+    const baseline=await tabGeometry();
+    for(let i=0;i<3;i++) for(const label of ['Reservas','Mis ventas','Cuenta','Explorar']) {
+      await click(label,'tab'); await pause(300);
+      assert.deepEqual(await tabGeometry(),baseline,'El contenido o la barra se desplazaron al cambiar tabs');
+    }
+    for(const [choice,title,field] of [['Ahora en el campus','Ahora en el campus','Stock disponible'],['Productos','Nuevo producto','Seleccionar condición']]) {
+      await click('Vender'); await click(choice);
+      await until(`!![...document.querySelectorAll('[role="heading"]')].find(e=>e.textContent===${JSON.stringify(title)}&&!e.closest('[aria-hidden="true"],[inert]'))`);
+      assert.equal(await evaluate(`[...document.querySelectorAll('[role="tablist"]')].filter(e=>e.getBoundingClientRect().height>0&&!e.closest('[aria-hidden="true"],[inert]')).length`),0,'Vender repite selección');
+      assert(await evaluate(`!!document.querySelector('[aria-label="${field}"]')`),'Campos del tipo incorrectos');
+      shots.push(await capture('consistent-sell-'+choice.replaceAll(' ','-')));
+      await cdp('Runtime.evaluate',{expression:'history.back()'}); await until(`!!document.querySelector('[aria-label="Vender"]')`);
+      assert.deepEqual(await tabGeometry(),baseline,'El retorno desplazó el contenido');
+    }
+    for (const [route,text,name] of [
+      ['/homePage?scenario=empty','Nadie vende ahora','empty'], ['/homePage?scenario=loading','Campus Ensenada','loading'],
+      ['/homePage?scenario=error','No se pudieron cargar','error'], ['/reservations?scenario=reservation-mixed','Anteriores','history'],
+      ['/sales?scenario=sales-empty','Aún no tienes publicaciones','sales-empty'],
+      ['/sales?scenario=sales-loading','Cargando tus ventas','sales-loading'],
+      ['/sales?scenario=sales-error','No pudimos cargar tus ventas','sales-error'],
+      ['/reservations?scenario=reservation-empty','Aún no tienes reservas','reservation-empty'],
+      ['/reservations?scenario=reservation-urgent','Por vencer','reservation-urgent'],
+      ['/reservations?scenario=reservation-error','No pudimos cargar tus reservas','reservation-error'],
+      ['/account?scenario=profile-error','No pudimos cargar','account-error'],
+      ['/sales?scenario=long&fontScale=1.5','Reservas por entregar','sales-large'],
+      ['/reservations?scenario=long&fontScale=1.5','Mis reservas','reservations-large'],
+      ['/account?scenario=long&fontScale=1.5','maria.fernanda','account-large']
+    ]) {
+      await open(route,text);
+      if(name.endsWith('large')) await evaluate(`document.querySelectorAll('[dir=auto]').forEach(el=>{const c=getComputedStyle(el);el.style.fontSize=parseFloat(c.fontSize)*1.5+'px';el.style.lineHeight=parseFloat(c.lineHeight)*1.5+'px';});document.querySelectorAll('*').forEach(el=>{if(['auto','scroll'].includes(getComputedStyle(el).overflowY))el.scrollTop=0;});window.scrollTo(0,0);`);
+      shots.push(await capture('consistent-'+name));
+    }
+    await open('/homePage','Campus Ensenada'); await click('Filtros.'); await until(`document.body.innerText.includes('Ver 3 publicaciones')`);
+    shots.push(await capture('consistent-filters'));
+    await open('/homePage', 'Brownie de chocolate');
+    await click('Reservar Brownie de chocolate');
+    await until(`location.pathname==='/publication/p2' && [...document.querySelectorAll('[role="heading"]')].some(e=>e.textContent==='Brownie de chocolate'&&!e.closest('[aria-hidden="true"],[inert]'))`);
+    shots.push(await capture('consistent-featured-detail'));
+    assert.equal(exceptions.length,0,JSON.stringify(exceptions)); assert.equal(requests.length,0,JSON.stringify(requests));
+    fs.writeFileSync(path.join(output,'consistency.json'),JSON.stringify({shots,stableTabs:baseline,exceptions,missingAssets:requests},null,2));
+    console.log('PASS: consistencia integral, '+shots.length+' capturas y 12 cambios de tabs'); return;
+  }
+  if (process.argv.includes('--surfaces-only')) {
+    for (const [width, height] of [[320,844], [390,844], [430,932], [844,390]]) {
+      viewportWidth = width;
+      await cdp('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: true });
+      await open('/homePage', 'Campus Ensenada');
+      await click('Filtros.');
+      await until("document.body.innerText.includes('Ver 3 publicaciones')");
+      shots.push(await capture('surfaces-filters-' + width));
+      await click('Facultad de Ingeniería', 'radio');
+      await until("document.body.innerText.includes('Ver 2 publicaciones')");
+      shots.push(await capture('surfaces-filters-selected-' + width));
+      await click('Cerrar panel');
+      for (const [route, text, name] of [
+        ['/publication/book','Contactar por WhatsApp','static'],
+        ['/publication/p1?scenario=contact-empty','Apartar una unidad','live'],
+        ['/publication/p1?scenario=ganga','Apartar una unidad','ganga'],
+        ['/account','ana@uabc.edu.mx','account']
+      ]) { await open(route, text); shots.push(await capture('surfaces-' + name + '-' + width)); }
+      await click('Editar datos');
+      shots.push(await capture('surfaces-account-editor-' + width));
+    }
+    viewportWidth = 390;
+    await cdp('Emulation.setDeviceMetricsOverride', { width:390,height:844,deviceScaleFactor:1,mobile:true });
+    for (const [route, text, name] of [
+      ['/homePage?scenario=error','No se pudieron cargar','filters-error'],
+      ['/publication/p1?scenario=missing-photo','Apartar una unidad','missing-photo'],
+      ['/publication/p1?scenario=long&fontScale=1.5','Apartar una unidad','detail-large'],
+      ['/account?scenario=long&fontScale=1.5','maria.fernanda','account-large'],
+      ['/account?scenario=profile-error','No pudimos cargar','account-error'],
+      ['/account?scenario=profile-loading','Cargando tu cuenta','account-loading']
+    ]) {
+      await open(route,text);
+      if (name==='filters-error') { await click('Filtros.'); await until("document.body.innerText.includes('No pudimos actualizar los conteos')"); }
+      if (name.endsWith('large')) await evaluate("document.querySelectorAll('[dir=auto]').forEach(el=>{const c=getComputedStyle(el);el.style.fontSize=parseFloat(c.fontSize)*1.5+'px';el.style.lineHeight=parseFloat(c.lineHeight)*1.5+'px';})");
+      shots.push(await capture('surfaces-' + name));
+    }
+    assert.equal(exceptions.length,0,JSON.stringify(exceptions));
+    assert.equal(requests.length,0,JSON.stringify(requests));
+    fs.writeFileSync(path.join(output,'surfaces.json'),JSON.stringify({shots,exceptions,missingAssets:requests},null,2));
+    console.log('PASS: ' + shots.length + ' capturas de filtros, detalles y cuenta'); return;
+  }
+  if (process.argv.includes('--condition-only')) {
+    for (const width of [320, 390, 430]) {
+      viewportWidth = width;
+      await cdp('Emulation.setDeviceMetricsOverride', { width, height: 844, deviceScaleFactor: 1, mobile: true });
+      for (const [scenario, label] of [['normal', 'Usado'], ['condition-new', 'Nuevo']]) {
+        await open('/homePage?scenario=' + scenario, 'Campus Ensenada');
+        await click('Productos', 'tab'); await until(`document.body.innerText.includes('${label}')`);
+        await evaluate("document.querySelector('[role=button][aria-label^=\"Ver C\"]').scrollIntoView({block:'center'})");
+        shots.push(await capture('condition-' + scenario + '-' + width));
+      }
+      await open('/publication/book', 'Contactar por WhatsApp');
+      await until("document.body.innerText.includes('Usado')");
+      shots.push(await capture('condition-detail-' + width));
+      await open('/publication/edit?type=STATIC', 'Publicar producto');
+      await evaluate("document.querySelector('[aria-label=\"Seleccionar condición\"]').scrollIntoView({block:'center'})");
+      await click('Seleccionar condición');
+      shots.push(await capture('condition-picker-' + width));
+      await click('Usado', 'radio');
+      shots.push(await capture('condition-form-' + width));
+    }
+    await open('/homePage', 'Campus Ensenada');
+    const top = () => evaluate("[...document.querySelectorAll('[data-testid=marketplace-screen]')].filter(e=>e.getBoundingClientRect().height>0&&!e.closest('[aria-hidden=true],[inert]')).at(-1).getBoundingClientRect().top");
+    const baseline = await top();
+    for (const label of ['Reservas', 'Mis ventas', 'Cuenta', 'Explorar', 'Cuenta', 'Reservas', 'Explorar']) {
+      await click(label, 'tab');
+      assert.equal(await top(), baseline, 'El contenido se desplazó al cambiar de pestaña');
+      await pause(300);
+      assert.equal(await top(), baseline, 'El contenido se desplazó después de cambiar de pestaña');
+    }
+    shots.push(await capture('tabs-stable'));
+    assert.equal(exceptions.length, 0, JSON.stringify(exceptions));
+    assert.equal(requests.length, 0, JSON.stringify(requests));
+    fs.writeFileSync(path.join(output, 'condition.json'), JSON.stringify({ shots, stableTabTop: baseline, exceptions, missingAssets: requests }, null, 2));
+    console.log('PASS: condición y cambios de pestaña, ' + shots.length + ' capturas'); return;
+  }
+  if (process.argv.includes('--explore-only')) {
+    for (const [width,height] of [[320,844],[390,844],[430,932],[844,390]]) {
+      viewportWidth = width;
+      await cdp('Emulation.setDeviceMetricsOverride', {width,height,deviceScaleFactor:1,mobile:true});
+      await open('/homePage', 'Torta de pollo');
+      shots.push(await capture('explore-live-' + width));
+      await evaluate("document.querySelector('[role=button][aria-label=\"Ver Torta de pollo\"]').scrollIntoView({block:'center'})");
+      shots.push(await capture('explore-grid-' + width));
+      await click('Productos', 'tab'); await until("document.body.innerText.includes('C\u00e1lculo I')");
+      shots.push(await capture('explore-static-' + width));
+      await evaluate("document.querySelector('[role=button][aria-label^=\"Ver C\"]').scrollIntoView({block:'center'})");
+      shots.push(await capture('explore-static-grid-' + width));
+    }
+    viewportWidth = 390;
+    await cdp('Emulation.setDeviceMetricsOverride', {width:390,height:844,deviceScaleFactor:1,mobile:true});
+    for (const scenario of ['empty','loading','error','missing-photo','long']) {
+      await open('/homePage?scenario=' + scenario, 'Campus Ensenada');
+      await pause(700);
+      shots.push(await capture('explore-' + scenario));
+    }
+    await open('/homePage?scenario=long&fontScale=1.5','Torta de pollo');
+    await evaluate("document.querySelectorAll('[dir=auto]').forEach(el=>{const c=getComputedStyle(el);el.style.fontSize=parseFloat(c.fontSize)*1.5+'px';el.style.lineHeight=parseFloat(c.lineHeight)*1.5+'px';})");
+    shots.push(await capture('explore-large-text'));
+    assert.equal(exceptions.length, 0, JSON.stringify(exceptions));
+    assert.equal(requests.length, 0, JSON.stringify(requests));
+    fs.writeFileSync(path.join(output,'explore.json'),JSON.stringify({shots,exceptions,missingAssets:requests},null,2));
+    console.log('PASS: ' + shots.length + ' capturas Explorar'); return;
+  }
   if (process.argv.includes('--contact-only')) {
     // Nunca abrir WhatsApp ni enviar mensajes durante la revisión auxiliar.
     const contactVisible = `(()=>{const el=[...document.querySelectorAll('[role="button"]')].find(e=>e.textContent.trim()==='Contactar por WhatsApp');if(!el)return false;const r=el.getBoundingClientRect();return r.height>=48&&r.top>=0&&r.bottom<=innerHeight;})()`;
@@ -178,7 +418,7 @@ async function capture(name) {
     viewportWidth=375;
     await cdp('Emulation.setDeviceMetricsOverride',{width:375,height:812,deviceScaleFactor:1,mobile:true});
     await open('/publication/edit?id=p1&scenario=form-network','Editar publicación');
-    await type('Título','Borrador'); await click('Guardar cambios'); await until(`document.body.innerText.includes('No se pudo guardar.')`);
+    await type('Título','Borrador'); await click('Guardar cambios'); await until(`document.body.innerText.includes('El servidor no está disponible')`);
     await type('Descripción','El fallo general persiste al escribir.');
     await noticeVisible(); shots.push(await capture('form-network-preserved'));
     await open('/publication/edit?scenario=form-zone-error','Nueva publicación');
@@ -231,7 +471,7 @@ async function capture(name) {
       await scrollTo('Elegir fin de venta'); shots.push(await capture('publication-delivery-' + width));
       await click('Precio de oferta'); await click('Programada'); shots.push(await capture('publication-offer-' + width));
       await click('Cerrar panel');
-      await open('/publication/edit?type=STATIC', 'Publicar artículo'); shots.push(await capture('publication-catalog-' + width));
+      await open('/publication/edit?type=STATIC', 'Publicar producto'); shots.push(await capture('publication-catalog-' + width));
       assert(!await evaluate(`!!document.querySelector('input[aria-label="Stock disponible"]')`), 'Catálogo expone stock');
       await open('/publication/edit?id=p1', 'Editar publicación'); await until(`!!document.querySelector('[data-testid="selected-publication-image"]')`);
       await until(`(()=>{const root=document.querySelector('[data-testid="selected-publication-image"]');const img=root?.tagName==='IMG'?root:root?.querySelector('img');return !!img?.complete&&img.naturalWidth>0;})()`);
@@ -393,7 +633,7 @@ async function capture(name) {
   await open('/sales?type=STATIC&scenario=sold', 'VENDIDO'); shots.push(await capture('catalog-sold'));
   await open('/publication/edit', 'Nueva publicación'); shots.push(await capture('form-live'));
   await type('Precio', '85'); await click('Precio de oferta'); await click('Programada'); await type('Precio de oferta opcional', '65'); await type('Minutos antes del fin', '10'); shots.push(await capture('ganga-config'));
-  await open('/publication/edit?type=STATIC', 'Publicar artículo'); shots.push(await capture('form-catalog'));
+  await open('/publication/edit?type=STATIC', 'Publicar producto'); shots.push(await capture('form-catalog'));
   await open('/homePage?scenario=empty', 'Sin resultados'); shots.push(await capture('empty'));
   await open('/homePage?scenario=error', 'No se pudieron cargar'); shots.push(await capture('error'));
   await click('Reintentar');

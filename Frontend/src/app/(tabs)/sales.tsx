@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
 import { COLORS, RADIUS, SPACE } from '@/theme';
 import AppText from '@/components/app-text';
 import PublicationPrice, { GangaBadge } from '@/components/publication-price';
+import ConditionLabel from '@/components/condition-label';
+import PublicationPhoto from '@/components/publication-photo';
+import { CampusHeader } from '@/components/campus-header';
 import ReservationCard from '@/components/reservation-card';
-import { ConfirmationDialog, DataState, InlineMessage } from '@/components/feedback';
-import { MarketplaceShell, PageHeader, TypeSelector } from '@/components/marketplace-shell';
+import { ConfirmationDialog, DataState, ErrorNotice } from '@/components/feedback';
+import { MARKETPLACE_SCROLL_PROPS, MarketplaceShell, PageHeader, TypeSelector } from '@/components/marketplace-shell';
 import { useMarketplaceSync } from '@/hooks/use-marketplace-sync';
 import { money, countdown, saleHasStarted, saleIsOpen } from '@/lib/marketplace-presentation';
 import {
@@ -24,6 +28,7 @@ import {
   type Reservation,
 } from '@/services/marketplace';
 import { openWhatsApp } from '@/services/whatsapp';
+import { PUBLICATION_COPY } from '@/lib/publication-copy';
 import {
   canActOnReservation,
   formatReservationDate,
@@ -40,6 +45,8 @@ type Action = {
 };
 export default function Sales() {
   const router = useRouter();
+  const { width, fontScale } = useWindowDimensions();
+  const stacked = width < 360 || fontScale > 1.2;
   const { type: initialType } = useLocalSearchParams<{ type?: string }>();
   const [saleType, setSaleType] = useState<PublicationType>(
     initialType === 'STATIC' ? 'STATIC' : 'LIVE',
@@ -145,7 +152,7 @@ export default function Sales() {
             {
               'physical-sale': `¿Registrar una venta física de ${selectedSale.publication.title}? Se restará una unidad disponible.`,
               finish: `¿Finalizar la publicación ${selectedSale.publication.title}? No se aceptarán nuevos apartados; las reservas previas conservan su plazo.`,
-              sold: `¿Marcar ${selectedSale.publication.title} como vendida?`,
+              sold: `¿Marcar el artículo «${selectedSale.publication.title}» como vendido?`,
               ganga: `¿Activar el precio de oferta de ${selectedSale.publication.title} por ${money(selectedSale.publication.ganga_min_price ?? selectedSale.publication.price)}? Las reservas anteriores conservan su precio.`,
             } as Record<string, string>
           )[action.kind]
@@ -156,7 +163,7 @@ export default function Sales() {
           complete: 'Confirmar entrega',
           'physical-sale': 'Registrar venta física',
           finish: 'Finalizar publicación',
-          sold: 'Marcar vendida',
+          sold: PUBLICATION_COPY.STATIC.soldAction,
           ganga: 'Activar oferta',
         } as Record<Action['kind'], string>
       )[action.kind]
@@ -214,32 +221,26 @@ export default function Sales() {
   const visibleSales = sales.filter(sale => sale.publication.type === saleType);
 
   return (
-    <MarketplaceShell active="sales">
-      <PageHeader title="Mis ventas" />
-      <View style={styles.typeSelector}>
-        <TypeSelector
-          value={saleType}
-          liveLabel="Con horario"
-          disabled={busy}
-          onChange={type => {
-            setSaleType(type);
-            router.setParams({ type });
-          }}
-        />
-      </View>
+    <MarketplaceShell active="sales" navigationDisabled={busy}>
+      {error && sales.length > 0 ? <ErrorNotice onRetry={() => void refresh()}>{error}</ErrorNotice> : null}
       <FlatList
+        {...MARKETPLACE_SCROLL_PROPS}
+        style={styles.fill}
         data={visibleSales}
         keyExtractor={item => item.publication.id}
         contentContainerStyle={styles.list}
         extraData={now}
         refreshing={refreshing && !loading}
         onRefresh={() => void refresh()}
-        ListHeaderComponent={
-          error && sales.length > 0 ? (
-            <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage>
-          ) : undefined
-        }
+        ListHeaderComponent={<>
+          <CampusHeader />
+          <View style={styles.headerBody}>
+            <PageHeader title="Mis ventas" contained />
+            <TypeSelector value={saleType} disabled={busy} onChange={type => { setSaleType(type); router.setParams({ type }); }} />
+          </View>
+        </>}
         ListEmptyComponent={
+          <View style={styles.listBody}>{
           loading ? (
             <DataState
               kind="loading"
@@ -263,12 +264,12 @@ export default function Sales() {
                   : 'Publica un artículo y coordina la entrega por WhatsApp.'
               }
             />
-          )
+          )}</View>
         }
         ListFooterComponent={
           <View style={styles.footer}>
             <PrimaryButton
-              title={saleType === 'LIVE' ? '+ Nueva publicación' : '+ Publicar otro artículo'}
+              title={PUBLICATION_COPY[saleType].createAction}
               variant="secondary"
               disabled={busy}
               onPress={() =>
@@ -295,36 +296,35 @@ export default function Sales() {
           return (
             <View style={styles.sale}>
               <Card style={[styles.card, p.is_ganga_active && active && styles.gangaCard]}>
-                {p.is_ganga_active && active ? <GangaBadge /> : null}
+                <PublicationPhoto uri={p.image_url} title={p.title} style={[styles.photo, p.type === 'STATIC' && styles.staticPhoto]} />
+                <View style={styles.cardBody}>
+                {p.type === 'LIVE' && p.is_ganga_active && active ? <GangaBadge /> : null}
                 <AppText variant="badge">
-                  {p.type === 'LIVE' ? 'VENTA CON HORARIO' : 'CATÁLOGO'} ·{' '}
+                  {PUBLICATION_COPY[p.type].badgeLabel} ·{' '}
                   {active ? 'ACTIVA' : p.type === 'STATIC' ? 'VENDIDO' : 'FINALIZADA'}
                 </AppText>
                 <AppText variant="heading">{p.title}</AppText>
-                {p.type === 'STATIC' || p.is_ganga_active || !active ? (
+                <ConditionLabel item={p} />
                   <PublicationPrice
                     item={p}
                     compact={p.type === 'LIVE' && !p.is_ganga_active}
                   />
-                ) : null}
+                <View style={styles.place}><Ionicons name="location-outline" size={16} color={COLORS.textDark} accessible={false} /><AppText variant="place" style={styles.flex}>{p.pickup_mode === 'ARRANGED' ? 'Entrega por acordar' : zoneOptions.find(z => z.id === p.zone_id)?.name ?? 'Zona no disponible'}</AppText></View>
                 {p.type === 'LIVE' ? (
                   <AppText variant="caption">
                     {active
-                      ? `${!p.is_ganga_active ? `${money(p.price)} · ` : ''}${p.current_stock} disponibles · ${started ? `Termina ${new Date(p.end_time!).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false })}` : `Inicia ${formatReservationDate(p.start_time)}`}`
+                      ? `${p.current_stock === 1 ? 'Queda 1' : `Quedan ${p.current_stock ?? 0}`} · ${started ? `Hasta ${new Date(p.end_time!).toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true })}` : `Inicia ${formatReservationDate(p.start_time)}`}`
                       : 'Venta cerrada · sin nuevos apartados'}
                   </AppText>
                 ) : (
                   <>
-                    <AppText variant="caption">
-                      {zoneOptions.find(z => z.id === p.zone_id)?.name}
-                    </AppText>
                     <AppText variant="caption">{p.description}</AppText>
                   </>
                 )}
                 {active ? (
                   <>
                     {p.type === 'LIVE' ? (
-                      <View style={styles.row}>
+                      <View style={[styles.row, stacked && styles.stacked]}>
                         <PrimaryButton
                           compact
                           variant="secondary"
@@ -389,9 +389,9 @@ export default function Sales() {
                       <PrimaryButton
                         compact
                         style={styles.flex}
-                        title={p.type === 'LIVE' ? 'Finalizar' : 'Marcar vendido'}
+                        title={p.type === 'LIVE' ? 'Finalizar' : PUBLICATION_COPY.STATIC.soldAction}
                         accessibilityLabel={
-                          p.type === 'LIVE' ? 'Finalizar publicación' : 'Marcar vendido'
+                          p.type === 'LIVE' ? 'Finalizar publicación' : PUBLICATION_COPY.STATIC.soldAction
                         }
                         variant="destructive"
                         disabled={busy}
@@ -408,9 +408,10 @@ export default function Sales() {
                   <AppText variant="caption">
                     {p.type === 'LIVE'
                       ? 'Puedes entregar las reservas que sigan vigentes.'
-                      : 'Ya no aparece en el catálogo activo.'}
+                      : 'Ya no aparece en Productos.'}
                   </AppText>
                 )}
+                </View>
               </Card>
               {p.type === 'LIVE' ? (
                 <>
@@ -480,13 +481,20 @@ export default function Sales() {
 }
 
 const styles = StyleSheet.create({
-  typeSelector: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.sm },
-  list: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.page, gap: SPACE.xl, flexGrow: 1 },
-  sale: { gap: SPACE.md },
-  card: { padding: SPACE.lg, gap: SPACE.sm },
+  fill: { flex: 1, minHeight: 0 },
+  headerBody: { paddingHorizontal: SPACE.page, gap: SPACE.sm, paddingBottom: SPACE.xl },
+  list: { paddingBottom: SPACE.page, flexGrow: 1 },
+  listBody: { paddingHorizontal: SPACE.page },
+  sale: { gap: SPACE.md, marginHorizontal: SPACE.page, marginBottom: SPACE.xl },
+  card: { overflow: 'hidden' },
+  cardBody: { padding: SPACE.lg, gap: SPACE.sm },
+  photo: { width: '100%', aspectRatio: 2.4, backgroundColor: COLORS.inputBg },
+  staticPhoto: { aspectRatio: 1.6 },
+  place: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.xs },
   gangaCard: { backgroundColor: COLORS.gangaSoft },
   row: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm },
-  flex: { flex: 1 },
+  stacked: { flexDirection: 'column', alignItems: 'stretch' },
+  flex: { flex: 1, minWidth: 0 },
   ganga: { color: COLORS.ganga },
   link: { color: COLORS.primary },
   info: {
@@ -495,5 +503,5 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primarySoft,
     gap: SPACE.sm,
   },
-  footer: { paddingTop: SPACE.xl, gap: SPACE.md },
+  footer: { paddingTop: SPACE.md, paddingHorizontal: SPACE.page, gap: SPACE.md },
 });

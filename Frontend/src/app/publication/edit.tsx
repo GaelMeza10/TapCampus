@@ -18,10 +18,12 @@ import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
 import { COLORS, METRICS, RADIUS, SPACE, TYPE } from '@/theme';
 import { Image as ExpoImage } from 'expo-image';
-import { DateTimePicker } from '@expo/ui/community/datetime-picker';
+import SaleTimePicker from '@/components/sale-time-picker';
+import OfferDuration from '@/components/offer-duration';
+import { maximumOfferMinutes } from '@/components/offer-duration.types';
 import AppText from '@/components/app-text';
 import OptionGrid from '@/components/option-grid';
-import { TypeSelector } from '@/components/marketplace-shell';
+import { MARKETPLACE_SCROLL_PROPS, TypeSelector } from '@/components/marketplace-shell';
 import { DataState, InlineMessage, Sheet } from '@/components/feedback';
 import {
   apiMessage,
@@ -39,6 +41,7 @@ import {
   type Zone,
 } from '@/services/marketplace';
 import { formFieldOrder, localDate, localInput, validPrice, validatePublicationDraft, type PublicationDraft, type PublicationFormErrors, type PublicationFormField } from '@/lib/publication-form-validation';
+import { PUBLICATION_COPY } from '@/lib/publication-copy';
 
 type Draft = PublicationDraft;
 const empty: Draft = {
@@ -120,15 +123,20 @@ function FormPicker({
 export default function EditPublication() {
   const { width, fontScale } = useWindowDimensions();
   const stacked = width < 360 || fontScale > 1.2;
-  const { id, type: initialType } = useLocalSearchParams<{ id?: string; type?: string }>();
+  const params = useLocalSearchParams<{ id?: string | string[]; type?: string | string[] }>();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const routeType = Array.isArray(params.type) ? params.type[0] : params.type;
+  const initialType = routeType === 'LIVE' || routeType === 'STATIC' ? routeType : undefined;
   const router = useRouter();
-  const [type, setType] = useState<PublicationType>(initialType === 'STATIC' ? 'STATIC' : 'LIVE');
+  const [selectedType, setType] = useState<PublicationType>(initialType ?? 'LIVE');
+  const type = id ? selectedType : initialType ?? selectedType;
   const [draft, setDraft] = useState<Draft>(() => ({
     ...empty,
     start: localInput(new Date()),
     end: localInput(new Date(Date.now() + 3600000)),
   }));
   const [zoneId, setZoneId] = useState<number>();
+  const [pickupMode, setPickupMode] = useState<'SPECIFIC_ZONE' | 'ARRANGED'>('SPECIFIC_ZONE');
   const [categoryId, setCategoryId] = useState<number>();
   const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
@@ -153,6 +161,7 @@ export default function EditPublication() {
   const photoRef = useRef<ComponentRef<typeof Pressable>>(null);
   const zoneRef = useRef<ComponentRef<typeof Pressable>>(null);
   const categoryRef = useRef<ComponentRef<typeof Pressable>>(null);
+  const conditionRef = useRef<ComponentRef<typeof Pressable>>(null);
   const startRef = useRef<ComponentRef<typeof Pressable>>(null);
   const endRef = useRef<ComponentRef<typeof Pressable>>(null);
   const offerRef = useRef<ComponentRef<typeof Pressable>>(null);
@@ -162,7 +171,7 @@ export default function EditPublication() {
   const submitting = useRef(false);
   const pendingField = useRef<PublicationFormField | undefined>(undefined);
   const [navigationRequest, setNavigationRequest] = useState(0);
-  const [panel, setPanel] = useState<'photo' | 'zone' | 'category' | 'ganga' | 'start' | 'end'>();
+  const [panel, setPanel] = useState<'photo' | 'zone' | 'category' | 'condition' | 'ganga' | 'start' | 'end'>();
   const [config, setConfig] = useState({
     mode: 'NONE' as 'NONE' | 'MANUAL' | 'SCHEDULED',
     price: '',
@@ -185,10 +194,10 @@ export default function EditPublication() {
   };
 
   const validation = () => validatePublicationDraft({ draft, type, original, editing: !!id,
-    hasPhoto: !!(asset || existingImage), zoneId, categoryId, gangaMode, now: Date.now() });
+    hasPhoto: !!(asset || existingImage), zoneId, pickupMode, categoryId, gangaMode, now: Date.now() });
   const fieldErrors: PublicationFormErrors = { ...(attempted ? validation() : {}), ...Object.fromEntries(Object.entries(serverErrors).filter(([, value]) => value)) };
   const problems: PublicationFormErrors = { ...fieldErrors, ...(photoError ? { photo: photoError } : {}),
-    ...(zoneError ? { zone: zoneError } : {}), ...(categoryError ? { category: categoryError } : {}) };
+    ...(zoneError && !(type === 'STATIC' && pickupMode === 'ARRANGED') ? { zone: zoneError } : {}), ...(categoryError ? { category: categoryError } : {}) };
   const firstError = formFieldOrder.find(field => problems[field]);
   const contentBlocked = !!(serverErrors.title || serverErrors.description);
   const notice = contentBlocked ? contentMessage : firstError ? 'Revisa los campos señalados' : error || loadError;
@@ -200,7 +209,7 @@ export default function EditPublication() {
   function focusPending() {
     const field = pendingField.current;
     if (!field || panel || fieldPositions.current[field] === undefined) return;
-    const target = { photo: photoRef, title: titleRef, description: descriptionRef, category: categoryRef,
+    const target = { photo: photoRef, title: titleRef, description: descriptionRef, condition: conditionRef, category: categoryRef,
       price: priceRef, stock: stockRef, zone: zoneRef, start: startRef, end: endRef, offer: offerRef }[field].current;
     target?.focus();
     if (target && Platform.OS !== 'web') AccessibilityInfo.sendAccessibilityEvent(target, 'focus');
@@ -233,6 +242,10 @@ export default function EditPublication() {
       current = false;
     };
   }, [zoneAttempt]);
+
+  useEffect(() => {
+    if (!id) setCategoryId(undefined);
+  }, [id, initialType]);
 
   useEffect(() => {
     let current = true;
@@ -269,11 +282,13 @@ export default function EditPublication() {
         }
         setOriginal(p);
         setType(p.type);
-        setZoneId(p.zone_id);
+        setZoneId(p.zone_id ?? undefined);
+        setPickupMode(p.pickup_mode ?? 'SPECIFIC_ZONE');
         setCategoryId(p.category_id);
         setExistingImage(p.image_url);
         setGangaMode(p.ganga_activation_mode ?? 'MANUAL');
         setDraft({
+          condition: p.condition ?? undefined,
           title: p.title,
           description: p.description,
           price: p.price,
@@ -338,8 +353,8 @@ export default function EditPublication() {
         setAsset(selected);
         setExistingImage('');
       }
-    } catch (cause) {
-      setPhotoError((cause as Error).message || 'No se pudo seleccionar la imagen.');
+    } catch {
+      setPhotoError('No se pudo seleccionar la imagen. Inténtalo de nuevo.');
     }
   }
 
@@ -350,7 +365,7 @@ export default function EditPublication() {
     const first = formFieldOrder.find(field => errors[field]);
     if (first) { requestField(first); return; }
     if (id && !original) { setLoadError('Espera a que cargue la publicación antes de editarla.'); return; }
-    if (zoneError || categoryError) { requestField(zoneError ? 'zone' : 'category'); return; }
+    if ((zoneError && !(type === 'STATIC' && pickupMode === 'ARRANGED')) || categoryError) { requestField(categoryError ? 'category' : 'zone'); return; }
     const start = localDate(draft.start), end = localDate(draft.end);
     submitting.current = true;
     let stage: 'upload' | 'save' = 'upload';
@@ -367,7 +382,8 @@ export default function EditPublication() {
         description: draft.description.trim(),
         price: Number(draft.price),
         image_url: imageUrl,
-        zone_id: zoneId!,
+        zone_id: type === 'STATIC' && pickupMode === 'ARRANGED' ? null : zoneId!,
+        pickup_mode: type === 'STATIC' ? pickupMode : 'SPECIFIC_ZONE',
         category_id: categoryId!,
         ...(type === 'LIVE'
           ? {
@@ -388,13 +404,13 @@ export default function EditPublication() {
                   }
                 : {}),
             }
-          : {}),
+          : { condition: draft.condition! }),
       };
       if (id && original) {
         const patch: PublicationPatch = {};
         for (const [key, value] of Object.entries(payload)) {
           if (key === 'type' || key === 'initial_stock') continue;
-          const before = original[key as keyof OwnedPublication];
+          const before = key === 'pickup_mode' ? original.pickup_mode ?? 'SPECIFIC_ZONE' : original[key as keyof OwnedPublication];
           const equal =
             key === 'price' || key === 'ganga_min_price'
               ? (before == null || value == null ? before === value : Number(before) === value)
@@ -465,6 +481,7 @@ export default function EditPublication() {
       config.mode === 'SCHEDULED' &&
       (!/^\d+$/.test(config.minutes) ||
         Number(config.minutes) < 1 ||
+        Number(config.minutes) > 2147483647 ||
         !end ||
         !start ||
         end.getTime() - Number(config.minutes) * 60000 <= Math.max(Date.now(), start.getTime()))
@@ -499,7 +516,7 @@ export default function EditPublication() {
   const configScheduleError = configError.startsWith('Programa la oferta') ? configError : undefined;
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView testID="publication-editor" style={styles.screen}>
       <KeyboardAvoidingView
         style={styles.fill}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -507,7 +524,7 @@ export default function EditPublication() {
         <View style={styles.header}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Volver a Mis ventas"
+            accessibilityLabel="Volver"
             accessibilityState={{ disabled: loading }}
             disabled={loading}
             style={({ pressed }) => [styles.back, pressed && styles.pressed]}
@@ -519,9 +536,9 @@ export default function EditPublication() {
               color={COLORS.primary}
               accessible={false}
             />
-            <AppText style={styles.link}>Mis ventas</AppText>
+            <AppText style={styles.link}>Volver</AppText>
           </Pressable>
-          <AppText variant="title" accessibilityRole="header">{id ? 'Editar publicación' : 'Nueva publicación'}</AppText>
+          <AppText variant="title" accessibilityRole="header">{id ? 'Editar publicación' : initialType ? PUBLICATION_COPY[initialType].formTitle : 'Nueva publicación'}</AppText>
         </View>
         {notice ? <ScrollView testID="publication-form-notice" style={styles.notice} contentContainerStyle={styles.noticeContent} keyboardShouldPersistTaps="handled">
           <AppText accessibilityRole="alert" style={styles.errorText}>{notice}</AppText>
@@ -529,6 +546,7 @@ export default function EditPublication() {
             loadError ? <PrimaryButton compact variant="ghost" title="Reintentar carga" onPress={() => setAttempt(n => n + 1)} /> : null}
         </ScrollView> : null}
         <ScrollView
+          {...MARKETPLACE_SCROLL_PROPS}
           ref={scrollRef}
           testID="publication-form-scroll"
           style={styles.fill}
@@ -536,7 +554,7 @@ export default function EditPublication() {
           contentContainerStyle={styles.scroll}
           onContentSizeChange={focusPending}
         >
-          <TypeSelector
+          {!id && !initialType ? <TypeSelector
             value={type}
             disabled={!!id || loading}
             onChange={next => {
@@ -545,7 +563,7 @@ export default function EditPublication() {
                 setCategoryId(undefined);
               }
             }}
-          />
+          /> : null}
           {id && !editingReady ? (
             <DataState
               kind="loading"
@@ -662,6 +680,17 @@ export default function EditPublication() {
                   multiline
                 />
               </View>
+              {type === 'STATIC' ? <FormPicker
+                label="Condición"
+                controlRef={conditionRef}
+                onLayout={event => { fieldPositions.current.condition = event.nativeEvent.layout.y; }}
+                error={problems.condition}
+                value={draft.condition === 'NEW' ? 'Nuevo' : draft.condition === 'USED' ? 'Usado' : undefined}
+                placeholder="Seleccionar condición"
+                icon="pricetag-outline"
+                disabled={loading}
+                onPress={() => setPanel('condition')}
+              /> : null}
               <FormPicker
                 label="Categoría"
                 controlRef={categoryRef}
@@ -740,7 +769,7 @@ export default function EditPublication() {
                 controlRef={zoneRef}
                 onLayout={event => { fieldPositions.current.zone = event.nativeEvent.layout.y; }}
                 error={problems.zone}
-                value={zoneOptions.find(z => z.id === zoneId)?.name}
+                value={type === 'STATIC' && pickupMode === 'ARRANGED' ? 'Punto de entrega por acordar dentro del campus' : zoneOptions.find(z => z.id === zoneId)?.name}
                 placeholder="Seleccionar zona"
                 icon="location-outline"
                 disabled={loading}
@@ -842,7 +871,7 @@ export default function EditPublication() {
         </ScrollView>
         <View style={styles.submit}>
           <PrimaryButton
-            title={id ? 'Guardar cambios' : type === 'STATIC' ? 'Publicar artículo' : 'Publicar'}
+            title={id ? 'Guardar cambios' : type === 'STATIC' ? PUBLICATION_COPY.STATIC.createAction : 'Publicar'}
             loadingTitle={id ? 'Guardando…' : 'Publicando…'}
             disabled={!!id && (!editingReady || !original)}
             loading={loading}
@@ -871,11 +900,22 @@ export default function EditPublication() {
           }}
         />
       </Sheet>
+      <Sheet visible={panel === 'condition'} title="Condición del artículo" onClose={() => setPanel(undefined)}>
+        <OptionGrid
+          options={[{ id: 1, name: 'Nuevo' }, { id: 2, name: 'Usado' }]}
+          value={draft.condition === 'NEW' ? 1 : draft.condition === 'USED' ? 2 : undefined}
+          onChange={value => {
+            setDraft(previous => ({ ...previous, condition: value === 1 ? 'NEW' : 'USED' }));
+            setPanel(undefined);
+          }}
+        />
+      </Sheet>
       <Sheet
         visible={panel === 'zone' || panel === 'category'}
         title={panel === 'zone' ? 'Zona' : 'Categoría'}
         onClose={() => setPanel(undefined)}
       >
+        {panel === 'zone' && type === 'STATIC' ? <PrimaryButton title="Punto de entrega por acordar dentro del campus" variant={pickupMode === 'ARRANGED' ? 'primary' : 'secondary'} onPress={() => { setPickupMode('ARRANGED'); setZoneId(undefined); setPanel(undefined); }} /> : null}
         {(panel === 'zone' ? zoneLoading : categoryLoading) ? (
           <DataState
             kind="loading"
@@ -891,10 +931,12 @@ export default function EditPublication() {
           />
         ) : (
           <OptionGrid
+            key={panel}
+            searchLabel={panel === 'category' ? 'Buscar categorías' : 'Buscar zonas'}
             options={panel === 'zone' ? zoneOptions : categoryOptions}
             value={panel === 'zone' ? zoneId : categoryId}
             onChange={value => {
-              if (panel === 'zone') setZoneId(value);
+              if (panel === 'zone') { setZoneId(value); setPickupMode('SPECIFIC_ZONE'); }
               else setCategoryId(value);
               setPanel(undefined);
             }}
@@ -950,15 +992,13 @@ export default function EditPublication() {
             </AppText>
             {config.mode === 'SCHEDULED' ? (
               <>
-                <CustomInput
-                  label="Minutos antes del fin"
-                  surface="white"
-                  value={config.minutes}
+                <OfferDuration
+                  value={Number(config.minutes) || 0}
+                  maxMinutes={maximumOfferMinutes(localDate(draft.start)?.getTime() ?? NaN, localDate(draft.end)?.getTime() ?? NaN, Date.now())}
                   error={configScheduleError}
-                  keyboardType="number-pad"
-                  editable={!loading && !original?.is_ganga_active}
-                  onChangeText={minutes => {
-                    setConfig(previous => ({ ...previous, minutes }));
+                  disabled={loading || !!original?.is_ganga_active}
+                  onChange={minutes => {
+                    setConfig(previous => ({ ...previous, minutes: String(minutes) }));
                     setConfigError('');
                   }}
                 />
@@ -975,7 +1015,7 @@ export default function EditPublication() {
                           hour: '2-digit',
                           minute: '2-digit',
                         })
-                      : 'Elige los minutos'}
+                      : 'Elige la anticipación'}
                   </AppText>
                   <AppText variant="caption">La venta termina {localLabel(draft.end)}.</AppText>
                 </View>
@@ -1017,12 +1057,9 @@ export default function EditPublication() {
       >
         <AppText variant="label">{pickedTime.toLocaleString('es-MX')}</AppText>
         {timedPanel && (Platform.OS !== 'android' || androidStep) ? (
-          <DateTimePicker
+          <SaleTimePicker
             value={pickedTime}
             mode={Platform.OS === 'android' ? (androidStep ?? 'date') : 'datetime'}
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            locale="es_MX"
-            accentColor={COLORS.primary}
             onDismiss={() => setAndroidStep(undefined)}
             onValueChange={(_event, value) => {
               if (Platform.OS === 'android' && androidStep === 'date') {

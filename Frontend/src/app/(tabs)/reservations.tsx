@@ -16,8 +16,9 @@ import {
 } from '@/lib/reservation-presentation';
 import { useClock } from '@/hooks/use-clock';
 import { useMarketplaceSync } from '@/hooks/use-marketplace-sync';
-import { MarketplaceShell, PageHeader } from '@/components/marketplace-shell';
-import { ConfirmationDialog, InlineMessage } from '@/components/feedback';
+import { MARKETPLACE_SCROLL_PROPS, MarketplaceShell, PageHeader } from '@/components/marketplace-shell';
+import { CampusHeader } from '@/components/campus-header';
+import { ConfirmationDialog, ErrorNotice } from '@/components/feedback';
 import BuyerReservationCard from '@/components/buyer-reservation-card';
 import ReservationListState from '@/components/reservation-list-state';
 import AppText from '@/components/app-text';
@@ -116,8 +117,11 @@ export default function MyReservations() {
   }
 
   return (
-    <MarketplaceShell active="reservations">
+    <MarketplaceShell active="reservations" navigationDisabled={busy}>
+      {error && rows.length > 0 ? <ErrorNotice onRetry={() => void refresh()}>{error}</ErrorNotice> : null}
       <SectionList
+        {...MARKETPLACE_SCROLL_PROPS}
+        style={styles.fill}
         sections={sections}
         keyExtractor={({ reservation }) => reservation.id}
         extraData={{ now, busy }}
@@ -127,13 +131,13 @@ export default function MyReservations() {
         onRefresh={() => void refresh()}
         ListHeaderComponent={
           <>
+            <CampusHeader />
+            <View style={styles.body}>
             <PageHeader
               title="Mis reservas"
               contained
             />
-            {error && rows.length > 0 ? (
-              <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage>
-            ) : null}
+            </View>
           </>
         }
         renderSectionHeader={({ section }) => (
@@ -189,14 +193,17 @@ export default function MyReservations() {
 }
 
 const styles = StyleSheet.create({
-  list: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.xl, flexGrow: 1 },
+  fill: { flex: 1, minHeight: 0 },
+  list: { paddingBottom: SPACE.xl, flexGrow: 1 },
+  body: { paddingHorizontal: SPACE.page },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACE.sm,
     paddingTop: SPACE.md,
     paddingBottom: SPACE.md,
+    paddingHorizontal: SPACE.page,
   },
   sectionTitle: { flexShrink: 1, color: COLORS.textDark },
-  item: { marginBottom: SPACE.lg },
+  item: { marginBottom: SPACE.lg, paddingHorizontal: SPACE.page },
 });

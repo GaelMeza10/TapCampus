@@ -1,11 +1,11 @@
 import React from 'react';
-import { act, fireEvent, render } from '@testing-library/react-native';
+import { act, fireEvent, render, within } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 import MyAccount from '../src/app/(tabs)/account';
 import { BottomNavigation, type MarketTab } from '../src/components/marketplace-shell';
 import { myProfile, updateProfile } from '../src/services/auth.service';
 import { COLORS } from '../src/theme';
-import { accountInitials } from '../src/components/account-ui';
+import { accountInitials, accountPhone } from '../src/components/account-ui';
 
 const mockLogout = jest.fn();
 const mockNavigate = jest.fn();
@@ -24,7 +24,7 @@ test.each<[MarketTab, string]>([['explore', 'Explorar'], ['reservations', 'Reser
   const selected = view.getByRole('tab', { name: label });
   expect(selected.props.accessibilityState.selected).toBe(true);
   expect(StyleSheet.flatten(selected.props.style).backgroundColor).toBe(COLORS.navigationSelected);
-  expect(StyleSheet.flatten(view.getByText(label).props.style).color).toBe(COLORS.primary);
+  expect(StyleSheet.flatten(view.getByText(label).props.style).color).toBe(COLORS.white);
   await fireEvent.press(selected);
   expect(mockNavigate).not.toHaveBeenCalled();
 });
@@ -39,7 +39,7 @@ test('Mi cuenta muestra datos recibidos y edición, sin contraseña ni identific
   const view = await render(<MyAccount />);
   expect(await view.findByText(profile.name)).toBeTruthy();
   expect(view.getByText(profile.email)).toBeTruthy();
-  expect(view.getByText(profile.phone)).toBeTruthy();
+  expect(view.getByText(accountPhone(profile.phone))).toBeTruthy();
   expect(view.queryByText('u1')).toBeNull();
   expect(view.queryByText(/Contraseña/)).toBeNull();
   expect(view.getByText('Editar datos')).toBeTruthy();
@@ -77,7 +77,7 @@ test('fallo conserva borrador, reintento guarda datos normalizados y mantiene se
   expect(view.getByLabelText('Nombre completo').props.value).toBe('  Ana   María Pérez  ');
   await fireEvent.press(view.getByText('Guardar cambios'));
   expect(await view.findByText('Datos actualizados.')).toBeTruthy();
-  expect(view.getByText(updated.phone)).toBeTruthy();
+  expect(view.getByText(accountPhone(updated.phone))).toBeTruthy();
   expect(view.getByText(updated.name)).toBeTruthy();
   expect(updateProfile).toHaveBeenLastCalledWith({ name: updated.name, phone: updated.phone });
   expect(mockLogout).not.toHaveBeenCalled();
@@ -124,14 +124,29 @@ test.each([404, 500])('un error técnico %s nunca muestra mensajes del servidor 
   expect(await view.findByText(profile.email)).toBeTruthy();
 });
 
+test('0047 cancelar cierre conserva sesión y borrador sin guardar', async () => {
+  const view = await render(<MyAccount />);
+  await view.findByText(profile.name);
+  await fireEvent.press(view.getByText('Editar datos'));
+  await fireEvent.changeText(view.getByLabelText('Nombre completo'), 'Ana editada');
+  await fireEvent.press(view.getByText('Cerrar sesión'));
+  expect(view.getByText(/Los cambios de tu perfil sin guardar se perderán/)).toBeTruthy();
+  expect(mockLogout).not.toHaveBeenCalled();
+  await fireEvent.press(within(view.getByTestId('confirmation-dialog')).getByRole('button', { name: 'Volver' }));
+  expect(view.getByLabelText('Nombre completo').props.value).toBe('Ana editada');
+  expect(mockLogout).not.toHaveBeenCalled();
+});
+
 test('cierre fallido conserva datos y permite reintentar', async () => {
   mockLogout.mockRejectedValueOnce(new Error('SecureStore'));
   const view = await render(<MyAccount />);
   await view.findByText(profile.name);
   await fireEvent.press(view.getByText('Cerrar sesión'));
+  expect(mockLogout).not.toHaveBeenCalled();
+  await fireEvent.press(within(view.getByTestId('confirmation-dialog')).getByRole('button', { name: 'Cerrar sesión' }));
   expect(view.getByText('No se pudo cerrar la sesión. Inténtalo de nuevo.')).toBeTruthy();
   expect(view.getByText(profile.email)).toBeTruthy();
-  await fireEvent.press(view.getByText('Cerrar sesión'));
+  await fireEvent.press(within(view.getByTestId('confirmation-dialog')).getByRole('button', { name: 'Cerrar sesión' }));
   expect(mockLogout).toHaveBeenCalledTimes(2);
 });
 
@@ -142,10 +157,11 @@ test('cierre pendiente bloquea repetición y navegación', async () => {
   await view.findByText(profile.name);
   await fireEvent.press(view.getByText('Editar datos'));
   await fireEvent.press(view.getByText('Cerrar sesión'));
-  expect(view.getByText('Cerrando sesión…')).toBeTruthy();
+  await fireEvent.press(within(view.getByTestId('confirmation-dialog')).getByRole('button', { name: 'Cerrar sesión' }));
+  expect(within(view.getByTestId('confirmation-dialog')).getByText('Cerrando sesión…')).toBeTruthy();
   expect(view.getByLabelText('Nombre completo').props.editable).toBe(false);
   expect(view.getByRole('button', { name: 'Guardar cambios' }).props.accessibilityState.disabled).toBe(true);
-  await fireEvent.press(view.getByText('Cerrando sesión…'));
+  await fireEvent.press(within(view.getByTestId('confirmation-dialog')).getByText('Cerrando sesión…'));
   expect(view.getByRole('tab', { name: 'Explorar' }).props.accessibilityState.disabled).toBe(true);
   await fireEvent.press(view.getByRole('tab', { name: 'Explorar' }));
   expect(mockNavigate).not.toHaveBeenCalled();

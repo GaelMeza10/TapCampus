@@ -1,4 +1,5 @@
 import type { Reservation } from '@/services/marketplace';
+import { PUBLICATION_COPY } from './publication-copy';
 
 const reservationLabels: Record<Reservation['status'], string> = {
   ACTIVE: 'Activa',
@@ -32,7 +33,7 @@ export function reservationStatusLabel(row: Reservation, now: number): string {
 }
 
 export function publicationTypeLabel(type: string): string {
-  return ({ LIVE: 'Disponibles ahora', STATIC: 'Catálogo' } as Record<string, string>)[type] ?? 'Tipo no disponible';
+  return type === 'LIVE' || type === 'STATIC' ? PUBLICATION_COPY[type].label : 'Tipo no disponible';
 }
 
 export function publicationStatusLabel(status: string, type: string): string {

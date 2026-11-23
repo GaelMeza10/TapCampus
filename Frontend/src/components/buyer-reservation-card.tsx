@@ -8,6 +8,7 @@ import AppText from './app-text';
 import Card from './Card';
 import PrimaryButton from './PrimaryButton';
 import PublicationPhoto from './publication-photo';
+import PickupLocation from './pickup-location';
 
 type Props = { reservation: Reservation; unitLabel: string; now: number; disabled?: boolean; onCancel: () => void; onContact: () => void };
 const stateIcons = { ACTIVE: 'time-outline', COMPLETED: 'checkmark-circle-outline', CANCELLED: 'close-circle-outline', EXPIRED: 'hourglass-outline' } as const;
@@ -16,6 +17,7 @@ export default function BuyerReservationCard({ reservation: r, unitLabel, now, d
   const { width, fontScale } = useWindowDimensions();
   const stacked = width < 360 || fontScale > 1.2;
   const active = canActOnReservation(r, now);
+  const urgent = active && new Date(r.expiresAt).getTime() - now <= 300000;
   const pending = r.status === 'ACTIVE';
   const description = reservationDescription(r, unitLabel);
   const completed = r.status === 'COMPLETED';
@@ -33,13 +35,14 @@ export default function BuyerReservationCard({ reservation: r, unitLabel, now, d
         </View>
       </View>
     </View>
+    <PickupLocation reservation={r} />
     {pending ? <View style={[styles.deadline, !active && styles.waiting]}>
       <View style={styles.deadlineRow}>
         <View style={styles.status}>
-          <Ionicons name={stateIcons.ACTIVE} size={18} color={active ? COLORS.primary : COLORS.textMedium} accessible={false} />
-          <AppText variant="label" style={[styles.statusText, color]}>{reservationStatusLabel(r, now)}</AppText>
+          <Ionicons name={urgent ? 'alert-circle-outline' : stateIcons.ACTIVE} size={18} color={urgent ? COLORS.error : active ? COLORS.primary : COLORS.textMedium} accessible={false} />
+          <AppText variant="label" style={[styles.statusText, color, urgent && styles.urgentText]}>{urgent ? 'Por vencer' : reservationStatusLabel(r, now)}</AppText>
         </View>
-        {active ? <AppText variant="countdown" style={styles.timer} accessibilityLabel={`Tiempo para recoger: ${countdown(r.expiresAt, now)}`}>{countdown(r.expiresAt, now)}</AppText> : null}
+        {active ? <AppText variant="countdown" style={[styles.timer, urgent && styles.urgentText]} accessibilityLabel={`Tiempo para recoger: ${countdown(r.expiresAt, now)}`}>{countdown(r.expiresAt, now)}</AppText> : null}
       </View>
       {active ? <AppText variant="caption" style={styles.greenText}>Tiempo para recoger · Vence {formatReservationDate(r.expiresAt)}</AppText> : null}
     </View> : <View style={styles.resolution}>
@@ -72,6 +75,7 @@ const styles = StyleSheet.create({
   status: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, flexShrink: 1 },
   statusText: { flexShrink: 1 },
   timer: { fontVariant: ['tabular-nums'] },
+  urgentText: { color: COLORS.error },
   resolution: { gap: SPACE.xs },
   greenText: { color: COLORS.primary }, mutedText: { color: COLORS.textMedium },
   actions: { flexDirection: 'row', gap: SPACE.sm }, stackedActions: { flexDirection: 'column' }, action: { flex: 1 },

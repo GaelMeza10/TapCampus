@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, waitFor, within } from '@testing-library/react-native';
 import Sales from '../src/app/(tabs)/sales';
 import { completeReservation, publicationAction } from '../src/services/marketplace';
 
@@ -19,16 +19,28 @@ beforeEach(() => {
   market.publicationAction.mockResolvedValue({ ...mockPublication, current_stock: 1 });
 });
 
+test('una acción fallida conserva publicaciones y deja el error fuera de la lista', async () => {
+  (publicationAction as jest.Mock).mockRejectedValueOnce(new Error('offline'));
+  const view = await render(<Sales />);
+  await view.findByText('Unidad 1 · Luis');
+  await fireEvent.press(view.getByText('−1 venta física'));
+  await fireEvent.press(view.getByRole('button', { name: 'Registrar venta física' }));
+  expect(await view.findByTestId('persistent-error')).toBeTruthy();
+  expect(view.getByText('Error de red')).toBeTruthy();
+  expect(view.getByText('Burrito')).toBeTruthy();
+  expect(publicationAction).toHaveBeenCalledTimes(1);
+});
+
 test('volver de guardar cambia el tipo en ventas ya montada y el selector mantiene la URL sincronizada', async () => {
   const view = await render(<Sales />);
   await view.findByText('Unidad 1 · Luis');
   mockRouteType = 'STATIC';
   await view.rerender(<Sales />);
-  expect(view.getByRole('tab', { name: 'Catálogo' }).props.accessibilityState.selected).toBe(true);
+  expect(view.getByRole('tab', { name: 'Productos' }).props.accessibilityState.selected).toBe(true);
   expect(view.queryByText('Unidad 1 · Luis')).toBeNull();
-  await fireEvent.press(view.getByRole('tab', { name: 'Con horario' }));
+  await fireEvent.press(view.getByRole('tab', { name: 'Ahora en el campus' }));
   expect(mockSetParams).toHaveBeenCalledWith({ type: 'LIVE' });
-  expect(view.getByRole('tab', { name: 'Con horario' }).props.accessibilityState.selected).toBe(true);
+  expect(view.getByRole('tab', { name: 'Ahora en el campus' }).props.accessibilityState.selected).toBe(true);
 });
 jest.mock('../src/services/marketplace', () => ({
   zones: jest.fn(async () => []),
@@ -85,7 +97,7 @@ test('vendedor lee cuatro estados en español y etiquetas accesibles sin identif
   await view.findByText(/Estado: Entrega confirmada/);
   expect(view.getByText(/Estado: Cancelada/)).toBeTruthy();
   expect(view.getByText(/Estado: Vencida/)).toBeTruthy();
-  expect(view.getByText(/VENTA CON HORARIO · ACTIVA/)).toBeTruthy();
+  expect(view.getByText(/AHORA EN EL CAMPUS · ACTIVA/)).toBeTruthy();
   const label = view.getByLabelText(/Confirmar entrega de Burrito · Unidad 1 de 4/).props.accessibilityLabel;
   expect(label).toContain('Luis');
   expect(label).not.toMatch(/r1|p1|LIVE|ACTIVE/);
@@ -96,7 +108,7 @@ test('venta finalizada oculta acciones de publicación y permite entregar una re
   market.myPublications.mockResolvedValue([{ ...mockPublication, status: 'FINISHED', end_time: '2000-01-01T12:00:00Z' }]);
   market.sellerReservations.mockResolvedValueOnce([mockReservation]).mockResolvedValue([{ ...mockReservation, status: 'COMPLETED' }]);
   const view = await render(<Sales />);
-  await view.findByText(/VENTA CON HORARIO · FINALIZADA/);
+  await view.findByText(/AHORA EN EL CAMPUS · FINALIZADA/);
   expect(view.queryByText('−1 venta física')).toBeNull();
   expect(view.queryByText('Editar publicación')).toBeNull();
   expect(view.queryByText(/Activar oferta/)).toBeNull();
@@ -112,16 +124,16 @@ test('Catálogo permite marcar vendido con confirmación y retira acciones al te
   market.myPublications.mockResolvedValueOnce([book]).mockResolvedValue([{ ...book, status: 'FINISHED' }]);
   market.publicationAction.mockResolvedValue({ ...book, status: 'FINISHED' });
   const view = await render(<Sales />);
-  expect(view.getByRole('tab', { name: 'Con horario' }).props.accessibilityState.selected).toBe(true);
-  await fireEvent.press(view.getByRole('tab', { name: 'Catálogo' }));
-  expect(view.getByRole('tab', { name: 'Catálogo' }).props.accessibilityState.selected).toBe(true);
+  expect(view.getByRole('tab', { name: 'Ahora en el campus' }).props.accessibilityState.selected).toBe(true);
+  await fireEvent.press(view.getByRole('tab', { name: 'Productos' }));
+  expect(view.getByRole('tab', { name: 'Productos' }).props.accessibilityState.selected).toBe(true);
   await view.findByText('Cálculo I');
   expect(view.queryByText('−1 venta física')).toBeNull();
   expect(view.queryByText(/Reservas por entregar/)).toBeNull();
   await fireEvent.press(view.getByRole('button', { name: 'Marcar vendido' }));
   expect(publicationAction).not.toHaveBeenCalled();
-  await fireEvent.press(view.getByRole('button', { name: 'Marcar vendida' }));
+  await fireEvent.press(within(view.getByTestId('confirmation-dialog')).getByRole('button', { name: 'Marcar vendido' }));
   await waitFor(() => expect(publicationAction).toHaveBeenCalledWith('book', 'sold'));
-  await view.findByText(/CATÁLOGO · VENDIDO/);
+  await view.findByText(/PRODUCTO · VENDIDO/);
   expect(view.queryByText('Editar publicación')).toBeNull();
 });

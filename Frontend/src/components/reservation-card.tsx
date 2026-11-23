@@ -9,6 +9,7 @@ import PrimaryButton from './PrimaryButton';
 import StatusIcon from './status-icon';
 import PublicationPhoto from './publication-photo';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import PickupLocation from './pickup-location';
 
 export default function ReservationCard({ reservation: r, unitLabel, now, seller, combineTitle, onConfirm, onCancel, onContact, disabled }: { reservation: Reservation; unitLabel: string; now: number; seller?: boolean; combineTitle?: boolean; onConfirm?: () => void; onCancel?: () => void; onContact?: () => void; disabled?: boolean }) {
   const active = canActOnReservation(r, now);
@@ -18,6 +19,7 @@ export default function ReservationCard({ reservation: r, unitLabel, now, seller
     <View style={styles.sellerHeader}><AppText variant="label" style={styles.flex}>{unitLabel || 'Unidad 1'} · {r.buyer?.name ?? 'No disponible'}</AppText>{contact && onContact ? <Pressable accessibilityRole="button" accessibilityLabel={`Contactar a ${r.buyer?.name ?? 'el comprador'} por WhatsApp sobre ${description}`} disabled={disabled} style={styles.contactIcon} onPress={onContact}><Ionicons name="logo-whatsapp" size={22} color={COLORS.primary} /></Pressable> : null}</View>
     <AppText variant="label" style={styles.clock}>Apartado vence en {countdown(r.expiresAt, now)}</AppText>
     <AppText variant="caption">Precio fijado: {money(r.unitPrice)}</AppText>
+    <PickupLocation reservation={r} />
     {onConfirm ? <PrimaryButton compact title="Confirmar entrega" accessibilityLabel={`Confirmar entrega de ${description} para ${r.buyer?.name ?? 'el comprador'}`} disabled={disabled} onPress={onConfirm} /> : null}
   </Card>;
   return <Card style={styles.card}>
@@ -32,6 +34,7 @@ export default function ReservationCard({ reservation: r, unitLabel, now, seller
         <AppText variant="label">Precio fijado: {money(r.unitPrice)}</AppText>
       </View>
     </View>
+    <PickupLocation reservation={r} />
     {active ? <><AppText variant="label" style={styles.clock}>Apartado vence en {countdown(r.expiresAt, now)}</AppText><AppText variant="caption">Vence: {formatReservationDate(r.expiresAt)}</AppText></> : null}
     {r.resolvedAt ? <AppText variant="caption">Resuelta el {formatReservationDate(r.resolvedAt)}</AppText> : null}
     {active ? <>

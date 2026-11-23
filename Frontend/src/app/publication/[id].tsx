@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ComponentRef } from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -6,17 +7,19 @@ import { randomUUID } from 'expo-crypto';
 import Card from '@/components/Card';
 import PrimaryButton from '@/components/PrimaryButton';
 import { COLORS, RADIUS, SPACE } from '@/theme';
-import PublicationPhoto from '@/components/publication-photo';
-import PublicationPrice, { GangaBadge } from '@/components/publication-price';
+import PublicationDetailContent from '@/components/publication-detail-content';
 import AppText from '@/components/app-text';
 import ReservationCard from '@/components/reservation-card';
+import PickupLocation from '@/components/pickup-location';
 import StatusIcon from '@/components/status-icon';
-import { ConfirmationDialog, DataState, InlineMessage } from '@/components/feedback';
+import { ConfirmationDialog, DataState, ErrorNotice } from '@/components/feedback';
+import { MARKETPLACE_SCROLL_PROPS } from '@/components/marketplace-shell';
 import { useMarketplaceSync } from '@/hooks/use-marketplace-sync';
 import { countdown, money, saleHasStarted, saleIsOpen } from '@/lib/marketplace-presentation';
 import {
   apiMessage,
   cancelReservation,
+  categories,
   myReservations,
   publicationDetail,
   reserve,
@@ -52,10 +55,13 @@ export default function PublicationDetail() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [contactError, setContactError] = useState('');
+  const [unavailable, setUnavailable] = useState(false);
+  const [reservationsError, setReservationsError] = useState('');
   const [now, setNow] = useState(Date.now());
   const [confirmId, setConfirmId] = useState<string>();
   const [successId, setSuccessId] = useState<string>();
   const [zoneOptions, setZoneOptions] = useState<Zone[]>([]);
+  const [categoryName, setCategoryName] = useState<string>();
   const [lastConfirmed, setLastConfirmed] = useState<Reservation>();
   const sequence = useRef(0);
   const reservationBusy = useRef(false);
@@ -73,21 +79,23 @@ export default function PublicationDetail() {
     const results = await Promise.allSettled([publicationDetail(id), myReservations()]);
     if (request !== sequence.current) return;
     setError('');
-    if (results[0].status === 'fulfilled') setItem(results[0].value);
+    if (results[0].status === 'fulfilled') { setItem(results[0].value); setUnavailable(false); }
     else {
       if ((results[0].reason as { response?: { status?: number } }).response?.status === 404) {
         setItem(undefined);
+        setUnavailable(true);
         setContactError('');
       }
       setError(apiMessage(results[0].reason));
     }
     if (results[1].status === 'fulfilled') {
+      setReservationsError('');
       const rows = results[1].value.filter(r => r.publicationId === id);
       setReservations(rows);
       setLastConfirmed(previous =>
         previous ? (rows.find(r => r.id === previous.id) ?? previous) : previous,
       );
-    } else setError(apiMessage(results[1].reason));
+    } else setReservationsError(apiMessage(results[1].reason));
     setLoading(false);
   }, [id]);
 
@@ -98,6 +106,8 @@ export default function PublicationDetail() {
   useEffect(() => {
     routeEpoch.current++;
     setItem(undefined);
+    setUnavailable(false);
+    setReservationsError('');
     setReservations([]);
     setSuccessId(undefined);
     setLastConfirmed(undefined);
@@ -151,6 +161,17 @@ export default function PublicationDetail() {
     }
     if (shouldRefresh) void refresh();
   }, [reservations, now, refresh]);
+
+  const itemType = item?.type;
+  const categoryId = item?.category_id;
+  useEffect(() => {
+    let current = true;
+    setCategoryName(undefined);
+    if (itemType) void categories(itemType).then(rows => {
+      if (current) setCategoryName(rows.find(row => row.id === categoryId)?.name);
+    }).catch(() => {});
+    return () => { current = false; };
+  }, [itemType, categoryId]);
 
   const presented = presentReservations(reservations);
   const selected =
@@ -287,6 +308,7 @@ export default function PublicationDetail() {
   }
 
   const confirmed = successId && lastConfirmed?.id === successId ? lastConfirmed : undefined;
+  const pageError = [error && (item || confirmed) ? error : '', reservationsError].filter(Boolean).join('\n');
   const zone = item ? zoneOptions.find(z => z.id === item.zone_id)?.name : undefined;
 
   return (
@@ -296,15 +318,18 @@ export default function PublicationDetail() {
         accessibilityElementsHidden={reservationOpen || !!confirmId}
         importantForAccessibility={reservationOpen || confirmId ? 'no-hide-descendants' : 'auto'}
       >
+        {pageError ? <ErrorNotice onRetry={() => void refresh()}>{pageError}</ErrorNotice> : null}
+        {contactError ? <ErrorNotice>{contactError}</ErrorNotice> : null}
         {confirmed ? (
-          <ScrollView contentContainerStyle={styles.successScroll}>
+          <ScrollView {...MARKETPLACE_SCROLL_PROPS} contentContainerStyle={styles.successScroll}>
             <Pressable
               accessibilityRole="button"
               style={styles.back}
               disabled={pending}
               onPress={() => setSuccessId(undefined)}
             >
-              <AppText style={styles.link}>‹ Volver al producto</AppText>
+              <Ionicons name="chevron-back" size={20} color={COLORS.primary} accessible={false} />
+              <AppText style={styles.link}>Volver al producto</AppText>
             </Pressable>
             <Card style={styles.successCard}>
               <StatusIcon kind={canActOnReservation(confirmed, now) ? 'success' : 'expired'} />
@@ -325,7 +350,8 @@ export default function PublicationDetail() {
                 <AppText variant="caption">Precio fijado</AppText>
                 <AppText variant="price">{money(confirmed.unitPrice)}</AppText>
               </View>
-              {zone ? <AppText variant="caption">{zone}</AppText> : null}
+              <AppText variant="caption">1 unidad · Recoge antes de {formatReservationDate(confirmed.expiresAt)}</AppText>
+              <PickupLocation reservation={confirmed} />
               {canActOnReservation(confirmed, now) ? (
                 <>
                   {confirmed.sellerContact?.phone ? (
@@ -354,8 +380,6 @@ export default function PublicationDetail() {
                 </AppText>
               )}
             </Card>
-            {error ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}
-            {contactError ? <InlineMessage>{contactError}</InlineMessage> : null}
             {canReserve || unresolved ? (
               <PrimaryButton
                 ref={reserveTrigger}
@@ -373,13 +397,13 @@ export default function PublicationDetail() {
           </ScrollView>
         ) : (
           <>
-            <ScrollView contentContainerStyle={styles.scroll}>
+            <ScrollView {...MARKETPLACE_SCROLL_PROPS} contentContainerStyle={styles.scroll}>
               <Pressable
                 accessibilityRole="button"
                 style={styles.back}
                 onPress={() => router.back()}
               >
-                <AppText style={styles.link}>‹ Explorar</AppText>
+                <Ionicons name="chevron-back" size={20} color={COLORS.primaryDark} accessible={false} /><AppText variant="label" style={styles.link}>Explorar</AppText>
               </Pressable>
               {loading ? (
                 <DataState
@@ -387,69 +411,26 @@ export default function PublicationDetail() {
                   title="Cargando publicación…"
                 />
               ) : null}
-              {error ? <InlineMessage onRetry={() => void refresh()}>{error}</InlineMessage> : null}
-              {contactError ? <InlineMessage>{contactError}</InlineMessage> : null}
               {item ? (
                 <>
-                  <PublicationPhoto
-                    uri={item.image_url}
-                    title={item.title}
-                    style={styles.image}
-                  />
-                  {item.is_ganga_active ? <GangaBadge /> : null}
-                  <AppText variant="badge">
-                    {item.type === 'LIVE'
-                      ? `${item.is_ganga_active ? 'Venta termina en' : 'DISPONIBLE AHORA · Venta termina en'} ${countdown(item.end_time, now)}`
-                      : 'CATÁLOGO · Sin reserva'}
-                  </AppText>
-                  <AppText variant="title">{item.title}</AppText>
-                  <View style={[styles.detailPrices, item.is_ganga_active && styles.gangaPanel]}>
-                    <PublicationPrice item={item} />
-                    {item.type === 'LIVE' ? (
-                      <AppText variant="badge">{item.current_stock} disponibles</AppText>
-                    ) : null}
-                  </View>
-                  <AppText variant="label">
-                    {item.type === 'LIVE' ? 'Dónde recogerlo' : 'Dónde se encuentra'}
-                  </AppText>
-                  <AppText variant="caption">
-                    {zone ?? 'Consulta el punto de entrega con el vendedor.'}
-                  </AppText>
-                  <AppText variant="label">
-                    {item.type === 'LIVE' ? 'Sobre el producto' : 'Descripción'}
-                  </AppText>
-                  <AppText variant="caption">{item.description}</AppText>
-                  <AppText variant="caption">Vendedor: {item.seller.name}</AppText>
-                  <View style={styles.info}>
-                    <AppText
-                      variant="label"
-                      style={styles.link}
-                    >
-                      {item.type === 'LIVE'
-                        ? 'Apartas 1 unidad durante 20 min'
-                        : 'Aquí puedes escribir sin apartar.'}
-                    </AppText>
-                    <AppText variant="caption">
-                      {item.type === 'LIVE'
-                        ? 'El precio se fija al confirmarse la reserva.'
-                        : 'Coordina la entrega directamente por WhatsApp.'}
-                    </AppText>
-                  </View>
+                  <PublicationDetailContent item={item} zone={zone} category={categoryName} now={now} />
                 </>
+              ) : !loading && error && !unavailable ? (
+                <DataState kind="error" title="No pudimos cargar la publicación" description={error} action="Reintentar" onAction={() => void refresh()} />
               ) : !loading ? (
                 <DataState
                   kind="empty"
                   title="Publicación no disponible"
-                  description="Ya no se aceptan nuevos apartados. Las reservas vigentes conservan su propio plazo."
+                  description="La publicación ya no está disponible. Si tienes reservas, conservan su propio plazo."
                   action="Ver mis reservas"
                   onAction={() => router.dismissTo('/reservations')}
                 />
               ) : null}
-              {item?.type === 'LIVE' || reservations.length > 0 ? (
+              {item?.type === 'LIVE' || reservations.length > 0 || reservationsError ? (
                 <>
                   <AppText variant="heading">Mis reservas de esta publicación</AppText>
                   {presented.length === 0 ? (
-                    <AppText variant="caption">Todavía no tienes reservas.</AppText>
+                    <AppText variant="caption">{reservationsError ? 'No pudimos actualizar tus reservas.' : 'Todavía no tienes reservas.'}</AppText>
                   ) : (
                     presented.map(({ reservation: r, unitLabel }) => (
                       <ReservationCard
@@ -471,6 +452,7 @@ export default function PublicationDetail() {
             </ScrollView>
             {item || unresolved ? (
               <View style={styles.footer}>
+                {item ? <AppText variant="caption" style={styles.footerHelp}>{item.type === 'STATIC' ? 'Este producto no se aparta: escríbele para coordinar la entrega.' : 'Apartas 1 unidad durante 20 min. El precio se fija al confirmarse la reserva.'}</AppText> : null}
                 {item?.type === 'LIVE' || unresolved ? (
                   <PrimaryButton
                     ref={reserveTrigger}
@@ -491,6 +473,7 @@ export default function PublicationDetail() {
                 {canConsultSeller && item?.sellerContact?.phone ? (
                   <PrimaryButton
                     title="Contactar por WhatsApp"
+                    icon={<Ionicons name="chatbubble-outline" size={20} color={item.type === 'LIVE' ? COLORS.primary : COLORS.white} accessible={false} />}
                     variant={item.type === 'LIVE' ? 'secondary' : 'primary'}
                     disabled={pending || reservationOpen || !!confirmId}
                     onPress={() => void contact(item.sellerContact!.phone, false, item.title)}
@@ -545,30 +528,11 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   screen: { flex: 1, backgroundColor: COLORS.background },
   scroll: { paddingHorizontal: SPACE.page, paddingBottom: SPACE.page, gap: SPACE.lg },
-  back: { minHeight: 44, justifyContent: 'center' },
+  back: { minHeight: 48, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: SPACE.xs, paddingHorizontal: SPACE.md, borderWidth: 1, borderColor: COLORS.primaryDark, borderRadius: RADIUS.sm },
   link: { color: COLORS.primary },
-  image: {
-    width: '100%',
-    height: 221,
-    borderRadius: RADIUS.lg,
-    backgroundColor: COLORS.primarySoft,
-  },
-  detailPrices: { gap: SPACE.sm },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: SPACE.sm,
-    flexWrap: 'wrap',
-  },
-  gangaPanel: { backgroundColor: COLORS.gangaSoft, padding: SPACE.lg, borderRadius: RADIUS.md },
-  info: {
-    backgroundColor: COLORS.primarySoft,
-    padding: SPACE.lg,
-    borderRadius: RADIUS.md,
-    gap: SPACE.sm,
-  },
-  footer: { padding: SPACE.page, gap: SPACE.sm },
+  priceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: SPACE.sm, flexWrap: 'wrap' },
+  footer: { paddingHorizontal: SPACE.page, paddingTop: SPACE.md, paddingBottom: SPACE.sm, gap: SPACE.sm, borderTopWidth: 1, borderTopColor: COLORS.border },
+  footerHelp: { textAlign: 'center' },
   successScroll: { padding: SPACE.page, gap: SPACE.lg, flexGrow: 1 },
   successCard: { padding: SPACE.xl, gap: SPACE.lg },
   center: { textAlign: 'center' },

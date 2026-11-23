@@ -18,6 +18,10 @@ import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
 import { mexicanPhone, uabcEmail } from '@/services/auth-validation';
 import { InlineMessage } from '@/components/feedback';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { CampusHeader } from '@/components/campus-header';
+import { MARKETPLACE_SCROLL_PROPS } from '@/components/marketplace-shell';
+import { authErrorMessage } from '@/services/error-messages';
 
 export default function Register() {
   const { register } = useAuth();
@@ -28,7 +32,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const update = (key: keyof typeof form, value: string) => {
     setForm(previous => ({ ...previous, [key]: value }));
-    setError('');
+    if (errorField === key) { setError(''); setErrorField(undefined); }
   };
   const complete = Boolean(
     form.name.trim() && form.email.trim() && form.phone.trim() && form.password && accepted,
@@ -58,11 +62,8 @@ export default function Register() {
     setErrorField(undefined);
     try {
       await register({ name: form.name.trim(), email, phone, password: form.password });
-    } catch (cause: any) {
-      const message = cause?.response?.data?.message;
-      setError(
-        Array.isArray(message) ? message.join('\n') : message || 'No se pudo crear la cuenta.',
-      );
+    } catch (cause) {
+      setError(authErrorMessage(cause, 'register'));
     } finally {
       setLoading(false);
     }
@@ -76,9 +77,12 @@ export default function Register() {
         style={styles.fill}
       >
         <ScrollView
+          {...MARKETPLACE_SCROLL_PROPS}
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
         >
+          <CampusHeader />
+          <View style={styles.body}>
           <Link
             href="/login"
             asChild
@@ -87,7 +91,8 @@ export default function Register() {
               accessibilityRole="link"
               style={styles.back}
             >
-              <AppText style={styles.link}>‹ Volver</AppText>
+                <Ionicons name="chevron-back" size={20} color={COLORS.primary} accessible={false} />
+                <AppText style={styles.link}>Volver</AppText>
             </Pressable>
           </Link>
           <AppText variant="title">Crea tu cuenta</AppText>
@@ -96,6 +101,7 @@ export default function Register() {
               label="Nombre completo"
               placeholder="Nombre completo"
               value={form.name}
+              error={form.name.length > 0 && !form.name.trim() ? 'Escribe tu nombre completo.' : undefined}
               editable={!loading}
               onChangeText={value => update('name', value)}
               autoCapitalize="words"
@@ -145,8 +151,9 @@ export default function Register() {
               onPress={() => setAccepted(!accepted)}
               style={styles.terms}
             >
-              <AppText variant="caption">
-                {accepted ? '☑' : '☐'} Acepto el aviso de privacidad y los términos de uso de
+              <Ionicons name={accepted ? 'checkbox-outline' : 'square-outline'} size={24} color={COLORS.primary} accessible={false} />
+              <AppText variant="caption" style={styles.termsText}>
+                Acepto el aviso de privacidad y los términos de uso de
                 TapCampus.
               </AppText>
             </Pressable>
@@ -172,6 +179,7 @@ export default function Register() {
               </Pressable>
             </Link>
           </View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -181,15 +189,20 @@ export default function Register() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: COLORS.background },
   fill: { flex: 1 },
-  scroll: { flexGrow: 1, paddingHorizontal: SPACE.page, paddingVertical: SPACE.lg, gap: SPACE.sm },
+  scroll: { flexGrow: 1, paddingBottom: SPACE.xl },
+  body: { paddingHorizontal: SPACE.page, width: '100%', maxWidth: 640, alignSelf: 'center', gap: SPACE.sm },
   back: {
     alignSelf: 'flex-start',
     minHeight: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACE.xs,
     justifyContent: 'center',
     marginBottom: SPACE.sm,
   },
   card: { padding: SPACE.page, gap: SPACE.lg, marginTop: SPACE.md },
-  terms: { minHeight: 44, justifyContent: 'center', paddingVertical: SPACE.sm },
+  terms: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, paddingVertical: SPACE.sm },
+  termsText: { flex: 1, minWidth: 0 },
   footer: {
     flexDirection: 'row',
     flexWrap: 'wrap',

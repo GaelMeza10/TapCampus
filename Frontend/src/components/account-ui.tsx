@@ -9,6 +9,10 @@ export function accountInitials(name: string) {
   return (words.length > 1 ? [words[0], words[words.length - 1]].map(word => Array.from(word)[0]).join('') : Array.from(words[0] ?? '').slice(0, 2).join('')).toLocaleUpperCase('es-MX');
 }
 
+export function accountPhone(phone: string) {
+  return phone.replace(/^\+52(\d{3})(\d{3})(\d{4})$/, '+52 $1 $2 $3');
+}
+
 export function AccountIdentity({ name, disabled, onEdit }: { name: string; disabled: boolean; onEdit: () => void }) {
   const { fontScale } = useWindowDimensions();
   return <View style={[styles.identity, fontScale > 1.2 && styles.stacked]}>
@@ -27,10 +31,10 @@ export function AccountIdentity({ name, disabled, onEdit }: { name: string; disa
 
 export function AccountContact({ label, value, readOnly, divider }: { label: string; value: string; readOnly?: boolean; divider?: boolean }) {
   return <View style={[styles.contact, divider && styles.divider]}>
-    <Ionicons name={readOnly ? 'mail-outline' : 'call-outline'} size={21} color={COLORS.textMedium} style={styles.contactIcon} accessible={false} />
+    <Ionicons name={readOnly ? 'mail-outline' : 'call-outline'} size={21} color={COLORS.primaryDark} style={styles.contactIcon} accessible={false} />
     <View style={styles.contactBody}>
       <View style={styles.contactLabel}><AppText variant="caption">{label}</AppText>{readOnly ? <View style={styles.readOnly}><Ionicons name="lock-closed-outline" size={12} color={COLORS.textMedium} accessible={false} /><AppText variant="caption">Solo lectura</AppText></View> : null}</View>
-      <AppText selectable>{value}</AppText>
+      <AppText variant="label" selectable>{readOnly ? value : accountPhone(value)}</AppText>
     </View>
   </View>;
 }
@@ -52,16 +56,16 @@ export function AccountState({ loading, error, onRetry }: { loading: boolean; er
 const styles = StyleSheet.create({
   identity: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.lg, paddingVertical: SPACE.lg },
   stacked: { flexDirection: 'column' },
-  monogram: { width: 64, minHeight: 64, borderRadius: RADIUS.full, backgroundColor: COLORS.primarySoft, alignItems: 'center', justifyContent: 'center', padding: SPACE.sm },
+  monogram: { width: 80, minHeight: 80, borderRadius: RADIUS.full, backgroundColor: COLORS.primarySoft, borderWidth: 1, borderColor: COLORS.primary, alignItems: 'center', justifyContent: 'center', padding: SPACE.sm },
   initials: { color: COLORS.primary },
   identityBody: { flex: 1, minWidth: 0, gap: SPACE.xs },
-  edit: { alignSelf: 'flex-start', minHeight: METRICS.compactControl, flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, paddingVertical: SPACE.sm },
+  edit: { alignSelf: 'flex-start', minHeight: METRICS.compactControl, flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, paddingVertical: SPACE.sm, paddingHorizontal: SPACE.md, borderWidth: 1, borderColor: COLORS.primaryDark, borderRadius: RADIUS.sm },
   green: { color: COLORS.primary }, pressed: { opacity: 0.75 }, disabled: { opacity: 0.55 },
   contact: { padding: SPACE.lg, flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.md },
   contactIcon: { marginTop: SPACE.xs },
   contactBody: { flex: 1, minWidth: 0, gap: SPACE.sm },
   contactLabel: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: SPACE.sm },
-  readOnly: { flexDirection: 'row', alignItems: 'center', gap: SPACE.xs },
+  readOnly: { flexDirection: 'row', alignItems: 'center', gap: SPACE.xs, backgroundColor: COLORS.inputBg, paddingHorizontal: SPACE.sm, paddingVertical: SPACE.xs, borderRadius: RADIUS.sm },
   divider: { borderBottomWidth: 1, borderBottomColor: COLORS.border },
   loading: { gap: SPACE.xl, paddingVertical: SPACE.lg },
   skeletonIdentity: { flexDirection: 'row', gap: SPACE.lg },

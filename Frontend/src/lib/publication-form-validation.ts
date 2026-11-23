@@ -1,10 +1,11 @@
-import type { OwnedPublication, PublicationType } from '@/services/marketplace';
+import type { OwnedPublication, ProductCondition, PublicationType } from '@/services/marketplace';
 
 export type PublicationDraft = {
+  condition?: ProductCondition;
   title: string; description: string; price: string; stock: string;
   start: string; end: string; gangaPrice: string; gangaMinutes: string;
 };
-export const formFieldOrder = ['photo', 'title', 'description', 'category', 'price', 'stock', 'zone', 'start', 'end', 'offer'] as const;
+export const formFieldOrder = ['photo', 'title', 'description', 'condition', 'category', 'price', 'stock', 'zone', 'start', 'end', 'offer'] as const;
 export type PublicationFormField = typeof formFieldOrder[number];
 export type PublicationFormErrors = Partial<Record<PublicationFormField, string>>;
 export const validPrice = (value: string) =>
@@ -19,9 +20,9 @@ export function localDate(value: string) {
   return Number.isNaN(date.getTime()) || localInput(date) !== value ? null : date;
 }
 
-export function validatePublicationDraft({ draft, type, original, editing, hasPhoto, zoneId, categoryId, gangaMode, now }: {
+export function validatePublicationDraft({ draft, type, original, editing, hasPhoto, zoneId, pickupMode, categoryId, gangaMode, now }: {
   draft: PublicationDraft; type: PublicationType; original?: OwnedPublication; editing: boolean;
-  hasPhoto: boolean; zoneId?: number; categoryId?: number; gangaMode: 'MANUAL' | 'SCHEDULED'; now: number;
+  hasPhoto: boolean; zoneId?: number; pickupMode?: 'SPECIFIC_ZONE' | 'ARRANGED'; categoryId?: number; gangaMode: 'MANUAL' | 'SCHEDULED'; now: number;
 }): PublicationFormErrors {
   const errors: PublicationFormErrors = {};
   if (!hasPhoto) errors.photo = 'Añade una foto del producto.';
@@ -29,8 +30,11 @@ export function validatePublicationDraft({ draft, type, original, editing, hasPh
   if (!draft.description.trim()) errors.description = 'Describe el producto y agrega una referencia para la entrega.';
   if (!categoryId) errors.category = 'Selecciona una categoría.';
   if (!validPrice(draft.price)) errors.price = 'El precio debe ser positivo y tener hasta dos decimales.';
-  if (!zoneId) errors.zone = 'Selecciona una zona.';
-  if (type === 'STATIC') return errors;
+  if (!(type === 'STATIC' && pickupMode === 'ARRANGED') && !zoneId) errors.zone = 'Selecciona una zona.';
+  if (type === 'STATIC') {
+    if (draft.condition !== 'NEW' && draft.condition !== 'USED') errors.condition = 'Selecciona si el artículo es nuevo o usado.';
+    return errors;
+  }
   if (!/^\d+$/.test(draft.stock) || Number(draft.stock) < (editing ? 0 : 1) || Number(draft.stock) > 2147483647) {
     errors.stock = 'El stock debe ser un entero no negativo; al crear debe ser mayor que cero.';
   }

@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "name": "Comida Fuerte",
+    "type": "LIVE"
+  },
+  {
+    "id": 2,
+    "name": "Snacks",
+    "type": "LIVE"
+  },
+  {
+    "id": 3,
+    "name": "Bebidas",
+    "type": "LIVE"
+  },
+  {
+    "id": 4,
+    "name": "Postres",
+    "type": "LIVE"
+  },
+  {
+    "id": 5,
+    "name": "Libros",
+    "type": "STATIC"
+  },
+  {
+    "id": 6,
+    "name": "Material Escolar",
+    "type": "STATIC"
+  },
+  {
+    "id": 8,
+    "name": "Electrónica",
+    "type": "STATIC"
+  },
+  {
+    "id": 9,
+    "name": "Batas/Uniformes",
+    "type": "STATIC"
+  },
+  {
+    "id": 10,
+    "name": "Desayunos",
+    "type": "LIVE"
+  },
+  {
+    "id": 11,
+    "name": "Panadería",
+    "type": "LIVE"
+  },
+  {
+    "id": 12,
+    "name": "Arte y Dibujo",
+    "type": "STATIC"
+  },
+  {
+    "id": 13,
+    "name": "Audio y Accesorios",
+    "type": "STATIC"
+  },
+  {
+    "id": 14,
+    "name": "Libros",
+    "type": "LIVE"
+  },
+  {
+    "id": 15,
+    "name": "Material Escolar",
+    "type": "LIVE"
+  },
+  {
+    "id": 16,
+    "name": "Batas/Uniformes",
+    "type": "LIVE"
+  },
+  {
+    "id": 17,
+    "name": "Electrónica",
+    "type": "LIVE"
+  },
+  {
+    "id": 18,
+    "name": "Arte y Dibujo",
+    "type": "LIVE"
+  },
+  {
+    "id": 19,
+    "name": "Audio y Accesorios",
+    "type": "LIVE"
+  },
+  {
+    "id": 20,
+    "name": "Ropa y calzado",
+    "type": "LIVE"
+  },
+  {
+    "id": 21,
+    "name": "Mochilas y bolsos",
+    "type": "LIVE"
+  },
+  {
+    "id": 22,
+    "name": "Deportes",
+    "type": "LIVE"
+  },
+  {
+    "id": 23,
+    "name": "Juegos y videojuegos",
+    "type": "LIVE"
+  },
+  {
+    "id": 24,
+    "name": "Ropa y calzado",
+    "type": "STATIC"
+  },
+  {
+    "id": 25,
+    "name": "Mochilas y bolsos",
+    "type": "STATIC"
+  },
+  {
+    "id": 26,
+    "name": "Deportes",
+    "type": "STATIC"
+  },
+  {
+    "id": 27,
+    "name": "Juegos y videojuegos",
+    "type": "STATIC"
+  }
+]

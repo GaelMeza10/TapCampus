@@ -125,6 +125,7 @@ describe('navegación Expo Router SDK 58', () => {
     for (const label of ['Reservas', 'Mis ventas', 'Cuenta', 'Explorar', 'Cuenta', 'Reservas', 'Explorar']) {
       await fireEvent.press(screen.getByRole('tab', { name: label }));
       await waitFor(() => expect(screen.getByRole('tab', { name: label }).props.accessibilityState.selected).toBe(true));
+      expect(screen.getAllByTestId('marketplace-navigation')).toHaveLength(1);
       const root = view.getRouterState()!.routes[0].state!;
       expect(root.routes).toHaveLength(before.routes.length);
       const group = root.routes.find(route => route.name === '(tabs)')!;

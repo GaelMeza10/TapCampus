@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@expo-google-fonts/bricolage-grotesque": "^0.4.1",
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo/ui": "~58.0.27",
     "@expo/vector-icons": "^15.0.2",
@@ -43,8 +44,9 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
+    "check:design": "node scripts/check-design-consistency.cjs",
+    "pretest": "npm run check:design",
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -53,7 +55,9 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "setupFilesAfterEnv": ["<rootDir>/jest.setup.ts"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ],
     "moduleNameMapper": {
       "^@/assets/(.*)$": "<rootDir>/assets/$1",
       "^@/(.*)$": "<rootDir>/src/$1"

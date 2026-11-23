@@ -18,6 +18,9 @@ import CustomInput from '@/components/CustomInput';
 import PrimaryButton from '@/components/PrimaryButton';
 import { uabcEmail } from '@/services/auth-validation';
 import { InlineMessage } from '@/components/feedback';
+import { CampusHeader } from '@/components/campus-header';
+import { MARKETPLACE_SCROLL_PROPS } from '@/components/marketplace-shell';
+import { authErrorMessage } from '@/services/error-messages';
 
 export default function Login() {
   const { login } = useAuth();
@@ -45,11 +48,8 @@ export default function Login() {
     setErrorField(undefined);
     try {
       await login({ email: normalizedEmail, password });
-    } catch (cause: any) {
-      const message = cause?.response?.data?.message;
-      setError(
-        Array.isArray(message) ? message.join('\n') : message || 'Correo o contraseña incorrectos.',
-      );
+    } catch (cause) {
+      setError(authErrorMessage(cause, 'login'));
     } finally {
       setLoading(false);
     }
@@ -63,12 +63,12 @@ export default function Login() {
         style={styles.fill}
       >
         <ScrollView
+          {...MARKETPLACE_SCROLL_PROPS}
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.brandGroup}>
-            <AppText variant="brand">TapCampus</AppText>
-          </View>
+          <CampusHeader />
+          <View style={styles.body}>
           <Card style={styles.card}>
             <AppText variant="section">Bienvenido de nuevo</AppText>
             <CustomInput
@@ -82,7 +82,7 @@ export default function Login() {
               value={email}
               onChangeText={value => {
                 setEmail(value);
-                setError('');
+                if (errorField === 'email') { setError(''); setErrorField(undefined); }
               }}
               error={errorField === 'email' ? error : undefined}
             />
@@ -96,7 +96,7 @@ export default function Login() {
               value={password}
               onChangeText={value => {
                 setPassword(value);
-                setError('');
+                if (errorField === 'password') { setError(''); setErrorField(undefined); }
               }}
               error={errorField === 'password' ? error : undefined}
             />
@@ -122,6 +122,7 @@ export default function Login() {
               </Pressable>
             </Link>
           </View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -133,12 +134,10 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   scroll: {
     flexGrow: 1,
-    paddingHorizontal: SPACE.page,
-    paddingTop: SPACE.section,
     paddingBottom: SPACE.xl,
   },
-  brandGroup: { paddingHorizontal: SPACE.xs, marginBottom: SPACE.xl },
-  card: { padding: SPACE.xl, gap: SPACE.lg },
+  body: { paddingHorizontal: SPACE.page, paddingTop: SPACE.lg, width: '100%', maxWidth: 640, alignSelf: 'center' },
+  card: { padding: SPACE.page, gap: SPACE.lg },
   footer: {
     flexDirection: 'row',
     flexWrap: 'wrap',

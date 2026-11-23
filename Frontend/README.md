@@ -1,57 +1,26 @@
-# Welcome to your Expo app 👋
+# TapCampus — aplicación móvil
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+React Native 0.88 / Expo SDK 58. Rutas en `src/app`, tema en `src/theme.js` y componentes compartidos en `src/components`. Diseño vigente en [DESIGN.md](../DESIGN.md).
 
-## Get started
+Desde esta carpeta:
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```powershell
+npm ci
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Configura EXPO_PUBLIC_API_URL en `.env` con un origen de API alcanzable desde el teléfono. No uses localhost desde un dispositivo físico. Cámara y galería requieren sus permisos. El cliente conserva borradores y muestra errores; el servidor decide stock, precio y plazo.
 
-### Other setup steps
+Consulta [la guía de entrega](../docs/11_DELIVERY_GUIDE.md) para preparar cuentas y datos. El script de reinicio de la plantilla Expo se retiró porque no corresponde a esta aplicación.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```powershell
+node node_modules/typescript/bin/tsc --noEmit
+npm run check:design
+npm test
+```
 
-## Learn more
+La exportación no sustituye aceptación en teléfono. [Evidencia de casos adversos](../specs/0045-errores-y-datos-adversos/verification.md).
 
-To learn more about developing your project with Expo, look at the following resources:
+`npm test` ejecuta primero la comprobación de `DESIGN.md`. Detecta diferencias de tokens/nombres, materiales fuera de las tabs y patrones anteriores; las pruebas de navegación y de presentación comparan los recorridos y la misma publicación entre pantallas. Un cambio deliberado del sistema requiere actualizar su autoridad en DESIGN.md, los componentes compartidos y sus comprobaciones conjuntamente.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-
+La comprobación incluye fuentes CSS y el índice local de Impeccable cuando existe. [Revisión de consistencia y evidencia](../docs/design/consistency-review.md): alcance comprobado, correcciones y aceptación nativa pendiente.

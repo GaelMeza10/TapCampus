@@ -12,7 +12,7 @@ test('valida todos los campos aplicables y mantiene orden visual con categoría 
   expect(formFieldOrder.filter(field => errors[field])).toEqual(['photo', 'title', 'description', 'category', 'price', 'stock', 'zone', 'start', 'end']);
 });
 test('STATIC no valida stock/horario/oferta, pero conserva errores de texto/catálogos', () => {
-  expect(validatePublicationDraft({ ...valid, type: 'STATIC', draft: { ...valid.draft, stock: '-1', start: '', end: '', gangaPrice: '999' } })).toEqual({});
+  expect(validatePublicationDraft({ ...valid, type: 'STATIC', draft: { ...valid.draft, condition: 'NEW', stock: '-1', start: '', end: '', gangaPrice: '999' } })).toEqual({});
 });
 test('precio y horario revalidan la oferta dependiente; corregirlos limpia el error', () => {
   expect(validatePublicationDraft({ ...valid, draft: { ...valid.draft, gangaPrice: '85', gangaMinutes: '10' } })).toHaveProperty('offer');

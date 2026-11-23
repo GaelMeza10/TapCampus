@@ -14,6 +14,7 @@ jest.mock('expo-crypto', () => ({ randomUUID: jest.fn() }));
 jest.mock('expo-linking', () => ({ openURL: jest.fn() }));
 jest.mock('../src/services/marketplace', () => ({
   zones: jest.fn(async () => []),
+  categories: jest.fn(async () => []),
   publicationDetail: jest.fn(async () => ({ id: 'p1', type: 'LIVE', status: 'ACTIVE', title: 'Burrito', description: 'Caliente', price: '30.00', image_url: 'https://example.com/a.jpg', seller: { id: 's1', name: 'Ana' }, current_stock: 2, end_time: '2099-01-01T12:00:00.000Z', is_ganga_active: false })),
   myReservations: jest.fn(async () => []), reserve: jest.fn(), cancelReservation: jest.fn(), apiMessage: () => 'Error de red',
 }));
@@ -28,6 +29,25 @@ beforeEach(() => {
   (reserve as jest.Mock).mockReset();
   (randomUUID as jest.Mock).mockReset().mockReturnValue('uuid-one');
   (Linking.openURL as jest.Mock).mockReset().mockResolvedValue(true);
+});
+
+test('fallo de carga inicial muestra reintento y no afirma que la publicación fue eliminada', async () => {
+  (publicationDetail as jest.Mock).mockRejectedValueOnce(new Error('offline'));
+  const view = await render(<Detail />);
+  expect(await view.findByText('No pudimos cargar la publicación')).toBeTruthy();
+  expect(view.queryByText('Publicación no disponible')).toBeNull();
+  expect(view.getByRole('button', { name: 'Reintentar' })).toBeTruthy();
+  await fireEvent.press(view.getByRole('button', { name: 'Reintentar' }));
+  expect(await view.findByRole('button', { name: 'Apartar una unidad' })).toBeTruthy();
+});
+
+test('fallo parcial de reservas conserva el producto y no declara un vacío confirmado', async () => {
+  (myReservations as jest.Mock).mockRejectedValueOnce(new Error('offline'));
+  const view = await render(<Detail />);
+  expect(await view.findByText('No pudimos actualizar tus reservas.')).toBeTruthy();
+  expect(view.getByRole('button', { name: 'Apartar una unidad' })).toBeTruthy();
+  expect(view.getByTestId('persistent-error')).toBeTruthy();
+  expect(view.queryByText('Todavía no tienes reservas.')).toBeNull();
 });
 
 test.each(['LIVE', 'STATIC'])('consulta previa %s abre interés sin reservar ni crear clave', async type => {

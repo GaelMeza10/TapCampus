@@ -1,13 +1,18 @@
 import api from './api';
+import { apiMessage } from './error-messages';
 import { API_BASE_URL } from '../constants/api.constants';
 
 export type PublicationType = 'LIVE' | 'STATIC';
+export type ProductCondition = 'NEW' | 'USED';
+export type PickupMode = 'SPECIFIC_ZONE' | 'ARRANGED';
 export type PublicPublication = {
   id: string; type: PublicationType; title: string; description: string;
+  condition?: ProductCondition | null;
   price: string; image_url: string; status: 'ACTIVE' | 'FINISHED';
   price_before_ganga?: string | null;
   seller_id: string; seller: { id: string; name: string };
-  zone_id: number; category_id: number; current_stock: number | null;
+  pickup_mode?: PickupMode;
+  zone_id: number | null; category_id: number; current_stock: number | null;
   initial_stock: number | null; start_time: string | null; end_time: string | null;
   is_ganga_active: boolean;
   sellerContact?: { phone: string };
@@ -19,6 +24,8 @@ export type OwnedPublication = PublicPublication & {
   ganga_minutes_before: number | null;
 };
 export type Reservation = {
+  sellerName?: string;
+  pickupLocation?: { zoneId: number; name: string; source: 'SNAPSHOT' | 'LEGACY_CURRENT' } | null;
   publicationImageUrl?: string | null;
   id: string; publicationId: string; publicationTitle: string; status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
   reservedAt: string; expiresAt: string; resolvedAt: string | null; unitPrice: string;
@@ -44,8 +51,8 @@ function reservationForClient(reservation: Reservation): Reservation {
   return reservation.publicationImageUrl ? { ...reservation, publicationImageUrl: imageForClient(reservation.publicationImageUrl) } : reservation;
 }
 
-export async function listPublications(type: PublicationType, zoneId?: number, categoryId?: number, q?: string) {
-  const { data } = await api.get<Publication[]>('/publications', { params: { type, zoneId, categoryId, ...(q?.trim() ? { q: q.trim().replace(/\s+/g, ' ') } : {}) } });
+export async function listPublications(type: PublicationType, zoneId?: number, categoryId?: number, q?: string, pickupMode?: PickupMode) {
+  const { data } = await api.get<Publication[]>('/publications', { params: { type, zoneId, categoryId, pickupMode, ...(q?.trim() ? { q: q.trim().replace(/\s+/g, ' ') } : {}) } });
   return data.map(publicationForClient);
 }
 export async function publicationDetail(id: string) {
@@ -91,8 +98,10 @@ export async function publicationAction(id: string, action: 'physical-sale' | 'f
   return publicationForClient(data);
 }
 export type PublicationPayload = {
+  condition?: ProductCondition;
   type: PublicationType; title: string; description: string; price: number;
-  image_url: string; zone_id: number; category_id: number;
+  image_url: string; zone_id: number | null; category_id: number;
+  pickup_mode?: PickupMode;
   initial_stock?: number; current_stock?: number; start_time?: string; end_time?: string;
   ganga_min_price?: number; ganga_activation_mode?: 'MANUAL' | 'SCHEDULED';
   ganga_minutes_before?: number;
@@ -118,18 +127,7 @@ export async function uploadImage(asset: { uri: string; mimeType?: string | null
   return data.image_url;
 }
 
-export function apiMessage(error: unknown): string {
-  const cause = error as { code?: string; response?: { status?: number; data?: { message?: string | string[] } } };
-  if (cause.code === 'ECONNABORTED' || cause.code === 'ETIMEDOUT') {
-    return 'El servidor tardó demasiado en responder. Revisa tu conexión y vuelve a intentarlo.';
-  }
-  const message = cause.response?.data?.message;
-  const visibleMessage = (value: string) => value.replace(/precio ganga/gi, 'precio de oferta').replace(/\bgangas\b/gi, 'ofertas').replace(/\bganga\b/gi, 'oferta');
-  if (Array.isArray(message)) return visibleMessage(message.join('\n'));
-  if (typeof message === 'string') return visibleMessage(message);
-  if (cause.response?.status === 409) return 'La acción ya no está disponible. Actualiza los datos e inténtalo de nuevo.';
-  return 'No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.';
-}
+export { apiMessage } from './error-messages';
 
 export function publicationContentError(error: unknown): { message: string; fields: ('title' | 'description')[] } | undefined {
   const data = (error as { response?: { data?: { code?: unknown; fields?: unknown } } } | null)?.response?.data;

@@ -1,3 +1,4 @@
+import { BricolageGrotesque_800ExtraBold } from '@expo-google-fonts/bricolage-grotesque/800ExtraBold';
 import { Stack } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useFonts } from 'expo-font';
@@ -14,7 +15,7 @@ function RootNavigator() {
   if (estaCargando) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: COLORS.background } }}>
       <Stack.Screen name="index" />
       <Stack.Protected guard={!estaAutenticado}>
         <Stack.Screen name="login" />
@@ -31,6 +32,7 @@ function RootNavigator() {
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
+    BricolageGrotesque_800ExtraBold,
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
