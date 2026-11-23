@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: tapcampus-api
+    runtime: docker
+    plan: 0.5c-512mb
+    region: oregon
+    dockerfilePath: ./Backend/Dockerfile
+    dockerContext: ./Backend
+    healthCheckPath: /categories
+    numInstances: 1
+    autoDeployTrigger: off
+    disk:
+      name: tapcampus-uploads
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tapcampus-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: tapcampus-jobs
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SEED_DEMO_PASSWORD
+        generateValue: true
+      - key: UPLOADS_DIR
+        value: /var/data/uploads
+      - key: BULLMQ_PREFIX
+        value: tapcampus-production
+  - type: keyvalue
+    name: tapcampus-jobs
+    plan: 256mb
+    region: oregon
+    maxmemoryPolicy: noeviction
+    persistenceMode: journal-snapshot
+    ipAllowList: []
+databases:
+  - name: tapcampus-db
+    plan: 0.1c-256mb
+    region: oregon
+    postgresMajorVersion: "16"
+    diskSizeGB: 5
+    ipAllowList: []

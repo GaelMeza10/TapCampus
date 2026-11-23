@@ -1,0 +1,19 @@
+{
+    "result":  "PASS build and signature",
+    "java":  17,
+    "variant":  "release",
+    "compileSdk":  37,
+    "physicalInstallTested":  false,
+    "bytes":  35412852,
+    "minAndroidApi":  24,
+    "backend":  "Conserva EXPO_PUBLIC_API_URL actual; requiere conexión con ese backend.",
+    "version":  "1.0.0",
+    "date":  "2026-11-23T05:37:23.1033871Z",
+    "label":  "TapCampus",
+    "artifact":  "entrega/TapCampus-1.0.0-arm64.apk",
+    "gradle":  "9.4.1",
+    "sha256":  "AB6A6A540958E51722BC051C7C6A1CC716D97F7994CB06180B412431629EE17A",
+    "abi":  "arm64-v8a",
+    "ndk":  "27.1.12297006",
+    "signature":  "APK v2; clave de demostración"
+}

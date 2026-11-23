@@ -1,6 +1,9 @@
 # Logs
 Backend/.local/
 /.local/
+/entrega/*.apk
+/entrega/*.sha256
+/.cxx/
 logs
 *.log
 npm-debug.log*

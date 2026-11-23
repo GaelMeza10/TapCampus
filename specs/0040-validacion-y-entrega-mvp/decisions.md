@@ -8,4 +8,4 @@
 | DEC-04 | ¿Cómo incorporar los casos límite del profesor? | AC-02/03; T-02/03 | Resuelta | 2026-11-21: añadir plan y registro en 0040, con estabilidad y función separadas. No tratar el plan como prueba ejecutada ni convertir un fallo funcional controlado en cierre completo del MVP. |
 | DEC-05 | ¿El ejemplo de giro/GPS/texto largo cambia el producto? | AC-02 | Resuelta | 2026-11-21: no. Portrait se comprueba como configuración vigente; GPS no aplica; 200 letras no introduce por sí solo un máximo de nombre. Volver del fondo y terminar el proceso tienen expectativas distintas para borrador sin guardar. |
 
-No se solicita publicar ni contratar servicios por completar este plan. Al ejecutar, registrar proveedor, identidad de paquete y plataforma con su configuración y evidencia.
+El usuario selecciona Render para despliegue permanente. Se prepara render.yaml con PostgreSQL/Key Value/disco persistentes, sin modificar datos locales. El costo debe aceptarse al confirmar los recursos; preparar configuración no equivale a contratar. Acceso automático al panel no disponible; aplicación del Blueprint y verificación remota pendientes.

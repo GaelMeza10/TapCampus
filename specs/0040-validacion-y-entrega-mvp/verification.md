@@ -35,3 +35,7 @@ AC-02 → T-08/T-07: reporte del usuario en Nueva publicación, Inicio/Fin con r
 Pendiente: abrir Inicio/Fin en el iPhone con Expo Go, comprobar ruedas visibles desde el primer momento, desplazarlas, guardar, reabrir y cerrar sin guardar. Las pruebas con mocks y el bundle no acreditan la representación ni los gestos nativos; INC-0040-02 y T-08 permanecen abiertos hasta esa comprobación. Ningún cambio visual global ni evidencia de captura nativa añadida.
 
 Registro histórico 2026-11-21: INC-0040-01 se reprodujo por POST /auth/register con nombre de tres espacios y otros datos válidos: respondió 201 en lugar de 400; referido a RF-02/0002. Su corrección posterior está en 0045 EV-01, con rechazo 400 antes de invocar el servicio. T-01/T-02/T-03/T-07 conservan los pendientes detallados en revision-mvp.md. No cerrar TASKS 5.1–5.6/6.2/6.3 ni declarar iPhone o los 43 casos aprobados. Infraestructura, instalación y UAT conservan sus dependencias originales.
+
+## EV-05 — APK local generado
+
+AC-05/T-05: assembleRelease PASS, APK Android arm64 de 35.412.852 bytes, firma v2 verificada y aplicación no depurable. Artefacto local: entrega/TapCampus-1.0.0-arm64.apk; hash y herramientas en evidence/apk-local.json. Firma de demostración; no es publicación en Play Store. No requiere Expo Go ni Metro. Conserva la API actual; no empaqueta el backend. Instalación física y recorrido contra el entorno final siguen pendientes; T-05 no se marca completa.
