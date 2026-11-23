@@ -5,7 +5,9 @@ export const zoneNames = [
   'Cafetería Principal',
   'Gimnasio',
 ];
+const productCategories = ['Libros', 'Material Escolar', 'Batas/Uniformes', 'Electrónica', 'Arte y Dibujo', 'Audio y Accesorios',
+  'Ropa y calzado', 'Mochilas y bolsos', 'Deportes', 'Juegos y videojuegos'];
 export const categoryNames = {
-  LIVE: ['Comida Fuerte', 'Snacks', 'Bebidas', 'Postres'],
-  STATIC: ['Libros', 'Material Escolar', 'Batas/Uniformes', 'Electrónica'],
+  LIVE: ['Comida Fuerte', 'Snacks', 'Bebidas', 'Postres', 'Desayunos', 'Panadería', ...productCategories],
+  STATIC: productCategories,
 };

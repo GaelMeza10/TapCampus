@@ -1,5 +1,9 @@
 # Operación de la fase 1
 
+## Perfil de entrega 0046
+
+Usa `npm run db:seed:delivery` para añadir seis cuentas, 48 publicaciones y doce reservas de demostración. Amplía a doce categorías conservando las anteriores; no resetea ni duplica datos. Los accesos se guardan en `.local/demo-access.json`, ignorado por Git; no se imprimen contraseñas. Prueba aislada: `npm run test:seed:delivery`, con PostgreSQL y backend compilado. [Guía y recorrido completos](../../docs/11_DELIVERY_GUIDE.md), [evidencia](../../specs/0046-seed-entrega-y-limpieza/verification.md). Los apartados siguientes conservan herramientas de fases anteriores y el perfil de 24 publicaciones.
+
 ## Backend fase 3
 
 Desde Backend, con DATABASE_URL y JWT_SECRET locales, PostgreSQL de fase 1 y Redis:

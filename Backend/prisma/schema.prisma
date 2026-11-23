@@ -14,6 +14,11 @@ enum PublicationType {
   STATIC
 }
 
+enum ProductCondition {
+  NEW
+  USED
+}
+
 enum PublicationStatus {
   ACTIVE
   FINISHED
@@ -49,6 +54,11 @@ model User {
   @@map("users")
 }
 
+enum PickupMode {
+  SPECIFIC_ZONE
+  ARRANGED
+}
+
 model Zone {
   id           Int           @id @default(autoincrement())
   name         String        @unique
@@ -70,6 +80,7 @@ model Category {
 model Publication {
   id          String            @id @default(uuid()) @db.Uuid
   type        PublicationType
+  condition   ProductCondition?
   title       String
   description String            @db.Text
   price       Decimal           @db.Decimal(10, 2)
@@ -81,8 +92,9 @@ model Publication {
   // Base Relations
   seller_id   String   @db.Uuid
   seller      User     @relation("SellerPublications", fields: [seller_id], references: [id])
-  zone_id     Int
-  zone        Zone     @relation(fields: [zone_id], references: [id])
+  pickup_mode PickupMode @default(SPECIFIC_ZONE)
+  zone_id     Int?
+  zone        Zone?    @relation(fields: [zone_id], references: [id], onDelete: Restrict)
   category_id Int
   category    Category @relation(fields: [category_id], references: [id])
 
@@ -95,6 +107,7 @@ model Publication {
   ganga_min_price       Decimal?             @db.Decimal(10, 2)
   ganga_activation_mode GangaActivationMode?
   ganga_minutes_before  Int?
+  availability_announced_for DateTime?
 
   // Relations
   reservations Reservation[]
@@ -110,6 +123,8 @@ model Reservation {
   resolved_at DateTime?
   unit_price Decimal @db.Decimal(10, 2)
   idempotency_key String @db.Uuid
+  pickup_zone_id Int?
+  pickup_zone_name String?
 
   // Relations
   buyer_id       String      @db.Uuid

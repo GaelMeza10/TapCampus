@@ -444,7 +444,7 @@ try {
   const unavailable = [
     await post(
       '/publications',
-      { ...common, type: 'STATIC', category_id: staticCategory },
+      { ...common, type: 'STATIC', condition: 'USED', category_id: staticCategory },
       owner.token,
     ),
     await live(),

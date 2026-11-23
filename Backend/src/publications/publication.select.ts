@@ -4,6 +4,7 @@ import { Prisma } from '../generated/prisma/client';
 export const publicationSelect = {
   id: true,
   type: true,
+  condition: true,
   title: true,
   description: true,
   price: true,
@@ -13,6 +14,7 @@ export const publicationSelect = {
   created_at: true,
   seller_id: true,
   zone_id: true,
+  pickup_mode: true,
   category_id: true,
   initial_stock: true,
   current_stock: true,
@@ -24,6 +26,8 @@ export const publicationSelect = {
 
 export const ownedPublicationSelect = {
   ...publicationSelect,
+  // Private scheduling marker; the explicit serializer never returns it.
+  availability_announced_for: true,
   ganga_min_price: true,
   ganga_activation_mode: true,
   ganga_minutes_before: true,
@@ -36,6 +40,7 @@ export function publicationResponse(publication: PublicPublication) {
   return {
     id: publication.id,
     type: publication.type,
+    condition: publication.condition,
     title: publication.title,
     description: publication.description,
     price: publication.price.toFixed(2),
@@ -45,6 +50,7 @@ export function publicationResponse(publication: PublicPublication) {
     created_at: publication.created_at,
     seller_id: publication.seller_id,
     zone_id: publication.zone_id,
+    pickup_mode: publication.pickup_mode,
     category_id: publication.category_id,
     initial_stock: publication.initial_stock,
     current_stock: publication.current_stock,

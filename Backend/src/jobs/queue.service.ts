@@ -79,9 +79,15 @@ export class QueueService implements OnModuleInit, OnApplicationShutdown {
       { reservationId: id },
     );
   }
-  async publication(p: Publication) {
+  async publication(p: Pick<Publication, 'id' | 'type' | 'status' | 'start_time' | 'end_time' | 'is_ganga_active' | 'ganga_activation_mode' | 'ganga_min_price' | 'ganga_minutes_before' | 'availability_announced_for'>) {
     if (p.type !== 'LIVE' || p.status !== 'ACTIVE' || !p.end_time) return;
     const endAt = p.end_time.getTime();
+    if (p.start_time && p.availability_announced_for?.getTime() !== p.start_time.getTime()) {
+      const startAt = p.start_time.getTime();
+      await this.enqueue(this.publications, 'start', `${p.id}-start-${startAt}`, startAt, {
+        publicationId: p.id, expectedAt: startAt,
+      });
+    }
     await this.enqueue(this.publications, 'expire', `${p.id}-${endAt}`, endAt, {
       publicationId: p.id,
       expectedAt: endAt,

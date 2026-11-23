@@ -12,7 +12,7 @@ import { UploadsService } from '../uploads/uploads.service';
 import { PublicationQueryDto } from '../catalogs/catalog-query.dto';
 import { CreatePublicationDto, UpdatePublicationDto } from './publication.dto';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
-import { QueueService } from '../jobs/queue.service';
+import { QueueService, RESERVATION_MS } from '../jobs/queue.service';
 import { blockedContentFields } from './content-policy';
 import {
   publicationResponse,
@@ -57,18 +57,24 @@ export class PublicationsService {
     requireFutureGanga = true,
     requireLowerPrice = true,
   ) {
+    if (data.type === 'LIVE' && data.condition != null) {
+      throw new BadRequestException('La condición Nuevo/Usado solo corresponde a Productos');
+    }
     for (const field of [
       'title',
       'description',
       'price',
       'image_url',
-      'zone_id',
       'category_id',
     ] as const) {
       if (data[field] === undefined || data[field] === null)
         throw new BadRequestException(`${field} es obligatorio`);
     }
-    await this.catalogs.validate(data.zone_id, data.category_id, data.type);
+    const pickupMode = data.pickup_mode ?? 'SPECIFIC_ZONE';
+    if (pickupMode === 'ARRANGED' ? data.type !== 'STATIC' || data.zone_id !== null : data.zone_id == null) {
+      throw new BadRequestException('Elige una zona concreta; solo Productos permite entrega por acordar sin zona');
+    }
+    await this.catalogs.validate(data.zone_id ?? undefined, data.category_id, data.type);
     await this.uploads.validateImageUrl(data.image_url, origin);
     if (data.type === 'STATIC') {
       if (
@@ -136,6 +142,9 @@ export class PublicationsService {
 
   async create(dto: CreatePublicationDto, sellerId: string, origin: string) {
     this.validateContent(dto);
+    if (dto.type === 'STATIC' && !dto.condition) {
+      throw new BadRequestException('Selecciona si el artículo es nuevo o usado');
+    }
     const data = {
       ...dto,
       seller_id: sellerId,
@@ -145,15 +154,22 @@ export class PublicationsService {
       current_stock: dto.type === 'LIVE' ? dto.initial_stock : undefined,
     } as Prisma.PublicationUncheckedCreateInput;
     await this.validate(data, origin);
+    if (dto.type === 'LIVE' && dto.start_time && new Date(dto.start_time).getTime() <= Date.now()) {
+      data.availability_announced_for = new Date(dto.start_time);
+    }
     const publication = await this.prisma.publication.create({
       data,
       select: ownedPublicationSelect,
     });
+    this.events.publicationChanged('publication_created', publication.id, publication.type);
     await this.queue.publication(publication);
     return ownedPublicationResponse(publication);
   }
 
   async list(query: PublicationQueryDto) {
+    if (query.pickupMode === 'ARRANGED' && (query.type !== 'STATIC' || query.zoneId !== undefined)) {
+      throw new BadRequestException('Entrega por acordar requiere Productos y no admite zona concreta');
+    }
     await this.catalogs.validate(query.zoneId, query.categoryId, query.type);
     const text = query.q?.replace(/[\\%_]/g, '\\$&');
     const search: Prisma.PublicationWhereInput[] = text ? [{
@@ -169,6 +185,7 @@ export class PublicationsService {
           {
             type: query.type,
             zone_id: query.zoneId,
+            ...(query.pickupMode ? { pickup_mode: query.pickupMode } : {}),
             category_id: query.categoryId,
           },
           ...search,
@@ -245,6 +262,13 @@ export class PublicationsService {
       throw new BadRequestException('Envía al menos un campo editable');
     const result = await this.prisma.$transaction(async (tx) => {
       const publication = await this.owned(tx, id, sellerId);
+      if (publication.type === 'LIVE' && dto.zone_id !== undefined && dto.zone_id !== publication.zone_id) {
+        const active = await tx.reservation.count({ where: {
+          publication_id: id, status: 'ACTIVE',
+          reserved_at: { gt: new Date(Date.now() - RESERVATION_MS) },
+        } });
+        if (active) throw new ConflictException('No puedes cambiar el punto de recogida mientras haya reservas vigentes');
+      }
       this.validateContent(dto, true);
       if (
         publication.type === 'STATIC' &&
@@ -300,24 +324,31 @@ export class PublicationsService {
           'price', 'ganga_min_price', 'ganga_activation_mode', 'ganga_minutes_before',
         ].some((field) => fields.includes(field)),
       );
+      const combined = { ...publication, ...supplied };
+      const announce = combined.type === 'LIVE' && combined.start_time && combined.end_time &&
+        new Date(combined.start_time).getTime() <= Date.now() && new Date(combined.end_time).getTime() > Date.now() &&
+        (combined.current_stock ?? 0) > 0 && publication.availability_announced_for?.getTime() !== new Date(combined.start_time).getTime();
       const updated = await tx.publication.update({
         where: { id },
-        data,
+        data: { ...data, ...(announce ? { availability_announced_for: new Date(combined.start_time!) } : {}) },
         select: ownedPublicationSelect,
       });
       return {
         updated,
+        announce: !!announce,
         stockChanged: publication.current_stock !== updated.current_stock,
       };
     });
     if (result.stockChanged && result.updated.current_stock !== null)
       this.events.stockUpdated(id, result.updated.current_stock);
+    this.events.publicationChanged('publication_updated', id, result.updated.type);
+    if (result.announce) this.events.publicationChanged('publication_available', id, 'LIVE');
     await this.queue.publication(result.updated);
     return ownedPublicationResponse(result.updated);
   }
 
   async sold(id: string, sellerId: string) {
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const publication = await this.owned(tx, id, sellerId);
       if (publication.type !== 'STATIC')
         throw new ConflictException('Solo STATIC puede marcarse vendido');
@@ -329,6 +360,22 @@ export class PublicationsService {
         }),
       );
     });
+    this.events.publicationChanged('publication_updated', id, 'STATIC');
+    return result;
+  }
+
+  async available(id: string, expectedAt?: number) {
+    const changed = await this.prisma.$transaction(async tx => {
+      const [p] = await tx.$queryRaw<Publication[]>`SELECT * FROM publications WHERE id = ${id}::uuid FOR UPDATE`;
+      if (!p || p.type !== 'LIVE' || p.status !== 'ACTIVE' || !p.start_time || !p.end_time ||
+        p.start_time.getTime() > Date.now() || p.end_time.getTime() <= Date.now() ||
+        !p.current_stock || (expectedAt !== undefined && p.start_time.getTime() !== expectedAt) ||
+        p.availability_announced_for?.getTime() === p.start_time.getTime()) return false;
+      await tx.publication.update({ where: { id }, data: { availability_announced_for: p.start_time } });
+      return true;
+    });
+    if (changed) this.events.publicationChanged('publication_available', id, 'LIVE');
+    return changed;
   }
 
   async physicalSale(id: string, sellerId: string) {

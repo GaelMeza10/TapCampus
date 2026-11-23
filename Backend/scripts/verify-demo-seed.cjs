@@ -10,8 +10,8 @@ async function main() {
   const records = new Map();
   const zones = zoneNames.map((name, index) => ({ id: index + 1, name }));
   const categories = Object.entries(categoryNames).flatMap(([type, names]) =>
-    names.map((name, index) => ({ id: type === 'LIVE' ? index + 1 : index + 5, name, type })),
-  );
+    names.map(name => ({ name, type })),
+  ).map((row, index) => ({ ...row, id: index + 1 }));
   let sellerExists = true;
   const prisma = {
     user: { findUnique: async () => sellerExists ? { id: '30000000-0000-4000-8000-000000000001' } : null },
@@ -58,7 +58,7 @@ async function main() {
   assert.equal(all.filter((row) => row.type === 'STATIC').length, 12);
   const newRows = all.filter((row) => Number(row.id.slice(-12)) > 8);
   assert.equal(newRows.length, 16);
-  for (const category of categories) {
+  for (const category of categories.filter(category => newRows.some(row => row.category_id === category.id))) {
     assert.equal(newRows.filter((row) => row.category_id === category.id).length, 2);
   }
   assert.equal(new Set(newRows.map((row) => row.title)).size, 16);

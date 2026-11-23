@@ -15,7 +15,8 @@ const include = {
       title: true,
       image_url: true,
       seller_id: true,
-      seller: { select: { phone: true } },
+      seller: { select: { phone: true, name: true } },
+      zone: { select: { id: true, name: true } },
     },
   },
   buyer: { select: { id: true, name: true, phone: true } },
@@ -44,6 +45,12 @@ export class ReservationsService {
       expiresAt: expiresAt.toISOString(),
       resolvedAt: r.resolved_at?.toISOString() ?? null,
       unitPrice: r.unit_price.toFixed(2),
+      sellerName: r.publication.seller.name,
+      pickupLocation: r.pickup_zone_id != null && r.pickup_zone_name != null
+        ? { zoneId: r.pickup_zone_id, name: r.pickup_zone_name, source: 'SNAPSHOT' as const }
+        : r.publication.zone
+          ? { zoneId: r.publication.zone.id, name: r.publication.zone.name, source: 'LEGACY_CURRENT' as const }
+          : null,
       ...(actor === r.buyer_id
         ? { sellerContact: { phone: r.publication.seller.phone } }
         : {
@@ -93,6 +100,7 @@ export class ReservationsService {
             'Stock agotado o publicación no disponible',
           );
         }
+        const zone = await tx.zone.findUniqueOrThrow({ where: { id: p.zone_id! }, select: { name: true } });
         const reservation = await tx.reservation.create({
           data: {
             publication_id: publicationId,
@@ -100,6 +108,8 @@ export class ReservationsService {
             idempotency_key: key,
             unit_price: p.price,
             reserved_at: now,
+            pickup_zone_id: p.zone_id,
+            pickup_zone_name: zone.name,
           },
           include,
         });

@@ -47,7 +47,9 @@ export class JobsService
       new Worker(
         'publication_queue',
         (job) =>
-          this.publications.expire(job.data.publicationId, job.data.expectedAt),
+          job.name === 'start'
+            ? this.publications.available(job.data.publicationId, job.data.expectedAt)
+            : this.publications.expire(job.data.publicationId, job.data.expectedAt),
         options,
       ),
       new Worker(
@@ -114,6 +116,7 @@ export class JobsService
       for (const p of rows) {
         if (this.stopping) return;
         await this.publications.expire(p.id);
+        await this.publications.available(p.id);
         await this.publications.activateGanga(p.id);
         await this.queue.publication(p);
       }

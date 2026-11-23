@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsEnum, IsInt, IsString, Max, MaxLength, Min, ValidateIf } from 'class-validator';
-import { PublicationType } from '../generated/prisma/client';
+import { PublicationType, PickupMode } from '../generated/prisma/client';
 
 export class CategoryQueryDto {
   @ValidateIf((_object, value) => value !== undefined)
@@ -9,6 +9,10 @@ export class CategoryQueryDto {
 }
 
 export class PublicationQueryDto extends CategoryQueryDto {
+  @ValidateIf((_object, value) => value !== undefined)
+  @IsEnum(PickupMode)
+  pickupMode?: PickupMode;
+
   @ValidateIf((_object, value) => value !== undefined)
   @Transform(({ value }: { value: unknown }) => typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : value)
   @IsString()

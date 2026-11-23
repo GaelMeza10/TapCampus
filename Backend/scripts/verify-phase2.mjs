@@ -10,6 +10,10 @@ import pg from 'pg';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { inventory } from './db-inventory.mjs';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+require('ts-node/register');
+const { categoryNames } = require('../prisma/catalogs.ts');
 
 // Solo se migra/siembra una BD nueva. DATABASE_URL original permanece en lectura.
 const source = new URL(process.env.DATABASE_URL);
@@ -184,7 +188,7 @@ try {
   ).rows[0].server_version;
   evidence.originalBefore = (await inventory(admin)).tables;
   assert.equal(evidence.originalBefore.zones.count, 5);
-  assert.equal(evidence.originalBefore.categories.count, 8);
+  assert.ok(evidence.originalBefore.categories.count >= 8);
   const migrationCount = readdirSync('prisma/migrations', { withFileTypes: true }).filter(entry => entry.isDirectory()).length;
   assert.equal(evidence.originalBefore._prisma_migrations.count, migrationCount);
   await admin.query(`CREATE DATABASE "${name}"`);
@@ -346,15 +350,15 @@ try {
   );
   assert.deepEqual(
     liveCategories.map((c) => c.name).sort(),
-    ['Comida Fuerte', 'Snacks', 'Bebidas', 'Postres'].sort(),
+    [...categoryNames.LIVE].sort(),
   );
   assert.deepEqual(
     staticCategories.map((c) => c.name).sort(),
-    ['Libros', 'Material Escolar', 'Batas/Uniformes', 'Electrónica'].sort(),
+    [...categoryNames.STATIC].sort(),
   );
   assert(liveCategories.every((c) => c.type === 'LIVE'));
   assert(staticCategories.every((c) => c.type === 'STATIC'));
-  assert.equal((await http('/categories')).length, 8);
+  assert.equal((await http('/categories')).length, 26);
   const common = {
     title: 'Artículo fixture',
     description: 'Descripción fixture',
@@ -373,6 +377,7 @@ try {
   const stat = {
     ...common,
     type: 'STATIC',
+    condition: 'USED',
     category_id: staticCategories[0].id,
   };
   for (const body of [live, stat]) {

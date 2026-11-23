@@ -7,6 +7,10 @@ import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:net';
 import { once } from 'node:events';
 import { inventory } from './db-inventory.mjs';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+require('ts-node/register');
+const { categoryNames } = require('../prisma/catalogs.ts');
 
 // Crea bases propias; nunca resetea, migra ni siembra DATABASE_URL original.
 const source = new URL(process.env.DATABASE_URL);
@@ -247,17 +251,8 @@ try {
       await legacy.client.query(
         'SELECT name,type::text FROM categories ORDER BY type,name',
       )
-    ).rows,
-    [
-      { name: 'Bebidas', type: 'LIVE' },
-      { name: 'Comida Fuerte', type: 'LIVE' },
-      { name: 'Postres', type: 'LIVE' },
-      { name: 'Snacks', type: 'LIVE' },
-      { name: 'Batas/Uniformes', type: 'STATIC' },
-      { name: 'Electrónica', type: 'STATIC' },
-      { name: 'Libros', type: 'STATIC' },
-      { name: 'Material Escolar', type: 'STATIC' },
-    ],
+    ).rows.map(row => `${row.type}:${row.name}`).sort(),
+    Object.entries(categoryNames).flatMap(([type, names]) => names.map(name => `${type}:${name}`)).sort(),
   );
   assert.equal(
     (
@@ -428,6 +423,7 @@ try {
     env: {
       ...process.env,
       DATABASE_URL: empty.url,
+      BULLMQ_PREFIX: prefix,
       JWT_SECRET: 'fixture-secret-only-for-isolated-tests',
       PORT: String(port),
       CORS_ORIGINS: 'http://localhost:8081',

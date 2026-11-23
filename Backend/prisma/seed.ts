@@ -101,7 +101,7 @@ async function main() {
     },
     { timeout: 30000 },
   );
-  console.log('Seed verificado: 5 zonas, 4 categorías LIVE y 4 STATIC.');
+  console.log(`Seed verificado: ${zoneNames.length} zonas, ${categoryNames.LIVE.length} categorías LIVE y ${categoryNames.STATIC.length} STATIC.`);
   if (process.env.SEED_DEMO_SELLER_EMAIL) {
     const created = await seedDemoPublications(prisma);
     console.log(`Publicaciones de demo: ${created} nuevas (24 en total).`);

@@ -7,8 +7,10 @@ import {
 } from 'class-validator';
 
 import EsCorreoInstitucional from '../validators/correo-institucional.validator';
+import { Transform } from 'class-transformer';
 
 export class RegisterDto {
+  @Transform(({ value }: { value: unknown }) => typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : value)
   @IsNotEmpty({ message: 'El nombre es obligatorio' })
   @IsString({ message: 'El nombre debe ser texto' })
   name: string;

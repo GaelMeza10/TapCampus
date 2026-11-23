@@ -22,6 +22,9 @@ export class RealtimeGateway implements OnGatewayConnection {
   handleConnection(client: Socket) {
     void client.join('feed');
   }
+  publicationChanged(event: 'publication_created' | 'publication_updated' | 'publication_available', publicationId: string, type: 'LIVE' | 'STATIC') {
+    this.server?.to('feed').emit(event, { publicationId, type });
+  }
   stockUpdated(publicationId: string, newStock: number) {
     this.server?.to('feed').emit('stock_updated', { publicationId, newStock });
   }

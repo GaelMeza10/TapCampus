@@ -13,6 +13,8 @@ import {
 import {
   GangaActivationMode,
   PublicationType,
+  ProductCondition,
+  PickupMode,
 } from '../generated/prisma/client';
 
 const supplied = (_object: unknown, value: unknown) => value !== undefined;
@@ -21,6 +23,14 @@ const trim = ({ value }: { value: unknown }) =>
   typeof value === 'string' ? value.trim() : value;
 
 export class EditablePublicationDto {
+  @ValidateIf(supplied)
+  @IsEnum(PickupMode)
+  pickup_mode?: PickupMode;
+
+  @ValidateIf(supplied)
+  @IsEnum(ProductCondition)
+  condition?: ProductCondition;
+
   @ValidateIf(supplied)
   @Transform(trim)
   @IsString()
@@ -44,11 +54,11 @@ export class EditablePublicationDto {
   @Matches(/\S/)
   image_url?: string;
 
-  @ValidateIf(supplied)
+  @ValidateIf(nonNull)
   @IsInt()
   @Min(1)
   @Max(2147483647)
-  zone_id?: number;
+  zone_id?: number | null;
 
   @ValidateIf(supplied)
   @IsInt()
